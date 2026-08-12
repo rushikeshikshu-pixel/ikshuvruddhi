@@ -1,0 +1,15 @@
+﻿farm_id,field_name,tehsil_district,latitude,longitude,cane_variety,planting_type,crop_age_days,soil_type,sat_ndvi,sat_temp_celsius,sat_solar_radiation_kwh_m2,sat_precipitation_mm,sat_humidity_pct,sat_diurnal_temp_range
+AHI-01,Kopargaon Sugar Estate,Kopargaon Ahilyanagar,19.8912,74.4795,Co 86032,Adsali,420,Black Heavy Soil,0.82,33.5,7.8,0.0,42.2,12.5
+AHI-02,Shrirampur Agro Plot,Shrirampur Ahilyanagar,19.6234,74.6611,CoM 0265,Pre-seasonal,375,Medium Black,0.78,34.1,7.6,0.0,45.0,11.8
+AHI-03,Rahuri MPKV Research Field,Rahuri Ahilyanagar,19.3945,74.6488,Co 11015,Suru,345,Deep Black Clay,0.84,32.8,8.1,0.0,40.5,13.2
+AHI-04,Sangamner Valley Cane,Sangamner Ahilyanagar,19.5721,74.2144,Co 86032,Ratoon,310,Light Medium,0.72,31.2,7.2,0.1,48.0,11.2
+AHI-05,Nevasa Godavari Belt,Nevasa Ahilyanagar,19.5543,74.9212,Co 94012,Adsali,440,Alluvial Loam,0.83,33.0,7.9,0.0,41.5,12.0
+AHI-06,Shevgaon Agro Farm,Shevgaon Ahilyanagar,19.3512,75.2234,CoM 0265,Pre-seasonal,360,Black Soil,0.75,35.2,8.0,0.0,39.0,12.8
+AHI-07,Akole High Rainfall Field,Akole Ahilyanagar,19.5422,73.9876,Co 86032,Suru,320,Reddish Loam,0.76,28.5,6.8,1.2,62.0,9.5
+AHI-08,Parner Drip Irrigated Farm,Parner Ahilyanagar,19.0012,74.4421,MS 10001,Ratoon,295,Shallow Black,0.70,34.5,7.7,0.0,38.0,13.5
+AHI-09,Pathardi Sugar Plot,Pathardi Ahilyanagar,19.1754,75.1723,Co 86032,Pre-seasonal,385,Medium Black,0.77,34.8,7.9,0.0,41.0,12.1
+AHI-10,Jamkhed Cane Belt,Jamkhed Ahilyanagar,18.7231,75.3214,Co 94012,Adsali,430,Black Soil,0.80,35.0,8.0,0.0,38.0,12.6
+MAH-11,Karveer Sugar Estate,Kolhapur,16.6912,74.2312,Co 86032,Adsali,450,Deep Fertile Black,0.86,30.5,7.5,0.2,55.0,11.8
+MAH-12,Malshiras Sugar Field,Solapur,17.8543,74.8012,CoM 0265,Pre-seasonal,390,Black Cotton,0.80,36.0,8.2,0.0,36.0,13.8
+MAH-13,Karad Krishna Valley,Satara,17.2834,74.1823,Co 11015,Adsali,460,Alluvial Black,0.87,31.0,7.8,0.0,48.0,12.5
+MAH-14,Baramati Sugar Belt,Pune,18.1523,74.5789,Co 86032,Pre-seasonal,370,Medium Black,0.79,33.2,7.8,0.0,42.0,12.2
