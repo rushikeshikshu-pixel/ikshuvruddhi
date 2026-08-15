@@ -13,7 +13,7 @@ from typing import List, Dict, Any, Optional
 from ml.copernicus_client import CopernicusCDSEProcessEngine
 from ml.satellite_engine import polygonize_cane_mask
 
-app = FastAPI(title="IkshuVruddhi Real Satellite Ingestion API", version="2.2.0")
+app = FastAPI(title="IkshuVruddhi Real Satellite Ingestion API", version="2.3.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -71,10 +71,16 @@ def process_plot_satellite_raster(req: PolygonRequest):
         "valid_pixels": raster_result["valid_cloud_free_pixels"],
         "invalid_pixels": raster_result.get("invalid_masked_pixels", 0),
         "cloud_pct": raster_result["cloud_contamination_pct"],
+        "geojson": snapped.get("geojson"),
         "snapped_polygon": snapped["snapped_polygon"],
         "detected_cane_acres": snapped["standing_cane_acres"],
+        "raw_classified_acres": snapped.get("raw_classified_acres", snapped["standing_cane_acres"]),
+        "smoothed_canopy_acres": snapped.get("smoothed_canopy_acres", snapped["standing_cane_acres"]),
         "standing_fraction_pct": snapped["standing_fraction_pct"],
+        "clear_sky_coverage_pct": snapped.get("clear_sky_coverage_pct", 100.0),
+        "observed_cane_fraction_pct": snapped.get("observed_cane_fraction_pct", snapped["standing_fraction_pct"]),
         "cane_signature_score_mean": snapped.get("cane_signature_score_mean", 0.0),
+        "utm_zone": snapped.get("utm_zone", "Zone 43N (EPSG:32643)"),
         "cells": cells
     }
 

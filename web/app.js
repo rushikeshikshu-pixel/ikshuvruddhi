@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
         weeklyCalibrationOffset: 0.0,
         labCalibrationBias: 0.0,
         liveRasterByFarmId: {},
-        stalePlots: {}, // Tracks manually modified boundaries requiring fresh satellite fetch
+        liveGeoJsonByFarmId: {},
+        stalePlots: {},
         enrichedData: [],
         filteredData: [],
         searchTerm: '',
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cadastralPolygons: [],
         walkedPolygons: [],
         rasterHeatMapLayers: [],
+        geoJsonLayers: [],
         markerMapByFarmId: {}
     };
 
@@ -184,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!caneCells.length || !originalWalkedCoords || originalWalkedCoords.length < 3) {
             return {
+                geojson: { type: "Polygon", coordinates: [originalWalkedCoords] },
                 snappedCoords: originalWalkedCoords,
                 detectedAcres: (originalWalkedCoords.length * 0.1).toFixed(2),
                 standingFractionPct: observedCaneFractionPct,
@@ -226,6 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const meanScore = (caneCells.reduce((sum, c) => sum + parseFloat(c.cane_signature_score || c.p_cane || 0.9), 0) / caneCells.length * 100).toFixed(1);
 
         return {
+            geojson: { type: "Polygon", coordinates: [snappedHull.length >= 3 ? snappedHull : originalWalkedCoords] },
             snappedCoords: snappedHull.length >= 3 ? snappedHull : originalWalkedCoords,
             detectedAcres: detectedAcres,
             standingFractionPct: observedCaneFractionPct,
@@ -341,7 +345,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             is_live_geotiff: true
                         }));
 
-                        // Clear stale flag on successful fresh fetch
+                        if (data.geojson) {
+                            state.liveGeoJsonByFarmId[farmId] = data.geojson;
+                        }
+
+                        // Explicit cache cleanup on single auto-snap
                         delete state.stalePlots[farmId];
 
                         state.latestAcquisitionDate = data.acquisition_date || null;
@@ -360,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
 • Estimated Standing Cane Area: ${data.detected_cane_acres} Ac (Observed Fraction: ${data.standing_fraction_pct}%)
 • Cane Signature Score: ${data.cane_signature_score_mean}%
 
-Real GeoTIFF cells are locked into the map!`);
+Real GeoTIFF cells and GeoJSON boundaries are locked into the map!`);
                         } else {
                             state.hasLiveSatellitePixels = false;
                             updateHeaderStatusDisplay("⚠️ LIVE SCENE — NO USABLE PIXELS", "#ff9100", "Cloud Masked");
@@ -408,7 +416,6 @@ Real GeoTIFF cells are locked into the map!`);
 
     /**
      * MUTUALLY EXCLUSIVE 4-TIER CONCURRENT BULK SNAPPING
-     * Tracks: LIVE_FETCHED, LIVE_CACHED, LIVE_FAILED, SIMULATED
      */
     window.runAutonomousCanopySnapping = async function() {
         if (!ACTIVE_SEASON_DATA.length) {
@@ -461,6 +468,7 @@ Real GeoTIFF cells are locked into the map!`);
                             const data = await res.json();
                             if (data.live_satellite && data.snapped_polygon && data.cells && data.cells.length && (data.valid_pixels > 0)) {
                                 state.liveRasterByFarmId[farmId] = data.cells.map(c => ({ ...c, is_live_geotiff: true }));
+                                if (data.geojson) state.liveGeoJsonByFarmId[farmId] = data.geojson;
                                 delete state.stalePlots[farmId];
                                 const snappedStr = data.snapped_polygon.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
                                 row['Plot Area Lat Long'] = snappedStr;
@@ -534,7 +542,7 @@ Total Plots Accounted: ${liveFetchedCount + liveCachedCount + liveFailedCount + 
         if (el.polygonEditBanner) el.polygonEditBanner.style.display = 'block';
     };
 
-    // EXPLICIT STALE CACHE MANAGEMENT ON MANUAL EDIT
+    // STRICT STALE STATE MANAGEMENT ON MANUAL EDIT
     window.saveCurrentPolygonEdit = function() {
         if (!state.isEditingPolygon || !state.editingLayer || !state.editingPlotId) return;
 
@@ -545,6 +553,7 @@ Total Plots Accounted: ${liveFetchedCount + liveCachedCount + liveFailedCount + 
 
         // INVALIDATE CACHE & MARK AS STALE
         delete state.liveRasterByFarmId[state.editingPlotId];
+        delete state.liveGeoJsonByFarmId[state.editingPlotId];
         state.stalePlots[state.editingPlotId] = true;
 
         state.editingLayer.editing.disable();
@@ -577,6 +586,7 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             ACTIVE_SEASON_DATA = [];
             LAB_GROUND_TRUTH_DB = {};
             state.liveRasterByFarmId = {};
+            state.liveGeoJsonByFarmId = {};
             state.stalePlots = {};
             state.enrichedData = [];
             state.filteredData = [];
@@ -629,15 +639,27 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             let ccs = (1.022 * pol) - (0.38 * brix);
 
             const isStale = !!state.stalePlots[farmId];
-            const rasterCells = (!isStale && state.liveRasterByFarmId[farmId]) || generateFallbackRasterCells(walkedCoords, pol, brix, ccs);
-            const snappedObj = polygonizeClassifiedCane(rasterCells, walkedCoords);
+            
+            // STRICT STALE DATA SUPPRESSION: Suppress synthetic generation if stale
+            let rasterCells = [];
+            if (!isStale) {
+                rasterCells = state.liveRasterByFarmId[farmId] || generateFallbackRasterCells(walkedCoords, pol, brix, ccs);
+            }
+
+            const snappedObj = isStale ? {
+                detectedAcres: "--",
+                standingFractionPct: "--",
+                clearSkyCoveragePct: "--",
+                observedCaneFractionPct: "--",
+                caneSignatureScoreMean: "--"
+            } : polygonizeClassifiedCane(rasterCells, walkedCoords);
 
             const detectedCaneAcres = snappedObj.detectedAcres;
             const observedCaneFractionPct = snappedObj.observedCaneFractionPct || snappedObj.standingFractionPct;
             const clearSkyCoveragePct = snappedObj.clearSkyCoveragePct || "100.0";
             const meanScore = snappedObj.caneSignatureScoreMean;
 
-            const totalTons = (parseFloat(detectedCaneAcres) * 48.0).toFixed(1);
+            const totalTons = isStale ? "--" : (parseFloat(detectedCaneAcres || 0) * 48.0).toFixed(1);
 
             let labInfo = LAB_GROUND_TRUTH_DB[farmId] || null;
             let labPolText = "--";
@@ -668,21 +690,23 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                 }
             }
 
-            let decision = "3–7 DAYS";
-            let decisionClass = "next-7d";
-            let priorityRank = 2;
-            let peakWindow = "In 3–7 Days (Optimal Window)";
+            let decision = isStale ? "STALE" : "3–7 DAYS";
+            let decisionClass = isStale ? "wait" : "next-7d";
+            let priorityRank = isStale ? 4 : 2;
+            let peakWindow = isStale ? "Satellite Refresh Required" : "In 3–7 Days (Optimal Window)";
 
-            if (ccs >= 12.05) {
-                decision = "CUT NOW";
-                decisionClass = "cut-now";
-                priorityRank = 1;
-                peakWindow = "Immediate Harvest (Peak Maturity)";
-            } else if (ccs < 11.45) {
-                decision = "WAIT";
-                decisionClass = "wait";
-                priorityRank = 3;
-                peakWindow = "Wait 15–20 Days (Sucrose Accumulation)";
+            if (!isStale) {
+                if (ccs >= 12.05) {
+                    decision = "CUT NOW";
+                    decisionClass = "cut-now";
+                    priorityRank = 1;
+                    peakWindow = "Immediate Harvest (Peak Maturity)";
+                } else if (ccs < 11.45) {
+                    decision = "WAIT";
+                    decisionClass = "wait";
+                    priorityRank = 3;
+                    peakWindow = "Wait 15–20 Days (Sucrose Accumulation)";
+                }
             }
 
             return {
@@ -705,23 +729,23 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                 decision: decision,
                 decisionClass: decisionClass,
                 priorityRank: priorityRank,
-                predictedPol: pol.toFixed(1),
-                predictedBrix: brix.toFixed(1),
-                predictedPurity: purity.toFixed(1),
-                predictedCcs: ccs.toFixed(2),
+                predictedPol: isStale ? "--" : pol.toFixed(1),
+                predictedBrix: isStale ? "--" : brix.toFixed(1),
+                predictedPurity: isStale ? "--" : purity.toFixed(1),
+                predictedCcs: isStale ? "--" : ccs.toFixed(2),
                 labPolText: labPolText,
                 labBrixText: labBrixText,
                 labPurityText: labPurityText,
                 labCcsText: labCcsText,
                 labFeedBadge: labFeedBadge,
                 plantDateInfo: { dateStr: plantationDate, seasonType: caneType },
-                ripening: { peakWindow: peakWindow, peakCcs: (ccs + 0.35).toFixed(2) },
+                ripening: { peakWindow: peakWindow, peakCcs: isStale ? "--" : (ccs + 0.35).toFixed(2) },
                 caneTonnage: totalTons,
                 rasterCells: rasterCells
             };
         });
 
-        state.enrichedData.sort((a, b) => a.priorityRank - b.priorityRank || parseFloat(b.predictedCcs) - parseFloat(a.predictedCcs));
+        state.enrichedData.sort((a, b) => a.priorityRank - b.priorityRank || parseFloat(b.predictedCcs || 0) - parseFloat(a.predictedCcs || 0));
         applyFilters();
     }
 
@@ -766,11 +790,12 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             return;
         }
 
-        const cutNowCount = state.filteredData.filter(d => d.decision === 'CUT NOW').length;
-        const cutNext7Count = state.filteredData.filter(d => d.decision === '3–7 DAYS').length;
-        const waitCount = state.filteredData.filter(d => d.decision === 'WAIT').length;
-        const totalBiomassMt = state.filteredData.reduce((acc, d) => acc + parseFloat(d.caneTonnage || 0), 0).toFixed(0);
-        const totalAcres = state.filteredData.reduce((acc, d) => acc + parseFloat(d.detectedCaneAcres || 0), 0);
+        const validPlots = state.filteredData.filter(d => !d.isStale);
+        const cutNowCount = validPlots.filter(d => d.decision === 'CUT NOW').length;
+        const cutNext7Count = validPlots.filter(d => d.decision === '3–7 DAYS').length;
+        const waitCount = validPlots.filter(d => d.decision === 'WAIT' || d.decision === 'STALE').length;
+        const totalBiomassMt = validPlots.reduce((acc, d) => acc + parseFloat(d.caneTonnage || 0), 0).toFixed(0);
+        const totalAcres = validPlots.reduce((acc, d) => acc + parseFloat(d.detectedCaneAcres || 0), 0);
 
         if (el.kpiCutToday) el.kpiCutToday.textContent = cutNowCount;
         if (el.kpiCut3to7Days) el.kpiCut3to7Days.textContent = cutNext7Count;
@@ -778,17 +803,17 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
         if (el.kpiEstSugar) el.kpiEstSugar.textContent = `${totalBiomassMt} MT`;
         if (el.kpiBonusRevenue) el.kpiBonusRevenue.textContent = `+ ₹ ${(totalAcres * 0.48).toFixed(1)} L`;
 
-        const polArray = state.filteredData.map(d => parseFloat(d.predictedPol)).sort((a, b) => a - b);
-        const medianPol = polArray[Math.floor(polArray.length / 2)].toFixed(1);
-        if (el.kpiMedianPol) el.kpiMedianPol.textContent = `${medianPol}%`;
+        const polArray = validPlots.map(d => parseFloat(d.predictedPol)).filter(v => !isNaN(v)).sort((a, b) => a - b);
+        const medianPol = polArray.length ? polArray[Math.floor(polArray.length / 2)].toFixed(1) : "--";
+        if (el.kpiMedianPol) el.kpiMedianPol.textContent = polArray.length ? `${medianPol}%` : "--";
 
-        const ccsArray = state.filteredData.map(d => parseFloat(d.predictedCcs)).sort((a, b) => a - b);
-        const medianCcs = ccsArray[Math.floor(ccsArray.length / 2)].toFixed(2);
-        if (el.kpiMedianCcs) el.kpiMedianCcs.textContent = `${medianCcs}%`;
+        const ccsArray = validPlots.map(d => parseFloat(d.predictedCcs)).filter(v => !isNaN(v)).sort((a, b) => a - b);
+        const medianCcs = ccsArray.length ? ccsArray[Math.floor(ccsArray.length / 2)].toFixed(2) : "--";
+        if (el.kpiMedianCcs) el.kpiMedianCcs.textContent = ccsArray.length ? `${medianCcs}%` : "--";
 
-        const purityArray = state.filteredData.map(d => parseFloat(d.predictedPurity)).sort((a, b) => a - b);
-        const medianPurity = purityArray[Math.floor(purityArray.length / 2)].toFixed(1);
-        if (el.kpiMedianPurity) el.kpiMedianPurity.textContent = `${medianPurity}%`;
+        const purityArray = validPlots.map(d => parseFloat(d.predictedPurity)).filter(v => !isNaN(v)).sort((a, b) => a - b);
+        const medianPurity = purityArray.length ? purityArray[Math.floor(purityArray.length / 2)].toFixed(1) : "--";
+        if (el.kpiMedianPurity) el.kpiMedianPurity.textContent = purityArray.length ? `${medianPurity}%` : "--";
     }
 
     function getRasterCellColor(val, layer, cell) {
@@ -838,6 +863,8 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
         state.walkedPolygons = [];
         state.rasterHeatMapLayers.forEach(l => state.map.removeLayer(l));
         state.rasterHeatMapLayers = [];
+        state.geoJsonLayers.forEach(l => state.map.removeLayer(l));
+        state.geoJsonLayers = [];
 
         if (!state.filteredData.length) return;
 
@@ -856,9 +883,9 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                         <strong style="color:var(--accent-cyan); font-size:14px;">${item.farmer_name}</strong><br/>
                         <b>Gat #${item.farm_id}</b> | <b>Decision:</b> <span class="decision-badge ${item.decisionClass}">${item.decision}</span><br/>
                         ${item.isStale ? '<span style="color:#ff9100; font-weight:bold;">⚠️ STALE — SATELLITE REFRESH REQUIRED</span><br/>' : ''}
-                        <b>Predicted Pol:</b> <strong style="color:#00f2fe;">${item.predictedPol}%</strong> | <b>Purity:</b> <strong>${item.predictedPurity}%</strong><br/>
-                        <b>Estimated Standing Cane:</b> <strong style="color:#00e676;">${item.detectedCaneAcres} Ac</strong> (Observed: ${item.observedCaneFractionPct}%)<br/>
-                        <b>Cane Signature Score:</b> <strong>${item.caneSignatureScoreMean}%</strong><br/>
+                        <b>Predicted Pol:</b> <strong style="color:#00f2fe;">${item.predictedPol}${item.isStale ? '' : '%'}</strong> | <b>Purity:</b> <strong>${item.predictedPurity}${item.isStale ? '' : '%'}</strong><br/>
+                        <b>Estimated Standing Cane:</b> <strong style="color:#00e676;">${item.detectedCaneAcres} ${item.isStale ? '' : 'Ac'}</strong> (Observed: ${item.observedCaneFractionPct}%)<br/>
+                        <b>Cane Signature Score:</b> <strong>${item.caneSignatureScoreMean}${item.isStale ? '' : '%'}</strong><br/>
                         <div style="display:flex; gap:4px; margin-top:8px;">
                             <button class="btn btn-xs btn-primary" onclick="window.openCockpitDeepDive('${item.farm_id}')" style="flex:1;">
                                 🔍 Cockpit
@@ -881,6 +908,20 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                     dashArray: item.isStale ? '4, 4' : null
                 }).addTo(state.map);
                 state.walkedPolygons.push(wPoly);
+
+                // Render Full MultiPolygon/Holes GeoJSON if present
+                const geoJson = state.liveGeoJsonByFarmId[item.farm_id];
+                if (geoJson) {
+                    const geoLayer = L.geoJSON(geoJson, {
+                        style: {
+                            color: '#00e676',
+                            weight: 2.5,
+                            fillColor: '#00e676',
+                            fillOpacity: 0.15
+                        }
+                    }).addTo(state.map);
+                    state.geoJsonLayers.push(geoLayer);
+                }
 
                 item.rasterCells.forEach(cell => {
                     let cellVal = cell.ndvi;
@@ -976,19 +1017,19 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                     <span style="font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:#cbd5e1;">#${item.farm_id}</span>
                 </td>
                 <td>
-                    <strong style="color:#00f2fe; font-size:0.80rem;">${item.predictedPol}%</strong>
+                    <strong style="color:#00f2fe; font-size:0.80rem;">${item.predictedPol}${item.isStale ? '' : '%'}</strong>
                     <span class="source-tag model" style="display:block; width:fit-content; margin-top:2px;">PREDICTED</span>
                 </td>
                 <td>
-                    <strong style="color:#00e676; font-size:0.80rem;">${item.predictedCcs}%</strong>
+                    <strong style="color:#00e676; font-size:0.80rem;">${item.predictedCcs}${item.isStale ? '' : '%'}</strong>
                     <span class="source-tag model" style="display:block; width:fit-content; margin-top:2px;">PREDICTED</span>
                 </td>
                 <td>
-                    <strong style="color:#00e676; font-size:0.78rem;">${item.detectedCaneAcres} Ac</strong>
-                    <span style="display:block; font-size:0.65rem; color:#94a3b8;">Observed: ${item.observedCaneFractionPct}% (Sky: ${item.clearSkyCoveragePct}%)</span>
+                    <strong style="color:#00e676; font-size:0.78rem;">${item.detectedCaneAcres} ${item.isStale ? '' : 'Ac'}</strong>
+                    <span style="display:block; font-size:0.65rem; color:#94a3b8;">${item.isStale ? 'Refresh Required' : `Observed: ${item.observedCaneFractionPct}%`}</span>
                 </td>
                 <td>
-                    <span style="font-size:0.72rem; font-weight:700; color:#f8fafc;">${item.caneTonnage} MT</span>
+                    <span style="font-size:0.72rem; font-weight:700; color:#f8fafc;">${item.caneTonnage} ${item.isStale ? '' : 'MT'}</span>
                 </td>
             `;
 
@@ -1005,17 +1046,17 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
 
         document.getElementById('modalFarmerTitle').textContent = `${item.farmer_name} (Gat #${farmId})`;
         document.getElementById('modalGatSubtitle').textContent = `Spatial Key: ${item.adminKey} | Site: ${item.Village || 'Ghotan'}`;
-        document.getElementById('modalPredictedPol').textContent = `${item.predictedPol}%`;
-        document.getElementById('modalPredictedCcs').textContent = `${item.predictedCcs}%`;
-        document.getElementById('modalPredictedPurity').textContent = `${item.predictedPurity}% Purity`;
+        document.getElementById('modalPredictedPol').textContent = item.isStale ? "--" : `${item.predictedPol}%`;
+        document.getElementById('modalPredictedCcs').textContent = item.isStale ? "--" : `${item.predictedCcs}%`;
+        document.getElementById('modalPredictedPurity').textContent = item.isStale ? "--" : `${item.predictedPurity}% Purity`;
         document.getElementById('modalHarvestDecision').innerHTML = `<span class="decision-badge ${item.decisionClass}">${item.decision}</span>`;
         document.getElementById('modalPeakWindow').textContent = item.ripening.peakWindow;
         document.getElementById('modalPlantingDate').textContent = item.plantDateInfo.dateStr;
         document.getElementById('modalCropAge').textContent = `${item.plantDateInfo.seasonType} (${item.detectedCaneAcres} Ac Estimated Standing Cane)`;
-        document.getElementById('modalTotalYieldTons').textContent = `${item.caneTonnage} MT (~48 T/Ac Model)`;
+        document.getElementById('modalTotalYieldTons').textContent = item.isStale ? "--" : `${item.caneTonnage} MT (~48 T/Ac Model)`;
         
-        const estSugarMt = (parseFloat(item.caneTonnage) * (parseFloat(item.predictedCcs)/100)).toFixed(1);
-        document.getElementById('modalRecoverableSugar').textContent = `${estSugarMt} MT Commercial Sugar`;
+        const estSugarMt = item.isStale ? "--" : (parseFloat(item.caneTonnage) * (parseFloat(item.predictedCcs)/100)).toFixed(1);
+        document.getElementById('modalRecoverableSugar').textContent = item.isStale ? "--" : `${estSugarMt} MT Commercial Sugar`;
 
         document.getElementById('modalThreeBoundaryBox').innerHTML = `
             <div style="background:rgba(4,7,17,0.85); padding:8px 10px; border-radius:6px; border:1px solid rgba(0,242,254,0.25); margin-bottom:8px;">
@@ -1028,22 +1069,22 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                     </tr>
                     <tr>
                         <td style="padding:4px;"><b>Pol % (Sucrose)</b></td>
-                        <td style="padding:4px; color:#00f2fe; font-weight:bold;">${item.predictedPol}%</td>
+                        <td style="padding:4px; color:#00f2fe; font-weight:bold;">${item.predictedPol}${item.isStale ? '' : '%'}</td>
                         <td style="padding:4px; color:#a855f7; font-weight:bold;">${item.labPolText}</td>
                     </tr>
                     <tr>
                         <td style="padding:4px;"><b>CCS Sugar %</b></td>
-                        <td style="padding:4px; color:#00f2fe; font-weight:bold;">${item.predictedCcs}%</td>
+                        <td style="padding:4px; color:#00f2fe; font-weight:bold;">${item.predictedCcs}${item.isStale ? '' : '%'}</td>
                         <td style="padding:4px; color:#a855f7; font-weight:bold;">${item.labCcsText}</td>
                     </tr>
                     <tr>
                         <td style="padding:4px;"><b>Juice Purity %</b></td>
-                        <td style="padding:4px; color:#00f2fe;">${item.predictedPurity}%</td>
+                        <td style="padding:4px; color:#00f2fe;">${item.predictedPurity}${item.isStale ? '' : '%'}</td>
                         <td style="padding:4px; color:#a855f7;">${item.labPurityText}</td>
                     </tr>
                     <tr>
                         <td style="padding:4px;"><b>Brix (°Bx Solids)</b></td>
-                        <td style="padding:4px; color:#cbd5e1;">${item.predictedBrix} °Bx</td>
+                        <td style="padding:4px; color:#cbd5e1;">${item.predictedBrix}${item.isStale ? '' : ' °Bx'}</td>
                         <td style="padding:4px; color:#cbd5e1;">${item.labBrixText}</td>
                     </tr>
                 </table>
@@ -1051,7 +1092,7 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
 
             <div style="font-size:0.70rem; color:#cbd5e1; padding:4px 6px;">
                 <span style="color:#00f2fe;">🔷 Registered Walked: ${item.registeredAcres} Ac</span> | 
-                <span style="color:#00e676; font-weight:bold;">🟩 Estimated Standing Cane: ${item.detectedCaneAcres} Ac (Observed: ${item.observedCaneFractionPct}%)</span>
+                <span style="color:#00e676; font-weight:bold;">🟩 Estimated Standing Cane: ${item.detectedCaneAcres} ${item.isStale ? '' : 'Ac'} (Observed: ${item.observedCaneFractionPct}%)</span>
             </div>
         `;
 
@@ -1073,7 +1114,7 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                 <span>Estimated Standing Cane Area:</span>
-                <strong style="color:#00e676;">${item.detectedCaneAcres} Ac</strong>
+                <strong style="color:#00e676;">${item.detectedCaneAcres} ${item.isStale ? '' : 'Ac'}</strong>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                 <span>Observed Cane Fraction:</span>
@@ -1081,11 +1122,11 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                 <span>Clear-Sky Scene Coverage:</span>
-                <strong style="color:#00f2fe;">${item.clearSkyCoveragePct}% (SCL Whitelist)</strong>
+                <strong style="color:#00f2fe;">${item.clearSkyCoveragePct}% (Parcel SCL Whitelist)</strong>
             </div>
             <div style="display:flex; justify-content:space-between;">
                 <span>Cane Signature Score:</span>
-                <strong style="color:#00e676;">${item.caneSignatureScoreMean}%</strong>
+                <strong style="color:#00e676;">${item.caneSignatureScoreMean}${item.isStale ? '' : '%'}</strong>
             </div>
         `;
 
@@ -1096,7 +1137,7 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             const ctx = document.getElementById('ripeningChartCanvas').getContext('2d');
             if (state.ripeningChartInstance) state.ripeningChartInstance.destroy();
 
-            const cur = parseFloat(item.predictedPol);
+            const cur = item.isStale ? 16.0 : parseFloat(item.predictedPol);
             const labels = ["Current", "+7 Days", "+14 Days", "+21 Days", "+28 Days (Peak)", "+35 Days"];
             const dataPoints = [
                 cur,
