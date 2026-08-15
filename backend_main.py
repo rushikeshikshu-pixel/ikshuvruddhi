@@ -1,6 +1,6 @@
 """
 IkshuVruddhi FastAPI Satellite Engine Backend
-Exposes live Sentinel-2 L2A raster sampling, SCL cloud-masking, and morphological snapping to the dashboard.
+Exposes authentic Sentinel-2 L2A raster sampling, SCL cloud-masking, and morphological snapping.
 """
 
 import os
@@ -13,7 +13,7 @@ from typing import List, Dict, Any, Optional
 from ml.copernicus_client import CopernicusCDSEProcessEngine
 from ml.satellite_engine import polygonize_cane_mask
 
-app = FastAPI(title="IkshuVruddhi Real Satellite Ingestion API", version="2.0.0")
+app = FastAPI(title="IkshuVruddhi Real Satellite Ingestion API", version="2.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,7 +28,7 @@ engine = CopernicusCDSEProcessEngine()
 class PolygonRequest(BaseModel):
     farm_id: str
     polygon: str # lat,lon#lat,lon#...
-    date: Optional[str] = "2026-08-15"
+    date: Optional[str] = None
     crop_age_days: Optional[int] = 280
 
 @app.get("/api/health")
@@ -37,7 +37,7 @@ def health_check():
     return {
         "service": "IkshuVruddhi Satellite API",
         "live_cdse_configured": has_credentials,
-        "mode": "LIVE_SATELLITE" if has_credentials else "SIMULATION_OFFLINE"
+        "mode": "CDSE_CONFIGURED" if has_credentials else "SIMULATION_OFFLINE"
     }
 
 @app.post("/api/satellite/process_plot")
@@ -49,16 +49,15 @@ def process_plot_satellite_raster(req: PolygonRequest):
     # 1. Fetch authentic Sentinel-2 L2A raster
     raster_result = engine.fetch_real_sentinel2_l2a_raster(coords, req.date)
 
-    # 2. If unauthenticated / offline, return honest transparent payload
     if not raster_result.get("live_satellite", False):
         return {
             "live_satellite": False,
-            "status": "SIMULATION_MODE_OFFLINE",
-            "message": "CDSE credentials not active. Displaying physics simulation mode with explicit indicator.",
+            "status": raster_result.get("status", "SIMULATION_MODE_OFFLINE"),
+            "message": raster_result.get("message", "CDSE credentials not active. Simulation fallback mode."),
             "farm_id": req.farm_id
         }
 
-    # 3. Polygonize genuine standing cane mask
+    # 2. Polygonize genuine standing cane mask
     cells = raster_result.get("cells", [])
     snapped = polygonize_cane_mask(cells, coords)
 
@@ -67,7 +66,10 @@ def process_plot_satellite_raster(req: PolygonRequest):
         "status": "LIVE_COPERNICUS_L2A",
         "farm_id": req.farm_id,
         "source": raster_result["source"],
+        "acquisition_date": raster_result.get("acquisition_date"),
+        "product_id": raster_result.get("product_id"),
         "valid_pixels": raster_result["valid_cloud_free_pixels"],
+        "invalid_pixels": raster_result.get("invalid_masked_pixels", 0),
         "cloud_pct": raster_result["cloud_contamination_pct"],
         "snapped_polygon": snapped["snapped_polygon"],
         "detected_cane_acres": snapped["standing_cane_acres"],
