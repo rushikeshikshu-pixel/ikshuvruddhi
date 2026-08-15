@@ -84,7 +84,6 @@
                 </button>
             </div>
 
-            <!-- ESSENTIAL ACTION TOOLS -->
             <div style="display: flex; gap: 0.45rem; flex-wrap:wrap; align-items:center;">
                 <button id="btnOpenCompareModal" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #00f2fe, #a855f7); border: none; font-weight: 800; box-shadow: var(--glow-cyan);">
                     <i class="fa-solid fa-columns"></i> 🔀 Dual Screen Compare
@@ -92,7 +91,7 @@
             </div>
         </div>
 
-        <!-- TIER 1: OPERATIONAL COMMAND CARDS (WHAT TO CUT & CRUSH) -->
+        <!-- TIER 1: OPERATIONAL COMMAND CARDS -->
         <div class="section-label-strip">
             <i class="fa-solid fa-truck-ramp-box" style="color:var(--accent-cyan);"></i> <span>2025–26 ACTIVE HARVEST & CRUSHING OPERATIONS</span>
         </div>
@@ -221,13 +220,14 @@
             <!-- RIGHT CARD: PRECISION GIS MAP -->
             <div class="glass-card map-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-map-location-dot"></i> Spatial 10m Raster Heat Map</h3>
-                    <!-- HEAT MAP LAYER SELECTOR -->
+                    <h3><i class="fa-solid fa-map-location-dot"></i> Spatial 10m Multispectral Raster</h3>
+                    <!-- MULTISPECTRAL REMOTE SENSING LAYER SELECTOR -->
                     <div style="display:flex; gap:4px; flex-wrap:wrap;">
-                        <button class="btn btn-xs btn-outline heat-layer-btn active" data-layer="ccs" onclick="window.setHeatMapLayer('ccs')">Predicted CCS %</button>
-                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="pol" onclick="window.setHeatMapLayer('pol')">Predicted Pol %</button>
-                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="brix" onclick="window.setHeatMapLayer('brix')">Brix °Bx</button>
-                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="ndvi" onclick="window.setHeatMapLayer('ndvi')">NDVI Canopy</button>
+                        <button class="btn btn-xs btn-outline heat-layer-btn active" data-layer="ndvi" onclick="window.setHeatMapLayer('ndvi')">🌿 NDVI Canopy (10m)</button>
+                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="ndre" onclick="window.setHeatMapLayer('ndre')">🧬 NDRE RedEdge (20m)</button>
+                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="lswi" onclick="window.setHeatMapLayer('lswi')">💧 LSWI Moisture (20m)</button>
+                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="cane_score" onclick="window.setHeatMapLayer('cane_score')">📊 Cane Score</button>
+                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="scl" onclick="window.setHeatMapLayer('scl')">🛰️ SCL Mask</button>
                     </div>
                 </div>
 
@@ -255,15 +255,15 @@
                         </div>
                     </div>
 
-                    <!-- 10M RASTER HEAT MAP NUMERIC LEGEND -->
+                    <!-- 10M MULTISPECTRAL RASTER LEGEND -->
                     <div class="contour-floating-legend" id="contourLegend" style="display:block;">
-                        <div class="legend-header" id="heatLegendHeader"><i class="fa-solid fa-fire"></i> 10m Predicted CCS % Legend</div>
-                        <div class="legend-item"><span class="legend-box" style="background:#00e676;"></span> <b>&gt;12.0% CCS:</b> Priority Cut (Peak Ripening)</div>
-                        <div class="legend-item"><span class="legend-box" style="background:#ffea00;"></span> <b>11.5–12.0% CCS:</b> Near Peak (3–7 Days)</div>
-                        <div class="legend-item"><span class="legend-box" style="background:#ff9100;"></span> <b>10.5–11.5% CCS:</b> Developing Sucrose</div>
-                        <div class="legend-item"><span class="legend-box" style="background:#ff1744;"></span> <b>&lt;10.5% CCS:</b> Immature / Wait</div>
+                        <div class="legend-header" id="heatLegendHeader"><i class="fa-solid fa-seedling"></i> 10m NDVI Canopy Legend</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#00e676;"></span> <b>&gt;0.75 NDVI:</b> Dense Green Canopy (High Biomass)</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#ffea00;"></span> <b>0.60–0.75 NDVI:</b> Moderate Canopy Cover</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#ff9100;"></span> <b>0.45–0.60 NDVI:</b> Sparse / Ripening Senescence</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#ff1744;"></span> <b>&lt;0.45 NDVI:</b> Bare Soil / Fallow / Track</div>
                         <div style="font-size:0.62rem; color:#94a3b8; border-top:1px solid rgba(255,255,255,0.06); margin-top:4px; padding-top:4px;">
-                            🔷 Walked Boundary | 🟩 10m Classified Pixels
+                            🔷 Walked Boundary | 🟩 10m Sentinel-2 Pixels
                         </div>
                     </div>
                 </div>

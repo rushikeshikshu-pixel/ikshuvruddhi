@@ -26,12 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
         latestProductId: null,
         weeklyCalibrationOffset: 0.0,
         labCalibrationBias: 0.0,
-        liveRasterByFarmId: {}, // PERSISTENT STORAGE FOR GENUINE CDSE GEOTIFF CELLS
+        liveRasterByFarmId: {},
         enrichedData: [],
         filteredData: [],
         searchTerm: '',
         focusedPlotId: null,
-        activeHeatMapLayer: 'ndvi', // Default to NDVI for genuine radiometric visualization
+        activeHeatMapLayer: 'ndvi', // Default to 10m NDVI Canopy
         ripeningChartInstance: null,
 
         // Polygon Editing State
@@ -70,9 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return inside;
     }
 
-    /**
-     * LOCAL BIOPHYSICAL FALLBACK GENERATOR (Used only when CDSE credentials are not configured)
-     */
     function generateFallbackRasterCells(walkedCoords, basePol, baseBrix, baseCcs) {
         if (!walkedCoords || walkedCoords.length < 3) return [];
 
@@ -115,25 +112,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     const ndwi = (b3 - b8) / (b3 + b8 + 1e-7);
                     const lswi = (b8 - b11) / (b8 + b11 + 1e-7);
                     const bsi = ((b11 + b4) - (b8 + b2)) / ((b11 + b4) + (b8 + b2) + 1e-7);
-                    const vh_vv_ratio = Math.pow(10, (vh_db - vv_db) / 10.0);
 
-                    let pCane = 0.0;
+                    let caneScore = Math.min(Math.max(0.35 * ((ndvi - 0.40) / 0.40) + 0.35 * ((ndre - 0.10) / 0.20) + 0.30 * ((lswi - 0.05) / 0.25), 0.01), 0.98);
                     let landClass = "STANDING_SUGARCANE";
 
                     if (ndwi > 0.05) {
                         landClass = "WATER_POND";
-                        pCane = 0.01;
+                        caneScore = 0.01;
                     } else if (bsi > 0.08 || ndvi < 0.35) {
                         landClass = "ROAD_BARE_SOIL";
-                        pCane = 0.04;
+                        caneScore = 0.04;
+                    } else if (ndvi >= 0.65 && ndre >= 0.18 && lswi >= 0.15) {
+                        landClass = "STANDING_SUGARCANE";
                     } else {
-                        if (ndvi >= 0.65) pCane += 0.35;
-                        else if (ndvi >= 0.50) pCane += 0.15;
-                        if (ndre >= 0.18) pCane += 0.25;
-                        if (lswi >= 0.15) pCane += 0.20;
-                        if (vh_vv_ratio >= 0.22) pCane += 0.20;
-                        if (pCane >= 0.65) landClass = "STANDING_SUGARCANE";
-                        else landClass = "OTHER_VEGETATION";
+                        landClass = "OTHER_VEGETATION";
                     }
 
                     const isStandingCane = landClass === "STANDING_SUGARCANE";
@@ -164,7 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         ndwi: ndwi.toFixed(3),
                         lswi: lswi.toFixed(3),
                         bsi: bsi.toFixed(3),
-                        p_cane: pCane.toFixed(2),
+                        cane_signature_score: caneScore.toFixed(2),
+                        p_cane: caneScore.toFixed(2),
                         land_class: landClass,
                         is_standing_cane: isStandingCane,
                         is_live_geotiff: false,
@@ -223,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const snappedHull = computeConvexHull(caneCenters);
         const detectedAcres = (caneCells.length * 0.0247105).toFixed(2);
         const standingFractionPct = ((caneCells.length / rasterCells.length) * 100.0).toFixed(1);
-        const meanConfidencePct = (caneCells.reduce((sum, c) => sum + parseFloat(c.p_cane || 0.9), 0) / caneCells.length * 100).toFixed(1);
+        const meanConfidencePct = (caneCells.reduce((sum, c) => sum + parseFloat(c.cane_signature_score || c.p_cane || 0.9), 0) / caneCells.length * 100).toFixed(1);
 
         return {
             snappedCoords: snappedHull.length >= 3 ? snappedHull : originalWalkedCoords,
@@ -330,32 +323,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (res.ok) {
                     const data = await res.json();
                     if (data.live_satellite && data.snapped_polygon && data.cells && data.cells.length) {
+                        const validPixels = data.valid_pixels || 0;
                         const snappedStr = data.snapped_polygon.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
                         updatePlotPolygonInMemory(farmId, snappedStr);
                         
-                        // 1. PERSISTENT STORAGE OF REAL GEOTIFF CELLS
                         state.liveRasterByFarmId[farmId] = data.cells.map(c => ({
                             ...c,
                             is_live_geotiff: true
                         }));
 
-                        state.hasLiveSatellitePixels = true;
-                        state.satelliteSourceInfo = data.source || "Copernicus CDSE Sentinel-2 L2A";
-                        state.latestAcquisitionDate = data.acquisition_date || "CDSE Cloud-Free Pass";
-                        state.latestProductId = data.product_id || "ESA_S2_L2A_PROCESS_API";
+                        state.latestAcquisitionDate = data.acquisition_date || null;
+                        state.latestProductId = data.product_id || null;
 
-                        updateHeaderStatusDisplay("🟢 LIVE SENTINEL-2 L2A DATA ✓", "var(--accent-green)", "Live Orbit");
-
-                        runEngine();
-                        window.focusFarmerPlotOnMap(farmId);
-                        alert(`🟢 LIVE Sentinel-2 L2A Snapping Complete (Gat #${farmId})!
+                        // STRICT STATUS GATING: Only show LIVE DATA ✓ if valid cloud-free pixels > 0
+                        if (validPixels > 0) {
+                            state.hasLiveSatellitePixels = true;
+                            state.satelliteSourceInfo = data.source || "Copernicus CDSE Sentinel-2 L2A";
+                            updateHeaderStatusDisplay("🟢 LIVE SENTINEL-2 L2A DATA ✓", "var(--accent-green)", "Live Orbit");
+                            runEngine();
+                            window.focusFarmerPlotOnMap(farmId);
+                            alert(`🟢 LIVE Sentinel-2 L2A Snapping Complete (Gat #${farmId})!
 
 • Source: ${state.satelliteSourceInfo}
-• Valid Cloud-Free Pixels: ${data.valid_pixels}
+• Valid Cloud-Free Pixels: ${validPixels}
 • Estimated Standing Cane Area: ${data.detected_cane_acres} Ac (${data.standing_fraction_pct}% of parcel)
-• Classification Confidence: ${data.confidence_pct}%
+• Cane Signature Score: ${data.confidence_pct}%
 
 Real GeoTIFF cells are permanently locked into the map!`);
+                        } else {
+                            state.hasLiveSatellitePixels = false;
+                            updateHeaderStatusDisplay("⚠️ LIVE SCENE — NO USABLE PIXELS", "#ff9100", "Cloud Masked");
+                            runEngine();
+                            window.focusFarmerPlotOnMap(farmId);
+                            alert(`⚠️ LIVE Sentinel-2 Tile Ingested (Gat #${farmId}), but 100% of pixels are clouded/masked.
+
+• Valid Pixels: 0
+• SCL Mask applied.`);
+                        }
                         return;
                     }
                 }
@@ -374,7 +378,7 @@ Real GeoTIFF cells are permanently locked into the map!`);
 
 • Mode: Simulation Fallback (Unauthenticated)
 • Estimated Standing Cane Area: ${snappedObj.detectedAcres} Ac (${snappedObj.standingFractionPct}% of parcel)
-• Classification Confidence: ${snappedObj.confidencePct}%
+• Cane Signature Score: ${snappedObj.confidencePct}%
 • Excluded non-cane features (water pond & bare dirt margins).`);
     };
 
@@ -470,7 +474,7 @@ Real GeoTIFF cells are permanently locked into the map!`);
         runEngine();
         alert(`✅ Polygon for Gat #${state.editingPlotId} saved!
 
-10m Raster Heat Map recalculated.`);
+10m Multispectral Raster recalculated.`);
     };
 
     window.cancelPolygonEdit = function() {
@@ -540,7 +544,6 @@ Real GeoTIFF cells are permanently locked into the map!`);
             let purity = (pol / brix) * 100;
             let ccs = (1.022 * pol) - (0.38 * brix);
 
-            // PERSISTENT LIVE RASTER CHECK: Use live GeoTIFF cells if available, otherwise biophysical fallback
             const rasterCells = state.liveRasterByFarmId[farmId] || generateFallbackRasterCells(walkedCoords, pol, brix, ccs);
             const snappedObj = polygonizeClassifiedCane(rasterCells, walkedCoords);
 
@@ -701,7 +704,9 @@ Real GeoTIFF cells are permanently locked into the map!`);
     }
 
     function getRasterCellColor(val, layer, cell) {
-        if (!cell.is_standing_cane) {
+        if (!cell.scl_valid) return '#757575'; // Grey for cloud/shadow masked
+
+        if (!cell.is_standing_cane && layer !== 'scl') {
             if (cell.land_class === "WATER_POND") return '#00b0ff';
             if (cell.land_class === "ROAD_BARE_SOIL") return '#78909c';
             return '#ff5252';
@@ -713,20 +718,25 @@ Real GeoTIFF cells are permanently locked into the map!`);
             if (v >= 0.60) return '#ffea00';
             if (v >= 0.45) return '#ff9100';
             return '#ff1744';
-        } else if (layer === 'p_cane') {
+        } else if (layer === 'ndre') {
+            if (v >= 0.25) return '#00e676';
+            if (v >= 0.18) return '#ffea00';
+            if (v >= 0.12) return '#ff9100';
+            return '#ff1744';
+        } else if (layer === 'lswi') {
+            if (v >= 0.22) return '#00e676';
+            if (v >= 0.15) return '#ffea00';
+            if (v >= 0.08) return '#ff9100';
+            return '#ff1744';
+        } else if (layer === 'cane_score') {
             if (v >= 0.85) return '#00e676';
             if (v >= 0.65) return '#ffea00';
             return '#ff9100';
-        } else if (layer === 'ccs') {
-            if (v >= 12.0) return '#00e676';
-            if (v >= 11.5) return '#ffea00';
-            if (v >= 10.5) return '#ff9100';
-            return '#ff1744';
-        } else if (layer === 'pol') {
-            if (v >= 16.0) return '#00e676';
-            if (v >= 15.4) return '#ffea00';
-            if (v >= 14.5) return '#ff9100';
-            return '#ff1744';
+        } else if (layer === 'scl') {
+            if (cell.scl === 4) return '#00e676'; // Vegetation
+            if (cell.scl === 5) return '#78909c'; // Bare Soil
+            if (cell.scl === 6) return '#00b0ff'; // Water
+            return '#ff1744'; // Cloud / Shadow
         }
         return '#00e676';
     }
@@ -759,7 +769,7 @@ Real GeoTIFF cells are permanently locked into the map!`);
                         <b>Gat #${item.farm_id}</b> | <b>Decision:</b> <span class="decision-badge ${item.decisionClass}">${item.decision}</span><br/>
                         <b>Predicted Pol:</b> <strong style="color:#00f2fe;">${item.predictedPol}%</strong> | <b>Purity:</b> <strong>${item.predictedPurity}%</strong><br/>
                         <b>Estimated Standing Cane:</b> <strong style="color:#00e676;">${item.detectedCaneAcres} Ac</strong> (${item.standingFractionPct}% of parcel)<br/>
-                        <b>Confidence:</b> <strong>${item.meanConfidencePct}%</strong><br/>
+                        <b>Cane Signature Score:</b> <strong>${item.meanConfidencePct}%</strong><br/>
                         <div style="display:flex; gap:4px; margin-top:8px;">
                             <button class="btn btn-xs btn-primary" onclick="window.openCockpitDeepDive('${item.farm_id}')" style="flex:1;">
                                 🔍 Cockpit
@@ -782,9 +792,10 @@ Real GeoTIFF cells are permanently locked into the map!`);
 
                 item.rasterCells.forEach(cell => {
                     let cellVal = cell.ndvi;
-                    if (state.activeHeatMapLayer === 'p_cane') cellVal = cell.p_cane;
-                    else if (state.activeHeatMapLayer === 'ccs') cellVal = cell.ccs;
-                    else if (state.activeHeatMapLayer === 'pol') cellVal = cell.pol;
+                    if (state.activeHeatMapLayer === 'ndre') cellVal = cell.ndre;
+                    else if (state.activeHeatMapLayer === 'lswi') cellVal = cell.lswi;
+                    else if (state.activeHeatMapLayer === 'cane_score') cellVal = cell.cane_signature_score || cell.p_cane;
+                    else if (state.activeHeatMapLayer === 'scl') cellVal = cell.scl;
 
                     const cellColor = getRasterCellColor(cellVal, state.activeHeatMapLayer, cell);
 
@@ -792,16 +803,17 @@ Real GeoTIFF cells are permanently locked into the map!`);
                         color: 'rgba(255, 255, 255, 0.20)',
                         weight: 0.7,
                         fillColor: cellColor,
-                        fillOpacity: cell.is_standing_cane ? 0.78 : 0.40
+                        fillOpacity: cell.scl_valid ? 0.78 : 0.30
                     }).addTo(state.map);
 
                     cellLayer.bindPopup(`
                         <div style="font-family:'Outfit', sans-serif; font-size:0.75rem;">
                             <strong style="color:#00f2fe;">${cell.id} (${item.farmer_name})</strong> ${cell.is_live_geotiff ? '<span class="source-tag gis">LIVE GEOTIFF</span>' : '<span class="source-tag model">SIMULATED</span>'}<br/>
                             <b>Classification:</b> <strong style="color:${cell.is_standing_cane ? '#00e676' : '#ff5252'};">${cell.land_class}</strong><br/>
-                            <b>Cane Probability P(Cane):</b> <strong>${(cell.p_cane * 100).toFixed(0)}%</strong><br/>
-                            <b>NDVI (10m Native):</b> <strong>${cell.ndvi}</strong> | <b>NDRE (20m):</b> ${cell.ndre}<br/>
-                            <b>NDWI:</b> ${cell.ndwi} | <b>LSWI (20m):</b> ${cell.lswi}<br/>
+                            <b>Cane Signature Score:</b> <strong>${((cell.cane_signature_score || cell.p_cane || 0) * 100).toFixed(0)}%</strong><br/>
+                            <b>NDVI (10m Native):</b> <strong>${cell.ndvi || 'NaN'}</strong> | <b>NDRE (20m):</b> ${cell.ndre || 'NaN'}<br/>
+                            <b>NDWI (Water):</b> ${cell.ndwi || 'NaN'} | <b>LSWI (Moisture):</b> ${cell.lswi || 'NaN'}<br/>
+                            <b>BSI (Soil):</b> ${cell.bsi || 'NaN'} | <b>SCL:</b> ${cell.scl} (${cell.scl_valid ? 'Valid Surface' : 'Masked Cloud/Shadow'})<br/>
                             <span style="font-size:0.65rem; color:#94a3b8;">Bands: B2, B3, B4, B8 (10m) | B8A, B11, SCL (20m resampled)</span>
                         </div>
                     `);
@@ -972,7 +984,7 @@ Real GeoTIFF cells are permanently locked into the map!`);
                 <strong style="color:#ffea00;">${item.standingFractionPct}% of Parcel</strong>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
-                <span>Cane Classification Confidence:</span>
+                <span>Cane Signature Score:</span>
                 <strong style="color:#00e676;">${item.meanConfidencePct}%</strong>
             </div>
             <div style="display:flex; justify-content:space-between;">
@@ -1083,7 +1095,7 @@ Real GeoTIFF cells are permanently locked into the map!`);
                     registered_walked_acres: d.registeredAcres,
                     estimated_standing_cane_acres: d.detectedCaneAcres,
                     standing_fraction_pct: d.standingFractionPct,
-                    cane_classification_confidence_pct: d.meanConfidencePct,
+                    cane_signature_score_pct: d.meanConfidencePct,
                     est_cane_tonnage: d.caneTonnage,
                     plot_area_polygon: d.plot_area_polygon
                 })));

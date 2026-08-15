@@ -1,6 +1,11 @@
-fastapi>=0.104.0
-uvicorn>=0.24.0
-pydantic>=2.4.2
-psycopg2-binary>=2.9.9
+fastapi>=0.110.0
+uvicorn>=0.28.0
+pydantic>=2.6.0
+requests>=2.31.0
 numpy>=1.26.0
-pandas>=2.1.1
+pandas>=2.2.0
+tifffile>=2024.2.12
+shapely>=2.0.3
+scikit-learn>=1.4.0
+matplotlib>=3.8.0
+python-multipart>=0.0.9
