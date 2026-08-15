@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi Command - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - 2025–26 Active Season Continuous Weekly Model Retraining & Harvest Telemetry for Gangamai Sugar Mill (SSK).">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - 2025–26 Active Season Weekly Model Retraining with Partial/Full Lab Pol & Brix Feedback for Gangamai Sugar Mill (SSK).">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="brand-text">
                     <h1>IkshuVruddhi <span>Command</span> <span class="mill-badge">2025–26 SEASON</span></h1>
-                    <p>Gangamai Sugar Mill - Weekly Continuous AI Retraining & Sucrose Harvest Command</p>
+                    <p>Gangamai Sugar Mill - Continuous Model Retraining with Live Polarimeter Feedback</p>
                 </div>
             </div>
             
@@ -45,8 +45,8 @@
                     <span class="status-val" style="color: var(--accent-green);" id="lblRetrainCadence">🔄 Continuous Weekly Retraining</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Weekly Training Cycle</span>
-                    <span class="status-val" style="color: #ffea00;" id="lblTrainingWeek">Week 1 (Live Ingest)</span>
+                    <span class="status-label">Lab Calibration Points</span>
+                    <span class="status-val" style="color: #ffea00;" id="lblLabSamplesCount">n = 0 Lab Samples</span>
                 </div>
             </div>
 
@@ -61,19 +61,24 @@
             </div>
         </header>
 
-        <!-- STREAMLINED ACTION TOOLBAR (WITH CLEAR & RESET DATA ACTION) -->
+        <!-- STREAMLINED ACTION TOOLBAR (WITH DEDICATED FIELD PLOTS & LAB TRAINING INGEST) -->
         <div class="toolbar-bar">
             <div class="preset-group">
+                <!-- Dual inputs: Field Plots vs Lab Training Ground-Truth -->
                 <input type="file" id="csvNewSeasonInput" accept=".csv" style="display:none;">
+                <input type="file" id="csvLabTrainingInput" accept=".csv" style="display:none;">
                 
                 <button class="btn-preset active" id="btnUploadNewSeason" onclick="document.getElementById('csvNewSeasonInput').click()" style="background: rgba(0,242,254,0.18); color: var(--accent-cyan); border-color: rgba(0,242,254,0.5); font-weight:700;">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 Ingest 2025–26 Season CSV
+                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 1. Ingest 2025–26 Field Plots CSV
+                </button>
+                <button class="btn-preset" id="btnUploadLabTraining" onclick="document.getElementById('csvLabTrainingInput').click()" style="background: rgba(168,85,247,0.18); color: #a855f7; border-color: rgba(168,85,247,0.45); font-weight:700;">
+                    <i class="fa-solid fa-flask-vial"></i> 🧪 2. Ingest Lab Pol / Brix Training CSV
                 </button>
                 <button class="btn-preset" id="btnClearCurrentDataset" onclick="window.clearActiveDataset()" style="background: rgba(255,23,68,0.15); color: var(--accent-coral); border-color: rgba(255,23,68,0.35); font-weight:700;">
-                    <i class="fa-solid fa-trash-can"></i> 🗑️ Clear / Remove Plots
+                    <i class="fa-solid fa-trash-can"></i> 🗑️ Clear Workspace
                 </button>
                 <button class="btn-preset" id="btnTriggerWeeklyRetrain" onclick="window.triggerWeeklyRetrainingCycle()" style="background: rgba(0,230,118,0.15); color: var(--accent-green); border-color: rgba(0,230,118,0.4); font-weight:700;">
-                    <i class="fa-solid fa-rotate"></i> ⚡ Run Weekly Retraining
+                    <i class="fa-solid fa-rotate"></i> ⚡ Recalibrate Model Now
                 </button>
             </div>
 
@@ -127,7 +132,7 @@
 
         <!-- TIER 2: SUCROSE CHEMISTRY & WEEKLY RETRAINING BENCHMARKS -->
         <div class="section-label-strip" style="margin-top: 0.6rem;">
-            <i class="fa-solid fa-flask-vial" style="color:var(--accent-cyan);"></i> <span>2025–26 SUCROSE BENCHMARKS & WEEKLY RETRAINING TELEMETRY</span>
+            <i class="fa-solid fa-flask-vial" style="color:var(--accent-cyan);"></i> <span>2025–26 SUCROSE BENCHMARKS & LAB TRAINING TELEMETRY</span>
         </div>
         <div class="kpi-grid quality-grid" style="margin-bottom:0.9rem;">
             <div class="kpi-card quality-card">
@@ -146,19 +151,19 @@
                 <span class="kpi-subtext"><span class="source-tag model">MODEL PREDICTED</span> Recoverable Sugar</span>
             </div>
             <div class="kpi-card quality-card">
-                <span class="kpi-title"><i class="fa-solid fa-rotate"></i> Weekly Retraining State</span>
-                <span class="kpi-value quality-val" style="color:var(--accent-green);">Ready</span>
-                <span class="kpi-subtext"><span class="source-tag gis">WEEKLY RETRAIN</span> Sentinel 5-Day Cycle</span>
+                <span class="kpi-title"><i class="fa-solid fa-rotate"></i> Model Calibration Status</span>
+                <span class="kpi-value quality-val" id="kpiCalibrationStatus" style="color:var(--accent-green);">Ready</span>
+                <span class="kpi-subtext"><span class="source-tag gis">ACTIVE ADAPTATION</span> Continuous Feed</span>
             </div>
             <div class="kpi-card quality-card">
                 <span class="kpi-title"><i class="fa-solid fa-location-crosshairs"></i> GPS Location Sanity</span>
-                <span class="kpi-value quality-val" style="color:var(--accent-green);">--</span>
+                <span class="kpi-value quality-val" id="kpiGpsSanityScore" style="color:var(--accent-green);">--</span>
                 <span class="kpi-subtext"><span class="source-tag field">FIELD AUDIT</span> &lt;300m from Cadastral Gat</span>
             </div>
             <div class="kpi-card quality-card">
-                <span class="kpi-title"><i class="fa-solid fa-check-double"></i> Polarimeter Lab Calibration</span>
-                <span class="kpi-value quality-val" style="color:#a855f7;">n = 0</span>
-                <span class="kpi-subtext"><span class="source-tag lab">WEEKLY CRUSH</span> Live Mill Feedback</span>
+                <span class="kpi-title"><i class="fa-solid fa-check-double"></i> Lab Polarimeter Samples</span>
+                <span class="kpi-value quality-val" id="kpiLabSampleVal" style="color:#a855f7;">n = 0</span>
+                <span class="kpi-subtext"><span class="source-tag lab">LAB GROUND-TRUTH</span> Pol & Brix Feed</span>
             </div>
         </div>
 
@@ -168,7 +173,7 @@
             <!-- LEFT CARD: ADVANCED AI TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> 2025–26 Harvesting Queue & Weekly Calibration</h3>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> 2025–26 Harvesting Queue & Lab Calibration Status</h3>
                     <span class="badge success" id="lblPlotCount">0 Plots</span>
                 </div>
 
@@ -191,7 +196,7 @@
                                 <th>Predicted Pol</th>
                                 <th>Predicted CCS</th>
                                 <th>Juice Purity</th>
-                                <th>Brix °Bx</th>
+                                <th>Lab Feed Status</th>
                                 <th>Est. Cane</th>
                             </tr>
                         </thead>
@@ -204,10 +209,13 @@
                 <div class="left-card-footer-strip">
                     <div style="display:flex; gap:6px;">
                         <button class="btn btn-xs btn-outline" onclick="document.getElementById('csvNewSeasonInput').click()" style="border-color:rgba(0,242,254,0.4); color:var(--accent-cyan); font-weight:700;">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload 2025–26 CSV
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Plots CSV
+                        </button>
+                        <button class="btn btn-xs btn-outline" onclick="document.getElementById('csvLabTrainingInput').click()" style="border-color:rgba(168,85,247,0.4); color:#a855f7; font-weight:700;">
+                            <i class="fa-solid fa-flask"></i> Ingest Lab CSV
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-rotate" style="color:var(--accent-green);"></i> Ready for 2025–26 Season Ingestion</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-rotate" style="color:var(--accent-green);"></i> Supports Full/Partial Pol & Brix Samples</span>
                 </div>
             </div>
 
