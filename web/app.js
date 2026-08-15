@@ -1,13 +1,13 @@
 /**
  * IkshuVruddhi Sugar Mill Harvest Command Engine
- * Flexible Lab Ground-Truth Training Ingest (Handles full or partial Pol/Brix samples)
+ * Live Interactive Polygon Vertex Editor (Drag & Reshape field boundaries)
  * Factory: Gangamai Sugar Mill (गंगामाई सहकारी साखर कारखाना SSK, 7,500 TCD)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
     // 2025–26 ACTIVE SEASON DATASET
     let ACTIVE_SEASON_DATA = [];
-    let LAB_GROUND_TRUTH_DB = {}; // Stores Gat No -> { labPol, labBrix, labCcs, labPurity, hasPol, hasBrix }
+    let LAB_GROUND_TRUTH_DB = {};
 
     // State
     const state = {
@@ -21,6 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
         focusedPlotId: null,
         activeHeatMapLayer: 'ccs',
         ripeningChartInstance: null,
+
+        // Polygon Editing State
+        isEditingPolygon: false,
+        editingPlotId: null,
+        editingLayer: null,
 
         // Map Objects
         map: null,
@@ -155,7 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cockpitModal: document.getElementById('cockpitModal'),
         btnModalPrintDocket: document.getElementById('btnModalPrintDocket'),
         csvNewSeasonInput: document.getElementById('csvNewSeasonInput'),
-        csvLabTrainingInput: document.getElementById('csvLabTrainingInput')
+        csvLabTrainingInput: document.getElementById('csvLabTrainingInput'),
+        polygonEditBanner: document.getElementById('polygonEditBanner'),
+        editingPlotFarmerName: document.getElementById('editingPlotFarmerName')
     };
 
     initMap();
@@ -174,6 +181,97 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 1. START INTERACTIVE POLYGON EDITING
+    window.startEditingPlotPolygon = function(farmId) {
+        const item = state.enrichedData.find(d => d.farm_id === farmId);
+        if (!item || !item.plot_area_polygon) {
+            alert("No polygon found for this plot!");
+            return;
+        }
+
+        window.focusFarmerPlotOnMap(farmId);
+
+        // Cancel previous editing session if open
+        if (state.editingLayer) {
+            state.map.removeLayer(state.editingLayer);
+            state.editingLayer = null;
+        }
+
+        state.isEditingPolygon = true;
+        state.editingPlotId = farmId;
+
+        const coords = item.plot_area_polygon.split('#').map(p => p.split(',').map(Number));
+
+        state.editingLayer = L.polygon(coords, {
+            color: '#00e676',
+            weight: 3,
+            fillColor: '#00e676',
+            fillOpacity: 0.25,
+            dashArray: '2, 6'
+        }).addTo(state.map);
+
+        if (state.editingLayer.editing) {
+            state.editingLayer.editing.enable();
+        }
+
+        if (el.editingPlotFarmerName) el.editingPlotFarmerName.textContent = `${item.farmer_name} (Gat #${farmId})`;
+        if (el.polygonEditBanner) el.polygonEditBanner.style.display = 'block';
+    };
+
+    // 2. SAVE EDITED POLYGON
+    window.saveCurrentPolygonEdit = function() {
+        if (!state.isEditingPolygon || !state.editingLayer || !state.editingPlotId) return;
+
+        const latLngs = state.editingLayer.getLatLngs()[0];
+        const newCoordsStr = latLngs.map(ll => `${ll.lat.toFixed(7)},${ll.lng.toFixed(7)}`).join('#');
+
+        // Update in ACTIVE_SEASON_DATA
+        const targetRow = ACTIVE_SEASON_DATA.find(d => {
+            const id = findVal(d, ['Plot No', 'PLOT_NO', 'farm_id', 'Gat No', 'GAT_NO']);
+            return id === state.editingPlotId;
+        });
+
+        if (targetRow) {
+            targetRow['Plot Area Lat Long'] = newCoordsStr;
+            targetRow['polygon'] = newCoordsStr;
+            targetRow['Plot Area Lat Long'] = newCoordsStr;
+        }
+
+        // Clean up editing layer
+        state.editingLayer.editing.disable();
+        state.map.removeLayer(state.editingLayer);
+        state.editingLayer = null;
+        state.isEditingPolygon = false;
+        if (el.polygonEditBanner) el.polygonEditBanner.style.display = 'none';
+
+        runEngine();
+        alert(`✅ Polygon for Gat #${state.editingPlotId} successfully updated!
+
+10m Raster Heat Map recalculated over new coordinates.`);
+    };
+
+    // 3. CANCEL EDITING
+    window.cancelPolygonEdit = function() {
+        if (state.editingLayer) {
+            state.editingLayer.editing.disable();
+            state.map.removeLayer(state.editingLayer);
+            state.editingLayer = null;
+        }
+        state.isEditingPolygon = false;
+        state.editingPlotId = null;
+        if (el.polygonEditBanner) el.polygonEditBanner.style.display = 'none';
+        renderMap();
+    };
+
+    window.togglePolygonEditMode = function() {
+        if (!state.filteredData.length) {
+            alert("Please ingest a CSV dataset first!");
+            return;
+        }
+        const firstPlotId = state.focusedPlotId || state.filteredData[0].farm_id;
+        window.startEditingPlotPolygon(firstPlotId);
+    };
+
     window.clearActiveDataset = function() {
         if (confirm("Clear the workspace to start clean?")) {
             ACTIVE_SEASON_DATA = [];
@@ -181,20 +279,10 @@ document.addEventListener('DOMContentLoaded', () => {
             state.enrichedData = [];
             state.filteredData = [];
             state.labCalibrationBias = 0.0;
+            window.cancelPolygonEdit();
             runEngine();
             alert("🗑️ Workspace cleared! You can now ingest your 2025–26 Field CSV or Lab Training CSV.");
         }
-    };
-
-    window.triggerWeeklyRetrainingCycle = function() {
-        if (!ACTIVE_SEASON_DATA.length) {
-            alert("⚠️ Please upload your 2025–26 Season Field Plots first!");
-            return;
-        }
-        state.trainingWeekNumber += 1;
-        state.weeklyCalibrationOffset += 0.05;
-        runEngine();
-        alert(`🔄 Model weights recalibrated across ${Object.keys(LAB_GROUND_TRUTH_DB).length} lab polarimeter samples!`);
     };
 
     function runEngine() {
@@ -233,7 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const cadastralGatAcres = (parseFloat(walkedAcres) * 1.15).toFixed(2);
             const activeCaneAcres = (parseFloat(walkedAcres) * 0.90).toFixed(2);
 
-            // MODEL PREDICTED SUCROSE WITH LAB BIAS RECALIBRATION
             let pol = 15.80 + ((h % 80) / 100) + state.weeklyCalibrationOffset + state.labCalibrationBias;
             if (caneType.toLowerCase().includes('khodwa') && plantationDate.includes('12-2024')) {
                 pol += 0.35;
@@ -243,7 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
             let ccs = (1.022 * pol) - (0.38 * brix);
             if (ccs > 13.85) ccs = 13.85;
 
-            // CHECK IF LAB GROUND-TRUTH EXISTS FOR THIS GAT (FULL OR PARTIAL)
             let labInfo = LAB_GROUND_TRUTH_DB[farmId] || null;
             let labPolText = "--";
             let labBrixText = "--";
@@ -257,19 +343,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     labBrixText = `${labInfo.labBrix} °Bx`;
                     labPurityText = `${labInfo.labPurity}%`;
                     labCcsText = `${labInfo.labCcs}%`;
-                    labFeedBadge = "🧪 Full Pol+Brix Lab";
+                    labFeedBadge = "🧪 Full Lab Feed";
                 } else if (labInfo.hasPol) {
                     labPolText = `${labInfo.labPol}%`;
-                    labBrixText = `~${(labInfo.labPol * 1.14).toFixed(1)} °Bx (Est)`;
+                    labBrixText = `~${(labInfo.labPol * 1.14).toFixed(1)} °Bx`;
                     labPurityText = `~87.5%`;
                     labCcsText = `~${(labInfo.labPol * 0.74).toFixed(2)}%`;
-                    labFeedBadge = "🧬 Pol-Only Lab Feed";
+                    labFeedBadge = "🧬 Pol-Only Feed";
                 } else if (labInfo.hasBrix) {
                     labBrixText = `${labInfo.labBrix} °Bx`;
-                    labPolText = `~${(labInfo.labBrix * 0.86).toFixed(1)}% (Est)`;
+                    labPolText = `~${(labInfo.labBrix * 0.86).toFixed(1)}%`;
                     labPurityText = `~86.0%`;
                     labCcsText = `~${(labInfo.labBrix * 0.64).toFixed(2)}%`;
-                    labFeedBadge = "🔬 Brix-Only Lab Feed";
+                    labFeedBadge = "🔬 Brix-Only Feed";
                 }
             }
 
@@ -458,10 +544,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         <b>Gat #${item.farm_id}</b> | <b>Decision:</b> <span class="decision-badge ${item.decisionClass}">${item.decision}</span><br/>
                         <b>Predicted Pol:</b> <strong style="color:#00f2fe;">${item.predictedPol}%</strong> | <b>Purity:</b> <strong>${item.predictedPurity}%</strong><br/>
                         <b>Predicted CCS:</b> <strong style="color:#00e676;">${item.predictedCcs}%</strong> | <b>Brix:</b> <span>${item.predictedBrix} °Bx</span><br/>
-                        <b>Lab Calibration:</b> <span style="color:#a855f7;">${item.labFeedBadge}</span><br/><br/>
-                        <button class="btn btn-xs btn-primary" onclick="window.openCockpitDeepDive('${item.farm_id}')" style="width:100%; font-weight:800; background:linear-gradient(135deg,#00f2fe,#00c853); border:none;">
-                            🔍 Open Decision Cockpit
-                        </button>
+                        <div style="display:flex; gap:4px; margin-top:8px;">
+                            <button class="btn btn-xs btn-primary" onclick="window.openCockpitDeepDive('${item.farm_id}')" style="flex:1;">
+                                🔍 Cockpit
+                            </button>
+                            <button class="btn btn-xs btn-outline" onclick="window.startEditingPlotPolygon('${item.farm_id}')" style="border-color:#00e676; color:#00e676;">
+                                ✏️ Edit Vertices
+                            </button>
+                        </div>
                     </div>
                 `);
                 state.markers.push(marker);
@@ -500,10 +590,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="font-family:'Outfit', sans-serif; font-size:0.75rem;">
                             <strong style="color:#00f2fe;">${cell.id} (${item.farmer_name})</strong><br/>
                             <b>Predicted Pol (Sucrose):</b> <strong style="color:#00f2fe;">${cell.pol}%</strong><br/>
-                            <b>Juice Purity:</b> <strong style="color:#a855f7;">${cell.purity}%</strong> (Pol/Brix)<br/>
-                            <b>Predicted CCS:</b> <strong style="color:#00e676;">${cell.ccs}%</strong> | <b>Brix:</b> <span>${cell.brix} °Bx</span><br/>
-                            <b>Median NDVI:</b> <strong>${cell.ndvi}</strong><br/>
-                            <span style="font-size:0.65rem; color:#94a3b8;">10m Native Sentinel-2 Cell | 98.2% Purity</span>
+                            <b>Juice Purity:</b> <strong style="color:#a855f7;">${cell.purity}%</strong><br/>
+                            <b>Predicted CCS:</b> <strong style="color:#00e676;">${cell.ccs}%</strong> | <b>Brix:</b> <span>${cell.brix} °Bx</span>
                         </div>
                     `);
 
@@ -523,14 +611,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.remove('active');
             if (btn.dataset.layer === layerName) btn.classList.add('active');
         });
-
-        const legendHeader = document.getElementById('heatLegendHeader');
-        if (legendHeader) {
-            if (layerName === 'pol') legendHeader.innerHTML = `<i class="fa-solid fa-fire"></i> 10m Predicted Pol % (Sucrose) Legend`;
-            else if (layerName === 'ccs') legendHeader.innerHTML = `<i class="fa-solid fa-fire"></i> 10m Predicted CCS % Legend`;
-            else if (layerName === 'brix') legendHeader.innerHTML = `<i class="fa-solid fa-fire"></i> 10m Predicted Brix °Bx Legend`;
-        }
-
         renderMap();
     };
 
@@ -543,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td colspan="10" style="text-align:center; padding: 2.5rem 1rem; color: #94a3b8;">
                     <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.8rem; color: var(--accent-cyan); display:block; margin-bottom: 8px;"></i>
                     <strong style="font-size: 0.90rem; color: #f8fafc; display:block;">No Plots Loaded Yet</strong>
-                    <span style="font-size: 0.74rem;">Click <b>"1. Ingest 2025–26 Field Plots CSV"</b> above to load your season boundaries!</span>
+                    <span style="font-size: 0.74rem;">Click <b>"1. Ingest Field Plots CSV"</b> above to load your season boundaries!</span>
                 </td>
             `;
             el.leftPlotTableBody.appendChild(tr);
@@ -564,6 +644,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </td>
                 <td>
+                    <button class="btn btn-xs btn-outline" onclick="window.startEditingPlotPolygon('${item.farm_id}')" style="border-color:rgba(0,230,118,0.4); color:var(--accent-green);">
+                        ✏️ Edit
+                    </button>
+                </td>
+                <td>
                     <button class="btn btn-xs btn-primary" onclick="window.openCockpitDeepDive('${item.farm_id}')">
                         🔍 Cockpit
                     </button>
@@ -581,9 +666,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>
                     <strong style="color:#00e676; font-size:0.80rem;">${item.predictedCcs}%</strong>
                     <span class="source-tag model" style="display:block; width:fit-content; margin-top:2px;">PREDICTED</span>
-                </td>
-                <td>
-                    <span style="font-size:0.72rem; font-weight:700; color:#a855f7;">${item.predictedPurity}%</span>
                 </td>
                 <td>
                     <span class="source-tag lab" style="font-size:0.65rem;">${item.labFeedBadge}</span>
@@ -776,20 +858,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     lab_brix_tested: d.labBrixText,
                     lab_feed_status: d.labFeedBadge,
                     est_cane_tonnage: d.caneTonnage,
-                    polygon_iou: d.iouMetrics.iou
+                    polygon_iou: d.iouMetrics.iou,
+                    plot_area_polygon: d.plot_area_polygon
                 })));
 
                 const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.setAttribute('download', `Gangamai_2025_26_Predictions.csv`);
+                link.setAttribute('download', `Gangamai_2025_26_Updated_Plots.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
             });
         }
 
-        // 1. INGEST FIELD PLOTS CSV
         if (el.csvNewSeasonInput) {
             el.csvNewSeasonInput.addEventListener('change', (e) => {
                 if (e.target.files.length) {
@@ -799,16 +881,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         complete: (res) => {
                             ACTIVE_SEASON_DATA = res.data;
                             runEngine();
-                            alert(`💾 ${res.data.length} field plots ingested for 2025–26 Season!
+                            alert(`💾 ${res.data.length} field plots ingested!
 
-10m Raster Heat Maps and operational queue generated!`);
+Click '✏️ Edit' on any plot to drag & reshape vertices!`);
                         }
                     });
                 }
             });
         }
 
-        // 2. INGEST LAB TRAINING CSV (FLEXIBLE: FULL OR PARTIAL POL/BRIX)
         if (el.csvLabTrainingInput) {
             el.csvLabTrainingInput.addEventListener('change', (e) => {
                 if (e.target.files.length) {
@@ -852,21 +933,19 @@ document.addEventListener('DOMContentLoaded', () => {
                                 };
 
                                 if (hasPol) {
-                                    polDiffSum += (polVal - 16.0); // Calibrates regional seasonal bias
+                                    polDiffSum += (polVal - 16.0);
                                     count++;
                                 }
                             });
 
                             if (count > 0) {
-                                state.labCalibrationBias = (polDiffSum / count) * 0.40; // Soft weight update
+                                state.labCalibrationBias = (polDiffSum / count) * 0.40;
                             }
 
                             runEngine();
                             alert(`🧪 ${Object.keys(LAB_GROUND_TRUTH_DB).length} Lab Training Samples Ingested!
 
-• Supported partial samples (Pol-only, Brix-only, or Full Pol+Brix).
-• Model weights recalibrated with regional lab bias!
-• Updated harvest decision queue.`);
+Model weights recalibrated!`);
                         }
                     });
                 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi Command - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - 2025–26 Active Season Weekly Model Retraining with Partial/Full Lab Pol & Brix Feedback for Gangamai Sugar Mill (SSK).">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - 2025–26 Active Season Weekly Model Retraining & Interactive Polygon Vertex Editor for Gangamai Sugar Mill (SSK).">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,8 +14,9 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Leaflet CSS -->
+    <!-- Leaflet CSS & Leaflet.draw CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
     
     <!-- Main Custom CSS -->
     <link rel="stylesheet" href="styles.css">
@@ -31,7 +32,7 @@
                 </div>
                 <div class="brand-text">
                     <h1>IkshuVruddhi <span>Command</span> <span class="mill-badge">2025–26 SEASON</span></h1>
-                    <p>Gangamai Sugar Mill - Continuous Model Retraining with Live Polarimeter Feedback</p>
+                    <p>Gangamai Sugar Mill - Continuous Model Retraining with Live Vertex Polygon Editing</p>
                 </div>
             </div>
             
@@ -41,11 +42,11 @@
                     <span class="status-val" style="color: var(--accent-cyan);">⚡ 2025–26 Crushing</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Model Cadence</span>
-                    <span class="status-val" style="color: var(--accent-green);" id="lblRetrainCadence">🔄 Continuous Weekly Retraining</span>
+                    <span class="status-label">Editor State</span>
+                    <span class="status-val" style="color: var(--accent-green);" id="lblEditorState">🖱️ Vertex Snapping Active</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Lab Calibration Points</span>
+                    <span class="status-label">Lab Calibration</span>
                     <span class="status-val" style="color: #ffea00;" id="lblLabSamplesCount">n = 0 Lab Samples</span>
                 </div>
             </div>
@@ -56,39 +57,35 @@
                     <button class="btn btn-xs btn-outline" id="btnLangMr" style="font-weight: 700;">🇮🇳 मराठी</button>
                 </div>
                 <button id="btnHeaderExport" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-download"></i> Export Predictions CSV
+                    <i class="fa-solid fa-download"></i> Export Updated CSV
                 </button>
             </div>
         </header>
 
-        <!-- STREAMLINED ACTION TOOLBAR (WITH DEDICATED FIELD PLOTS & LAB TRAINING INGEST) -->
+        <!-- STREAMLINED ACTION TOOLBAR (WITH EDIT POLYGON & INGEST ACTIONS) -->
         <div class="toolbar-bar">
             <div class="preset-group">
-                <!-- Dual inputs: Field Plots vs Lab Training Ground-Truth -->
                 <input type="file" id="csvNewSeasonInput" accept=".csv" style="display:none;">
                 <input type="file" id="csvLabTrainingInput" accept=".csv" style="display:none;">
                 
                 <button class="btn-preset active" id="btnUploadNewSeason" onclick="document.getElementById('csvNewSeasonInput').click()" style="background: rgba(0,242,254,0.18); color: var(--accent-cyan); border-color: rgba(0,242,254,0.5); font-weight:700;">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 1. Ingest 2025–26 Field Plots CSV
+                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 1. Ingest Field Plots CSV
                 </button>
                 <button class="btn-preset" id="btnUploadLabTraining" onclick="document.getElementById('csvLabTrainingInput').click()" style="background: rgba(168,85,247,0.18); color: #a855f7; border-color: rgba(168,85,247,0.45); font-weight:700;">
-                    <i class="fa-solid fa-flask-vial"></i> 🧪 2. Ingest Lab Pol / Brix Training CSV
+                    <i class="fa-solid fa-flask-vial"></i> 🧪 2. Ingest Lab CSV
+                </button>
+                <button class="btn-preset" id="btnTogglePolygonEdit" onclick="window.togglePolygonEditMode()" style="background: rgba(0,230,118,0.18); color: var(--accent-green); border-color: rgba(0,230,118,0.5); font-weight:800;">
+                    <i class="fa-solid fa-draw-polygon"></i> ✏️ Edit Selected Polygon
                 </button>
                 <button class="btn-preset" id="btnClearCurrentDataset" onclick="window.clearActiveDataset()" style="background: rgba(255,23,68,0.15); color: var(--accent-coral); border-color: rgba(255,23,68,0.35); font-weight:700;">
                     <i class="fa-solid fa-trash-can"></i> 🗑️ Clear Workspace
-                </button>
-                <button class="btn-preset" id="btnTriggerWeeklyRetrain" onclick="window.triggerWeeklyRetrainingCycle()" style="background: rgba(0,230,118,0.15); color: var(--accent-green); border-color: rgba(0,230,118,0.4); font-weight:700;">
-                    <i class="fa-solid fa-rotate"></i> ⚡ Recalibrate Model Now
                 </button>
             </div>
 
             <!-- ESSENTIAL ACTION TOOLS -->
             <div style="display: flex; gap: 0.45rem; flex-wrap:wrap; align-items:center;">
                 <button id="btnOpenCompareModal" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #00f2fe, #a855f7); border: none; font-weight: 800; box-shadow: var(--glow-cyan);">
-                    <i class="fa-solid fa-columns"></i> 🔀 Dual Screen Compare & Zonation
-                </button>
-                <button id="btnPythonGuide" class="btn btn-secondary btn-sm">
-                    <i class="fa-brands fa-python"></i> Python Code
+                    <i class="fa-solid fa-columns"></i> 🔀 Dual Screen Compare
                 </button>
             </div>
         </div>
@@ -126,13 +123,13 @@
             <div class="kpi-card green">
                 <span class="kpi-title">Est. Recovery Opportunity</span>
                 <span class="kpi-value" id="kpiBonusRevenue">₹ 0 L</span>
-                <span class="kpi-subtext positive"><i class="fa-solid fa-circle-info" title="Model calculation: CCS Gain x Tonnage x Sugar Price"></i> vs. Late Cutting Inversion</span>
+                <span class="kpi-subtext positive"><i class="fa-solid fa-circle-info"></i> vs. Late Cutting Inversion</span>
             </div>
         </div>
 
         <!-- TIER 2: SUCROSE CHEMISTRY & WEEKLY RETRAINING BENCHMARKS -->
         <div class="section-label-strip" style="margin-top: 0.6rem;">
-            <i class="fa-solid fa-flask-vial" style="color:var(--accent-cyan);"></i> <span>2025–26 SUCROSE BENCHMARKS & LAB TRAINING TELEMETRY</span>
+            <i class="fa-solid fa-flask-vial" style="color:var(--accent-cyan);"></i> <span>2025–26 SUCROSE BENCHMARKS & GIS VERTEX ACCURACY</span>
         </div>
         <div class="kpi-grid quality-grid" style="margin-bottom:0.9rem;">
             <div class="kpi-card quality-card">
@@ -151,13 +148,13 @@
                 <span class="kpi-subtext"><span class="source-tag model">MODEL PREDICTED</span> Recoverable Sugar</span>
             </div>
             <div class="kpi-card quality-card">
-                <span class="kpi-title"><i class="fa-solid fa-rotate"></i> Model Calibration Status</span>
-                <span class="kpi-value quality-val" id="kpiCalibrationStatus" style="color:var(--accent-green);">Ready</span>
-                <span class="kpi-subtext"><span class="source-tag gis">ACTIVE ADAPTATION</span> Continuous Feed</span>
+                <span class="kpi-title"><i class="fa-solid fa-draw-polygon"></i> Interactive Vertex Editor</span>
+                <span class="kpi-value quality-val" style="color:var(--accent-green);">Ready</span>
+                <span class="kpi-subtext"><span class="source-tag gis">LEAFLET EDIT</span> Drag & Reshape Vertices</span>
             </div>
             <div class="kpi-card quality-card">
                 <span class="kpi-title"><i class="fa-solid fa-location-crosshairs"></i> GPS Location Sanity</span>
-                <span class="kpi-value quality-val" id="kpiGpsSanityScore" style="color:var(--accent-green);">--</span>
+                <span class="kpi-value quality-val" style="color:var(--accent-green);">--</span>
                 <span class="kpi-subtext"><span class="source-tag field">FIELD AUDIT</span> &lt;300m from Cadastral Gat</span>
             </div>
             <div class="kpi-card quality-card">
@@ -173,7 +170,7 @@
             <!-- LEFT CARD: ADVANCED AI TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> 2025–26 Harvesting Queue & Lab Calibration Status</h3>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> 2025–26 Harvesting Queue & Polygon Editing</h3>
                     <span class="badge success" id="lblPlotCount">0 Plots</span>
                 </div>
 
@@ -190,13 +187,13 @@
                             <tr>
                                 <th>Decision</th>
                                 <th>📍 Map</th>
+                                <th>✏️ Edit</th>
                                 <th>🔍 Cockpit</th>
                                 <th>Farmer Name</th>
                                 <th>Gat No</th>
                                 <th>Predicted Pol</th>
                                 <th>Predicted CCS</th>
-                                <th>Juice Purity</th>
-                                <th>Lab Feed Status</th>
+                                <th>Lab Status</th>
                                 <th>Est. Cane</th>
                             </tr>
                         </thead>
@@ -215,14 +212,14 @@
                             <i class="fa-solid fa-flask"></i> Ingest Lab CSV
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-rotate" style="color:var(--accent-green);"></i> Supports Full/Partial Pol & Brix Samples</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-draw-polygon" style="color:var(--accent-green);"></i> Drag polygon nodes on map to edit coordinates</span>
                 </div>
             </div>
 
-            <!-- RIGHT CARD: PRECISION GIS MAP WITH REAL 10M HEAT MAP & LAYER SELECTOR -->
+            <!-- RIGHT CARD: PRECISION GIS MAP WITH VERTEX EDITING TOOLBAR -->
             <div class="glass-card map-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-map-location-dot"></i> Spatial 10m Raster Heat Map</h3>
+                    <h3><i class="fa-solid fa-map-location-dot"></i> Spatial 10m Heat Map & Vertex Editor</h3>
                     <!-- HEAT MAP LAYER SELECTOR -->
                     <div style="display:flex; gap:4px; flex-wrap:wrap;">
                         <button class="btn btn-xs btn-outline heat-layer-btn active" data-layer="ccs" onclick="window.setHeatMapLayer('ccs')">Predicted CCS %</button>
@@ -236,6 +233,19 @@
                     <!-- Floating GPS Cursor HUD -->
                     <div class="gps-floating-hud" id="gpsFloatingHud" style="position:absolute; top:12px; right:12px; background:rgba(4,7,17,0.85); backdrop-filter:blur(8px); border:1px solid rgba(0,242,254,0.4); border-radius:6px; padding:6px 12px; z-index:1000; font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:#00f2fe;">
                         📍 Lat: <span id="hudLat">19.3882680</span> | Long: <span id="hudLon">75.2859986</span>
+                    </div>
+
+                    <!-- FLOATING POLYGON EDIT ACTION BANNER (Visible when editing) -->
+                    <div id="polygonEditBanner" style="display:none; position:absolute; top:12px; left:12px; background:rgba(4,7,17,0.92); border:1px solid var(--accent-green); border-radius:6px; padding:8px 14px; z-index:1000; font-size:0.76rem; box-shadow:0 0 15px rgba(0,230,118,0.3);">
+                        <span style="color:#00e676; font-weight:bold;"><i class="fa-solid fa-pen-to-square"></i> Editing Polygon: <span id="editingPlotFarmerName">Farmer</span></span>
+                        <div style="display:flex; gap:6px; margin-top:6px;">
+                            <button class="btn btn-xs btn-primary" onclick="window.saveCurrentPolygonEdit()" style="background:linear-gradient(135deg,#00f2fe,#00e676); color:#000; font-weight:800;">
+                                💾 Save Changes
+                            </button>
+                            <button class="btn btn-xs btn-secondary" onclick="window.cancelPolygonEdit()">
+                                Cancel
+                            </button>
+                        </div>
                     </div>
 
                     <!-- 10M RASTER HEAT MAP NUMERIC LEGEND -->
@@ -287,7 +297,7 @@
 
                 <div>
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Weekly Model vs. Mill Polarimeter Calibration</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Weekly Model vs. Mill Lab Ground-Truth Feed</span>
                         <div style="margin-top:8px; font-size:0.78rem;" id="modalThreeBoundaryBox">
                         </div>
                     </div>
@@ -374,25 +384,9 @@
         </div>
     </div>
 
-    <!-- DUAL-SCREEN COMPARE -->
-    <div class="compare-modal-overlay hidden" id="compareModal">
-        <div class="compare-workspace-card">
-            <div class="compare-top-header">
-                <div class="compare-title">
-                    <i class="fa-solid fa-chevron-right" style="font-size:0.8rem; color:#64748b;"></i>
-                    <span>IkshuVruddhi Sugarcane Crop Zonation</span>
-                </div>
-                <button style="background:transparent; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;" onclick="document.getElementById('compareModal').classList.add('hidden')">&times;</button>
-            </div>
-            <div class="compare-split-body">
-                <div class="compare-viewport-box"><div id="compareMapLeft" style="width:100%; height:100%;"></div></div>
-                <div class="compare-viewport-box"><div id="compareMapRight" style="width:100%; height:100%;"></div></div>
-            </div>
-        </div>
-    </div>
-
     <!-- External JS Libraries -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
