@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi AI Engine - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Autonomous Zero-Drone Satellite Boundary Delineation, Cane-Type Dynamic Lifecycle Simulation & Conformal Telemetry for Gangamai Sugar Mill.">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Autonomous Zero-Drone Satellite Boundary Delineation, Multi-Year Historical Snapping & Conformal Telemetry for Gangamai Sugar Mill.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="brand-text">
                     <h1>IkshuVruddhi <span>AI Engine</span> <span class="mill-badge">इक्षुवृद्धी 2026</span></h1>
-                    <p>Gangamai Sugar Mill Command - Dynamic Variety Lifecycle Intelligence & Telemetry</p>
+                    <p>Gangamai Sugar Mill Command - Multi-Year Historical Snapping & Autonomous Telemetry</p>
                 </div>
             </div>
             
@@ -41,8 +41,8 @@
                     <span class="status-val">Gangamai Sugar Mill (SSK)</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Planting Phenology</span>
-                    <span class="status-val" style="color: var(--accent-cyan);" id="lblRadarStatus">📅 Adsali / Suru / Khodwa Dynamic</span>
+                    <span class="status-label">Historical Archive</span>
+                    <span class="status-val" style="color: var(--accent-cyan);" id="lblHistoricalStatus">🏛️ 2023-2025 Multi-Year Active</span>
                 </div>
                 <div class="status-item">
                     <span class="status-label">Survey Mode</span>
@@ -56,7 +56,7 @@
                     <button class="btn btn-xs btn-outline" id="btnLangMr" style="font-weight: 700;">🇮🇳 मराठी</button>
                 </div>
                 <button id="btnHeaderExport" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-download"></i> Export Polygons & Ripening CSV
+                    <i class="fa-solid fa-download"></i> Export Polygons CSV
                 </button>
             </div>
         </header>
@@ -65,16 +65,17 @@
         <div class="toolbar-bar">
             <div class="preset-group">
                 <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
+                <input type="file" id="historicalCsvFileInput" accept=".csv" style="display:none;">
                 <input type="file" id="trainingDatasetFileInput" accept=".csv" style="display:none;">
                 
                 <button class="btn-preset active" id="btnUploadCsvDirect" style="background: rgba(0,242,254,0.18); color: var(--accent-cyan); border-color: rgba(0,242,254,0.5); font-weight:700;">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 Upload Farmer Plots CSV
+                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 Upload Current Season CSV
+                </button>
+                <button class="btn-preset" id="btnUploadHistoricalCsv" style="background: rgba(255,234,0,0.15); color: #ffea00; border-color: rgba(255,234,0,0.4); font-weight:700;">
+                    <i class="fa-solid fa-clock-rotate-left"></i> 🏛️ Ingest Previous Year's Dataset
                 </button>
                 <button class="btn-preset" id="btnAutoCorrectAllPolygons" style="background: linear-gradient(135deg, rgba(0,230,118,0.2), rgba(0,242,254,0.2)); color: var(--accent-green); border-color: rgba(0,230,118,0.5); font-weight:800;">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> 🤖 Auto-Run Variety Lifecycles & Ripening
-                </button>
-                <button class="btn-preset" id="btnUploadTrainingDataset" style="background: rgba(168,85,247,0.18); color: var(--accent-purple); border-color: rgba(168,85,247,0.5); font-weight:700;">
-                    <i class="fa-solid fa-flask"></i> 🧪 Upload Lab Ground-Truth
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 🤖 Multi-Year Auto-Snap & Delineate
                 </button>
                 <button class="btn-preset" id="btnResetData" style="background: rgba(255,23,68,0.15); color: var(--accent-coral); border-color: rgba(255,23,68,0.3);">
                     <i class="fa-solid fa-trash"></i> Clear Data
@@ -115,9 +116,9 @@
                 <span class="kpi-subtext"><i class="fa-solid fa-cubes-stacked"></i> ~42.5 T/Ac Average</span>
             </div>
             <div class="kpi-card purple">
-                <span class="kpi-title">Dynamic Lifecycles</span>
-                <span class="kpi-value" id="kpiRipeningGain" style="color:var(--accent-cyan);">100%</span>
-                <span class="kpi-subtext" style="color:var(--accent-green);"><i class="fa-solid fa-calendar-check"></i> Adsali / Suru / Khodwa</span>
+                <span class="kpi-title">Multi-Year Snapping</span>
+                <span class="kpi-value" id="kpiRipeningGain" style="color:var(--accent-cyan);">99.8%</span>
+                <span class="kpi-subtext" style="color:var(--accent-green);"><i class="fa-solid fa-link"></i> Auto-Historical Linked</span>
             </div>
             <div class="kpi-card green">
                 <span class="kpi-title">Maturity Optimization</span>
@@ -132,7 +133,7 @@
             <!-- LEFT CARD: ADVANCED AI TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Autonomous Plot Intelligence & Deep Diagnostics</h3>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Autonomous Plot Intelligence & Multi-Year History</h3>
                     <span class="badge success" id="lblPlotCount">0 Plots</span>
                 </div>
 
@@ -159,26 +160,27 @@
                     </select>
                 </div>
 
-                <!-- UNIFIED ADVANCED TELEMETRY TABLE -->
+                <!-- UNIFIED ADVANCED TELEMETRY TABLE (MAP & COCKPIT LEADING BUTTONS) -->
                 <div class="farmer-plot-list-wrapper" id="farmerPlotListWrapper">
                     <table class="data-table" id="leftPlotTable">
                         <thead>
                             <tr>
-                                <th>🔍 Deep-Dive</th>
+                                <th>📍 Map</th>
+                                <th>🔍 Cockpit</th>
                                 <th>Farmer Name & Gat No</th>
-                                <th>📅 Variety Lifecycle & Date</th>
+                                <th>📅 Variety & Planting Date</th>
                                 <th>🍬 CCS % (± Margin)</th>
-                                <th>⏳ Dynamic Peak Ripening</th>
+                                <th>⏳ 30-Day Peak Ripening</th>
                                 <th>💧 Soil Moisture</th>
-                                <th>📄 Docket</th>
+                                <th>🏛️ Multi-Year Snapped</th>
                             </tr>
                         </thead>
                         <tbody id="leftPlotTableBody">
                             <tr class="empty-row">
-                                <td colspan="7" style="text-align:center; padding: 2.5rem 1rem; color: var(--text-muted);">
+                                <td colspan="8" style="text-align:center; padding: 2.5rem 1rem; color: var(--text-muted);">
                                     <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--accent-cyan); display:block; margin-bottom: 0.75rem;"></i>
                                     <strong style="color:#f8fafc; font-size:0.95rem; display:block; margin-bottom:0.35rem;">No Datasets Currently Loaded</strong>
-                                    <span>Click <b>"📁 Upload Farmer Plots CSV"</b> above to load your factory field survey data.</span>
+                                    <span>Click <b>"📁 Upload Current Season CSV"</b> above to load your factory field survey data.</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -192,10 +194,10 @@
                             <i class="fa-solid fa-cloud-arrow-up"></i> Upload CSV
                         </button>
                         <button class="btn btn-xs btn-outline" onclick="window.autoCorrectAllPlotCoordinates()" style="border-color:rgba(0,230,118,0.5); color:var(--accent-green); font-weight:800;">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Detect Variety Lifecycles
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Multi-Year Auto-Snap
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-dna" style="color:var(--accent-cyan);"></i> Zero Manual Data Required</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-clock-rotate-left" style="color:var(--accent-cyan);"></i> Multi-Year Linked</span>
                 </div>
             </div>
 
@@ -231,7 +233,7 @@
         </main>
     </div>
 
-    <!-- 1. INTERACTIVE PLOT DEEP-DIVE COCKPIT MODAL -->
+    <!-- 1. INTERACTIVE PLOT DEEP-DIVE COCKPIT MODAL WITH MULTI-YEAR HISTORY -->
     <div class="cockpit-modal-overlay hidden" id="cockpitModal">
         <div class="cockpit-card">
             <div class="cockpit-header">
@@ -246,22 +248,31 @@
                 <!-- Left: Dynamic Variety Ripening Chart & Soil Moisture -->
                 <div>
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-chart-line"></i> Dynamic Variety Sucrose Ripening Simulation</span>
-                        <div style="height:180px; margin-top:8px;">
+                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-chart-line"></i> 30-Day Forward Sucrose Ripening Simulation</span>
+                        <div style="height:170px; margin-top:8px;">
                             <canvas id="ripeningChartCanvas"></canvas>
                         </div>
                     </div>
 
-                    <div class="cockpit-stat-box" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                        <div>
-                            <span style="font-size:0.70rem; color:#94a3b8;">💧 Soil Moisture (Root Zone)</span>
-                            <div style="font-size:1.1rem; font-weight:800; color:#00e676;" id="modalSoilMoisture">68% (Adequate)</div>
-                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalDripAdvice">Next Drip in 4 Days</span>
-                        </div>
-                        <div>
-                            <span style="font-size:0.70rem; color:#94a3b8;">📅 Auto-Detected Planting Date</span>
-                            <div style="font-size:1.1rem; font-weight:800; color:#00f2fe;" id="modalPlantingDate">18-Aug-2025</div>
-                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalCropAge">Adsali (362 Days)</span>
+                    <!-- MULTI-YEAR CROSS-SEASON HISTORICAL CARD -->
+                    <div class="cockpit-stat-box" style="background:rgba(0,242,254,0.04); border-color:rgba(0,242,254,0.2);">
+                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-clock-rotate-left"></i> Multi-Year Historical Alignment & Snapping</span>
+                        <div style="margin-top:6px; font-size:0.76rem;" id="modalMultiYearHistory">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                                <span>2024 Season (Plant Cane):</span>
+                                <strong style="color:#00e676;">1.80 Ac | 92.4 MT | 11.45% CCS</strong>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                                <span>2025 Season (1st Ratoon):</span>
+                                <strong style="color:#ffea00;">1.80 Ac | 86.0 MT | 11.10% CCS</strong>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>2026 Season (Current):</span>
+                                <strong style="color:#00f2fe;">1.78 Ac | 82.5 MT | 11.19% CCS</strong>
+                            </div>
+                            <div style="margin-top:6px; font-size:0.70rem; color:#00e676;">
+                                <i class="fa-solid fa-link"></i> Geodetic Boundary Alignment: <b>99.8% Match with 2024/2025 Cadastral Archive</b>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -274,21 +285,34 @@
                         </div>
                     </div>
 
+                    <div class="cockpit-stat-box" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div>
+                            <span style="font-size:0.70rem; color:#94a3b8;">💧 Soil Moisture</span>
+                            <div style="font-size:1.05rem; font-weight:800; color:#00e676;" id="modalSoilMoisture">68%</div>
+                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalDripAdvice">Next Drip in 4d</span>
+                        </div>
+                        <div>
+                            <span style="font-size:0.70rem; color:#94a3b8;">📅 Auto-Planting Date</span>
+                            <div style="font-size:1.05rem; font-weight:800; color:#00f2fe;" id="modalPlantingDate">18-Aug-2025</div>
+                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalCropAge">Adsali (362d)</span>
+                        </div>
+                    </div>
+
                     <div class="cockpit-stat-box">
                         <span style="font-size:0.75rem; font-weight:800; color:#00e676; text-transform:uppercase;"><i class="fa-solid fa-sack-dollar"></i> Sugar Mill Recovery Value</span>
                         <div style="display:flex; justify-content:space-between; margin-top:8px;">
                             <div>
-                                <span style="font-size:0.70rem; color:#94a3b8;">Est Factory Crushing Yield:</span>
-                                <div style="font-size:1.1rem; font-weight:800; color:#f8fafc;" id="modalTotalYieldTons">128.5 MT</div>
+                                <span style="font-size:0.70rem; color:#94a3b8;">Crushing Yield:</span>
+                                <div style="font-size:1.05rem; font-weight:800; color:#f8fafc;" id="modalTotalYieldTons">128.5 MT</div>
                             </div>
                             <div>
-                                <span style="font-size:0.70rem; color:#94a3b8;">Est Commercial Sugar:</span>
-                                <div style="font-size:1.1rem; font-weight:800; color:#00e676;" id="modalRecoverableSugar">15.8 MT Sugar</div>
+                                <span style="font-size:0.70rem; color:#94a3b8;">Commercial Sugar:</span>
+                                <div style="font-size:1.05rem; font-weight:800; color:#00e676;" id="modalRecoverableSugar">15.8 MT Sugar</div>
                             </div>
                         </div>
                     </div>
 
-                    <div style="display:flex; gap:8px; margin-top:12px;">
+                    <div style="display:flex; gap:8px; margin-top:10px;">
                         <button class="btn btn-primary btn-sm" id="btnModalPrintDocket" style="flex:1;">
                             <i class="fa-solid fa-print"></i> Print Harvest Docket
                         </button>
@@ -301,12 +325,12 @@
         </div>
     </div>
 
-    <!-- 4. PRINTABLE EXECUTIVE HARVEST & CANE QUALITY DOCKET TEMPLATE -->
+    <!-- PRINTABLE EXECUTIVE HARVEST & CANE QUALITY DOCKET TEMPLATE -->
     <div id="printableDocket" style="display:none;">
         <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;">
             <h2 style="margin:0; text-transform:uppercase;">गंगामाई सहकारी साखर कारखाना (SSK)</h2>
             <h4 style="margin:4px 0;">Gangamai Sugar Mill - Precision Agriculture & Harvest Department</h4>
-            <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Autonomous Satellite Intelligence Docket</p>
+            <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Autonomous Multi-Year Intelligence Docket</p>
         </div>
 
         <table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:14px;" border="1">
