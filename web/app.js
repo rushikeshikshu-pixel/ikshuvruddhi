@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         weeklyCalibrationOffset: 0.0,
         labCalibrationBias: 0.0,
         liveRasterByFarmId: {},
+        stalePlots: {}, // Tracks manually modified boundaries requiring fresh satellite fetch
         enrichedData: [],
         filteredData: [],
         searchTerm: '',
@@ -171,12 +172,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function polygonizeClassifiedCane(rasterCells, originalWalkedCoords) {
+        const totalCells = rasterCells.length;
+        const validCells = rasterCells.filter(c => c.scl_valid);
         const caneCells = rasterCells.filter(c => c.is_standing_cane);
+        
+        const validCount = validCells.length;
+        const caneCount = caneCells.length;
+
+        const clearSkyCoveragePct = totalCells ? ((validCount / totalCells) * 100.0).toFixed(1) : "0.0";
+        const observedCaneFractionPct = validCount ? ((caneCount / validCount) * 100.0).toFixed(1) : "0.0";
+
         if (!caneCells.length || !originalWalkedCoords || originalWalkedCoords.length < 3) {
             return {
                 snappedCoords: originalWalkedCoords,
                 detectedAcres: (originalWalkedCoords.length * 0.1).toFixed(2),
-                standingFractionPct: 100.0,
+                standingFractionPct: observedCaneFractionPct,
+                clearSkyCoveragePct: clearSkyCoveragePct,
+                observedCaneFractionPct: observedCaneFractionPct,
                 caneSignatureScoreMean: 0.0
             };
         }
@@ -211,13 +223,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const snappedHull = computeConvexHull(caneCenters);
         const detectedAcres = (caneCells.length * 0.0247105).toFixed(2);
-        const standingFractionPct = ((caneCells.length / rasterCells.length) * 100.0).toFixed(1);
         const meanScore = (caneCells.reduce((sum, c) => sum + parseFloat(c.cane_signature_score || c.p_cane || 0.9), 0) / caneCells.length * 100).toFixed(1);
 
         return {
             snappedCoords: snappedHull.length >= 3 ? snappedHull : originalWalkedCoords,
             detectedAcres: detectedAcres,
-            standingFractionPct: standingFractionPct,
+            standingFractionPct: observedCaneFractionPct,
+            clearSkyCoveragePct: clearSkyCoveragePct,
+            observedCaneFractionPct: observedCaneFractionPct,
             caneSignatureScoreMean: meanScore
         };
     }
@@ -328,6 +341,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             is_live_geotiff: true
                         }));
 
+                        // Clear stale flag on successful fresh fetch
+                        delete state.stalePlots[farmId];
+
                         state.latestAcquisitionDate = data.acquisition_date || null;
                         state.latestProductId = data.product_id || null;
 
@@ -341,8 +357,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 • Source: ${state.satelliteSourceInfo}
 • Valid Cloud-Free Pixels: ${validPixels}
-• Estimated Standing Cane Area: ${data.detected_cane_acres} Ac (${data.standing_fraction_pct}% of parcel)
-• Cane Signature Score: ${data.cane_signature_score_mean || data.confidence_pct}%
+• Estimated Standing Cane Area: ${data.detected_cane_acres} Ac (Observed Fraction: ${data.standing_fraction_pct}%)
+• Cane Signature Score: ${data.cane_signature_score_mean}%
 
 Real GeoTIFF cells are locked into the map!`);
                         } else {
@@ -367,12 +383,13 @@ Real GeoTIFF cells are locked into the map!`);
         const snappedStr = snappedObj.snappedCoords.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
 
         updatePlotPolygonInMemory(farmId, snappedStr);
+        delete state.stalePlots[farmId];
         runEngine();
         window.focusFarmerPlotOnMap(farmId);
         alert(`🤖 Autonomous Canopy Snapping Complete (Gat #${farmId})!
 
 • Mode: Simulation Fallback (Unauthenticated)
-• Estimated Standing Cane Area: ${snappedObj.detectedAcres} Ac (${snappedObj.standingFractionPct}% of parcel)
+• Estimated Standing Cane Area: ${snappedObj.detectedAcres} Ac (Observed Fraction: ${snappedObj.standingFractionPct}%)
 • Cane Signature Score: ${snappedObj.caneSignatureScoreMean}%
 • Excluded non-cane features (water pond & bare dirt margins).`);
     };
@@ -390,8 +407,8 @@ Real GeoTIFF cells are locked into the map!`);
     }
 
     /**
-     * CONCURRENT LIVE BULK AUTO-SNAP (Pool concurrency = 4)
-     * Transparent 3-tier reporting: Live / Unavailable / Simulated
+     * MUTUALLY EXCLUSIVE 4-TIER CONCURRENT BULK SNAPPING
+     * Tracks: LIVE_FETCHED, LIVE_CACHED, LIVE_FAILED, SIMULATED
      */
     window.runAutonomousCanopySnapping = async function() {
         if (!ACTIVE_SEASON_DATA.length) {
@@ -399,16 +416,16 @@ Real GeoTIFF cells are locked into the map!`);
             return;
         }
 
-        let liveCount = 0;
-        let unavailableCount = 0;
-        let simulationCount = 0;
+        let liveFetchedCount = 0;
+        let liveCachedCount = 0;
+        let liveFailedCount = 0;
+        let simulatedCount = 0;
 
         const tasks = ACTIVE_SEASON_DATA.filter(row => {
             let polyStr = findVal(row, ['Plot Area Lat Long', 'polygon', 'Polygon', 'PLOT_AREA_POLYGON']);
             return polyStr && polyStr.includes('#') && polyStr.split('#').length >= 3;
         });
 
-        // Worker queue with concurrency = 4
         const CONCURRENCY = 4;
         let taskIndex = 0;
 
@@ -420,7 +437,20 @@ Real GeoTIFF cells are locked into the map!`);
                 const polyStr = findVal(row, ['Plot Area Lat Long', 'polygon', 'Polygon', 'PLOT_AREA_POLYGON']);
                 const coords = polyStr.split('#').map(p => p.split(',').map(Number));
 
-                if (state.isCdseConfigured && !state.liveRasterByFarmId[farmId]) {
+                // 1. If already has authentic live raster in cache, reuse it
+                if (state.liveRasterByFarmId[farmId] && !state.stalePlots[farmId]) {
+                    const cells = state.liveRasterByFarmId[farmId];
+                    const snappedObj = polygonizeClassifiedCane(cells, coords);
+                    const snappedStr = snappedObj.snappedCoords.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
+                    row['Plot Area Lat Long'] = snappedStr;
+                    row['polygon'] = snappedStr;
+                    liveCachedCount++;
+                    continue;
+                }
+
+                // 2. Try live CDSE fetch if configured
+                let fetchSuccess = false;
+                if (state.isCdseConfigured) {
                     try {
                         const res = await fetch(`${BACKEND_BASE_URL}/api/satellite/process_plot`, {
                             method: "POST",
@@ -431,26 +461,30 @@ Real GeoTIFF cells are locked into the map!`);
                             const data = await res.json();
                             if (data.live_satellite && data.snapped_polygon && data.cells && data.cells.length && (data.valid_pixels > 0)) {
                                 state.liveRasterByFarmId[farmId] = data.cells.map(c => ({ ...c, is_live_geotiff: true }));
+                                delete state.stalePlots[farmId];
                                 const snappedStr = data.snapped_polygon.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
                                 row['Plot Area Lat Long'] = snappedStr;
                                 row['polygon'] = snappedStr;
-                                liveCount++;
+                                liveFetchedCount++;
+                                fetchSuccess = true;
                                 continue;
                             }
                         }
-                        unavailableCount++;
-                    } catch (e) {
-                        unavailableCount++;
+                    } catch (e) {}
+                    
+                    if (!fetchSuccess) {
+                        liveFailedCount++;
                     }
+                } else {
+                    simulatedCount++;
                 }
 
-                // Fallback simulation processing
-                const cells = state.liveRasterByFarmId[farmId] || generateFallbackRasterCells(coords, 16.0, 18.5, 12.0);
+                // 3. Fallback processing for offline / failed items
+                const cells = generateFallbackRasterCells(coords, 16.0, 18.5, 12.0);
                 const snappedObj = polygonizeClassifiedCane(cells, coords);
                 const snappedStr = snappedObj.snappedCoords.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
                 row['Plot Area Lat Long'] = snappedStr;
                 row['polygon'] = snappedStr;
-                simulationCount++;
             }
         }
 
@@ -458,13 +492,14 @@ Real GeoTIFF cells are locked into the map!`);
         await Promise.all(workers);
 
         runEngine();
-        alert(`⚡ Autonomous Canopy Snapping Summary across ${tasks.length} Plots:
+        alert(`⚡ Autonomous Canopy Snapping Complete across ${tasks.length} Plots:
 
-• 🟢 Live Copernicus GeoTIFFs Ingested: ${liveCount}
-• ⚠️ Live CDSE Unavailable / Failed: ${unavailableCount}
-• 🧪 Physics Simulation Processed: ${simulationCount}
+• 🟢 Live Copernicus CDSE Fetched: ${liveFetchedCount}
+• 📦 Authentic Live Rasters Reused: ${liveCachedCount}
+• ⚠️ Live CDSE Attempts Failed: ${liveFailedCount}
+• 🧪 Physics Simulation Mode: ${simulatedCount}
 
-All boundaries snapped to estimated standing cane canopy!`);
+Total Plots Accounted: ${liveFetchedCount + liveCachedCount + liveFailedCount + simulatedCount} / ${tasks.length}`);
     };
 
     window.startEditingPlotPolygon = function(farmId) {
@@ -499,7 +534,7 @@ All boundaries snapped to estimated standing cane canopy!`);
         if (el.polygonEditBanner) el.polygonEditBanner.style.display = 'block';
     };
 
-    // CACHE INVALIDATION ON EDIT: Clears stale satellite raster cells for modified parcel
+    // EXPLICIT STALE CACHE MANAGEMENT ON MANUAL EDIT
     window.saveCurrentPolygonEdit = function() {
         if (!state.isEditingPolygon || !state.editingLayer || !state.editingPlotId) return;
 
@@ -508,8 +543,9 @@ All boundaries snapped to estimated standing cane canopy!`);
 
         updatePlotPolygonInMemory(state.editingPlotId, newCoordsStr);
 
-        // INVALIDATE STALE RASTER CACHE
+        // INVALIDATE CACHE & MARK AS STALE
         delete state.liveRasterByFarmId[state.editingPlotId];
+        state.stalePlots[state.editingPlotId] = true;
 
         state.editingLayer.editing.disable();
         state.map.removeLayer(state.editingLayer);
@@ -518,9 +554,10 @@ All boundaries snapped to estimated standing cane canopy!`);
         if (el.polygonEditBanner) el.polygonEditBanner.style.display = 'none';
 
         runEngine();
-        alert(`✅ Polygon for Gat #${state.editingPlotId} saved!
+        alert(`✅ Modified Boundary for Gat #${state.editingPlotId} saved!
 
-Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixels for the new boundary.`);
+Status: ⚠️ STALE — SATELLITE REFRESH REQUIRED
+Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new boundary.`);
     };
 
     window.cancelPolygonEdit = function() {
@@ -540,6 +577,7 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
             ACTIVE_SEASON_DATA = [];
             LAB_GROUND_TRUTH_DB = {};
             state.liveRasterByFarmId = {};
+            state.stalePlots = {};
             state.enrichedData = [];
             state.filteredData = [];
             state.labCalibrationBias = 0.0;
@@ -590,11 +628,13 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
             let purity = (pol / brix) * 100;
             let ccs = (1.022 * pol) - (0.38 * brix);
 
-            const rasterCells = state.liveRasterByFarmId[farmId] || generateFallbackRasterCells(walkedCoords, pol, brix, ccs);
+            const isStale = !!state.stalePlots[farmId];
+            const rasterCells = (!isStale && state.liveRasterByFarmId[farmId]) || generateFallbackRasterCells(walkedCoords, pol, brix, ccs);
             const snappedObj = polygonizeClassifiedCane(rasterCells, walkedCoords);
 
             const detectedCaneAcres = snappedObj.detectedAcres;
-            const standingFractionPct = snappedObj.standingFractionPct;
+            const observedCaneFractionPct = snappedObj.observedCaneFractionPct || snappedObj.standingFractionPct;
+            const clearSkyCoveragePct = snappedObj.clearSkyCoveragePct || "100.0";
             const meanScore = snappedObj.caneSignatureScoreMean;
 
             const totalTons = (parseFloat(detectedCaneAcres) * 48.0).toFixed(1);
@@ -658,8 +698,10 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
                 hectares: rawHectares,
                 registeredAcres: registeredAcres,
                 detectedCaneAcres: detectedCaneAcres,
-                standingFractionPct: standingFractionPct,
+                observedCaneFractionPct: observedCaneFractionPct,
+                clearSkyCoveragePct: clearSkyCoveragePct,
                 caneSignatureScoreMean: meanScore,
+                isStale: isStale,
                 decision: decision,
                 decisionClass: decisionClass,
                 priorityRank: priorityRank,
@@ -813,8 +855,9 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
                     <div style="font-family:'Outfit', sans-serif; font-size:0.80rem;">
                         <strong style="color:var(--accent-cyan); font-size:14px;">${item.farmer_name}</strong><br/>
                         <b>Gat #${item.farm_id}</b> | <b>Decision:</b> <span class="decision-badge ${item.decisionClass}">${item.decision}</span><br/>
+                        ${item.isStale ? '<span style="color:#ff9100; font-weight:bold;">⚠️ STALE — SATELLITE REFRESH REQUIRED</span><br/>' : ''}
                         <b>Predicted Pol:</b> <strong style="color:#00f2fe;">${item.predictedPol}%</strong> | <b>Purity:</b> <strong>${item.predictedPurity}%</strong><br/>
-                        <b>Estimated Standing Cane:</b> <strong style="color:#00e676;">${item.detectedCaneAcres} Ac</strong> (${item.standingFractionPct}% of parcel)<br/>
+                        <b>Estimated Standing Cane:</b> <strong style="color:#00e676;">${item.detectedCaneAcres} Ac</strong> (Observed: ${item.observedCaneFractionPct}%)<br/>
                         <b>Cane Signature Score:</b> <strong>${item.caneSignatureScoreMean}%</strong><br/>
                         <div style="display:flex; gap:4px; margin-top:8px;">
                             <button class="btn btn-xs btn-primary" onclick="window.openCockpitDeepDive('${item.farm_id}')" style="flex:1;">
@@ -832,7 +875,10 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
                 baseCoords.forEach(c => bounds.extend(c));
 
                 const wPoly = L.polygon(baseCoords, { 
-                    color: '#00f2fe', weight: 2.2, fillColor: 'transparent'
+                    color: item.isStale ? '#ff9100' : '#00f2fe',
+                    weight: 2.2,
+                    fillColor: 'transparent',
+                    dashArray: item.isStale ? '4, 4' : null
                 }).addTo(state.map);
                 state.walkedPolygons.push(wPoly);
 
@@ -913,8 +959,8 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
                     </button>
                 </td>
                 <td>
-                    <button class="btn btn-xs btn-outline" onclick="window.autoSnapIndividualPlot('${item.farm_id}')" style="border-color:rgba(0,242,254,0.5); color:var(--accent-cyan); font-weight:700;">
-                        ⚡ Auto-Snap
+                    <button class="btn btn-xs btn-outline" onclick="window.autoSnapIndividualPlot('${item.farm_id}')" style="border-color:${item.isStale ? '#ff9100' : 'rgba(0,242,254,0.5)'}; color:${item.isStale ? '#ff9100' : 'var(--accent-cyan)'}; font-weight:700;">
+                        ${item.isStale ? '⚠️ Re-Snap' : '⚡ Auto-Snap'}
                     </button>
                 </td>
                 <td>
@@ -924,6 +970,7 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
                 </td>
                 <td>
                     <strong style="color:#f8fafc; font-size:0.78rem;">${item.farmer_name}</strong>
+                    ${item.isStale ? '<span style="display:block; font-size:0.62rem; color:#ff9100; font-weight:bold;">STALE CACHE</span>' : ''}
                 </td>
                 <td>
                     <span style="font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:#cbd5e1;">#${item.farm_id}</span>
@@ -938,7 +985,7 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
                 </td>
                 <td>
                     <strong style="color:#00e676; font-size:0.78rem;">${item.detectedCaneAcres} Ac</strong>
-                    <span style="display:block; font-size:0.65rem; color:#94a3b8;">${item.standingFractionPct}% of parcel</span>
+                    <span style="display:block; font-size:0.65rem; color:#94a3b8;">Observed: ${item.observedCaneFractionPct}% (Sky: ${item.clearSkyCoveragePct}%)</span>
                 </td>
                 <td>
                     <span style="font-size:0.72rem; font-weight:700; color:#f8fafc;">${item.caneTonnage} MT</span>
@@ -1004,7 +1051,7 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
 
             <div style="font-size:0.70rem; color:#cbd5e1; padding:4px 6px;">
                 <span style="color:#00f2fe;">🔷 Registered Walked: ${item.registeredAcres} Ac</span> | 
-                <span style="color:#00e676; font-weight:bold;">🟩 Estimated Standing Cane: ${item.detectedCaneAcres} Ac (${item.standingFractionPct}%)</span>
+                <span style="color:#00e676; font-weight:bold;">🟩 Estimated Standing Cane: ${item.detectedCaneAcres} Ac (Observed: ${item.observedCaneFractionPct}%)</span>
             </div>
         `;
 
@@ -1029,16 +1076,16 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
                 <strong style="color:#00e676;">${item.detectedCaneAcres} Ac</strong>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
-                <span>Standing Cane Fraction:</span>
-                <strong style="color:#ffea00;">${item.standingFractionPct}% of Parcel</strong>
+                <span>Observed Cane Fraction:</span>
+                <strong style="color:#ffea00;">${item.observedCaneFractionPct}% of Clear-Sky Area</strong>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
-                <span>Cane Signature Score:</span>
-                <strong style="color:#00e676;">${item.caneSignatureScoreMean}%</strong>
+                <span>Clear-Sky Scene Coverage:</span>
+                <strong style="color:#00f2fe;">${item.clearSkyCoveragePct}% (SCL Whitelist)</strong>
             </div>
             <div style="display:flex; justify-content:space-between;">
-                <span>Cloud Contamination (SCL Mask):</span>
-                <strong style="color:#cbd5e1;">1.8% (Passed Clear Sky Whitelist)</strong>
+                <span>Cane Signature Score:</span>
+                <strong style="color:#00e676;">${item.caneSignatureScoreMean}%</strong>
             </div>
         `;
 
@@ -1096,7 +1143,7 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
         document.getElementById('docketGatNo').textContent = `Plot / Gat #${farmId} (${item.Village || 'Ghotan Site'})`;
         document.getElementById('docketVariety').textContent = `${item.cane_variety} (${item.plantDateInfo.seasonType})`;
         document.getElementById('docketPlantingDate').textContent = `${item.plantDateInfo.dateStr} (Season 2526)`;
-        document.getElementById('docketNetArea').textContent = `${item.detectedCaneAcres} Acres (Standing Fraction: ${item.standingFractionPct}%)`;
+        document.getElementById('docketNetArea').textContent = `${item.detectedCaneAcres} Acres (Observed Fraction: ${item.observedCaneFractionPct}%)`;
         document.getElementById('docketYield').textContent = `${item.caneTonnage} MT (~48.0 T/Ac Model)`;
         document.getElementById('docketPol').textContent = `${item.predictedPol}% (Lab: ${item.labPolText})`;
         document.getElementById('docketCcs').textContent = `${item.predictedCcs}% (Lab: ${item.labCcsText})`;
@@ -1143,7 +1190,8 @@ Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixe
                     predicted_purity_pct: d.predictedPurity,
                     registered_walked_acres: d.registeredAcres,
                     estimated_standing_cane_acres: d.detectedCaneAcres,
-                    standing_fraction_pct: d.standingFractionPct,
+                    observed_cane_fraction_pct: d.observedCaneFractionPct,
+                    clear_sky_coverage_pct: d.clearSkyCoveragePct,
                     cane_signature_score_pct: d.caneSignatureScoreMean,
                     est_cane_tonnage: d.caneTonnage,
                     plot_area_polygon: d.plot_area_polygon
