@@ -184,9 +184,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const clearSkyCoveragePct = totalCells ? ((validCount / totalCells) * 100.0).toFixed(1) : "0.0";
         const observedCaneFractionPct = validCount ? ((caneCount / validCount) * 100.0).toFixed(1) : "0.0";
 
+        const geojsonFallback = {
+            type: "Polygon",
+            coordinates: [originalWalkedCoords.map(p => [p[1], p[0]])]
+        };
+
         if (!caneCells.length || !originalWalkedCoords || originalWalkedCoords.length < 3) {
             return {
-                geojson: { type: "Polygon", coordinates: [originalWalkedCoords] },
+                geojson: geojsonFallback,
                 snappedCoords: originalWalkedCoords,
                 detectedAcres: (originalWalkedCoords.length * 0.1).toFixed(2),
                 standingFractionPct: observedCaneFractionPct,
@@ -229,7 +234,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const meanScore = (caneCells.reduce((sum, c) => sum + parseFloat(c.cane_signature_score || c.p_cane || 0.9), 0) / caneCells.length * 100).toFixed(1);
 
         return {
-            geojson: { type: "Polygon", coordinates: [snappedHull.length >= 3 ? snappedHull : originalWalkedCoords] },
+            geojson: {
+                type: "Polygon",
+                coordinates: [(snappedHull.length >= 3 ? snappedHull : originalWalkedCoords).map(p => [p[1], p[0]])]
+            },
             snappedCoords: snappedHull.length >= 3 ? snappedHull : originalWalkedCoords,
             detectedAcres: detectedAcres,
             standingFractionPct: observedCaneFractionPct,
@@ -349,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             state.liveGeoJsonByFarmId[farmId] = data.geojson;
                         }
 
-                        // Explicit cache cleanup on single auto-snap
+                        // STRICT: Only clear stale state on successful live fetch
                         delete state.stalePlots[farmId];
 
                         state.latestAcquisitionDate = data.acquisition_date || null;
@@ -383,10 +391,19 @@ Real GeoTIFF cells and GeoJSON boundaries are locked into the map!`);
                     }
                 }
             } catch (err) {
-                console.warn("Backend call failed, using simulation mode:", err);
+                console.warn("Backend call failed, maintaining stale/simulation status:", err);
+            }
+            
+            // If CDSE was attempted but failed, do NOT clear stale state or silently generate simulation
+            if (state.stalePlots[farmId]) {
+                alert(`⚠️ Live CDSE Refresh Failed for Gat #${farmId}.
+
+Plot remains flagged as STALE — SATELLITE REFRESH REQUIRED.`);
+                return;
             }
         }
 
+        // Offline / Unauthenticated simulation path
         const snappedObj = polygonizeClassifiedCane(item.rasterCells, walkedCoords);
         const snappedStr = snappedObj.snappedCoords.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
 
@@ -909,7 +926,6 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                 }).addTo(state.map);
                 state.walkedPolygons.push(wPoly);
 
-                // Render Full MultiPolygon/Holes GeoJSON if present
                 const geoJson = state.liveGeoJsonByFarmId[item.farm_id];
                 if (geoJson) {
                     const geoLayer = L.geoJSON(geoJson, {
