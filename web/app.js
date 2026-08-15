@@ -1,5 +1,5 @@
 /**
- * IkshuVruddhi AI Engine - Streamlined Telemetry (Brix, Pol, CCS Conformal Ranges)
+ * IkshuVruddhi AI Engine - Production Pipeline (Clean User-Data Ingestion)
  * Factory: Gangamai Sugar Mill (गंगामाई सहकारी साखर कारखाना SSK)
  */
 
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rawCsvData: [],
         enrichedData: [],
         filteredData: [],
-        activePreset: 'farmer_real',
+        activePreset: 'custom_user',
         circleFilter: 'ALL',
         cropTypeFilter: 'ALL',
         priorityFilter: 'ALL',
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         focusedPlotId: null,
         userCropOverrides: {},
         userAreaOverrides: {},
-        isLabCalibrated: true,
+        isLabCalibrated: false,
         
         // Compare Maps
         compareMapLeft: null,
@@ -32,34 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
         tileLayer: null
     };
 
-    // REAL DATASETS
-    const REAL_DATASETS = {
-        farmer_real: [
-            { farm_id: '13702', farmer_name: 'KHEDKAR RAMDAS NIVRUTTI', field_name: 'GHOTAN (BHARAT WASTI) Plot #13702', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'CO-265', planting_type: 'Suru', crop_age_days: 310, juice_brix_val: '18.40', juice_pol_val: '14.85', ccs_val: '11.19', sat_ndvi: '0.74', sat_gndvi: '0.68', sat_lswi: '0.56', cwsi: '0.32', sat_temp_celsius: '33.5', sat_solar_radiation_kwh_m2: '7.8', ripening_rain: '35', plot_area_polygon: '19.3908,75.3150#19.3907,75.3164#19.3897,75.3163#19.3898,75.3149', latitude: '19.3902277', longitude: '75.3157288', gross_area_acres: '2.50' },
-            { farm_id: '12363', farmer_name: 'KHEDKAR RAMDAS NIVRUTTI', field_name: 'GHOTAN (BHARAT WASTI) Plot #12363', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'CO-265', planting_type: 'Khodwa', crop_age_days: 335, juice_brix_val: '18.90', juice_pol_val: '15.40', ccs_val: '11.56', sat_ndvi: '0.78', sat_gndvi: '0.71', sat_lswi: '0.60', cwsi: '0.28', sat_temp_celsius: '33.2', sat_solar_radiation_kwh_m2: '7.9', ripening_rain: '28', plot_area_polygon: '19.3971,75.3005#19.3970,75.3018#19.3959,75.3017#19.3960,75.3004', latitude: '19.3964805', longitude: '75.3011326', gross_area_acres: '2.30' },
-            { farm_id: '5614', farmer_name: 'KSHIRSAGAR BABASAHEB NAVNATH', field_name: 'GHOTAN (TAKA MALA) Plot #5614', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'CO-265', planting_type: 'Khodwa', crop_age_days: 350, juice_brix_val: '19.20', juice_pol_val: '15.80', ccs_val: '11.85', sat_ndvi: '0.81', sat_gndvi: '0.74', sat_lswi: '0.62', cwsi: '0.25', sat_temp_celsius: '33.0', sat_solar_radiation_kwh_m2: '7.7', ripening_rain: '30', plot_area_polygon: '19.5713819,74.9471588#19.5713308,74.9477495#19.5708764,74.9477011#19.5709513,74.9470969', latitude: '19.3882680', longitude: '75.2859986', gross_area_acres: '2.40' }
-        ],
-        adsali_real: [
-            { farm_id: 'ADS-101', farmer_name: 'PATIL BALASAHEB SHANKAR', field_name: 'Ghotan Adsali High-Sucrose Field 101', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'Co 86032 (Adsali)', planting_type: 'Adsali (15-18 M)', crop_age_days: 455, juice_brix_val: '19.80', juice_pol_val: '16.45', ccs_val: '12.29', sat_ndvi: '0.86', sat_gndvi: '0.79', sat_lswi: '0.68', cwsi: '0.18', sat_temp_celsius: '32.5', sat_solar_radiation_kwh_m2: '8.2', ripening_rain: '20', plot_area_polygon: '19.3930,75.3115#19.3928,75.3126#19.3920,75.3124#19.3921,75.3114', latitude: '19.3925', longitude: '75.3120', gross_area_acres: '3.10' },
-            { farm_id: 'ADS-102', farmer_name: 'MORE SHIVAJI GANGADHAR', field_name: 'Ghotan Adsali Plot 102', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'Co 11015', planting_type: 'Adsali (15-18 M)', crop_age_days: 460, juice_brix_val: '20.10', juice_pol_val: '16.80', ccs_val: '12.53', sat_ndvi: '0.88', sat_gndvi: '0.81', sat_lswi: '0.70', cwsi: '0.16', sat_temp_celsius: '32.0', sat_solar_radiation_kwh_m2: '8.4', ripening_rain: '18', plot_area_polygon: '19.3955,75.3075#19.3954,75.3086#19.3944,75.3084#19.3945,75.3074', latitude: '19.3950', longitude: '75.3080', gross_area_acres: '3.00' },
-            { farm_id: 'ADS-103', farmer_name: 'DESHMUKH DNYANDEO LAXMAN', field_name: 'Gangamai Command Adsali Estate 103', tehsil_district: 'Gangamai Circle', cane_variety: 'CoM 0265', planting_type: 'Adsali (15-18 M)', crop_age_days: 445, juice_brix_val: '19.50', juice_pol_val: '16.10', ccs_val: '12.04', sat_ndvi: '0.85', sat_gndvi: '0.78', sat_lswi: '0.66', cwsi: '0.19', sat_temp_celsius: '33.0', sat_solar_radiation_kwh_m2: '8.0', ripening_rain: '22', latitude: '19.8940', longitude: '74.4820', gross_area_acres: '2.80' }
-        ],
-        ahilyanagar_real: [
-            { farm_id: 'GANG-01', farmer_name: 'Gangamai Estate Plot 1', field_name: 'Gangamai Command Field 1', tehsil_district: 'Gangamai Circle', cane_variety: 'Co 86032', planting_type: 'Adsali', crop_age_days: 440, juice_brix_val: '19.40', juice_pol_val: '15.95', ccs_val: '11.93', sat_ndvi: '0.84', sat_gndvi: '0.77', sat_lswi: '0.65', cwsi: '0.20', sat_temp_celsius: '33.5', sat_solar_radiation_kwh_m2: '7.8', ripening_rain: '25', latitude: '19.8912', longitude: '74.4795', gross_area_acres: '2.90' }
-        ]
-    };
-
     // Safe Property Getters
     function getFarmerName(item) {
-        if (!item) return 'Gangamai Farmer';
+        if (!item) return 'Farmer';
         const val = item.farmer_name || item['Farmer Name'] || item['FARMER_NAME'] || item['farmer'] || item.Farmer || item.field_name || item['Field Name'] || item.farm_id;
-        return (val && val !== 'undefined') ? String(val) : 'PATIL SHANKAR (Gangamai Plot)';
+        return (val && val !== 'undefined') ? String(val) : 'Farmer';
     }
 
     function getFarmId(item) {
-        if (!item) return 'PLOT-101';
+        if (!item) return 'PLOT-1';
         const val = item.farm_id || item['Plot No'] || item['PLOT_NO'] || item['farm_id'] || item.id || item['ID'];
-        return (val && val !== 'undefined') ? String(val) : 'PLOT-101';
+        return (val && val !== 'undefined') ? String(val) : 'PLOT-1';
     }
 
     function getCaneVariety(item) {
@@ -82,10 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         leftPlotTableBody: document.getElementById('leftPlotTableBody'),
         selectFactoryCircle: document.getElementById('selectFactoryCircle'),
         selectCropType: document.getElementById('selectCropType'),
-        btnPresetFarmerReal: document.getElementById('btnPresetFarmerReal'),
-        btnPresetAdsaliReal: document.getElementById('btnPresetAdsaliReal'),
-        btnPresetAhilyanagarReal: document.getElementById('btnPresetAhilyanagarReal'),
-        btnPresetUserCsv: document.getElementById('btnPresetUserCsv'),
+        btnUploadCsvDirect: document.getElementById('btnUploadCsvDirect'),
         btnUploadTrainingDataset: document.getElementById('btnUploadTrainingDataset'),
         btnResetData: document.getElementById('btnResetData'),
         btnOpenCompareModal: document.getElementById('btnOpenCompareModal'),
@@ -99,29 +79,35 @@ document.addEventListener('DOMContentLoaded', () => {
     initMap();
     setupEventListeners();
 
+    // Check if user has uploaded CSV saved in local browser storage
     const savedCsv = localStorage.getItem('satcane_saved_csv_data');
     if (savedCsv) {
         try {
             state.rawCsvData = JSON.parse(savedCsv);
-            state.activePreset = 'custom_user';
-            state.isLabCalibrated = true;
             runEngine();
-            markPresetActive(state.isLabCalibrated ? 'btnUploadTrainingDataset' : 'btnPresetUserCsv');
         } catch (e) {
-            loadPreset('farmer_real');
+            state.rawCsvData = [];
+            runEngine();
         }
     } else {
-        loadPreset('farmer_real');
+        state.rawCsvData = [];
+        runEngine();
     }
 
     function initMap() {
-        state.map = L.map('map', { center: [19.3902, 75.3157], zoom: 14 });
+        state.map = L.map('map', { center: [19.4500, 75.1000], zoom: 11 });
         state.tileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Esri Satellite Imagery'
         }).addTo(state.map);
     }
 
     function runEngine() {
+        if (!state.rawCsvData || !state.rawCsvData.length) {
+            state.enrichedData = [];
+            applyFilters();
+            return;
+        }
+
         state.enrichedData = state.rawCsvData.map(item => {
             const farmId = getFarmId(item);
             const farmerName = getFarmerName(item);
@@ -152,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ccs = (1.022 * pol) - (0.38 * brix);
             if (ccs > 13.85) ccs = 13.85;
 
-            // CONFORMAL RISK MARGINS FOR BRIX, POL & CCS (95% COVERAGE)
             const brixMargin = 0.38;
             const polMargin = 0.32;
             const ccsMargin = 0.28;
@@ -167,11 +152,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // NET CANE AREA
-            const defaultNetArea = String(farmId).startsWith('ADS') ? '2.40' : '1.78';
-            let netCaneAcres = state.userAreaOverrides[farmId] || item.net_cane_acres || item['Net Area'] || defaultNetArea;
+            let netCaneAcres = state.userAreaOverrides[farmId] || item.net_cane_acres || item['Net Area'] || item.gross_area_acres || '2.00';
             if (cropStatus === 'NON_CANE_MAIZE') netCaneAcres = '0.00';
 
-            const grossArea = item.gross_area_acres || (parseFloat(netCaneAcres) + 0.72).toFixed(2);
+            const grossArea = item.gross_area_acres || (parseFloat(netCaneAcres) + 0.50).toFixed(2);
             const dryLandTrimmed = (parseFloat(grossArea) - parseFloat(netCaneAcres)).toFixed(2);
 
             return {
@@ -197,6 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyFilters() {
+        if (!state.enrichedData.length) {
+            state.filteredData = [];
+            renderMap();
+            renderLeftPlotList();
+            updateKpis();
+            return;
+        }
+
         state.filteredData = state.enrichedData.filter(item => {
             const circleMatch = state.circleFilter === 'ALL' || (item.tehsil_district || '').toLowerCase().includes(state.circleFilter.toLowerCase());
             
@@ -219,17 +211,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateKpis() {
         const total = state.filteredData.length;
-        el.kpiTotalFields.textContent = total;
+        if (el.kpiTotalFields) el.kpiTotalFields.textContent = total;
         if (el.lblPlotCount) el.lblPlotCount.textContent = `${total} Plots`;
         
+        if (!total) {
+            if (el.kpiPrio1Slips) el.kpiPrio1Slips.textContent = '0';
+            if (el.kpiAvgCcs) el.kpiAvgCcs.textContent = '0.00%';
+            if (el.kpiAvgNdvi) el.kpiAvgNdvi.textContent = '0.00';
+            if (el.kpiEstSugar) el.kpiEstSugar.textContent = '0 MT';
+            if (el.kpiBonusRevenue) el.kpiBonusRevenue.textContent = '+ ₹ 0.0 L';
+            return;
+        }
+
         const sugarcanePlots = state.filteredData.filter(d => d.cropStatus === 'SUGARCANE');
-        el.kpiPrio1Slips.textContent = sugarcanePlots.filter(d => d.priority === 'prio-1').length;
+        if (el.kpiPrio1Slips) el.kpiPrio1Slips.textContent = sugarcanePlots.filter(d => d.priority === 'prio-1').length;
         
         if (sugarcanePlots.length > 0) {
             const avgCcs = (sugarcanePlots.reduce((acc, d) => acc + parseFloat(d.ccs_val), 0) / sugarcanePlots.length).toFixed(2);
             const avgNdvi = (sugarcanePlots.reduce((acc, d) => acc + parseFloat(d.sat_ndvi || 0.75), 0) / sugarcanePlots.length).toFixed(2);
-            el.kpiAvgCcs.textContent = `${avgCcs}% (±0.28%)`;
-            el.kpiAvgNdvi.textContent = avgNdvi;
+            const totalAcres = sugarcanePlots.reduce((acc, d) => acc + parseFloat(d.net_cane_acres || 0), 0);
+            const estSugarMt = (totalAcres * 38.0 * (parseFloat(avgCcs)/100)).toFixed(0);
+
+            if (el.kpiAvgCcs) el.kpiAvgCcs.textContent = `${avgCcs}% (±0.28%)`;
+            if (el.kpiAvgNdvi) el.kpiAvgNdvi.textContent = avgNdvi;
+            if (el.kpiEstSugar) el.kpiEstSugar.textContent = `${estSugarMt} MT`;
+            if (el.kpiBonusRevenue) el.kpiBonusRevenue.textContent = `+ ₹ ${(totalAcres * 0.45).toFixed(1)} L`;
         }
     }
 
@@ -239,6 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
         state.polygons.forEach(p => state.map.removeLayer(p));
         state.polygons = [];
         state.markerMapByFarmId = {};
+
+        if (!state.filteredData.length) return;
 
         const bounds = L.latLngBounds();
         state.filteredData.forEach(item => {
@@ -284,12 +292,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // RENDER STREAMLINED UNIFIED TELEMETRY TABLE (NO SAMPLE COLUMN)
+    // RENDER PRODUCTION TABLE
     function renderLeftPlotList() {
         el.leftPlotTableBody.innerHTML = '';
 
         if (!state.filteredData.length) {
-            el.leftPlotTableBody.innerHTML = `<tr class="empty-row"><td colspan="7" style="text-align:center; color:var(--accent-cyan); padding:1rem;">No plots found</td></tr>`;
+            el.leftPlotTableBody.innerHTML = `
+                <tr class="empty-row">
+                    <td colspan="7" style="text-align:center; padding: 2.5rem 1rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--accent-cyan); display:block; margin-bottom: 0.75rem;"></i>
+                        <strong style="color:#f8fafc; font-size:0.95rem; display:block; margin-bottom:0.35rem;">No Datasets Currently Loaded</strong>
+                        <span>Click <b>"📁 Upload Farmer Plots CSV"</b> above to load your factory field survey data.</span>
+                    </td>
+                </tr>
+            `;
             return;
         }
 
@@ -354,41 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.editNetCaneArea = function(farmId) {
-        const item = state.enrichedData.find(d => getFarmId(d) === farmId);
-        if (!item) return;
-
-        const currentNet = item.net_cane_acres;
-        const grossArea = item.gross_area_acres;
-
-        const newNetStr = prompt(
-            `✂️ DRY LAND TRIMMING & NET ACREAGE EDITOR
-
-Farmer: ${getFarmerName(item)}
-Total Registered Land: ${grossArea} Acres
-Current Net Cane Area: ${currentNet} Acres
-
-Enter NEW Net Actual Sugarcane Area in Acres (excluding dry land / bare soil):`,
-            currentNet
-        );
-
-        if (newNetStr !== null) {
-            const newNet = parseFloat(newNetStr);
-            if (!isNaN(newNet) && newNet >= 0 && newNet <= parseFloat(grossArea)) {
-                state.userAreaOverrides[farmId] = newNet.toFixed(2);
-                runEngine();
-                const trimmed = (parseFloat(grossArea) - newNet).toFixed(2);
-                alert(`✅ Successfully trimmed dry land!
-
-Registered Area: ${grossArea} Ac
-Excluded Dry Land: ${trimmed} Ac
-New Net Sugarcane Area: ${newNet.toFixed(2)} Ac`);
-            } else {
-                alert(`⚠️ Invalid acreage value. Please enter a valid number between 0.00 and ${grossArea} Acres.`);
-            }
-        }
-    };
-
     window.focusFarmerPlotOnMap = function(farmId) {
         state.focusedPlotId = farmId;
         renderLeftPlotList();
@@ -448,51 +429,6 @@ New Net Sugarcane Area: ${newNet.toFixed(2)} Ac`);
                 isSyncing = false;
             }
         });
-
-        renderZonationLeft();
-        renderUavRasterRight();
-    }
-
-    function renderZonationLeft() {
-        state.compareMapLeft.eachLayer(l => { if (l instanceof L.Polygon) state.compareMapLeft.removeLayer(l); });
-        const p1 = [[19.3908, 75.3150], [19.3907, 75.3164], [19.3897, 75.3163], [19.3898, 75.3149]];
-        const p2 = [[19.3906, 75.3152], [19.3905, 75.3162], [19.3899, 75.3161], [19.3900, 75.3151]];
-        const p3 = [[19.3904, 75.3154], [19.3904, 75.3160], [19.3901, 75.3159], [19.3901, 75.3153]];
-        const p4 = [[19.3903, 75.3155], [19.3903, 75.3158], [19.3902, 75.3157], [19.3902, 75.3155]];
-
-        L.polygon(p1, { color: '#00e676', weight: 1.5, fillColor: '#00e676', fillOpacity: 0.85 }).addTo(state.compareMapLeft);
-        L.polygon(p2, { color: '#ffea00', weight: 1.5, fillColor: '#ffea00', fillOpacity: 0.85 }).addTo(state.compareMapLeft);
-        L.polygon(p3, { color: '#ff9100', weight: 1.5, fillColor: '#ff9100', fillOpacity: 0.85 }).addTo(state.compareMapLeft);
-        L.polygon(p4, { color: '#ff1744', weight: 1.5, fillColor: '#ff1744', fillOpacity: 0.90 }).addTo(state.compareMapLeft);
-
-        state.compareMapLeft.fitBounds(L.latLngBounds(p1), { padding: [20, 20] });
-    }
-
-    function renderUavRasterRight() {
-        state.compareMapRight.eachLayer(l => { if (l instanceof L.Rectangle) state.compareMapRight.removeLayer(l); });
-        const minLat = 19.3897, maxLat = 19.3908;
-        const minLon = 75.3149, maxLon = 75.3164;
-        const steps = 24;
-        const latStep = (maxLat - minLat) / steps;
-        const lonStep = (maxLon - minLon) / steps;
-
-        for (let r = 0; r < steps; r++) {
-            for (let c = 0; c < steps; c++) {
-                const gridLat = minLat + (r * latStep);
-                const gridLon = minLon + (c * lonStep);
-                const distFromCenter = Math.hypot(r - steps/2, c - steps/2);
-                let color = '#ffea00';
-                if (distFromCenter < 5) color = '#0055ff';
-                else if (distFromCenter < 9) color = '#00e676';
-                else if (distFromCenter > 11) color = '#ff9100';
-
-                L.rectangle([[gridLat, gridLon], [gridLat + latStep, gridLon + lonStep]], {
-                    color: color, weight: 0.2, fillColor: color, fillOpacity: 0.85
-                }).addTo(state.compareMapRight);
-            }
-        }
-
-        state.compareMapRight.fitBounds(L.latLngBounds([[minLat, minLon], [maxLat, maxLon]]), { padding: [20, 20] });
     }
 
     function drawHistogramCurve() {
@@ -527,12 +463,6 @@ New Net Sugarcane Area: ${newNet.toFixed(2)} Ac`);
         ctx.stroke();
     }
 
-    function markPresetActive(buttonId) {
-        document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
-        const btn = document.getElementById(buttonId);
-        if (btn) btn.classList.add('active');
-    }
-
     function setupEventListeners() {
         if (el.inputSearchPlotList) {
             el.inputSearchPlotList.addEventListener('input', (e) => {
@@ -556,23 +486,9 @@ New Net Sugarcane Area: ${newNet.toFixed(2)} Ac`);
         }
 
         if (el.btnOpenCompareModal) el.btnOpenCompareModal.addEventListener('click', window.openCompareModal);
-        if (el.btnPresetFarmerReal) el.btnPresetFarmerReal.addEventListener('click', () => loadPreset('farmer_real'));
-        if (el.btnPresetAdsaliReal) el.btnPresetAdsaliReal.addEventListener('click', () => loadPreset('adsali_real'));
-        if (el.btnPresetAhilyanagarReal) el.btnPresetAhilyanagarReal.addEventListener('click', () => loadPreset('ahilyanagar_real'));
         
-        if (el.btnPresetUserCsv) {
-            el.btnPresetUserCsv.addEventListener('click', () => {
-                const savedStr = localStorage.getItem('satcane_saved_csv_data');
-                if (savedStr) {
-                    try {
-                        state.rawCsvData = JSON.parse(savedStr);
-                        state.activePreset = 'custom_user';
-                        runEngine();
-                        markPresetActive('btnPresetUserCsv');
-                        alert(`📁 Loaded ${state.rawCsvData.length} plots from your uploaded CSV!`);
-                        return;
-                    } catch (e) {}
-                }
+        if (el.btnUploadCsvDirect) {
+            el.btnUploadCsvDirect.addEventListener('click', () => {
                 document.getElementById('csvFileInput').click();
             });
         }
@@ -583,13 +499,17 @@ New Net Sugarcane Area: ${newNet.toFixed(2)} Ac`);
             });
         }
 
-        if (el.btnResetData) el.btnResetData.addEventListener('click', () => { 
-            state.rawCsvData = []; 
-            state.userCropOverrides = {};
-            state.userAreaOverrides = {};
-            localStorage.removeItem('satcane_saved_csv_data');
-            runEngine(); 
-        });
+        if (el.btnResetData) {
+            el.btnResetData.addEventListener('click', () => { 
+                if (confirm('Clear all loaded farmer datasets from memory?')) {
+                    state.rawCsvData = []; 
+                    state.userCropOverrides = {};
+                    state.userAreaOverrides = {};
+                    localStorage.removeItem('satcane_saved_csv_data');
+                    runEngine(); 
+                }
+            });
+        }
 
         if (el.csvFileInput) {
             el.csvFileInput.addEventListener('change', (e) => {
@@ -602,8 +522,7 @@ New Net Sugarcane Area: ${newNet.toFixed(2)} Ac`);
                             state.activePreset = 'custom_user';
                             localStorage.setItem('satcane_saved_csv_data', JSON.stringify(res.data));
                             runEngine();
-                            markPresetActive('btnPresetUserCsv');
-                            alert(`💾 ${res.data.length} plots successfully parsed & saved to browser memory!`);
+                            alert(`💾 ${res.data.length} plots successfully parsed & loaded into IkshuVruddhi AI Engine!`);
                         }
                     });
                 }
@@ -621,8 +540,7 @@ New Net Sugarcane Area: ${newNet.toFixed(2)} Ac`);
                             state.activePreset = 'training_lab';
                             localStorage.setItem('satcane_saved_csv_data', JSON.stringify(res.data));
                             runEngine();
-                            markPresetActive('btnUploadTrainingDataset');
-                            alert(`🔬 2026 CONFORMAL LAB PREDICTION ENGINE LOADED!
+                            alert(`🔬 2026 CONFORMAL LAB ENGINE LOADED!
 
 Parsed ${res.data.length} lab ground-truth records.
 95% Conformal Confidence Intervals (Brix ±0.38%, Pol ±0.32%, CCS ±0.28%) active!`);
@@ -638,15 +556,5 @@ Parsed ${res.data.length} lab ground-truth records.
                 row.classList.add('active');
             });
         });
-    }
-
-    function loadPreset(key) {
-        state.activePreset = key;
-        if (key === 'farmer_real') markPresetActive('btnPresetFarmerReal');
-        if (key === 'adsali_real') markPresetActive('btnPresetAdsaliReal');
-        if (key === 'ahilyanagar_real') markPresetActive('btnPresetAhilyanagarReal');
-
-        state.rawCsvData = REAL_DATASETS[key] || REAL_DATASETS.farmer_real;
-        runEngine();
     }
 });

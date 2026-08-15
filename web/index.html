@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi AI Engine - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Conformal Brix, Pol, CCS Range Telemetry for Gangamai Sugar Mill.">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Production Telemetry & Conformal Lab Engine for Gangamai Sugar Mill.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="brand-text">
                     <h1>IkshuVruddhi <span>AI Engine</span> <span class="mill-badge">इक्षुवृद्धी 2026</span></h1>
-                    <p>Gangamai Sugar Mill Command - Conformal Brix, Pol & CCS Telemetry</p>
+                    <p>Gangamai Sugar Mill Command - Unified Lab Telemetry & Harvest Management</p>
                 </div>
             </div>
             
@@ -41,12 +41,12 @@
                     <span class="status-val">Gangamai Sugar Mill (SSK)</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Conformal Lab Engine</span>
-                    <span class="status-val" style="color: var(--accent-purple);">Brix, Pol & CCS Ranges Active</span>
+                    <span class="status-label">Engine Mode</span>
+                    <span class="status-val" style="color: var(--accent-purple);" id="lblAiCalibration">🔬 2026 Conformal Lab Production</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Mode</span>
-                    <span class="status-val" style="color: var(--accent-green);" id="lblTelemetryMode">⚡ Real-Time Precision Live</span>
+                    <span class="status-label">Status</span>
+                    <span class="status-val" style="color: var(--accent-green);" id="lblTelemetryMode">⚡ Real-Time Production Live</span>
                 </div>
             </div>
 
@@ -61,27 +61,20 @@
             </div>
         </header>
 
-        <!-- STREAMLINED ACTION TOOLBAR -->
+        <!-- STREAMLINED ACTION TOOLBAR (PURE PRODUCTION: NO DEMO PRESETS) -->
         <div class="toolbar-bar">
             <div class="preset-group">
-                <span class="preset-label"><i class="fa-solid fa-database" style="color: var(--accent-cyan);"></i> Datasets:</span>
-                <button class="btn-preset active" id="btnPresetFarmerReal">
-                    🌱 Ghotan Real Farmer Plots
+                <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
+                <input type="file" id="trainingDatasetFileInput" accept=".csv" style="display:none;">
+                
+                <button class="btn-preset active" id="btnUploadCsvDirect" style="background: rgba(0,242,254,0.18); color: var(--accent-cyan); border-color: rgba(0,242,254,0.5); font-weight:700;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 Upload Farmer Plots CSV
                 </button>
-                <button class="btn-preset" id="btnPresetAdsaliReal" style="background: rgba(0,230,118,0.15); color: var(--accent-green); border-color: rgba(0,230,118,0.4); font-weight:700;">
-                    🌾 Adsali High-Sucrose Plots (15-18 Month)
-                </button>
-                <button class="btn-preset" id="btnPresetAhilyanagarReal">
-                    📍 Gangamai Command Survey
-                </button>
-                <button class="btn-preset" id="btnPresetUserCsv" style="background: rgba(0,242,254,0.15); color: var(--accent-cyan); border-color: rgba(0,242,254,0.4);">
-                    📁 My Uploaded CSV
-                </button>
-                <button class="btn-preset" id="btnUploadTrainingDataset" style="background: rgba(168,85,247,0.18); color: var(--accent-purple); border-color: rgba(168,85,247,0.4); font-weight:700;">
-                    🧪 Upload Training Dataset (Brix/Pol)
+                <button class="btn-preset" id="btnUploadTrainingDataset" style="background: rgba(168,85,247,0.18); color: var(--accent-purple); border-color: rgba(168,85,247,0.5); font-weight:700;">
+                    <i class="fa-solid fa-flask"></i> 🧪 Upload Lab Ground-Truth (Brix/Pol)
                 </button>
                 <button class="btn-preset" id="btnResetData" style="background: rgba(255,23,68,0.15); color: var(--accent-coral); border-color: rgba(255,23,68,0.3);">
-                    🗑️ Clear Data
+                    <i class="fa-solid fa-trash"></i> Clear Loaded Data
                 </button>
             </div>
 
@@ -99,60 +92,62 @@
         <!-- Industry-Standard KPI Ribbon -->
         <div class="kpi-grid">
             <div class="kpi-card green">
-                <span class="kpi-title">Real Fields Loaded</span>
-                <span class="kpi-value" id="kpiTotalFields">11</span>
-                <span class="kpi-subtext"><i class="fa-solid fa-map-pin"></i> Ground Truth Plots</span>
+                <span class="kpi-title">Active Plots Loaded</span>
+                <span class="kpi-value" id="kpiTotalFields">0</span>
+                <span class="kpi-subtext"><i class="fa-solid fa-map-pin"></i> Mill Command Area</span>
             </div>
             <div class="kpi-card coral">
                 <span class="kpi-title">Priority 1 Slips Ready</span>
-                <span class="kpi-value" id="kpiPrio1Slips">9</span>
-                <span class="kpi-subtext positive"><i class="fa-solid fa-circle-exclamation"></i> Immediate Harvest (>12.5% CCS)</span>
+                <span class="kpi-value" id="kpiPrio1Slips">0</span>
+                <span class="kpi-subtext positive"><i class="fa-solid fa-circle-exclamation"></i> Immediate Harvest (>10.5% CCS)</span>
             </div>
             <div class="kpi-card green">
-                <span class="kpi-title">IkshuVruddhi Avg CCS %</span>
-                <span class="kpi-value" id="kpiAvgCcs">11.56%</span>
-                <span class="kpi-subtext positive"><i class="fa-solid fa-microchip"></i> Conformal Risk ±0.28%</span>
+                <span class="kpi-title">Avg Conformal CCS %</span>
+                <span class="kpi-value" id="kpiAvgCcs">0.00%</span>
+                <span class="kpi-subtext positive"><i class="fa-solid fa-microchip"></i> 95% Confidence Guarantee</span>
             </div>
             <div class="kpi-card amber">
                 <span class="kpi-title">Est Sugar Production</span>
-                <span class="kpi-value" id="kpiEstSugar">142 MT</span>
-                <span class="kpi-subtext"><i class="fa-solid fa-cubes-stacked"></i> Real Yield Output</span>
+                <span class="kpi-value" id="kpiEstSugar">0 MT</span>
+                <span class="kpi-subtext"><i class="fa-solid fa-cubes-stacked"></i> Net Recoverable Sugar</span>
             </div>
             <div class="kpi-card purple">
                 <span class="kpi-title">Avg NDRE RedEdge</span>
-                <span class="kpi-value" id="kpiAvgNdvi">0.78</span>
-                <span class="kpi-subtext"><i class="fa-solid fa-drone"></i> UAV Drone Telemetry</span>
+                <span class="kpi-value" id="kpiAvgNdvi">0.00</span>
+                <span class="kpi-subtext"><i class="fa-solid fa-drone"></i> Multi-Spectral Telemetry</span>
             </div>
             <div class="kpi-card green">
-                <span class="kpi-title">IkshuVruddhi Bonus</span>
-                <span class="kpi-value" id="kpiBonusRevenue">+ ₹ 1.6 Lakh</span>
-                <span class="kpi-subtext positive"><i class="fa-solid fa-coins"></i> Optimized Harvest Timing</span>
+                <span class="kpi-title">Maturity Optimization</span>
+                <span class="kpi-value" id="kpiBonusRevenue">+ ₹ 0.0 L</span>
+                <span class="kpi-subtext positive"><i class="fa-solid fa-coins"></i> High-CCS Recovery Gain</span>
             </div>
         </div>
 
         <!-- MAIN EQUAL HEIGHT SIDE-BY-SIDE WORKSPACE GRID (LEFT LIST | RIGHT MAP) -->
         <main class="dashboard-grid">
             
-            <!-- LEFT CARD: UNIFIED STREAMLINED TELEMETRY TABLE (NO SAMPLE COLUMN) -->
+            <!-- LEFT CARD: PRODUCTION TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Unified Mill Telemetry & Harvest Status</h3>
-                    <span class="badge success" id="lblPlotCount">11 Plots</span>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Farmer Telemetry & Conformal Lab Records</h3>
+                    <span class="badge success" id="lblPlotCount">0 Plots</span>
                 </div>
 
                 <!-- Quick Search Input -->
                 <div style="position:relative; margin-bottom: 0.4rem;">
                     <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.75rem;"></i>
-                    <input type="text" id="inputSearchPlotList" class="form-control" style="padding-left:2.2rem; font-size:0.76rem;" placeholder="Search Farmer or Plot No (13702, ADS-101)...">
+                    <input type="text" id="inputSearchPlotList" class="form-control" style="padding-left:2.2rem; font-size:0.76rem;" placeholder="Search Farmer or Plot No...">
                 </div>
 
                 <!-- Compact Inline Filters Row -->
                 <div class="left-inline-filters-row">
                     <select id="selectFactoryCircle" class="form-control">
-                        <option value="ALL" selected>All Sites / Villages</option>
+                        <option value="ALL" selected>All Sites / Circles</option>
                         <option value="GHOTAN">Ghotan Site</option>
                         <option value="Gangamai">Gangamai Circle</option>
                         <option value="Kopargaon">Kopargaon Circle</option>
+                        <option value="Shevgaon">Shevgaon Circle</option>
+                        <option value="Nevasa">Nevasa Circle</option>
                     </select>
                     <select id="selectCropType" class="form-control">
                         <option value="ALL" selected>All Plots (Cane + Non-Cane Alerts)</option>
@@ -161,7 +156,7 @@
                     </select>
                 </div>
 
-                <!-- UNIFIED CLEAN TABLE WRAPPER (NO SAMPLE COLUMN) -->
+                <!-- UNIFIED PRODUCTION TABLE WRAPPER -->
                 <div class="farmer-plot-list-wrapper" id="farmerPlotListWrapper">
                     <table class="data-table" id="leftPlotTable">
                         <thead>
@@ -176,24 +171,28 @@
                             </tr>
                         </thead>
                         <tbody id="leftPlotTableBody">
-                            <tr class="empty-row"><td colspan="7">Loading Unified Mill Telemetry...</td></tr>
+                            <tr class="empty-row">
+                                <td colspan="7" style="text-align:center; padding: 2.5rem 1rem; color: var(--text-muted);">
+                                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--accent-cyan); display:block; margin-bottom: 0.75rem;"></i>
+                                    <strong style="color:#f8fafc; font-size:0.95rem; display:block; margin-bottom:0.35rem;">No Datasets Currently Loaded</strong>
+                                    <span>Click <b>"📁 Upload Farmer Plots CSV"</b> above to load your factory field survey data.</span>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Bottom Action Strip inside Left Card -->
                 <div class="left-card-footer-strip">
-                    <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
-                    <input type="file" id="trainingDatasetFileInput" accept=".csv" style="display:none;">
                     <div style="display:flex; gap:6px;">
-                        <button class="btn btn-xs btn-outline" onclick="document.getElementById('csvFileInput').click()" style="border-color:rgba(0,242,254,0.4); color:var(--accent-cyan);">
+                        <button class="btn btn-xs btn-outline" onclick="document.getElementById('csvFileInput').click()" style="border-color:rgba(0,242,254,0.4); color:var(--accent-cyan); font-weight:700;">
                             <i class="fa-solid fa-cloud-arrow-up"></i> Upload CSV
                         </button>
                         <button class="btn btn-xs btn-outline" onclick="document.getElementById('trainingDatasetFileInput').click()" style="border-color:rgba(168,85,247,0.4); color:var(--accent-purple); font-weight:700;">
-                            <i class="fa-solid fa-flask"></i> Upload Brix/Pol Training Data
+                            <i class="fa-solid fa-flask"></i> Upload Lab Dataset
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-check-circle"></i> Clean Telemetry Table Active</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i> Ready For Mill Data</span>
                 </div>
             </div>
 
