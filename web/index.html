@@ -133,10 +133,10 @@
         <!-- MAIN EQUAL HEIGHT SIDE-BY-SIDE WORKSPACE GRID (LEFT LIST | RIGHT MAP) -->
         <main class="dashboard-grid">
             
-            <!-- LEFT CARD: UNIFIED SINGLE TELEMETRY TABLE (WITH BRIX, POL & CCS CONFORMAL RANGES) -->
+            <!-- LEFT CARD: UNIFIED STREAMLINED TELEMETRY TABLE (NO SAMPLE COLUMN) -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Unified Mill Telemetry & Lab Sampling Sheet</h3>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Unified Mill Telemetry & Harvest Status</h3>
                     <span class="badge success" id="lblPlotCount">11 Plots</span>
                 </div>
 
@@ -161,18 +161,18 @@
                     </select>
                 </div>
 
-                <!-- UNIFIED SINGLE TABLE WRAPPER (WITH BRIX RANGE, POL RANGE, CCS RANGE) -->
+                <!-- UNIFIED CLEAN TABLE WRAPPER (NO SAMPLE COLUMN) -->
                 <div class="farmer-plot-list-wrapper" id="farmerPlotListWrapper">
                     <table class="data-table" id="leftPlotTable">
                         <thead>
                             <tr>
-                                <th>📍 Map Focus</th>
+                                <th>📍 Map</th>
                                 <th>Farmer Name & Gat No</th>
                                 <th>✂️ Net Area</th>
                                 <th>🧪 Brix % (± Margin)</th>
                                 <th>🧪 Pol % (± Margin)</th>
                                 <th>🍬 CCS % (± Margin)</th>
-                                <th>📊 Core Sample (AI vs Actual)</th>
+                                <th>🌾 Crop Verification</th>
                             </tr>
                         </thead>
                         <tbody id="leftPlotTableBody">
@@ -193,7 +193,7 @@
                             <i class="fa-solid fa-flask"></i> Upload Brix/Pol Training Data
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-scissors"></i> Single Table (Brix, Pol & CCS Ranges)</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-check-circle"></i> Clean Telemetry Table Active</span>
                 </div>
             </div>
 

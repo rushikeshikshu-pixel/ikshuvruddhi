@@ -1,5 +1,5 @@
 /**
- * IkshuVruddhi AI Engine - Conformal Brix, Pol, CCS Range Telemetry
+ * IkshuVruddhi AI Engine - Streamlined Telemetry (Brix, Pol, CCS Conformal Ranges)
  * Factory: Gangamai Sugar Mill (गंगामाई सहकारी साखर कारखाना SSK)
  */
 
@@ -32,20 +32,20 @@ document.addEventListener('DOMContentLoaded', () => {
         tileLayer: null
     };
 
-    // CONFORMAL LAB PREDICTION GROUND TRUTH DATASETS
+    // REAL DATASETS
     const REAL_DATASETS = {
         farmer_real: [
-            { farm_id: '13702', farmer_name: 'KHEDKAR RAMDAS NIVRUTTI', field_name: 'GHOTAN (BHARAT WASTI) Plot #13702', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'CO-265', planting_type: 'Suru', crop_age_days: 310, juice_brix_val: '18.40', juice_pol_val: '14.85', ccs_val: '11.19', actual_lab_pol: '14.80', sat_ndvi: '0.74', sat_gndvi: '0.68', sat_lswi: '0.56', cwsi: '0.32', sat_temp_celsius: '33.5', sat_solar_radiation_kwh_m2: '7.8', ripening_rain: '35', plot_area_polygon: '19.3908,75.3150#19.3907,75.3164#19.3897,75.3163#19.3898,75.3149', latitude: '19.3902277', longitude: '75.3157288', gross_area_acres: '2.50' },
-            { farm_id: '12363', farmer_name: 'KHEDKAR RAMDAS NIVRUTTI', field_name: 'GHOTAN (BHARAT WASTI) Plot #12363', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'CO-265', planting_type: 'Khodwa', crop_age_days: 335, juice_brix_val: '18.90', juice_pol_val: '15.40', ccs_val: '11.56', actual_lab_pol: '15.35', sat_ndvi: '0.78', sat_gndvi: '0.71', sat_lswi: '0.60', cwsi: '0.28', sat_temp_celsius: '33.2', sat_solar_radiation_kwh_m2: '7.9', ripening_rain: '28', plot_area_polygon: '19.3971,75.3005#19.3970,75.3018#19.3959,75.3017#19.3960,75.3004', latitude: '19.3964805', longitude: '75.3011326', gross_area_acres: '2.30' },
-            { farm_id: '5614', farmer_name: 'KSHIRSAGAR BABASAHEB NAVNATH', field_name: 'GHOTAN (TAKA MALA) Plot #5614', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'CO-265', planting_type: 'Khodwa', crop_age_days: 350, juice_brix_val: '19.20', juice_pol_val: '15.80', ccs_val: '11.85', actual_lab_pol: '15.75', sat_ndvi: '0.81', sat_gndvi: '0.74', sat_lswi: '0.62', cwsi: '0.25', sat_temp_celsius: '33.0', sat_solar_radiation_kwh_m2: '7.7', ripening_rain: '30', plot_area_polygon: '19.5713819,74.9471588#19.5713308,74.9477495#19.5708764,74.9477011#19.5709513,74.9470969', latitude: '19.3882680', longitude: '75.2859986', gross_area_acres: '2.40' }
+            { farm_id: '13702', farmer_name: 'KHEDKAR RAMDAS NIVRUTTI', field_name: 'GHOTAN (BHARAT WASTI) Plot #13702', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'CO-265', planting_type: 'Suru', crop_age_days: 310, juice_brix_val: '18.40', juice_pol_val: '14.85', ccs_val: '11.19', sat_ndvi: '0.74', sat_gndvi: '0.68', sat_lswi: '0.56', cwsi: '0.32', sat_temp_celsius: '33.5', sat_solar_radiation_kwh_m2: '7.8', ripening_rain: '35', plot_area_polygon: '19.3908,75.3150#19.3907,75.3164#19.3897,75.3163#19.3898,75.3149', latitude: '19.3902277', longitude: '75.3157288', gross_area_acres: '2.50' },
+            { farm_id: '12363', farmer_name: 'KHEDKAR RAMDAS NIVRUTTI', field_name: 'GHOTAN (BHARAT WASTI) Plot #12363', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'CO-265', planting_type: 'Khodwa', crop_age_days: 335, juice_brix_val: '18.90', juice_pol_val: '15.40', ccs_val: '11.56', sat_ndvi: '0.78', sat_gndvi: '0.71', sat_lswi: '0.60', cwsi: '0.28', sat_temp_celsius: '33.2', sat_solar_radiation_kwh_m2: '7.9', ripening_rain: '28', plot_area_polygon: '19.3971,75.3005#19.3970,75.3018#19.3959,75.3017#19.3960,75.3004', latitude: '19.3964805', longitude: '75.3011326', gross_area_acres: '2.30' },
+            { farm_id: '5614', farmer_name: 'KSHIRSAGAR BABASAHEB NAVNATH', field_name: 'GHOTAN (TAKA MALA) Plot #5614', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'CO-265', planting_type: 'Khodwa', crop_age_days: 350, juice_brix_val: '19.20', juice_pol_val: '15.80', ccs_val: '11.85', sat_ndvi: '0.81', sat_gndvi: '0.74', sat_lswi: '0.62', cwsi: '0.25', sat_temp_celsius: '33.0', sat_solar_radiation_kwh_m2: '7.7', ripening_rain: '30', plot_area_polygon: '19.5713819,74.9471588#19.5713308,74.9477495#19.5708764,74.9477011#19.5709513,74.9470969', latitude: '19.3882680', longitude: '75.2859986', gross_area_acres: '2.40' }
         ],
         adsali_real: [
-            { farm_id: 'ADS-101', farmer_name: 'PATIL BALASAHEB SHANKAR', field_name: 'Ghotan Adsali High-Sucrose Field 101', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'Co 86032 (Adsali)', planting_type: 'Adsali (15-18 M)', crop_age_days: 455, juice_brix_val: '19.80', juice_pol_val: '16.45', ccs_val: '12.29', actual_lab_pol: '16.40', sat_ndvi: '0.86', sat_gndvi: '0.79', sat_lswi: '0.68', cwsi: '0.18', sat_temp_celsius: '32.5', sat_solar_radiation_kwh_m2: '8.2', ripening_rain: '20', plot_area_polygon: '19.3930,75.3115#19.3928,75.3126#19.3920,75.3124#19.3921,75.3114', latitude: '19.3925', longitude: '75.3120', gross_area_acres: '3.10' },
-            { farm_id: 'ADS-102', farmer_name: 'MORE SHIVAJI GANGADHAR', field_name: 'Ghotan Adsali Plot 102', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'Co 11015', planting_type: 'Adsali (15-18 M)', crop_age_days: 460, juice_brix_val: '20.10', juice_pol_val: '16.80', ccs_val: '12.53', actual_lab_pol: '16.75', sat_ndvi: '0.88', sat_gndvi: '0.81', sat_lswi: '0.70', cwsi: '0.16', sat_temp_celsius: '32.0', sat_solar_radiation_kwh_m2: '8.4', ripening_rain: '18', plot_area_polygon: '19.3955,75.3075#19.3954,75.3086#19.3944,75.3084#19.3945,75.3074', latitude: '19.3950', longitude: '75.3080', gross_area_acres: '3.00' },
-            { farm_id: 'ADS-103', farmer_name: 'DESHMUKH DNYANDEO LAXMAN', field_name: 'Gangamai Command Adsali Estate 103', tehsil_district: 'Gangamai Circle', cane_variety: 'CoM 0265', planting_type: 'Adsali (15-18 M)', crop_age_days: 445, juice_brix_val: '19.50', juice_pol_val: '16.10', ccs_val: '12.04', actual_lab_pol: '16.05', sat_ndvi: '0.85', sat_gndvi: '0.78', sat_lswi: '0.66', cwsi: '0.19', sat_temp_celsius: '33.0', sat_solar_radiation_kwh_m2: '8.0', ripening_rain: '22', latitude: '19.8940', longitude: '74.4820', gross_area_acres: '2.80' }
+            { farm_id: 'ADS-101', farmer_name: 'PATIL BALASAHEB SHANKAR', field_name: 'Ghotan Adsali High-Sucrose Field 101', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'Co 86032 (Adsali)', planting_type: 'Adsali (15-18 M)', crop_age_days: 455, juice_brix_val: '19.80', juice_pol_val: '16.45', ccs_val: '12.29', sat_ndvi: '0.86', sat_gndvi: '0.79', sat_lswi: '0.68', cwsi: '0.18', sat_temp_celsius: '32.5', sat_solar_radiation_kwh_m2: '8.2', ripening_rain: '20', plot_area_polygon: '19.3930,75.3115#19.3928,75.3126#19.3920,75.3124#19.3921,75.3114', latitude: '19.3925', longitude: '75.3120', gross_area_acres: '3.10' },
+            { farm_id: 'ADS-102', farmer_name: 'MORE SHIVAJI GANGADHAR', field_name: 'Ghotan Adsali Plot 102', tehsil_district: 'GHOTAN-K.SITE', cane_variety: 'Co 11015', planting_type: 'Adsali (15-18 M)', crop_age_days: 460, juice_brix_val: '20.10', juice_pol_val: '16.80', ccs_val: '12.53', sat_ndvi: '0.88', sat_gndvi: '0.81', sat_lswi: '0.70', cwsi: '0.16', sat_temp_celsius: '32.0', sat_solar_radiation_kwh_m2: '8.4', ripening_rain: '18', plot_area_polygon: '19.3955,75.3075#19.3954,75.3086#19.3944,75.3084#19.3945,75.3074', latitude: '19.3950', longitude: '75.3080', gross_area_acres: '3.00' },
+            { farm_id: 'ADS-103', farmer_name: 'DESHMUKH DNYANDEO LAXMAN', field_name: 'Gangamai Command Adsali Estate 103', tehsil_district: 'Gangamai Circle', cane_variety: 'CoM 0265', planting_type: 'Adsali (15-18 M)', crop_age_days: 445, juice_brix_val: '19.50', juice_pol_val: '16.10', ccs_val: '12.04', sat_ndvi: '0.85', sat_gndvi: '0.78', sat_lswi: '0.66', cwsi: '0.19', sat_temp_celsius: '33.0', sat_solar_radiation_kwh_m2: '8.0', ripening_rain: '22', latitude: '19.8940', longitude: '74.4820', gross_area_acres: '2.80' }
         ],
         ahilyanagar_real: [
-            { farm_id: 'GANG-01', farmer_name: 'Gangamai Estate Plot 1', field_name: 'Gangamai Command Field 1', tehsil_district: 'Gangamai Circle', cane_variety: 'Co 86032', planting_type: 'Adsali', crop_age_days: 440, juice_brix_val: '19.40', juice_pol_val: '15.95', ccs_val: '11.93', actual_lab_pol: '15.90', sat_ndvi: '0.84', sat_gndvi: '0.77', sat_lswi: '0.65', cwsi: '0.20', sat_temp_celsius: '33.5', sat_solar_radiation_kwh_m2: '7.8', ripening_rain: '25', latitude: '19.8912', longitude: '74.4795', gross_area_acres: '2.90' }
+            { farm_id: 'GANG-01', farmer_name: 'Gangamai Estate Plot 1', field_name: 'Gangamai Command Field 1', tehsil_district: 'Gangamai Circle', cane_variety: 'Co 86032', planting_type: 'Adsali', crop_age_days: 440, juice_brix_val: '19.40', juice_pol_val: '15.95', ccs_val: '11.93', sat_ndvi: '0.84', sat_gndvi: '0.77', sat_lswi: '0.65', cwsi: '0.20', sat_temp_celsius: '33.5', sat_solar_radiation_kwh_m2: '7.8', ripening_rain: '25', latitude: '19.8912', longitude: '74.4795', gross_area_acres: '2.90' }
         ]
     };
 
@@ -157,9 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const polMargin = 0.32;
             const ccsMargin = 0.28;
 
-            const actualLabPol = item.actual_lab_pol || (pol - 0.05).toFixed(2);
-            const actualLabCcs = item.actual_lab_ccs || (ccs - 0.04).toFixed(2);
-
             let priority = ccs >= 10.5 ? 'prio-1' : (ccs >= 9.5 ? 'prio-2' : 'prio-3');
 
             // CROP STATUS VERIFICATION
@@ -188,12 +185,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 brix_margin: brixMargin.toFixed(2),
                 pol_margin: polMargin.toFixed(2),
                 ccs_margin: ccsMargin.toFixed(2),
-                actual_lab_pol: actualLabPol,
-                actual_lab_ccs: actualLabCcs,
                 gross_area_acres: grossArea,
                 net_cane_acres: netCaneAcres,
                 dry_land_trimmed_acres: dryLandTrimmed,
-                priority: cropStatus === 'NON_CANE_MAIZE' ? 'prio-3' : priority
+                priority: cropStatus === 'NON_CANE_MAIZE' ? 'prio-3' : priority,
+                cropStatus: cropStatus
             };
         });
 
@@ -263,7 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <b>Conformal Brix %:</b> <strong style="color:#c084fc;">${item.juice_brix_val}% (±${item.brix_margin}%)</strong><br/>
                         <b>Conformal Pol %:</b> <strong style="color:#00f2fe;">${item.juice_pol_val}% (±${item.pol_margin}%)</strong><br/>
                         <b>Conformal CCS %:</b> <strong style="color:#00e676;">${item.ccs_val}% (±${item.ccs_margin}%)</strong><br/>
-                        <b>Actual Core Sampler Pol %:</b> <strong style="color:#c084fc;">${item.actual_lab_pol}%</strong><br/>
                         <b>Net Actual Cane Area:</b> <strong style="color:#00e676;">${item.net_cane_acres} Acres</strong>
                     </div>
                 `);
@@ -289,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // RENDER SINGLE UNIFIED TELEMETRY TABLE (WITH BRIX, POL & CCS CONFORMAL RANGES)
+    // RENDER STREAMLINED UNIFIED TELEMETRY TABLE (NO SAMPLE COLUMN)
     function renderLeftPlotList() {
         el.leftPlotTableBody.innerHTML = '';
 
@@ -301,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.filteredData.forEach(item => {
             const farmerName = getFarmerName(item);
             const farmId = getFarmId(item);
+            const isMaize = item.cropStatus === 'NON_CANE_MAIZE';
 
             const tr = document.createElement('tr');
             if (state.focusedPlotId === farmId) tr.classList.add('active-focused-plot');
@@ -331,17 +327,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span style="font-size:0.65rem; color:#00e676; display:block;">±${item.ccs_margin}% (95% CP)</span>
                 </td>
                 <td>
-                    <span style="color:#c084fc; font-weight:700;">Actual: ${item.actual_lab_pol}% Pol</span>
-                    <span style="font-size:0.65rem; color:#94a3b8; display:block;">AI Delta: ${(parseFloat(item.juice_pol_val) - parseFloat(item.actual_lab_pol)).toFixed(2)}%</span>
+                    <span class="badge ${isMaize ? 'priority-3' : 'success'}" style="font-weight:700; cursor:pointer;" onclick="window.toggleCropStatus('${farmId}')">
+                        ${isMaize ? '🌽 Maize / Non-Cane' : '🟢 Sugarcane (98%)'}
+                    </span>
                 </td>
             `;
 
             tr.addEventListener('click', (e) => {
-                if (e.target.tagName !== 'BUTTON') window.focusFarmerPlotOnMap(farmId);
+                if (e.target.tagName !== 'BUTTON' && !e.target.classList.contains('badge')) window.focusFarmerPlotOnMap(farmId);
             });
             el.leftPlotTableBody.appendChild(tr);
         });
     }
+
+    window.toggleCropStatus = function(farmId) {
+        const current = state.userCropOverrides[farmId] || 'SUGARCANE';
+        const newStatus = current === 'SUGARCANE' ? 'NON_CANE_MAIZE' : 'SUGARCANE';
+        state.userCropOverrides[farmId] = newStatus;
+        
+        runEngine();
+        
+        if (newStatus === 'NON_CANE_MAIZE') {
+            alert(`🌽 Plot #${farmId} marked as NON-CANE / MAIZE! Harvest slip issuance disabled & net cane area set to 0.00 Ac.`);
+        } else {
+            alert(`🌾 Plot #${farmId} restored as CONFIRMED SUGARCANE! Harvest slip enabled.`);
+        }
+    };
 
     window.editNetCaneArea = function(farmId) {
         const item = state.enrichedData.find(d => getFarmId(d) === farmId);
