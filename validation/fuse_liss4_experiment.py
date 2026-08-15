@@ -1,9 +1,11 @@
-﻿import sys
-sys.stdout.reconfigure(encoding='utf-8')
-"""
+﻿"""
 validation/fuse_liss4_experiment.py
-Comparative Experiment: Sentinel-2 (10m) vs. Sentinel-2 + Resourcesat-2A LISS-4 (5.8m Fusion)
-Evaluated across the 36 confirmed active standing-cane plots (NDVI >= 0.55).
+Multi-Resolution Feasibility Benchmark: Baseline Sentinel-2 (10m) vs. 5.8m Guided Fusion
+Evaluated across the 36 High-NDVI / Strong-Vegetation Parcels (NDVI >= 0.55).
+
+NOTE: This experiment benchmarks the algorithmic fusion pipeline (Sentinel-2 10m
+regridded with 5.8m guided bilateral filtering). True empirical multi-sensor validation
+requires genuine ISRO Resourcesat-2A LISS-4 scenes acquired over the same dates via Bhoonidhi.
 """
 
 import os
@@ -20,6 +22,8 @@ import rasterio
 from rasterio.windows import from_bounds
 from rasterio.warp import reproject, Resampling
 
+sys.stdout.reconfigure(encoding='utf-8')
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
@@ -32,21 +36,20 @@ wgs84_to_utm43n = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:32643", always_
 
 def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_comparison.csv"):
     print("==================================================================")
-    print(" RESOURCESAT-2A LISS-4 (5.8m) + SENTINEL-2 (10m) FUSION EXPERIMENT")
-    print(" Comparing Baseline Sentinel-2 (10m) vs Multi-Sensor Fusion (5.8m)")
-    print(" Target Cohort: Confirmed Strong-Vegetation Fields (NDVI >= 0.55)")
+    print(" 5.8m GUIDED BILATERAL FILTERING FEASIBILITY BENCHMARK")
+    print(" Comparing Baseline Sentinel-2 (10m) vs Simulated 5.8m Guided Fusion")
+    print(" Target Cohort: 36 High-NDVI / Strong-Vegetation Parcels (NDVI >= 0.55)")
+    print(" Status: Algorithmic Simulation (Pending Real ISRO LISS-4 Ingestion)")
     print("==================================================================")
 
-    # 1. Load Ground-Truth Dataset & existing 88 validation results
     df_emp = pd.read_csv("data/output/refined_empirical_sentinel_analysis_88plots.csv")
     df_high_ndvi = df_emp[df_emp["mean_field_ndvi"] >= 0.55].copy()
-    print(f"Loaded {len(df_high_ndvi)} confirmed strong-vegetation plots for comparative benchmarking.")
+    print(f"Loaded {len(df_high_ndvi)} high-NDVI parcels for algorithmic benchmarking.")
 
     src_csv = os.path.join(REPO_ROOT, "data", "sugarcane_adsali_season_2627.csv")
     df_raw = pd.read_csv(src_csv)
     raw_map = {str(r["Plot No"]).strip(): r for _, r in df_raw.iterrows()}
 
-    # 2. Query Sentinel-2 STAC
     STAC_ENDPOINT = "https://earth-search.aws.element84.com/v1/search"
     payload = {
         "collections": ["sentinel-2-l2a"],
@@ -139,7 +142,7 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
         scl_10m = np.zeros(out_shape_10m, dtype=np.uint8)
         reproject(source=rasterio.band(src_scl, 1), destination=scl_10m, src_transform=src_scl.transform, src_crs=src_scl.crs, dst_transform=win_10m_transform, dst_crs=src_red.crs, resampling=Resampling.nearest)
 
-        # Baseline A: Sentinel-2 (10m)
+        # Baseline A: Empirical Sentinel-2 (10m)
         indices_10m = compute_spectral_indices(blue_10m, green_10m, red_10m, re_10m, nir_10m, swir_10m)
         s2_cane_mask = classify_sugarcane_raster(indices_10m["ndvi"], indices_10m["ndre"], indices_10m["lswi"], scl_10m, indices_10m["ndwi"], indices_10m["bsi"])
 
@@ -161,7 +164,7 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
         s2_strict_iou = (s2_cane_m2 / max(1.0, s2_union_m2)) * 100.0
         s2_area_error_pct = abs(s2_acres - gt_area_acres) / max(0.01, gt_area_acres) * 100.0
 
-        # Method B: Multi-Sensor Fusion (Sentinel-2 10m + Resourcesat-2A LISS-4 5.8m)
+        # Method B: Simulated 5.8m Multi-Resolution Guided Bilateral Fusion
         fusion_out = fuse_sentinel2_with_liss4_canopy(
             poly_utm=poly_utm,
             s2_red_10m=red_10m,
@@ -177,7 +180,6 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
         fused_occ_pct = fused_res["fused_occupancy_pct"]
         fused_strict_iou = fused_res["fused_strict_iou_pct"]
         fused_area_error_pct = abs(fused_acres - gt_area_acres) / max(0.01, gt_area_acres) * 100.0
-
         iou_gain = fused_strict_iou - s2_strict_iou
 
         rec = {
@@ -186,29 +188,31 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
             "village": erow["village"],
             "ground_truth_acres": round(gt_area_acres, 2),
             "mean_field_ndvi": erow["mean_field_ndvi"],
-            "s2_detected_acres_10m": round(s2_acres, 2),
-            "s2_parcel_occupancy_pct": round(s2_occ_pct, 1),
-            "s2_strict_iou_pct": round(s2_strict_iou, 1),
-            "s2_area_error_pct": round(s2_area_error_pct, 1),
-            "fused_detected_acres_58m": round(fused_acres, 2),
-            "fused_parcel_occupancy_pct": round(fused_occ_pct, 1),
-            "fused_strict_iou_pct": round(fused_strict_iou, 1),
-            "fused_area_error_pct": round(fused_area_error_pct, 1),
-            "iou_improvement_pct_points": round(iou_gain, 1)
+            "s2_empirical_detected_acres_10m": round(s2_acres, 2),
+            "s2_empirical_occupancy_pct": round(s2_occ_pct, 1),
+            "s2_empirical_strict_iou_pct": round(s2_strict_iou, 1),
+            "s2_empirical_area_error_pct": round(s2_area_error_pct, 1),
+            "simulated_58m_fused_acres": round(fused_acres, 2),
+            "simulated_58m_occupancy_pct": round(fused_occ_pct, 1),
+            "simulated_58m_strict_iou_pct": round(fused_strict_iou, 1),
+            "simulated_58m_area_error_pct": round(fused_area_error_pct, 1),
+            "simulated_iou_delta_pct_points": round(iou_gain, 1),
+            "benchmark_type": "ALGORITHMIC_SIMULATION_FALLBACK"
         }
         results.append(rec)
-        print(f"Plot #{pno:4s} ({erow['farmer_name'][:18]:18s}) | GT: {gt_area_acres:.2f} ac | S2 IoU: {s2_strict_iou:4.1f}% -> Fused LISS4 IoU: {fused_strict_iou:4.1f}% (Delta {iou_gain:+4.1f}%)")
+        print(f"Plot #{pno:4s} ({erow['farmer_name'][:18]:18s}) | GT: {gt_area_acres:.2f} ac | Empirical S2: {s2_strict_iou:4.1f}% IoU -> Sim 5.8m: {fused_strict_iou:4.1f}% IoU (Delta: {iou_gain:+4.1f}%)")
 
     df_comp = pd.DataFrame(results)
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
     df_comp.to_csv(output_csv, index=False)
 
     print("\n==================================================================")
-    print(f" FUSION EXPERIMENT BENCHMARK SUMMARY (N={len(df_comp)} Active Cane Plots)")
+    print(f" 5.8m GUIDED FILTERING FEASIBILITY SUMMARY (N={len(df_comp)} High-NDVI Parcels)")
     print("==================================================================")
-    print(f" Baseline Sentinel-2 Only (10m)    : Mean IoU = {df_comp['s2_strict_iou_pct'].mean():.2f}% | Mean Occ = {df_comp['s2_parcel_occupancy_pct'].mean():.2f}% | Area Err = {df_comp['s2_area_error_pct'].mean():.2f}%")
-    print(f" Sentinel-2 + LISS-4 Fusion (5.8m) : Mean IoU = {df_comp['fused_strict_iou_pct'].mean():.2f}% | Mean Occ = {df_comp['fused_parcel_occupancy_pct'].mean():.2f}% | Area Err = {df_comp['fused_area_error_pct'].mean():.2f}%")
-    print(f" Net Mean IoU Improvement          : {df_comp['iou_improvement_pct_points'].mean():+.2f} percentage points")
+    print(f" Empirical Sentinel-2 (10m)      : Mean IoU = {df_comp['s2_empirical_strict_iou_pct'].mean():.2f}% | Mean Occ = {df_comp['s2_empirical_occupancy_pct'].mean():.2f}% | Area Err = {df_comp['s2_empirical_area_error_pct'].mean():.2f}%")
+    print(f" Simulated 5.8m Guided Filtering : Mean IoU = {df_comp['simulated_58m_strict_iou_pct'].mean():.2f}% | Mean Occ = {df_comp['simulated_58m_occupancy_pct'].mean():.2f}% | Area Err = {df_comp['simulated_58m_area_error_pct'].mean():.2f}%")
+    print(f" Net Mean IoU Delta              : {df_comp['simulated_iou_delta_pct_points'].mean():+.2f} percentage points")
+    print(" Note: Empirical validation requires real ISRO Bhoonidhi LISS-4 GeoTIFF scenes.")
     print("==================================================================\n")
     return df_comp
 
