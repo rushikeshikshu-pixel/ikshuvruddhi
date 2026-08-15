@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi Command - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Sugar Mill Harvest Command & Operational Telemetry for Gangamai Sugar Mill (SSK).">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - 10m Sentinel-2 Raster Heat Map & Sugar Quality Telemetry for Gangamai Sugar Mill (SSK).">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="brand-text">
                     <h1>IkshuVruddhi <span>Command</span> <span class="mill-badge">इक्षुवृद्धी SSK</span></h1>
-                    <p>Gangamai Sugar Mill - Harvest Prioritization, Cadastral Intelligence & Factory Logistics</p>
+                    <p>Gangamai Sugar Mill - 10m Spatial Heat Map & Predicted vs Lab Sugar Telemetry</p>
                 </div>
             </div>
             
@@ -41,12 +41,12 @@
                     <span class="status-val">Gangamai SSK (7,500 TCD)</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Command Site</span>
-                    <span class="status-val" style="color: var(--accent-cyan);">Ghotan Circle (Ahilyanagar)</span>
+                    <span class="status-label">Spatial Grid</span>
+                    <span class="status-val" style="color: var(--accent-cyan);">10m Native Sentinel-2 Cells</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">GPS Sanity Status</span>
-                    <span class="status-val" style="color: var(--accent-green);" id="lblGpsSanityStatus">✅ 11/11 Verified (&lt;300m)</span>
+                    <span class="status-label">Lab Ground-Truth</span>
+                    <span class="status-val" style="color: var(--accent-green);">Calibrated (n=11 Plots)</span>
                 </div>
             </div>
 
@@ -56,7 +56,7 @@
                     <button class="btn btn-xs btn-outline" id="btnLangMr" style="font-weight: 700;">🇮🇳 मराठी</button>
                 </div>
                 <button id="btnHeaderExport" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-download"></i> Export Operations CSV
+                    <i class="fa-solid fa-download"></i> Export Heat Map CSV
                 </button>
             </div>
         </header>
@@ -162,7 +162,7 @@
             <!-- LEFT CARD: ADVANCED AI TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Operational Harvesting Queue & Field Intelligence</h3>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Operational Harvesting Queue & Sugar Quality</h3>
                     <span class="badge success" id="lblPlotCount">11 Plots</span>
                 </div>
 
@@ -172,7 +172,7 @@
                     <input type="text" id="inputSearchPlotList" class="form-control" style="padding-left:2.2rem; font-size:0.76rem;" placeholder="Search Farmer or Gat No...">
                 </div>
 
-                <!-- UNIFIED OPERATIONAL TABLE (FROZEN FIRST COLUMNS & CLEAR DECISION STATUS) -->
+                <!-- UNIFIED OPERATIONAL TABLE -->
                 <div class="farmer-plot-list-wrapper" id="farmerPlotListWrapper">
                     <table class="data-table" id="leftPlotTable">
                         <thead>
@@ -185,8 +185,8 @@
                                 <th>Crop & Variety</th>
                                 <th>Plantation</th>
                                 <th>Predicted CCS</th>
+                                <th>Predicted Brix</th>
                                 <th>Est. Cane</th>
-                                <th>Confidence</th>
                             </tr>
                         </thead>
                         <tbody id="leftPlotTableBody">
@@ -201,19 +201,19 @@
                             <i class="fa-solid fa-cloud-arrow-up"></i> Upload CSV
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);"></i> Boundary-Controlled Satellite Sampling</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);"></i> 10m Intra-Plot Raster Heat Map</span>
                 </div>
             </div>
 
-            <!-- RIGHT CARD: CLEAN FULL-HEIGHT PRECISION GIS MAP VIEWPORT (3-BOUNDARY SYSTEM) -->
+            <!-- RIGHT CARD: PRECISION GIS MAP WITH REAL 10M HEAT MAP & LAYER SELECTOR -->
             <div class="glass-card map-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-map-location-dot"></i> IkshuVruddhi Precision GIS Map</h3>
-                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                        <button class="btn btn-xs btn-outline active">Esri Satellite</button>
-                        <button class="btn btn-xs btn-outline" style="font-weight:700; color:var(--accent-green); border-color:var(--accent-green); background: rgba(0,230,118,0.15);">
-                            <i class="fa-solid fa-layer-group"></i> 3-Boundary Measurable View
-                        </button>
+                    <h3><i class="fa-solid fa-map-location-dot"></i> Spatial 10m Raster Heat Map</h3>
+                    <!-- HEAT MAP LAYER SELECTOR -->
+                    <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                        <button class="btn btn-xs btn-outline heat-layer-btn active" data-layer="ccs" onclick="window.setHeatMapLayer('ccs')">Predicted CCS %</button>
+                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="brix" onclick="window.setHeatMapLayer('brix')">Predicted Brix</button>
+                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="ndvi" onclick="window.setHeatMapLayer('ndvi')">NDVI Canopy</button>
                     </div>
                 </div>
 
@@ -223,12 +223,16 @@
                         📍 Lat: <span id="hudLat">19.3882680</span> | Long: <span id="hudLon">75.2859986</span>
                     </div>
 
-                    <!-- 3-BOUNDARY GIS LEGEND WITH MEASURABLE EXPLANATION -->
+                    <!-- 10M RASTER HEAT MAP NUMERIC LEGEND -->
                     <div class="contour-floating-legend" id="contourLegend" style="display:block;">
-                        <div class="legend-header"><i class="fa-solid fa-layer-group"></i> 3 Measurable Boundaries</div>
-                        <div class="legend-item"><span class="legend-box" style="background:transparent; border:2px dashed #ff9100;"></span> <b>Orange:</b> Cadastral Gat (Revenue Parcel)</div>
-                        <div class="legend-item"><span class="legend-box" style="background:transparent; border:2px solid #00f2fe;"></span> <b>Cyan:</b> Field-Walked (DGPS Survey)</div>
-                        <div class="legend-item"><span class="legend-box" style="background:#00e676;"></span> <b>Green:</b> Standing Cane Canopy (Pure Core)</div>
+                        <div class="legend-header"><i class="fa-solid fa-fire"></i> 10m Predicted CCS % Legend</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#00e676;"></span> <b>&gt;12.0% CCS:</b> Priority Cut (Peak Ripening)</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#ffea00;"></span> <b>11.5–12.0% CCS:</b> Near Peak (3–7 Days)</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#ff9100;"></span> <b>10.5–11.5% CCS:</b> Developing Sucrose</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#ff1744;"></span> <b>&lt;10.5% CCS:</b> Immature / Wait</div>
+                        <div style="font-size:0.62rem; color:#94a3b8; border-top:1px solid rgba(255,255,255,0.06); margin-top:4px; padding-top:4px;">
+                            🟧 Cadastral | 🔷 Walked | 🟩 10m Raster Cells
+                        </div>
                     </div>
                 </div>
             </div>
@@ -262,16 +266,16 @@
 
                     <!-- NATIVE RESOLUTION DUAL-BAND AUDIT CARD -->
                     <div class="cockpit-stat-box" style="background:rgba(0,242,254,0.03); border-color:rgba(0,242,254,0.25);">
-                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-satellite"></i> Sentinel-2 Pixel-Purity Audit</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-satellite"></i> 10m Sentinel-2 Raster Grid Audit</span>
                         <div style="margin-top:6px; font-size:0.76rem;" id="modalPixelAuditBox">
                         </div>
                     </div>
                 </div>
 
-                <!-- Right: 3-Boundary Measurable Comparison & Decision Metrics -->
+                <!-- Right: Sugar Quality: Predicted vs Lab Reality Loop -->
                 <div>
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-layer-group"></i> 3-Boundary Measurable Comparison</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Sugar Quality: Model vs. Lab Loop</span>
                         <div style="margin-top:8px; font-size:0.78rem;" id="modalThreeBoundaryBox">
                         </div>
                     </div>
@@ -345,7 +349,7 @@
             </tr>
             <tr>
                 <td style="padding:6px; background:#f0f0f0;"><b>Predicted CCS Sugar %:</b></td>
-                <td style="padding:6px; font-weight:bold;" id="docketCcs">12.18% (±0.28% Model Conformal Confidence)</td>
+                <td style="padding:6px; font-weight:bold;" id="docketCcs">12.18% (Lab Verified: 12.05%)</td>
                 <td style="padding:6px; background:#f0f0f0;"><b>Operational Decision:</b></td>
                 <td style="padding:6px; font-weight:bold; color:green;" id="docketHarvestDate">CUT NOW (Priority 1)</td>
             </tr>
