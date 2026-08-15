@@ -8,14 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let ACTIVE_SEASON_DATA = [];
     let LAB_GROUND_TRUTH_DB = {};
 
-    // Dynamic backend URL configuration
     const BACKEND_BASE_URL = window.IKSHU_BACKEND_URL || (
         window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:8000'
             : 'https://ikshuvruddhi-api.onrender.com'
     );
 
-    // State
     const state = {
         lang: 'en',
         isBackendReachable: false,
@@ -31,15 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
         filteredData: [],
         searchTerm: '',
         focusedPlotId: null,
-        activeHeatMapLayer: 'ndvi', // Default to 10m NDVI Canopy
+        activeHeatMapLayer: 'ndvi',
         ripeningChartInstance: null,
 
-        // Polygon Editing State
         isEditingPolygon: false,
         editingPlotId: null,
         editingLayer: null,
 
-        // Map Objects
         map: null,
         markers: [],
         cadastralPolygons: [],
@@ -393,60 +389,82 @@ Real GeoTIFF cells are locked into the map!`);
         }
     }
 
+    /**
+     * CONCURRENT LIVE BULK AUTO-SNAP (Pool concurrency = 4)
+     * Transparent 3-tier reporting: Live / Unavailable / Simulated
+     */
     window.runAutonomousCanopySnapping = async function() {
         if (!ACTIVE_SEASON_DATA.length) {
             alert("Please upload your 2025–26 Field CSV first!");
             return;
         }
 
-        let snapCount = 0;
         let liveCount = 0;
+        let unavailableCount = 0;
+        let simulationCount = 0;
 
-        for (let row of ACTIVE_SEASON_DATA) {
+        const tasks = ACTIVE_SEASON_DATA.filter(row => {
             let polyStr = findVal(row, ['Plot Area Lat Long', 'polygon', 'Polygon', 'PLOT_AREA_POLYGON']);
-            const farmId = findVal(row, ['Plot No', 'PLOT_NO', 'farm_id', 'Gat No', 'GAT_NO']);
+            return polyStr && polyStr.includes('#') && polyStr.split('#').length >= 3;
+        });
 
-            if (polyStr && polyStr.includes('#')) {
-                let coords = polyStr.split('#').map(p => p.split(',').map(Number));
-                if (coords.length >= 3) {
-                    if (state.isCdseConfigured && !state.liveRasterByFarmId[farmId]) {
-                        try {
-                            const res = await fetch(`${BACKEND_BASE_URL}/api/satellite/process_plot`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ farm_id: farmId, polygon: polyStr })
-                            });
-                            if (res.ok) {
-                                const data = await res.json();
-                                if (data.live_satellite && data.snapped_polygon && data.cells && data.cells.length) {
-                                    state.liveRasterByFarmId[farmId] = data.cells.map(c => ({ ...c, is_live_geotiff: true }));
-                                    const snappedStr = data.snapped_polygon.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
-                                    row['Plot Area Lat Long'] = snappedStr;
-                                    row['polygon'] = snappedStr;
-                                    liveCount++;
-                                    snapCount++;
-                                    continue;
-                                }
+        // Worker queue with concurrency = 4
+        const CONCURRENCY = 4;
+        let taskIndex = 0;
+
+        async function worker() {
+            while (taskIndex < tasks.length) {
+                const currentIndex = taskIndex++;
+                const row = tasks[currentIndex];
+                const farmId = findVal(row, ['Plot No', 'PLOT_NO', 'farm_id', 'Gat No', 'GAT_NO']);
+                const polyStr = findVal(row, ['Plot Area Lat Long', 'polygon', 'Polygon', 'PLOT_AREA_POLYGON']);
+                const coords = polyStr.split('#').map(p => p.split(',').map(Number));
+
+                if (state.isCdseConfigured && !state.liveRasterByFarmId[farmId]) {
+                    try {
+                        const res = await fetch(`${BACKEND_BASE_URL}/api/satellite/process_plot`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ farm_id: farmId, polygon: polyStr })
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.live_satellite && data.snapped_polygon && data.cells && data.cells.length && (data.valid_pixels > 0)) {
+                                state.liveRasterByFarmId[farmId] = data.cells.map(c => ({ ...c, is_live_geotiff: true }));
+                                const snappedStr = data.snapped_polygon.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
+                                row['Plot Area Lat Long'] = snappedStr;
+                                row['polygon'] = snappedStr;
+                                liveCount++;
+                                continue;
                             }
-                        } catch (e) {}
+                        }
+                        unavailableCount++;
+                    } catch (e) {
+                        unavailableCount++;
                     }
-
-                    const cells = state.liveRasterByFarmId[farmId] || generateFallbackRasterCells(coords, 16.0, 18.5, 12.0);
-                    const snappedObj = polygonizeClassifiedCane(cells, coords);
-                    const snappedStr = snappedObj.snappedCoords.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
-                    row['Plot Area Lat Long'] = snappedStr;
-                    row['polygon'] = snappedStr;
-                    snapCount++;
                 }
+
+                // Fallback simulation processing
+                const cells = state.liveRasterByFarmId[farmId] || generateFallbackRasterCells(coords, 16.0, 18.5, 12.0);
+                const snappedObj = polygonizeClassifiedCane(cells, coords);
+                const snappedStr = snappedObj.snappedCoords.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
+                row['Plot Area Lat Long'] = snappedStr;
+                row['polygon'] = snappedStr;
+                simulationCount++;
             }
         }
 
-        runEngine();
-        alert(`⚡ Autonomous Canopy Snapping Complete across ${snapCount} plots (${liveCount} Live Copernicus GeoTIFFs processed)!
+        const workers = Array.from({ length: Math.min(CONCURRENCY, tasks.length) }, () => worker());
+        await Promise.all(workers);
 
-• Applied multi-spectral optical + SAR structural classification.
-• Eliminated road margins & non-cane features.
-• Recalculated Estimated Standing Cane Area.`);
+        runEngine();
+        alert(`⚡ Autonomous Canopy Snapping Summary across ${tasks.length} Plots:
+
+• 🟢 Live Copernicus GeoTIFFs Ingested: ${liveCount}
+• ⚠️ Live CDSE Unavailable / Failed: ${unavailableCount}
+• 🧪 Physics Simulation Processed: ${simulationCount}
+
+All boundaries snapped to estimated standing cane canopy!`);
     };
 
     window.startEditingPlotPolygon = function(farmId) {
@@ -481,6 +499,7 @@ Real GeoTIFF cells are locked into the map!`);
         if (el.polygonEditBanner) el.polygonEditBanner.style.display = 'block';
     };
 
+    // CACHE INVALIDATION ON EDIT: Clears stale satellite raster cells for modified parcel
     window.saveCurrentPolygonEdit = function() {
         if (!state.isEditingPolygon || !state.editingLayer || !state.editingPlotId) return;
 
@@ -488,6 +507,9 @@ Real GeoTIFF cells are locked into the map!`);
         const newCoordsStr = latLngs.map(ll => `${ll.lat.toFixed(7)},${ll.lng.toFixed(7)}`).join('#');
 
         updatePlotPolygonInMemory(state.editingPlotId, newCoordsStr);
+
+        // INVALIDATE STALE RASTER CACHE
+        delete state.liveRasterByFarmId[state.editingPlotId];
 
         state.editingLayer.editing.disable();
         state.map.removeLayer(state.editingLayer);
@@ -498,7 +520,7 @@ Real GeoTIFF cells are locked into the map!`);
         runEngine();
         alert(`✅ Polygon for Gat #${state.editingPlotId} saved!
 
-10m Multispectral Raster recalculated.`);
+Stale raster cache cleared. Click '⚡ Auto-Snap' to fetch fresh Sentinel-2 pixels for the new boundary.`);
     };
 
     window.cancelPolygonEdit = function() {
@@ -986,6 +1008,9 @@ Real GeoTIFF cells are locked into the map!`);
             </div>
         `;
 
+        const acqDisplay = state.latestAcquisitionDate || (state.hasLiveSatellitePixels ? "Acquisition metadata unavailable from CDSE response" : "Unavailable (Simulation)");
+        const prodDisplay = state.latestProductId || (state.hasLiveSatellitePixels ? "Acquisition metadata unavailable from CDSE response" : "Unavailable (Simulation)");
+
         document.getElementById('modalPixelAuditBox').innerHTML = `
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                 <span>Data Source:</span>
@@ -993,11 +1018,11 @@ Real GeoTIFF cells are locked into the map!`);
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                 <span>Acquisition Timestamp:</span>
-                <strong>${state.latestAcquisitionDate || 'Unavailable (Simulation)'}</strong>
+                <strong>${acqDisplay}</strong>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                 <span>ESA Product ID:</span>
-                <span style="font-family:'JetBrains Mono', monospace; font-size:0.68rem; color:#00f2fe;">${state.latestProductId || 'Unavailable (Simulation)'}</span>
+                <span style="font-family:'JetBrains Mono', monospace; font-size:0.68rem; color:#00f2fe;">${prodDisplay}</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                 <span>Estimated Standing Cane Area:</span>
