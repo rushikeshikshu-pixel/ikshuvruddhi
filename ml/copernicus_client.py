@@ -1,3 +1,4 @@
+from ml.canopy_classifier import classify_sugarcane_pixel, SCL_VALID_CLASSES
 """
 IkshuVruddhi Production Copernicus CDSE Client (Strict Auditable Remote Sensing)
 1. Official CDSE Process API endpoint: https://sh.dataspace.copernicus.eu/process/v1
@@ -240,20 +241,10 @@ class CopernicusCDSEProcessEngine:
                         0.35 * ((ndre - 0.10) / 0.20) +
                         0.30 * ((lswi - 0.05) / 0.25), 0.01), 0.98), 2)
 
-                    if ndwi > 0.05:
-                        land_class = "WATER_POND"
-                        cane_score = 0.01
-                        is_cane = False
-                    elif bsi > 0.08 or ndvi < 0.35:
-                        land_class = "ROAD_BARE_SOIL"
-                        cane_score = 0.04
-                        is_cane = False
-                    elif ndvi >= 0.65 and ndre >= 0.18 and lswi >= 0.15:
-                        land_class = "STANDING_SUGARCANE"
-                        is_cane = True
-                    else:
-                        land_class = "OTHER_VEGETATION"
-                        is_cane = False
+                    classification = classify_sugarcane_pixel(ndvi, ndre, lswi, ndwi, bsi, scl)
+                    land_class = classification["land_class"]
+                    cane_score = classification["cane_signature_score"]
+                    is_cane = classification["is_standing_cane"]
 
                 cell_poly = [
                     [cell_lat, cell_lon],

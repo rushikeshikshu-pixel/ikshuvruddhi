@@ -80,9 +80,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 89.45,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.07,
-    "parcel_cane_occupancy_pct": 14.3,
-    "strict_parcel_iou_pct": 14.3,
+    "sat_detected_inside_acres": 0.05,
+    "parcel_cane_occupancy_pct": 11.1,
+    "strict_parcel_iou_pct": 10.6,
     "estimated_10m_edge_fraction_pct": 58.2,
     "primary_error_attribution": "SUB_ACRE_PIXELIZATION (10m grid edge quantization dominates small parcel boundary)",
     "estimated_boundary_pixel_exposure_pct": 58.2
@@ -124,9 +124,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 0.57,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 3.19,
-    "parcel_cane_occupancy_pct": 100.0,
-    "strict_parcel_iou_pct": 43.3,
+    "sat_detected_inside_acres": 3.16,
+    "parcel_cane_occupancy_pct": 99.6,
+    "strict_parcel_iou_pct": 42.8,
     "estimated_10m_edge_fraction_pct": 22.8,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 22.8
@@ -155,24 +155,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.4398084,
     "raw_lon_original": 75.1232201,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.6,
+    "real_satellite_mean_ndre": 0.377,
+    "real_satellite_mean_lswi": 0.179,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.78,
+    "parcel_cane_occupancy_pct": 89.1,
+    "strict_parcel_iou_pct": 73.3,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
+    "estimated_boundary_pixel_exposure_pct": 34.5
   },
   {
     "Plot No": 10,
@@ -212,8 +213,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
     "sat_detected_inside_acres": 0.22,
-    "parcel_cane_occupancy_pct": 8.3,
-    "strict_parcel_iou_pct": 8.3,
+    "parcel_cane_occupancy_pct": 8.2,
+    "strict_parcel_iou_pct": 8.1,
     "estimated_10m_edge_fraction_pct": 22.0,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 22.0
@@ -242,24 +243,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.3598547,
     "raw_lon_original": 75.2342532,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.592,
+    "real_satellite_mean_ndre": 0.38,
+    "real_satellite_mean_lswi": 0.216,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.81,
+    "parcel_cane_occupancy_pct": 82.2,
+    "strict_parcel_iou_pct": 60.4,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
+    "estimated_boundary_pixel_exposure_pct": 32.0
   },
   {
     "Plot No": 12,
@@ -285,24 +287,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.3662926,
     "raw_lon_original": 75.1413275,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.282,
+    "real_satellite_mean_ndre": 0.153,
+    "real_satellite_mean_lswi": -0.069,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.01,
+    "parcel_cane_occupancy_pct": 1.4,
+    "strict_parcel_iou_pct": 1.3,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
+    "estimated_boundary_pixel_exposure_pct": 36.3
   },
   {
     "Plot No": 13,
@@ -328,24 +331,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.3593214,
     "raw_lon_original": 75.1137009,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.369,
+    "real_satellite_mean_ndre": 0.21,
+    "real_satellite_mean_lswi": 0.035,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.0,
+    "parcel_cane_occupancy_pct": 0.0,
+    "strict_parcel_iou_pct": 0.0,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "SUB_ACRE_PIXELIZATION (10m grid edge quantization dominates small parcel boundary)",
+    "estimated_boundary_pixel_exposure_pct": 57.8
   },
   {
     "Plot No": 15,
@@ -371,24 +375,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.3542164,
     "raw_lon_original": 75.1207957,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.297,
+    "real_satellite_mean_ndre": 0.133,
+    "real_satellite_mean_lswi": -0.022,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.0,
+    "parcel_cane_occupancy_pct": 0.0,
+    "strict_parcel_iou_pct": 0.0,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
+    "estimated_boundary_pixel_exposure_pct": 38.8
   },
   {
     "Plot No": 16,
@@ -414,24 +419,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.4483175,
     "raw_lon_original": 75.1315329,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.426,
+    "real_satellite_mean_ndre": 0.258,
+    "real_satellite_mean_lswi": 0.078,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.0,
+    "parcel_cane_occupancy_pct": 0.0,
+    "strict_parcel_iou_pct": 0.0,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "SUB_ACRE_PIXELIZATION (10m grid edge quantization dominates small parcel boundary)",
+    "estimated_boundary_pixel_exposure_pct": 80.9
   },
   {
     "Plot No": 17,
@@ -457,24 +463,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.3429209,
     "raw_lon_original": 75.150906,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.385,
+    "real_satellite_mean_ndre": 0.237,
+    "real_satellite_mean_lswi": 0.034,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.3,
+    "parcel_cane_occupancy_pct": 20.9,
+    "strict_parcel_iou_pct": 20.3,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
+    "estimated_boundary_pixel_exposure_pct": 26.4
   },
   {
     "Plot No": 18,
@@ -500,24 +507,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.4086172,
     "raw_lon_original": 75.1310834,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.24,
+    "real_satellite_mean_ndre": 0.117,
+    "real_satellite_mean_lswi": -0.075,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.0,
+    "parcel_cane_occupancy_pct": 0.0,
+    "strict_parcel_iou_pct": 0.0,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
+    "estimated_boundary_pixel_exposure_pct": 45.9
   },
   {
     "Plot No": 19,
@@ -543,24 +551,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.4666836,
     "raw_lon_original": 75.1377667,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.51,
+    "real_satellite_mean_ndre": 0.325,
+    "real_satellite_mean_lswi": 0.14,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.84,
+    "parcel_cane_occupancy_pct": 38.5,
+    "strict_parcel_iou_pct": 38.1,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
+    "estimated_boundary_pixel_exposure_pct": 21.4
   },
   {
     "Plot No": 20,
@@ -599,9 +608,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 4.74,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 1.75,
-    "parcel_cane_occupancy_pct": 91.0,
-    "strict_parcel_iou_pct": 82.6,
+    "sat_detected_inside_acres": 1.69,
+    "parcel_cane_occupancy_pct": 92.0,
+    "strict_parcel_iou_pct": 80.7,
     "estimated_10m_edge_fraction_pct": 23.8,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 23.8
@@ -643,9 +652,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 97.97,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.02,
-    "parcel_cane_occupancy_pct": 1.9,
-    "strict_parcel_iou_pct": 1.8,
+    "sat_detected_inside_acres": 0.03,
+    "parcel_cane_occupancy_pct": 2.6,
+    "strict_parcel_iou_pct": 2.4,
     "estimated_10m_edge_fraction_pct": 31.2,
     "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
     "estimated_boundary_pixel_exposure_pct": 31.2
@@ -687,9 +696,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 32.22,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.72,
-    "parcel_cane_occupancy_pct": 64.4,
-    "strict_parcel_iou_pct": 63.0,
+    "sat_detected_inside_acres": 0.68,
+    "parcel_cane_occupancy_pct": 64.6,
+    "strict_parcel_iou_pct": 61.2,
     "estimated_10m_edge_fraction_pct": 32.1,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 32.1
@@ -718,24 +727,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.4187456,
     "raw_lon_original": 75.2208495,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.353,
+    "real_satellite_mean_ndre": 0.218,
+    "real_satellite_mean_lswi": -0.023,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.04,
+    "parcel_cane_occupancy_pct": 5.6,
+    "strict_parcel_iou_pct": 5.5,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
+    "estimated_boundary_pixel_exposure_pct": 40.6
   },
   {
     "Plot No": 25,
@@ -761,24 +771,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.4745459,
     "raw_lon_original": 75.139527,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.518,
+    "real_satellite_mean_ndre": 0.313,
+    "real_satellite_mean_lswi": 0.115,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.29,
+    "parcel_cane_occupancy_pct": 33.4,
+    "strict_parcel_iou_pct": 33.0,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
+    "estimated_boundary_pixel_exposure_pct": 35.2
   },
   {
     "Plot No": 26,
@@ -818,7 +829,7 @@ window.DEFAULT_ADSALI_DATASET = [
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
     "sat_detected_inside_acres": 0.79,
-    "parcel_cane_occupancy_pct": 51.6,
+    "parcel_cane_occupancy_pct": 51.4,
     "strict_parcel_iou_pct": 31.7,
     "estimated_10m_edge_fraction_pct": 28.8,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
@@ -861,9 +872,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 0.96,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.99,
-    "parcel_cane_occupancy_pct": 97.6,
-    "strict_parcel_iou_pct": 81.6,
+    "sat_detected_inside_acres": 0.98,
+    "parcel_cane_occupancy_pct": 98.0,
+    "strict_parcel_iou_pct": 81.2,
     "estimated_10m_edge_fraction_pct": 31.6,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 31.6
@@ -905,9 +916,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 3.73,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 1.04,
-    "parcel_cane_occupancy_pct": 100.0,
-    "strict_parcel_iou_pct": 80.8,
+    "sat_detected_inside_acres": 1.03,
+    "parcel_cane_occupancy_pct": 95.4,
+    "strict_parcel_iou_pct": 77.1,
     "estimated_10m_edge_fraction_pct": 34.2,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 34.2
@@ -936,24 +947,25 @@ window.DEFAULT_ADSALI_DATASET = [
     "raw_lat_original": 19.4481413,
     "raw_lon_original": 75.1110123,
     "is_anchor_anomaly_flag": false,
-    "satellite_validation_status": "PENDING_SATELLITE_ACQUISITION",
+    "satellite_validation_status": "EMPIRICAL_SENTINEL2_COGs",
     "sentinel_scene_id": NaN,
-    "scene_acquisition_date": NaN,
+    "scene_acquisition_date": "2026-01-23",
     "real_satellite_cane_acres": NaN,
-    "real_satellite_mean_ndvi": NaN,
-    "real_satellite_mean_ndre": NaN,
-    "real_satellite_mean_lswi": NaN,
+    "real_satellite_mean_ndvi": 0.362,
+    "real_satellite_mean_ndre": 0.19,
+    "real_satellite_mean_lswi": -0.013,
     "empirical_spatial_iou": NaN,
     "empirical_canopy_recall": NaN,
     "empirical_precision_in_window": NaN,
     "empirical_area_error_pct": NaN,
     "clear_sky_coverage_pct": 100.0,
-    "tile": NaN,
-    "sat_detected_inside_acres": NaN,
-    "parcel_cane_occupancy_pct": NaN,
-    "strict_parcel_iou_pct": NaN,
+    "tile": "43QEB",
+    "sat_detected_inside_acres": 0.01,
+    "parcel_cane_occupancy_pct": 1.0,
+    "strict_parcel_iou_pct": 0.9,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": "SUB_ACRE_PIXELIZATION (10m grid edge quantization dominates small parcel boundary)",
+    "estimated_boundary_pixel_exposure_pct": 45.5
   },
   {
     "Plot No": 30,
@@ -992,9 +1004,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 59.75,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.4,
-    "parcel_cane_occupancy_pct": 42.1,
-    "strict_parcel_iou_pct": 41.0,
+    "sat_detected_inside_acres": 0.39,
+    "parcel_cane_occupancy_pct": 40.2,
+    "strict_parcel_iou_pct": 39.2,
     "estimated_10m_edge_fraction_pct": 31.9,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 31.9
@@ -1036,9 +1048,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 100.0,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.0,
-    "parcel_cane_occupancy_pct": 0.0,
-    "strict_parcel_iou_pct": 0.0,
+    "sat_detected_inside_acres": 0.02,
+    "parcel_cane_occupancy_pct": 1.1,
+    "strict_parcel_iou_pct": 1.0,
     "estimated_10m_edge_fraction_pct": 27.2,
     "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
     "estimated_boundary_pixel_exposure_pct": 27.2
@@ -1080,9 +1092,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 6.25,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.94,
-    "parcel_cane_occupancy_pct": 95.0,
-    "strict_parcel_iou_pct": 80.9,
+    "sat_detected_inside_acres": 0.9,
+    "parcel_cane_occupancy_pct": 90.2,
+    "strict_parcel_iou_pct": 74.7,
     "estimated_10m_edge_fraction_pct": 31.5,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 31.5
@@ -1124,9 +1136,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 21.34,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 1.9,
-    "parcel_cane_occupancy_pct": 78.6,
-    "strict_parcel_iou_pct": 78.6,
+    "sat_detected_inside_acres": 1.88,
+    "parcel_cane_occupancy_pct": 77.5,
+    "strict_parcel_iou_pct": 76.6,
     "estimated_10m_edge_fraction_pct": 21.3,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 21.3
@@ -1300,9 +1312,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 88.57,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.12,
-    "parcel_cane_occupancy_pct": 11.1,
-    "strict_parcel_iou_pct": 10.2,
+    "sat_detected_inside_acres": 0.14,
+    "parcel_cane_occupancy_pct": 12.5,
+    "strict_parcel_iou_pct": 11.6,
     "estimated_10m_edge_fraction_pct": 31.2,
     "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
     "estimated_boundary_pixel_exposure_pct": 31.2
@@ -1344,9 +1356,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 1.9,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 1.95,
+    "sat_detected_inside_acres": 1.87,
     "parcel_cane_occupancy_pct": 97.5,
-    "strict_parcel_iou_pct": 88.8,
+    "strict_parcel_iou_pct": 84.9,
     "estimated_10m_edge_fraction_pct": 23.3,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 23.3
@@ -1388,9 +1400,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 1.9,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 1.95,
+    "sat_detected_inside_acres": 1.87,
     "parcel_cane_occupancy_pct": 97.5,
-    "strict_parcel_iou_pct": 88.8,
+    "strict_parcel_iou_pct": 84.9,
     "estimated_10m_edge_fraction_pct": 23.3,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 23.3
@@ -1432,9 +1444,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 6.03,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.96,
-    "parcel_cane_occupancy_pct": 86.7,
-    "strict_parcel_iou_pct": 75.0,
+    "sat_detected_inside_acres": 0.91,
+    "parcel_cane_occupancy_pct": 88.5,
+    "strict_parcel_iou_pct": 72.4,
     "estimated_10m_edge_fraction_pct": 31.5,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 31.5
@@ -1520,9 +1532,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 42.08,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.99,
-    "parcel_cane_occupancy_pct": 58.0,
-    "strict_parcel_iou_pct": 52.6,
+    "sat_detected_inside_acres": 0.95,
+    "parcel_cane_occupancy_pct": 55.6,
+    "strict_parcel_iou_pct": 49.4,
     "estimated_10m_edge_fraction_pct": 25.1,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 25.1
@@ -1564,9 +1576,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 98.45,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.02,
-    "parcel_cane_occupancy_pct": 1.5,
-    "strict_parcel_iou_pct": 1.4,
+    "sat_detected_inside_acres": 0.03,
+    "parcel_cane_occupancy_pct": 1.7,
+    "strict_parcel_iou_pct": 1.6,
     "estimated_10m_edge_fraction_pct": 25.6,
     "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
     "estimated_boundary_pixel_exposure_pct": 25.6
@@ -1608,9 +1620,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 68.06,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.96,
-    "parcel_cane_occupancy_pct": 32.0,
-    "strict_parcel_iou_pct": 19.2,
+    "sat_detected_inside_acres": 0.95,
+    "parcel_cane_occupancy_pct": 31.5,
+    "strict_parcel_iou_pct": 18.9,
     "estimated_10m_edge_fraction_pct": 26.4,
     "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
     "estimated_boundary_pixel_exposure_pct": 26.4
@@ -1652,9 +1664,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 36.14,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 1.71,
-    "parcel_cane_occupancy_pct": 62.7,
-    "strict_parcel_iou_pct": 57.5,
+    "sat_detected_inside_acres": 1.66,
+    "parcel_cane_occupancy_pct": 62.3,
+    "strict_parcel_iou_pct": 56.2,
     "estimated_10m_edge_fraction_pct": 20.2,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 20.2
@@ -1696,9 +1708,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 92.1,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.07,
-    "parcel_cane_occupancy_pct": 7.5,
-    "strict_parcel_iou_pct": 7.5,
+    "sat_detected_inside_acres": 0.05,
+    "parcel_cane_occupancy_pct": 5.8,
+    "strict_parcel_iou_pct": 5.7,
     "estimated_10m_edge_fraction_pct": 35.5,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 35.5
@@ -1829,8 +1841,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
     "sat_detected_inside_acres": 0.15,
-    "parcel_cane_occupancy_pct": 20.7,
-    "strict_parcel_iou_pct": 19.4,
+    "parcel_cane_occupancy_pct": 22.4,
+    "strict_parcel_iou_pct": 21.0,
     "estimated_10m_edge_fraction_pct": 43.1,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 43.1
@@ -1960,9 +1972,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 1.9,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.32,
-    "parcel_cane_occupancy_pct": 81.2,
-    "strict_parcel_iou_pct": 81.2,
+    "sat_detected_inside_acres": 0.3,
+    "parcel_cane_occupancy_pct": 73.3,
+    "strict_parcel_iou_pct": 68.9,
     "estimated_10m_edge_fraction_pct": 49.8,
     "primary_error_attribution": "SUB_ACRE_PIXELIZATION (10m grid edge quantization dominates small parcel boundary)",
     "estimated_boundary_pixel_exposure_pct": 49.8
@@ -2048,9 +2060,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 90.12,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.07,
-    "parcel_cane_occupancy_pct": 9.4,
-    "strict_parcel_iou_pct": 9.4,
+    "sat_detected_inside_acres": 0.05,
+    "parcel_cane_occupancy_pct": 7.1,
+    "strict_parcel_iou_pct": 6.9,
     "estimated_10m_edge_fraction_pct": 38.2,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 38.2
@@ -2092,9 +2104,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 19.38,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.77,
-    "parcel_cane_occupancy_pct": 79.5,
-    "strict_parcel_iou_pct": 79.5,
+    "sat_detected_inside_acres": 0.74,
+    "parcel_cane_occupancy_pct": 78.2,
+    "strict_parcel_iou_pct": 76.4,
     "estimated_10m_edge_fraction_pct": 35.7,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 35.7
@@ -2137,10 +2149,10 @@ window.DEFAULT_ADSALI_DATASET = [
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
     "sat_detected_inside_acres": 0.99,
-    "parcel_cane_occupancy_pct": 40.0,
-    "strict_parcel_iou_pct": 38.5,
+    "parcel_cane_occupancy_pct": 39.8,
+    "strict_parcel_iou_pct": 38.2,
     "estimated_10m_edge_fraction_pct": 24.8,
-    "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
+    "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 24.8
   },
   {
@@ -2180,9 +2192,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 7.87,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 1.8,
-    "parcel_cane_occupancy_pct": 93.6,
-    "strict_parcel_iou_pct": 93.6,
+    "sat_detected_inside_acres": 1.73,
+    "parcel_cane_occupancy_pct": 88.2,
+    "strict_parcel_iou_pct": 84.8,
     "estimated_10m_edge_fraction_pct": 22.6,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 22.6
@@ -2225,8 +2237,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
     "sat_detected_inside_acres": 0.02,
-    "parcel_cane_occupancy_pct": 4.8,
-    "strict_parcel_iou_pct": 4.3,
+    "parcel_cane_occupancy_pct": 4.2,
+    "strict_parcel_iou_pct": 3.8,
     "estimated_10m_edge_fraction_pct": 49.3,
     "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
     "estimated_boundary_pixel_exposure_pct": 49.3
@@ -2268,9 +2280,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 71.43,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.59,
-    "parcel_cane_occupancy_pct": 31.2,
-    "strict_parcel_iou_pct": 30.0,
+    "sat_detected_inside_acres": 0.56,
+    "parcel_cane_occupancy_pct": 29.4,
+    "strict_parcel_iou_pct": 27.9,
     "estimated_10m_edge_fraction_pct": 22.9,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 22.9
@@ -2313,8 +2325,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
     "sat_detected_inside_acres": 0.05,
-    "parcel_cane_occupancy_pct": 5.7,
-    "strict_parcel_iou_pct": 5.3,
+    "parcel_cane_occupancy_pct": 6.1,
+    "strict_parcel_iou_pct": 5.5,
     "estimated_10m_edge_fraction_pct": 37.1,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 37.1
@@ -2356,9 +2368,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 27.15,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.4,
-    "parcel_cane_occupancy_pct": 66.7,
-    "strict_parcel_iou_pct": 66.7,
+    "sat_detected_inside_acres": 0.37,
+    "parcel_cane_occupancy_pct": 67.4,
+    "strict_parcel_iou_pct": 63.9,
     "estimated_10m_edge_fraction_pct": 44.1,
     "primary_error_attribution": "SUB_ACRE_PIXELIZATION (10m grid edge quantization dominates small parcel boundary)",
     "estimated_boundary_pixel_exposure_pct": 44.1
@@ -2400,9 +2412,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 11.76,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.62,
-    "parcel_cane_occupancy_pct": 89.3,
-    "strict_parcel_iou_pct": 78.1,
+    "sat_detected_inside_acres": 0.59,
+    "parcel_cane_occupancy_pct": 84.9,
+    "strict_parcel_iou_pct": 72.3,
     "estimated_10m_edge_fraction_pct": 39.7,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 39.7
@@ -2444,9 +2456,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 93.06,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.1,
-    "parcel_cane_occupancy_pct": 6.7,
-    "strict_parcel_iou_pct": 6.3,
+    "sat_detected_inside_acres": 0.08,
+    "parcel_cane_occupancy_pct": 5.9,
+    "strict_parcel_iou_pct": 5.5,
     "estimated_10m_edge_fraction_pct": 27.7,
     "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
     "estimated_boundary_pixel_exposure_pct": 27.7
@@ -2533,8 +2545,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
     "sat_detected_inside_acres": 0.37,
-    "parcel_cane_occupancy_pct": 44.1,
-    "strict_parcel_iou_pct": 25.4,
+    "parcel_cane_occupancy_pct": 45.2,
+    "strict_parcel_iou_pct": 25.8,
     "estimated_10m_edge_fraction_pct": 45.4,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 45.4
@@ -2576,9 +2588,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 0.66,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.77,
-    "parcel_cane_occupancy_pct": 91.2,
-    "strict_parcel_iou_pct": 60.8,
+    "sat_detected_inside_acres": 0.75,
+    "parcel_cane_occupancy_pct": 91.1,
+    "strict_parcel_iou_pct": 59.4,
     "estimated_10m_edge_fraction_pct": 39.6,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 39.6
@@ -2620,9 +2632,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 14.52,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.82,
-    "parcel_cane_occupancy_pct": 86.8,
-    "strict_parcel_iou_pct": 52.4,
+    "sat_detected_inside_acres": 0.83,
+    "parcel_cane_occupancy_pct": 86.7,
+    "strict_parcel_iou_pct": 53.0,
     "estimated_10m_edge_fraction_pct": 34.0,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 34.0
@@ -2664,9 +2676,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 14.81,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.52,
-    "parcel_cane_occupancy_pct": 84.0,
-    "strict_parcel_iou_pct": 44.7,
+    "sat_detected_inside_acres": 0.51,
+    "parcel_cane_occupancy_pct": 83.5,
+    "strict_parcel_iou_pct": 43.7,
     "estimated_10m_edge_fraction_pct": 45.5,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 45.5
@@ -2708,9 +2720,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 30.39,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 1.31,
-    "parcel_cane_occupancy_pct": 71.6,
-    "strict_parcel_iou_pct": 53.5,
+    "sat_detected_inside_acres": 1.32,
+    "parcel_cane_occupancy_pct": 70.2,
+    "strict_parcel_iou_pct": 53.1,
     "estimated_10m_edge_fraction_pct": 27.8,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 27.8
@@ -2752,9 +2764,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 26.81,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 1.06,
-    "parcel_cane_occupancy_pct": 70.5,
-    "strict_parcel_iou_pct": 55.1,
+    "sat_detected_inside_acres": 1.04,
+    "parcel_cane_occupancy_pct": 71.4,
+    "strict_parcel_iou_pct": 54.6,
     "estimated_10m_edge_fraction_pct": 33.4,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 33.4
@@ -2796,9 +2808,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 49.95,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.47,
-    "parcel_cane_occupancy_pct": 44.2,
-    "strict_parcel_iou_pct": 44.2,
+    "sat_detected_inside_acres": 0.44,
+    "parcel_cane_occupancy_pct": 47.2,
+    "strict_parcel_iou_pct": 45.9,
     "estimated_10m_edge_fraction_pct": 33.4,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 33.4
@@ -2840,9 +2852,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 62.03,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.15,
-    "parcel_cane_occupancy_pct": 35.3,
-    "strict_parcel_iou_pct": 30.0,
+    "sat_detected_inside_acres": 0.12,
+    "parcel_cane_occupancy_pct": 30.9,
+    "strict_parcel_iou_pct": 24.5,
     "estimated_10m_edge_fraction_pct": 59.9,
     "primary_error_attribution": "SUB_ACRE_PIXELIZATION (10m grid edge quantization dominates small parcel boundary)",
     "estimated_boundary_pixel_exposure_pct": 59.9
@@ -2884,9 +2896,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 12.16,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.86,
-    "parcel_cane_occupancy_pct": 87.5,
-    "strict_parcel_iou_pct": 79.5,
+    "sat_detected_inside_acres": 0.85,
+    "parcel_cane_occupancy_pct": 86.6,
+    "strict_parcel_iou_pct": 77.9,
     "estimated_10m_edge_fraction_pct": 35.1,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 35.1
@@ -2928,9 +2940,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 65.32,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.25,
-    "parcel_cane_occupancy_pct": 31.2,
-    "strict_parcel_iou_pct": 29.4,
+    "sat_detected_inside_acres": 0.21,
+    "parcel_cane_occupancy_pct": 29.7,
+    "strict_parcel_iou_pct": 26.6,
     "estimated_10m_edge_fraction_pct": 37.3,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 37.3
@@ -3016,9 +3028,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 67.17,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.32,
-    "parcel_cane_occupancy_pct": 33.3,
-    "strict_parcel_iou_pct": 25.0,
+    "sat_detected_inside_acres": 0.33,
+    "parcel_cane_occupancy_pct": 33.4,
+    "strict_parcel_iou_pct": 25.3,
     "estimated_10m_edge_fraction_pct": 33.3,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 33.3
@@ -3060,9 +3072,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 3.24,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.84,
+    "sat_detected_inside_acres": 0.81,
     "parcel_cane_occupancy_pct": 100.0,
-    "strict_parcel_iou_pct": 70.8,
+    "strict_parcel_iou_pct": 68.6,
     "estimated_10m_edge_fraction_pct": 34.9,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 34.9
@@ -3104,9 +3116,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 36.2,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 3.26,
-    "parcel_cane_occupancy_pct": 63.2,
-    "strict_parcel_iou_pct": 58.4,
+    "sat_detected_inside_acres": 3.25,
+    "parcel_cane_occupancy_pct": 63.6,
+    "strict_parcel_iou_pct": 58.7,
     "estimated_10m_edge_fraction_pct": 15.9,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 15.9
@@ -3149,8 +3161,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
     "sat_detected_inside_acres": 0.69,
-    "parcel_cane_occupancy_pct": 84.8,
-    "strict_parcel_iou_pct": 63.6,
+    "parcel_cane_occupancy_pct": 76.8,
+    "strict_parcel_iou_pct": 58.9,
     "estimated_10m_edge_fraction_pct": 34.8,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 34.8
@@ -3192,9 +3204,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 55.7,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 1.36,
-    "parcel_cane_occupancy_pct": 44.0,
-    "strict_parcel_iou_pct": 32.2,
+    "sat_detected_inside_acres": 1.37,
+    "parcel_cane_occupancy_pct": 44.6,
+    "strict_parcel_iou_pct": 32.6,
     "estimated_10m_edge_fraction_pct": 21.8,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 21.8
@@ -3236,9 +3248,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 0.54,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 1.41,
-    "parcel_cane_occupancy_pct": 100.0,
-    "strict_parcel_iou_pct": 75.0,
+    "sat_detected_inside_acres": 1.38,
+    "parcel_cane_occupancy_pct": 98.8,
+    "strict_parcel_iou_pct": 73.0,
     "estimated_10m_edge_fraction_pct": 29.2,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 29.2
@@ -3324,11 +3336,11 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 24.96,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.84,
-    "parcel_cane_occupancy_pct": 72.3,
-    "strict_parcel_iou_pct": 61.8,
+    "sat_detected_inside_acres": 0.86,
+    "parcel_cane_occupancy_pct": 76.4,
+    "strict_parcel_iou_pct": 65.7,
     "estimated_10m_edge_fraction_pct": 33.0,
-    "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
+    "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 33.0
   },
   {
@@ -3368,9 +3380,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 20.74,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 1.41,
-    "parcel_cane_occupancy_pct": 77.0,
-    "strict_parcel_iou_pct": 69.5,
+    "sat_detected_inside_acres": 1.39,
+    "parcel_cane_occupancy_pct": 78.5,
+    "strict_parcel_iou_pct": 70.2,
     "estimated_10m_edge_fraction_pct": 24.3,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 24.3
@@ -3412,9 +3424,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 92.5,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.17,
-    "parcel_cane_occupancy_pct": 7.3,
-    "strict_parcel_iou_pct": 7.3,
+    "sat_detected_inside_acres": 0.16,
+    "parcel_cane_occupancy_pct": 7.2,
+    "strict_parcel_iou_pct": 7.1,
     "estimated_10m_edge_fraction_pct": 27.2,
     "primary_error_attribution": "NO_VEGETATION_DETECTED (NDVI < 0.35 on 2026-01-23; fallow/harvest/rotation)",
     "estimated_boundary_pixel_exposure_pct": 27.2
@@ -3456,7 +3468,7 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 100.0,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.02,
+    "sat_detected_inside_acres": 0.03,
     "parcel_cane_occupancy_pct": 0.5,
     "strict_parcel_iou_pct": 0.5,
     "estimated_10m_edge_fraction_pct": 14.3,
@@ -3500,9 +3512,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 81.91,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.84,
-    "parcel_cane_occupancy_pct": 18.2,
-    "strict_parcel_iou_pct": 18.2,
+    "sat_detected_inside_acres": 0.81,
+    "parcel_cane_occupancy_pct": 18.0,
+    "strict_parcel_iou_pct": 17.9,
     "estimated_10m_edge_fraction_pct": 15.8,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 15.8
@@ -3544,9 +3556,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 29.47,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 1.26,
-    "parcel_cane_occupancy_pct": 65.4,
-    "strict_parcel_iou_pct": 60.0,
+    "sat_detected_inside_acres": 1.21,
+    "parcel_cane_occupancy_pct": 67.7,
+    "strict_parcel_iou_pct": 60.2,
     "estimated_10m_edge_fraction_pct": 25.3,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 25.3
@@ -3588,9 +3600,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 14.52,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 0.96,
-    "parcel_cane_occupancy_pct": 88.6,
-    "strict_parcel_iou_pct": 72.2,
+    "sat_detected_inside_acres": 0.97,
+    "parcel_cane_occupancy_pct": 86.0,
+    "strict_parcel_iou_pct": 70.9,
     "estimated_10m_edge_fraction_pct": 31.1,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 31.1
@@ -3632,9 +3644,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 39.35,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QEB",
-    "sat_detected_inside_acres": 1.88,
-    "parcel_cane_occupancy_pct": 58.9,
-    "strict_parcel_iou_pct": 54.7,
+    "sat_detected_inside_acres": 1.84,
+    "parcel_cane_occupancy_pct": 59.5,
+    "strict_parcel_iou_pct": 54.5,
     "estimated_10m_edge_fraction_pct": 18.1,
     "primary_error_attribution": "PARTIAL_CANOPY_OR_COORDINATE_OFFSET (Mixed standing crop or partial plot coverage)",
     "estimated_boundary_pixel_exposure_pct": 18.1
@@ -3676,9 +3688,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 67.85,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.77,
-    "parcel_cane_occupancy_pct": 33.7,
-    "strict_parcel_iou_pct": 33.7,
+    "sat_detected_inside_acres": 0.75,
+    "parcel_cane_occupancy_pct": 32.5,
+    "strict_parcel_iou_pct": 32.2,
     "estimated_10m_edge_fraction_pct": 21.7,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 21.7
@@ -3720,9 +3732,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 9.36,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.74,
-    "parcel_cane_occupancy_pct": 100.0,
-    "strict_parcel_iou_pct": 100.0,
+    "sat_detected_inside_acres": 0.67,
+    "parcel_cane_occupancy_pct": 98.9,
+    "strict_parcel_iou_pct": 89.5,
     "estimated_10m_edge_fraction_pct": 38.4,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 38.4
@@ -3764,9 +3776,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 78.3,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 0.2,
-    "parcel_cane_occupancy_pct": 21.6,
-    "strict_parcel_iou_pct": 18.6,
+    "sat_detected_inside_acres": 0.18,
+    "parcel_cane_occupancy_pct": 19.6,
+    "strict_parcel_iou_pct": 16.6,
     "estimated_10m_edge_fraction_pct": 37.2,
     "primary_error_attribution": "BELOW_SPECTRAL_THRESHOLD (Vegetated field below sugarcane vigor threshold)",
     "estimated_boundary_pixel_exposure_pct": 37.2
@@ -3808,9 +3820,9 @@ window.DEFAULT_ADSALI_DATASET = [
     "empirical_area_error_pct": 1.09,
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
-    "sat_detected_inside_acres": 1.21,
-    "parcel_cane_occupancy_pct": 100.0,
-    "strict_parcel_iou_pct": 72.1,
+    "sat_detected_inside_acres": 1.22,
+    "parcel_cane_occupancy_pct": 99.8,
+    "strict_parcel_iou_pct": 72.6,
     "estimated_10m_edge_fraction_pct": 28.6,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 28.6
@@ -3853,8 +3865,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "clear_sky_coverage_pct": 100.0,
     "tile": "43QDB",
     "sat_detected_inside_acres": 1.04,
-    "parcel_cane_occupancy_pct": 87.5,
-    "strict_parcel_iou_pct": 62.7,
+    "parcel_cane_occupancy_pct": 88.5,
+    "strict_parcel_iou_pct": 63.4,
     "estimated_10m_edge_fraction_pct": 29.9,
     "primary_error_attribution": "HIGH_CANOPY_OCCUPANCY (Strong agreement; minor boundary trimming)",
     "estimated_boundary_pixel_exposure_pct": 29.9
@@ -4428,7 +4440,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 1541,
@@ -4471,7 +4484,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 1567,
@@ -4514,7 +4528,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 1602,
@@ -4557,7 +4572,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 1750,
@@ -4600,7 +4616,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 1765,
@@ -4643,7 +4660,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 1825,
@@ -4686,7 +4704,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2061,
@@ -4729,7 +4748,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2062,
@@ -4772,7 +4792,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2094,
@@ -4815,7 +4836,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2095,
@@ -4858,7 +4880,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2176,
@@ -4901,7 +4924,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2354,
@@ -4944,7 +4968,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2374,
@@ -4987,7 +5012,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2435,
@@ -5030,7 +5056,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2784,
@@ -5073,7 +5100,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2907,
@@ -5116,7 +5144,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2916,
@@ -5159,7 +5188,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2923,
@@ -5202,7 +5232,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2926,
@@ -5245,7 +5276,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2933,
@@ -5288,7 +5320,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 2949,
@@ -5331,7 +5364,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3242,
@@ -5374,7 +5408,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3294,
@@ -5417,7 +5452,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3311,
@@ -5460,7 +5496,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3324,
@@ -5503,7 +5540,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3353,
@@ -5546,7 +5584,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3414,
@@ -5589,7 +5628,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3540,
@@ -5632,7 +5672,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3549,
@@ -5675,7 +5716,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3592,
@@ -5718,7 +5760,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3608,
@@ -5761,7 +5804,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3620,
@@ -5804,7 +5848,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3660,
@@ -5847,7 +5892,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3847,
@@ -5890,7 +5936,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3975,
@@ -5933,7 +5980,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3981,
@@ -5976,7 +6024,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 3983,
@@ -6019,7 +6068,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4027,
@@ -6062,7 +6112,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4163,
@@ -6105,7 +6156,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4208,
@@ -6148,7 +6200,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4230,
@@ -6191,7 +6244,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4273,
@@ -6234,7 +6288,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4283,
@@ -6277,7 +6332,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4287,
@@ -6320,7 +6376,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4338,
@@ -6363,7 +6420,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4342,
@@ -6406,7 +6464,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4382,
@@ -6449,7 +6508,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4396,
@@ -6492,7 +6552,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4422,
@@ -6535,7 +6596,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4467,
@@ -6578,7 +6640,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4474,
@@ -6621,7 +6684,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4482,
@@ -6664,7 +6728,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4493,
@@ -6707,7 +6772,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4501,
@@ -6750,7 +6816,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4503,
@@ -6793,7 +6860,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4505,
@@ -6836,7 +6904,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4508,
@@ -6879,7 +6948,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4685,
@@ -6922,7 +6992,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4720,
@@ -6965,7 +7036,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4723,
@@ -7008,7 +7080,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4770,
@@ -7051,7 +7124,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4774,
@@ -7094,7 +7168,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4844,
@@ -7137,7 +7212,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4968,
@@ -7180,7 +7256,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4969,
@@ -7223,7 +7300,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4984,
@@ -7266,7 +7344,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 4985,
@@ -7309,7 +7388,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5050,
@@ -7352,7 +7432,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5323,
@@ -7395,7 +7476,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5324,
@@ -7438,7 +7520,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5400,
@@ -7481,7 +7564,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5427,
@@ -7524,7 +7608,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5429,
@@ -7567,7 +7652,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5433,
@@ -7610,7 +7696,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5434,
@@ -7653,7 +7740,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5437,
@@ -7696,7 +7784,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5462,
@@ -7739,7 +7828,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5474,
@@ -7782,7 +7872,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5483,
@@ -7825,7 +7916,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5484,
@@ -7868,7 +7960,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5525,
@@ -7911,7 +8004,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5535,
@@ -7954,7 +8048,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5540,
@@ -7997,7 +8092,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5588,
@@ -8040,7 +8136,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5591,
@@ -8083,7 +8180,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5595,
@@ -8126,7 +8224,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5599,
@@ -8169,7 +8268,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5616,
@@ -8212,7 +8312,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5765,
@@ -8255,7 +8356,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5860,
@@ -8298,7 +8400,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5917,
@@ -8341,7 +8444,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5927,
@@ -8384,7 +8488,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5932,
@@ -8427,7 +8532,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5934,
@@ -8470,7 +8576,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5940,
@@ -8513,7 +8620,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5963,
@@ -8556,7 +8664,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5986,
@@ -8599,7 +8708,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5989,
@@ -8642,7 +8752,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 5996,
@@ -8685,7 +8796,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6005,
@@ -8728,7 +8840,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6310,
@@ -8771,7 +8884,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6312,
@@ -8814,7 +8928,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6329,
@@ -8857,7 +8972,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6331,
@@ -8900,7 +9016,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6409,
@@ -8943,7 +9060,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6415,
@@ -8986,7 +9104,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6452,
@@ -9029,7 +9148,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6457,
@@ -9072,7 +9192,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6494,
@@ -9115,7 +9236,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6830,
@@ -9158,7 +9280,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6862,
@@ -9201,7 +9324,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6863,
@@ -9244,7 +9368,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6882,
@@ -9287,7 +9412,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6897,
@@ -9330,7 +9456,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6902,
@@ -9373,7 +9500,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6957,
@@ -9416,7 +9544,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6960,
@@ -9459,7 +9588,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 6964,
@@ -9502,7 +9632,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7235,
@@ -9545,7 +9676,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7282,
@@ -9588,7 +9720,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7285,
@@ -9631,7 +9764,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7343,
@@ -9674,7 +9808,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7347,
@@ -9717,7 +9852,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7452,
@@ -9760,7 +9896,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7455,
@@ -9803,7 +9940,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7683,
@@ -9846,7 +9984,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7925,
@@ -9889,7 +10028,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 7960,
@@ -9932,7 +10072,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 8307,
@@ -9975,7 +10116,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 8313,
@@ -10018,7 +10160,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 8915,
@@ -10061,7 +10204,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 8916,
@@ -10104,7 +10248,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 9146,
@@ -10147,7 +10292,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 9632,
@@ -10190,7 +10336,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 10056,
@@ -10233,7 +10380,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 10298,
@@ -10276,7 +10424,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 10300,
@@ -10319,7 +10468,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 10515,
@@ -10362,7 +10512,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 10526,
@@ -10405,7 +10556,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 10529,
@@ -10448,7 +10600,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 10900,
@@ -10491,7 +10644,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 11322,
@@ -10534,7 +10688,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 11323,
@@ -10577,7 +10732,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 11423,
@@ -10620,7 +10776,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 11839,
@@ -10663,7 +10820,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 12295,
@@ -10706,7 +10864,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 12302,
@@ -10749,7 +10908,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 12449,
@@ -10792,7 +10952,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 12653,
@@ -10835,7 +10996,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 12657,
@@ -10878,7 +11040,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 13007,
@@ -10921,7 +11084,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 13742,
@@ -10964,7 +11128,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 14038,
@@ -11007,7 +11172,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 14040,
@@ -11050,7 +11216,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 14140,
@@ -11093,7 +11260,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 14255,
@@ -11136,7 +11304,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 14487,
@@ -11179,7 +11348,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 14489,
@@ -11222,7 +11392,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 14625,
@@ -11265,7 +11436,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 14626,
@@ -11308,7 +11480,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 14627,
@@ -11351,7 +11524,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 15554,
@@ -11394,7 +11568,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 15908,
@@ -11437,7 +11612,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 16181,
@@ -11480,7 +11656,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 16222,
@@ -11523,7 +11700,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 16595,
@@ -11566,7 +11744,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 16598,
@@ -11609,7 +11788,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 17827,
@@ -11652,7 +11832,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 18026,
@@ -11695,7 +11876,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 18759,
@@ -11738,7 +11920,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 19744,
@@ -11781,7 +11964,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 19745,
@@ -11824,7 +12008,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 19774,
@@ -11867,7 +12052,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 20122,
@@ -11910,7 +12096,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 20325,
@@ -11953,7 +12140,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 20492,
@@ -11996,7 +12184,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 20552,
@@ -12039,7 +12228,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 20554,
@@ -12082,7 +12272,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 20780,
@@ -12125,7 +12316,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 21347,
@@ -12168,7 +12360,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 21357,
@@ -12211,7 +12404,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 21367,
@@ -12254,7 +12448,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 21474,
@@ -12297,7 +12492,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 21655,
@@ -12340,7 +12536,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 21717,
@@ -12383,7 +12580,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 21721,
@@ -12426,7 +12624,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 21987,
@@ -12469,7 +12668,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 22278,
@@ -12512,7 +12712,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 22322,
@@ -12555,7 +12756,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 22538,
@@ -12598,7 +12800,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 22881,
@@ -12641,7 +12844,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 23187,
@@ -12684,7 +12888,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 23572,
@@ -12727,7 +12932,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 23575,
@@ -12770,7 +12976,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 24040,
@@ -12813,7 +13020,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 24056,
@@ -12856,7 +13064,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 24057,
@@ -12899,7 +13108,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 24058,
@@ -12942,7 +13152,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 24311,
@@ -12985,7 +13196,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 24345,
@@ -13028,7 +13240,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 24589,
@@ -13071,7 +13284,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 24869,
@@ -13114,7 +13328,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 24896,
@@ -13157,7 +13372,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 25016,
@@ -13200,7 +13416,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 25227,
@@ -13243,7 +13460,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 25401,
@@ -13286,7 +13504,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 25434,
@@ -13329,7 +13548,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 25999,
@@ -13372,7 +13592,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26118,
@@ -13415,7 +13636,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26119,
@@ -13458,7 +13680,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26120,
@@ -13501,7 +13724,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26125,
@@ -13544,7 +13768,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26253,
@@ -13587,7 +13812,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26254,
@@ -13630,7 +13856,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26354,
@@ -13673,7 +13900,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26360,
@@ -13716,7 +13944,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26364,
@@ -13759,7 +13988,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26367,
@@ -13802,7 +14032,8 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   },
   {
     "Plot No": 26381,
@@ -13845,6 +14076,7 @@ window.DEFAULT_ADSALI_DATASET = [
     "parcel_cane_occupancy_pct": NaN,
     "strict_parcel_iou_pct": NaN,
     "estimated_10m_edge_fraction_pct": NaN,
-    "primary_error_attribution": NaN
+    "primary_error_attribution": NaN,
+    "estimated_boundary_pixel_exposure_pct": NaN
   }
 ];
