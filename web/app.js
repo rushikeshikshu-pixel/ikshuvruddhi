@@ -1,5 +1,5 @@
 /**
- * IkshuVruddhi AI Engine - Intra-Plot Contour Isoline Zonation & Conformal Pipeline
+ * IkshuVruddhi AI Engine - Interactive GPS Fix, Snapping & Contour Zonation Pipeline
  * Factory: Gangamai Sugar Mill (गंगामाई सहकारी साखर कारखाना SSK)
  */
 
@@ -18,8 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
         focusedPlotId: null,
         userCropOverrides: {},
         userAreaOverrides: {},
+        userGpsOverrides: {},
         isLabCalibrated: false,
         showContourZonation: true,
+        snappingPlotId: null,
         
         // Compare Maps
         compareMapLeft: null,
@@ -63,7 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
         kpiBonusRevenue: document.getElementById('kpiBonusRevenue'),
         lblPlotCount: document.getElementById('lblPlotCount'),
         lblAiCalibration: document.getElementById('lblAiCalibration'),
-        lblActiveLayerStatus: document.getElementById('lblActiveLayerStatus'),
+        lblGpsStatus: document.getElementById('lblGpsStatus'),
+        hudLat: document.getElementById('hudLat'),
+        hudLon: document.getElementById('hudLon'),
         inputSearchPlotList: document.getElementById('inputSearchPlotList'),
         leftPlotTableBody: document.getElementById('leftPlotTableBody'),
         selectFactoryCircle: document.getElementById('selectFactoryCircle'),
@@ -88,6 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check if user has uploaded CSV saved in local browser storage
     const savedCsv = localStorage.getItem('satcane_saved_csv_data');
+    const savedGps = localStorage.getItem('satcane_saved_gps_overrides');
+    if (savedGps) {
+        try { state.userGpsOverrides = JSON.parse(savedGps); } catch(e) {}
+    }
+
     if (savedCsv) {
         try {
             state.rawCsvData = JSON.parse(savedCsv);
@@ -106,6 +115,37 @@ document.addEventListener('DOMContentLoaded', () => {
         state.tileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Esri Satellite Imagery'
         }).addTo(state.map);
+
+        // Real-time Lat/Long HUD Cursor Tracker
+        state.map.on('mousemove', (e) => {
+            if (el.hudLat) el.hudLat.textContent = e.latlng.lat.toFixed(7);
+            if (el.hudLon) el.hudLon.textContent = e.latlng.lng.toFixed(7);
+        });
+
+        // 1-Click Map Snapping Handler
+        state.map.on('click', (e) => {
+            if (state.snappingPlotId) {
+                const farmId = state.snappingPlotId;
+                const newLat = e.latlng.lat.toFixed(7);
+                const newLon = e.latlng.lng.toFixed(7);
+
+                state.userGpsOverrides[farmId] = { lat: newLat, lon: newLon };
+                localStorage.setItem('satcane_saved_gps_overrides', JSON.stringify(state.userGpsOverrides));
+                
+                state.snappingPlotId = null;
+                if (el.lblGpsStatus) {
+                    el.lblGpsStatus.textContent = '✅ GPS Snapped & Saved';
+                    el.lblGpsStatus.style.color = 'var(--accent-green)';
+                }
+
+                runEngine();
+                alert(`✅ GPS Coordinates Corrected for Plot #${farmId}!
+
+New Snapped Location:
+Lat: ${newLat}
+Lon: ${newLon}`);
+            }
+        });
     }
 
     function runEngine() {
@@ -119,6 +159,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const farmId = getFarmId(item);
             const farmerName = getFarmerName(item);
             const caneVariety = getCaneVariety(item);
+
+            // Handle GPS overrides if user corrected faulty GPS
+            let lat = item.latitude;
+            let lon = item.longitude;
+            if (state.userGpsOverrides[farmId]) {
+                lat = state.userGpsOverrides[farmId].lat;
+                lon = state.userGpsOverrides[farmId].lon;
+            }
 
             let pol = parseFloat(item.juice_pol_val || item.pol || item['Pol %'] || item['Juice Pol %']);
             let brix = parseFloat(item.juice_brix_val || item.brix || item['Brix %'] || item['Juice Brix %']);
@@ -170,6 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 farm_id: farmId,
                 farmer_name: farmerName,
                 cane_variety: caneVariety,
+                latitude: lat,
+                longitude: lon,
                 juice_brix_val: brix.toFixed(2),
                 juice_pol_val: pol.toFixed(2),
                 ccs_val: ccs.toFixed(2),
@@ -267,20 +317,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const latSpan = maxLat - minLat;
         const lonSpan = maxLon - minLon;
 
-        // Zone 1 (Outer Field Shell): Emerald Green - Peak Sucrose
+        // Zone 1: Emerald Green - Peak Sucrose
         const z1 = baseCoords;
-        // Zone 2 (Intermediate Ring): Yellow/Lime - Normal Growth
+        // Zone 2: Yellow/Lime - Normal Growth
         const z2 = shrinkPoly(baseCoords, 0.78, latSpan * 0.04, -lonSpan * 0.02);
-        // Zone 3 (Inner Stress Ring): Warm Orange - Drip Moisture Stress
+        // Zone 3: Warm Orange - Drip Moisture Stress
         const z3 = shrinkPoly(baseCoords, 0.52, latSpan * 0.08, lonSpan * 0.03);
-        // Zone 4 (Center Hotspot Core): Red - Severe Stress / Lodging
+        // Zone 4: Red - Severe Stress / Dry Core
         const z4 = shrinkPoly(baseCoords, 0.28, latSpan * 0.10, lonSpan * 0.04);
 
         return [
             { coords: z1, color: '#00e676', name: 'Zone 1: Peak Sucrose (>12.5% CCS)', ccs: '12.60%' },
-            { coords: z2, color: '#ffea00', name: 'Zone 2: Moderate Vigor (11.5-12.5% CCS)', ccs: '11.85%' },
+            { coords: z2, color: '#ffea00', name: 'Zone 2: Normal Vigor (11.5-12.5% CCS)', ccs: '11.85%' },
             { coords: z3, color: '#ff9100', name: 'Zone 3: Drip Stress (10.5-11.5% CCS)', ccs: '10.90%' },
-            { coords: z4, color: '#ff1744', name: 'Zone 4: Severe Stress / Dry Core (<10.0% CCS)', ccs: '9.65%' }
+            { coords: z4, color: '#ff1744', name: 'Zone 4: Red Hotspot / Urgent Care (<10.0% CCS)', ccs: '9.65%' }
         ];
     }
 
@@ -306,22 +356,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 const farmId = getFarmId(item);
                 const isMaize = item.cropStatus === 'NON_CANE_MAIZE';
                 
-                const marker = L.marker([lat, lon]).addTo(state.map);
+                const marker = L.marker([lat, lon], { draggable: true }).addTo(state.map);
+                
+                marker.on('dragend', (ev) => {
+                    const pos = ev.target.getLatLng();
+                    state.userGpsOverrides[farmId] = { lat: pos.lat.toFixed(7), lon: pos.lng.toFixed(7) };
+                    localStorage.setItem('satcane_saved_gps_overrides', JSON.stringify(state.userGpsOverrides));
+                    runEngine();
+                    alert(`📍 Marker dragged! Saved corrected GPS for Plot #${farmId}:
+Lat: ${pos.lat.toFixed(7)}
+Lon: ${pos.lng.toFixed(7)}`);
+                });
+
                 marker.bindPopup(`
                     <div style="font-family:'Outfit', sans-serif;">
                         <strong style="color:${isMaize ? '#ff1744' : 'var(--accent-cyan)'}; font-size:14px;">${isMaize ? '🔴 MAIZE / NON-CANE ALERT' : '🌱 SUGARCANE CONFIRMED'} (Plot ${farmId})</strong><br/>
                         <b>Farmer:</b> ${farmerName}<br/>
+                        <b>GPS:</b> <span style="font-family:'JetBrains Mono'; font-size:0.75rem; color:#00f2fe;">${lat.toFixed(6)}, ${lon.toFixed(6)}</span><br/>
                         <b>Conformal Brix %:</b> <strong style="color:#c084fc;">${item.juice_brix_val}% (±${item.brix_margin}%)</strong><br/>
                         <b>Conformal Pol %:</b> <strong style="color:#00f2fe;">${item.juice_pol_val}% (±${item.pol_margin}%)</strong><br/>
                         <b>Conformal CCS %:</b> <strong style="color:#00e676;">${item.ccs_val}% (±${item.ccs_margin}%)</strong><br/>
-                        <b>Net Actual Cane Area:</b> <strong style="color:#00e676;">${item.net_cane_acres} Acres</strong>
+                        <b>Net Actual Cane Area:</b> <strong style="color:#00e676;">${item.net_cane_acres} Acres</strong><br/><br/>
+                        <button class="btn btn-xs btn-outline" onclick="window.startMapSnapping('${farmId}')" style="border-color:var(--accent-cyan); color:var(--accent-cyan); width:100%; font-weight:700;">
+                            🎯 Click Map to Snap / Reposition
+                        </button>
                     </div>
                 `);
                 state.markers.push(marker);
                 state.markerMapByFarmId[farmId] = marker;
 
                 let baseCoords = null;
-                if (item.plot_area_polygon) {
+                if (item.plot_area_polygon && !state.userGpsOverrides[farmId]) {
                     baseCoords = item.plot_area_polygon.split('#').map(p => p.split(',').map(Number));
                 } else {
                     const d = 0.0018;
@@ -364,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // RENDER PRODUCTION TABLE
+    // RENDER PRODUCTION TABLE WITH GPS FIX BUTTON
     function renderLeftPlotList() {
         el.leftPlotTableBody.innerHTML = '';
 
@@ -415,18 +480,72 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span style="font-size:0.65rem; color:#00e676; display:block;">±${item.ccs_margin}% (95% CP)</span>
                 </td>
                 <td>
-                    <span class="badge ${isMaize ? 'priority-3' : 'success'}" style="font-weight:700; cursor:pointer;" onclick="window.toggleCropStatus('${farmId}')">
-                        ${isMaize ? '🌽 Maize / Non-Cane' : '🟢 Sugarcane (98%)'}
-                    </span>
+                    <button class="btn btn-xs btn-outline" onclick="window.editGpsCoordinates('${farmId}')" style="border-color:var(--accent-cyan); color:var(--accent-cyan); font-weight:700;">
+                        🛠️ Fix GPS
+                    </button>
                 </td>
             `;
 
             tr.addEventListener('click', (e) => {
-                if (e.target.tagName !== 'BUTTON' && !e.target.classList.contains('badge')) window.focusFarmerPlotOnMap(farmId);
+                if (e.target.tagName !== 'BUTTON') window.focusFarmerPlotOnMap(farmId);
             });
             el.leftPlotTableBody.appendChild(tr);
         });
     }
+
+    // 1-CLICK GPS COORDINATE FIX / DIALOG
+    window.editGpsCoordinates = function(farmId) {
+        const item = state.enrichedData.find(d => getFarmId(d) === farmId);
+        if (!item) return;
+
+        const choice = prompt(
+            `🛠️ GPS COORDINATE FIX & REPOSITIONING TOOL
+
+Farmer: ${getFarmerName(item)} (Plot #${farmId})
+Current Coordinates: ${item.latitude}, ${item.longitude}
+
+Choose an option:
+1. Type new "Latitude, Longitude" (e.g. 19.3905, 75.3160)
+2. Type "SNAP" to click directly on the satellite map to reposition
+
+Enter new coordinates or SNAP:`,
+            `${item.latitude}, ${item.longitude}`
+        );
+
+        if (choice) {
+            if (choice.trim().toUpperCase() === 'SNAP') {
+                window.startMapSnapping(farmId);
+            } else {
+                const parts = choice.split(',').map(s => s.trim());
+                if (parts.length === 2 && !isNaN(parseFloat(parts[0])) && !isNaN(parseFloat(parts[1]))) {
+                    const newLat = parseFloat(parts[0]).toFixed(7);
+                    const newLon = parseFloat(parts[1]).toFixed(7);
+                    state.userGpsOverrides[farmId] = { lat: newLat, lon: newLon };
+                    localStorage.setItem('satcane_saved_gps_overrides', JSON.stringify(state.userGpsOverrides));
+                    runEngine();
+                    window.focusFarmerPlotOnMap(farmId);
+                    alert(`✅ Successfully updated GPS coordinates for Plot #${farmId}!
+
+New Location: ${newLat}, ${newLon}`);
+                } else {
+                    alert(`⚠️ Invalid coordinates format. Please enter as "Latitude, Longitude" (e.g. 19.3902, 75.3157).`);
+                }
+            }
+        }
+    };
+
+    window.startMapSnapping = function(farmId) {
+        state.snappingPlotId = farmId;
+        if (el.lblGpsStatus) {
+            el.lblGpsStatus.textContent = `🎯 Click anywhere on the map to snap Plot #${farmId}`;
+            el.lblGpsStatus.style.color = '#ffea00';
+        }
+        alert(`🎯 1-CLICK MAP SNAPPING ACTIVE!
+
+Simply CLICK ANYWHERE on the satellite map where the true sugarcane field is located.
+
+Plot #${farmId} will instantly snap to that exact location!`);
+    };
 
     window.toggleCropStatus = function(farmId) {
         const current = state.userCropOverrides[farmId] || 'SUGARCANE';
@@ -453,13 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const lon = parseFloat(item.longitude);
 
         if (!isNaN(lat) && !isNaN(lon)) {
-            if (item.plot_area_polygon) {
-                const coords = item.plot_area_polygon.split('#').map(p => p.split(',').map(Number));
-                state.map.fitBounds(L.latLngBounds(coords), { maxZoom: 18, padding: [40, 40] });
-            } else {
-                state.map.setView([lat, lon], 17, { animate: true });
-            }
-
+            state.map.setView([lat, lon], 17, { animate: true });
             const marker = state.markerMapByFarmId[farmId];
             if (marker) {
                 setTimeout(() => marker.openPopup(), 250);
@@ -610,11 +723,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (state.showContourZonation) {
                     el.mapToggleContour.classList.add('active');
                     el.contourLegend.style.display = 'block';
-                    if (el.lblActiveLayerStatus) el.lblActiveLayerStatus.textContent = '🌱 Contour Zonation Active';
                 } else {
                     el.mapToggleContour.classList.remove('active');
                     el.contourLegend.style.display = 'none';
-                    if (el.lblActiveLayerStatus) el.lblActiveLayerStatus.textContent = '🛰️ Standard Polygon Layer';
                 }
                 renderMap();
             });
@@ -638,7 +749,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.rawCsvData = []; 
                     state.userCropOverrides = {};
                     state.userAreaOverrides = {};
+                    state.userGpsOverrides = {};
                     localStorage.removeItem('satcane_saved_csv_data');
+                    localStorage.removeItem('satcane_saved_gps_overrides');
                     runEngine(); 
                 }
             });
