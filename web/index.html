@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi AI Engine - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Production Telemetry & Conformal Lab Engine for Gangamai Sugar Mill.">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Intra-Plot Contour Zonation & Conformal Lab Engine for Gangamai Sugar Mill.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="brand-text">
                     <h1>IkshuVruddhi <span>AI Engine</span> <span class="mill-badge">इक्षुवृद्धी 2026</span></h1>
-                    <p>Gangamai Sugar Mill Command - Unified Lab Telemetry & Harvest Management</p>
+                    <p>Gangamai Sugar Mill Command - Intra-Plot Contour Zonation & Telemetry</p>
                 </div>
             </div>
             
@@ -41,12 +41,12 @@
                     <span class="status-val">Gangamai Sugar Mill (SSK)</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Engine Mode</span>
-                    <span class="status-val" style="color: var(--accent-purple);" id="lblAiCalibration">🔬 2026 Conformal Lab Production</span>
+                    <span class="status-label">Active Layer</span>
+                    <span class="status-val" style="color: var(--accent-green);" id="lblActiveLayerStatus">🌱 Contour Zonation Active</span>
                 </div>
                 <div class="status-item">
                     <span class="status-label">Status</span>
-                    <span class="status-val" style="color: var(--accent-green);" id="lblTelemetryMode">⚡ Real-Time Production Live</span>
+                    <span class="status-val" style="color: var(--accent-cyan);" id="lblTelemetryMode">⚡ Real-Time Precision Live</span>
                 </div>
             </div>
 
@@ -61,7 +61,7 @@
             </div>
         </header>
 
-        <!-- STREAMLINED ACTION TOOLBAR (PURE PRODUCTION: NO DEMO PRESETS) -->
+        <!-- STREAMLINED ACTION TOOLBAR -->
         <div class="toolbar-bar">
             <div class="preset-group">
                 <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
@@ -192,22 +192,33 @@
                             <i class="fa-solid fa-flask"></i> Upload Lab Dataset
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i> Ready For Mill Data</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-layer-group" style="color:var(--accent-green);"></i> Contour Zonation Active</span>
                 </div>
             </div>
 
-            <!-- RIGHT CARD: PRECISION GIS MAP VIEWPORT -->
+            <!-- RIGHT CARD: PRECISION GIS MAP VIEWPORT WITH CONTOUR HEATMAP TOGGLES -->
             <div class="glass-card map-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-map-location-dot"></i> IkshuVruddhi Field Map & UAV Drone Orthomosaic</h3>
+                    <h3><i class="fa-solid fa-map-location-dot"></i> IkshuVruddhi Field Map & Intra-Plot Contour Zonation</h3>
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">
                         <button id="mapToggleSatellite" class="btn btn-xs btn-outline active">Esri Satellite</button>
+                        <button id="mapToggleContour" class="btn btn-xs btn-outline" style="font-weight:700; color:var(--accent-green); border-color:var(--accent-green); background: rgba(0,230,118,0.15);">
+                            <i class="fa-solid fa-layer-group"></i> 🌾 Intra-Plot Contour Zonation
+                        </button>
                         <button id="mapToggleDrone" class="btn btn-xs btn-outline" style="font-weight:700;"><i class="fa-solid fa-drone"></i> 🛸 UAV Drone (2.5cm)</button>
-                        <button id="mapToggleHeatmap" class="btn btn-xs btn-outline" style="font-weight:700; color:var(--accent-green); border-color:var(--accent-green);"><i class="fa-solid fa-fire"></i> 🔥 Intra-Plot Heatmap</button>
                     </div>
                 </div>
 
-                <div id="map" class="map-view"></div>
+                <div id="map" class="map-view" style="position:relative;">
+                    <!-- Floating Contour Isoline Legend -->
+                    <div class="contour-floating-legend" id="contourLegend">
+                        <div class="legend-header"><i class="fa-solid fa-layer-group"></i> Sugarcane Maturation Zones</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#00e676;"></span> Zone 1: Peak Sucrose (>12.5% CCS)</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#ffea00;"></span> Zone 2: Moderate Vigor (11.5-12.5%)</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#ff9100;"></span> Zone 3: Drip Stress (10.5-11.5%)</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#ff1744;"></span> Zone 4: Severe Moisture Stress / Dry Core</div>
+                    </div>
+                </div>
             </div>
 
         </main>

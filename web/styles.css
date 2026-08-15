@@ -272,3 +272,48 @@ body {
 .histogram-ticks-row { display: flex; justify-content: space-between; font-size: 0.70rem; color: #ffffff; font-family: var(--font-mono); font-weight: 800; margin-top: 4px; }
 
 .hidden { display: none !important; }
+
+/* Floating Contour Isoline Legend */
+.contour-floating-legend {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    background: rgba(4, 7, 17, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 242, 254, 0.35);
+    border-radius: 8px;
+    padding: 10px 14px;
+    z-index: 1000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), var(--glow-cyan);
+    font-family: 'Outfit', sans-serif;
+}
+
+.contour-floating-legend .legend-header {
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: #f8fafc;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.contour-floating-legend .legend-item {
+    font-size: 0.72rem;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.contour-floating-legend .legend-box {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    flex-shrink: 0;
+}
