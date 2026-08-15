@@ -9,9 +9,8 @@ Features:
   2. Resourcesat-2A LISS-4 (5.8m) provides 3x higher spatial density:
      - 5.8m x 5.8m ground sampling distance (~33.64 m2/pixel vs 100 m2/pixel).
      - Bands: B2 (Green 0.52-0.59 um), B3 (Red 0.62-0.68 um), B4 (NIR 0.77-0.86 um).
-  3. Joint Guided Bilateral Filtering & Sub-Pixel Boundary Snapping:
-     - Refines 10m Sentinel-2 crop probability mask against 5.8m LISS-4 structural edges.
-  4. Exact Fixed-Resolution Affine Gridding: Affine(5.8, 0, minx, 0, -5.8, maxy).
+  3. Preserves Native LISS-4 Raster Grid Alignment (zero artificial edge jitter).
+  4. Strict NoData Masking & Guided Bilateral Energy Filtering.
 """
 
 import os
@@ -58,10 +57,12 @@ def fuse_sentinel2_with_liss4_canopy(
     liss4_green_58m: Optional[np.ndarray] = None,
     liss4_red_58m: Optional[np.ndarray] = None,
     liss4_nir_58m: Optional[np.ndarray] = None,
-    liss4_transform: Optional[Any] = None
+    liss4_transform: Optional[Any] = None,
+    liss4_valid_mask: Optional[np.ndarray] = None
 ) -> Dict[str, Any]:
     """
     Fuses 10m Sentinel-2 multi-spectral crop probability with 5.8m LISS-4 VNIR spatial edges.
+    Strictly preserves native LISS-4 raster grid alignment when empirical data is supplied.
     """
     is_real_liss4 = (liss4_nir_58m is not None and liss4_red_58m is not None)
     data_source = "EMPIRICAL_ISRO_LISS4" if is_real_liss4 else "SIMULATED_5.8M_REGRIDDED"
@@ -82,21 +83,26 @@ def fuse_sentinel2_with_liss4_canopy(
     score_10m[~s2_valid_scl] = 0.0
     s2_cane_mask_10m = (s2_ndvi >= 0.55) & (s2_ndre >= 0.12) & (s2_lswi >= 0.05) & s2_valid_scl
 
-    # 2. CONSTRUCT MATHEMATICALLY EXACT 5.8m AFFINE GRID
+    # 2. Determine 5.8m Target Affine Grid (Preserve Native Grid Alignment if Real LISS-4)
     minx, miny, maxx, maxy = poly_utm.bounds
     res_58m = 5.8
-    width_58m = max(int(math.ceil((maxx - minx) / res_58m)), 2)
-    height_58m = max(int(math.ceil((maxy - miny) / res_58m)), 2)
-    exact_58m_affine = liss4_transform or Affine(res_58m, 0.0, minx, 0.0, -res_58m, maxy)
+    
+    if is_real_liss4 and liss4_transform is not None:
+        target_58m_affine = liss4_transform
+        height_58m, width_58m = liss4_nir_58m.shape
+    else:
+        width_58m = max(int(math.ceil((maxx - minx) / res_58m)), 2)
+        height_58m = max(int(math.ceil((maxy - miny) / res_58m)), 2)
+        target_58m_affine = Affine(res_58m, 0.0, minx, 0.0, -res_58m, maxy)
 
-    # Reproject 10m Sentinel-2 crop probability prior onto exact 5.8m grid
+    # Reproject 10m Sentinel-2 crop probability prior onto target 5.8m grid
     s2_prob_58m = np.zeros((height_58m, width_58m), dtype=np.float32)
     reproject(
         source=score_10m,
         destination=s2_prob_58m,
         src_transform=s2_transform,
         src_crs="EPSG:32643",
-        dst_transform=exact_58m_affine,
+        dst_transform=target_58m_affine,
         dst_crs="EPSG:32643",
         resampling=Resampling.bilinear
     )
@@ -105,13 +111,15 @@ def fuse_sentinel2_with_liss4_canopy(
     if not is_real_liss4:
         sim_nir_58m = np.zeros((height_58m, width_58m), dtype=np.float32)
         sim_red_58m = np.zeros((height_58m, width_58m), dtype=np.float32)
-        reproject(source=s2_nir_10m, destination=sim_nir_58m, src_transform=s2_transform, src_crs="EPSG:32643", dst_transform=exact_58m_affine, dst_crs="EPSG:32643", resampling=Resampling.cubic)
-        reproject(source=s2_red_10m, destination=sim_red_58m, src_transform=s2_transform, src_crs="EPSG:32643", dst_transform=exact_58m_affine, dst_crs="EPSG:32643", resampling=Resampling.cubic)
+        reproject(source=s2_nir_10m, destination=sim_nir_58m, src_transform=s2_transform, src_crs="EPSG:32643", dst_transform=target_58m_affine, dst_crs="EPSG:32643", resampling=Resampling.cubic)
+        reproject(source=s2_red_10m, destination=sim_red_58m, src_transform=s2_transform, src_crs="EPSG:32643", dst_transform=target_58m_affine, dst_crs="EPSG:32643", resampling=Resampling.cubic)
         guide_nir = sim_nir_58m
         guide_red = sim_red_58m
+        valid_58m = np.ones((height_58m, width_58m), dtype=bool)
     else:
         guide_nir = liss4_nir_58m
         guide_red = liss4_red_58m
+        valid_58m = liss4_valid_mask if liss4_valid_mask is not None else np.ones((height_58m, width_58m), dtype=bool)
 
     with np.errstate(divide="ignore", invalid="ignore"):
         guide_ndvi_58m = (guide_nir - guide_red) / (guide_nir + guide_red + 1e-7)
@@ -119,17 +127,19 @@ def fuse_sentinel2_with_liss4_canopy(
 
     # 4. Joint Guided Filtering Fusion
     fused_prob_58m = guided_filter_58m(guide_58m=guide_ndvi_58m, src_prob_58m=s2_prob_58m, radius=2, eps=1e-3)
-    fused_cane_mask_58m = (fused_prob_58m >= 0.50) & (guide_ndvi_58m >= 0.50)
+    
+    # Require 5.8m valid data + S2 cane probability + confirmed 5.8m vegetative vigor
+    fused_cane_mask_58m = (fused_prob_58m >= 0.50) & (guide_ndvi_58m >= 0.50) & valid_58m
 
-    # 5. Exact Sub-Pixel Geometric Area on 5.8m Grid (Exactly 33.64 m2 per cell)
+    # 5. Exact Sub-Pixel Geometric Area on 5.8m Grid (~33.64 m2 per cell)
     cell_area_m2_58m = res_58m * res_58m
     fused_cell_boxes = []
     fused_cane_flat = []
     
     for r in range(height_58m):
         for c in range(width_58m):
-            px_minx, px_maxy = exact_58m_affine * (c, r)
-            px_maxx, px_miny = exact_58m_affine * (c + 1, r + 1)
+            px_minx, px_maxy = target_58m_affine * (c, r)
+            px_maxx, px_miny = target_58m_affine * (c + 1, r + 1)
             fused_cell_boxes.append((min(px_minx, px_maxx), min(px_miny, px_maxy), max(px_minx, px_maxx), max(px_miny, px_maxy)))
             fused_cane_flat.append(bool(fused_cane_mask_58m[r, c]))
 

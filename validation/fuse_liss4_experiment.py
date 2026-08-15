@@ -4,7 +4,7 @@ Multi-Resolution Feasibility Benchmark: Baseline Sentinel-2 (10m) vs. 5.8m Guide
 Evaluated across the 36 High-NDVI / Strong-Vegetation Parcels (NDVI >= 0.55).
 
 Supports both:
-  1. Real ISRO Resourcesat-2A LISS-4 Product Ingestion (ZIP, HDF5, GeoTIFF)
+  1. Real ISRO Resourcesat-2A LISS-4 Product Ingestion (ZIP, HDF5, GeoTIFF) with Native Grid Preservation
   2. Algorithmic Guided Bilateral Simulation Fallback (explicitly annotated in metadata/output)
 """
 
@@ -177,14 +177,16 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
         liss4_red = None
         liss4_nir = None
         liss4_trans = None
+        liss4_vmask = None
         
         if is_real_liss4:
             crop_res = crop_and_reproject_liss4_product(liss4_product_path, poly_wgs)
             if crop_res:
-                liss4_green = crop_res["green_58m_toa"]
-                liss4_red   = crop_res["red_58m_toa"]
-                liss4_nir   = crop_res["nir_58m_toa"]
+                liss4_green = crop_res["green_58m"]
+                liss4_red   = crop_res["red_58m"]
+                liss4_nir   = crop_res["nir_58m"]
                 liss4_trans = crop_res["affine_transform"]
+                liss4_vmask = crop_res.get("valid_mask")
 
         fusion_out = fuse_sentinel2_with_liss4_canopy(
             poly_utm=poly_utm,
@@ -197,7 +199,8 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
             liss4_green_58m=liss4_green,
             liss4_red_58m=liss4_red,
             liss4_nir_58m=liss4_nir,
-            liss4_transform=liss4_trans
+            liss4_transform=liss4_trans,
+            liss4_valid_mask=liss4_vmask
         )
 
         fused_res = fusion_out["fused_liss4"]
