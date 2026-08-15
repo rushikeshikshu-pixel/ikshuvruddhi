@@ -4,7 +4,7 @@ Multi-Resolution Feasibility Benchmark: Baseline Sentinel-2 (10m) vs. 5.8m Guide
 Evaluated across the 36 High-NDVI / Strong-Vegetation Parcels (NDVI >= 0.55).
 
 Supports both:
-  1. Real ISRO Resourcesat-2A LISS-4 GeoTIFF Ingestion (via --liss4-path or BhoonidhiClient)
+  1. Real ISRO Resourcesat-2A LISS-4 Product Ingestion (ZIP, HDF5, GeoTIFF)
   2. Algorithmic Guided Bilateral Simulation Fallback (explicitly annotated in metadata/output)
 """
 
@@ -22,6 +22,7 @@ import pyproj
 import rasterio
 from rasterio.windows import from_bounds
 from rasterio.warp import reproject, Resampling
+from rasterio.transform import Affine
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -31,13 +32,13 @@ if REPO_ROOT not in sys.path:
 
 from ml.canopy_classifier import compute_spectral_indices, classify_sugarcane_raster
 from ml.liss4_fusion_engine import fuse_sentinel2_with_liss4_canopy
-from ml.bhoonidhi_client import BhoonidhiClient, crop_and_reproject_liss4_geotiff
+from ml.bhoonidhi_client import BhoonidhiClient, crop_and_reproject_liss4_product
 from validation.metrics import compute_exact_subpixel_intersection_area, compute_boundary_pixel_exposure
 
 wgs84_to_utm43n = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:32643", always_xy=True).transform
 
-def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_comparison.csv", liss4_geotiff_path=None):
-    is_real_liss4 = (liss4_geotiff_path is not None and os.path.exists(liss4_geotiff_path))
+def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_comparison.csv", liss4_product_path=None):
+    is_real_liss4 = (liss4_product_path is not None and os.path.exists(liss4_product_path))
     data_source_mode = "EMPIRICAL_ISRO_LISS4" if is_real_liss4 else "ALGORITHMIC_SIMULATION_FALLBACK"
 
     print("==================================================================")
@@ -45,7 +46,7 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
     print(f" Data Source Mode: {data_source_mode}")
     print(" Target Cohort   : 36 High-NDVI / Strong-Vegetation Parcels (NDVI >= 0.55)")
     if not is_real_liss4:
-        print(" Note: Running in algorithmic simulation mode (real Bhoonidhi GeoTIFF not supplied).")
+        print(" Note: Running in algorithmic simulation mode (real Bhoonidhi package not supplied).")
     print("==================================================================")
 
     df_emp = pd.read_csv("data/output/refined_empirical_sentinel_analysis_88plots.csv")
@@ -105,8 +106,8 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
                 
         poly_wgs = Polygon(pts)
         poly_utm = transform(wgs84_to_utm43n, poly_wgs)
-        gt_area_m2 = poly_utm.area
-        gt_area_acres = gt_area_m2 / 4046.8564224
+        ref_area_m2 = poly_utm.area
+        ref_area_acres = ref_area_m2 / 4046.8564224
         minx, miny, maxx, maxy = poly_utm.bounds
 
         target_reader = None
@@ -163,13 +164,13 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
                 cell_boxes_10m.append((min(px_minx, px_maxx), min(px_miny, px_maxy), max(px_minx, px_maxx), max(px_miny, px_maxy)))
                 cane_flat_10m.append(bool(s2_cane_mask[r_idx, c_idx]))
 
-        tot_gt_m2, s2_cane_m2, _ = compute_exact_subpixel_intersection_area(cell_boxes_10m, cane_flat_10m, poly_utm)
+        tot_ref_m2, s2_cane_m2, _ = compute_exact_subpixel_intersection_area(cell_boxes_10m, cane_flat_10m, poly_utm)
         s2_acres = s2_cane_m2 / 4046.8564224
-        s2_occ_pct = (s2_cane_m2 / max(1.0, tot_gt_m2)) * 100.0
+        s2_occ_pct = (s2_cane_m2 / max(1.0, tot_ref_m2)) * 100.0
         s2_total_cane_m2 = np.sum(s2_cane_mask) * 100.0
-        s2_union_m2 = tot_gt_m2 + max(0.0, s2_total_cane_m2 - s2_cane_m2)
+        s2_union_m2 = tot_ref_m2 + max(0.0, s2_total_cane_m2 - s2_cane_m2)
         s2_strict_iou = (s2_cane_m2 / max(1.0, s2_union_m2)) * 100.0
-        s2_area_error_pct = abs(s2_acres - gt_area_acres) / max(0.01, gt_area_acres) * 100.0
+        s2_area_error_pct = abs(s2_acres - ref_area_acres) / max(0.01, ref_area_acres) * 100.0
 
         # Method B: 5.8m Multi-Sensor Guided Fusion (Real or Simulated)
         liss4_green = None
@@ -178,11 +179,11 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
         liss4_trans = None
         
         if is_real_liss4:
-            crop_res = crop_and_reproject_liss4_geotiff(liss4_geotiff_path, poly_wgs)
+            crop_res = crop_and_reproject_liss4_product(liss4_product_path, poly_wgs)
             if crop_res:
-                liss4_green = crop_res["green_58m"]
-                liss4_red   = crop_res["red_58m"]
-                liss4_nir   = crop_res["nir_58m"]
+                liss4_green = crop_res["green_58m_toa"]
+                liss4_red   = crop_res["red_58m_toa"]
+                liss4_nir   = crop_res["nir_58m_toa"]
                 liss4_trans = crop_res["affine_transform"]
 
         fusion_out = fuse_sentinel2_with_liss4_canopy(
@@ -203,14 +204,14 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
         fused_acres = fused_res["fused_sat_acres"]
         fused_occ_pct = fused_res["fused_occupancy_pct"]
         fused_strict_iou = fused_res["fused_strict_iou_pct"]
-        fused_area_error_pct = abs(fused_acres - gt_area_acres) / max(0.01, gt_area_acres) * 100.0
+        fused_area_error_pct = abs(fused_acres - ref_area_acres) / max(0.01, ref_area_acres) * 100.0
         iou_gain = fused_strict_iou - s2_strict_iou
 
         rec = {
             "plot_no": pno,
             "farmer_name": erow["farmer_name"],
             "village": erow["village"],
-            "ground_truth_acres": round(gt_area_acres, 2),
+            "source_reference_acres": round(ref_area_acres, 2),
             "mean_field_ndvi": erow["mean_field_ndvi"],
             "s2_empirical_detected_acres_10m": round(s2_acres, 2),
             "s2_empirical_occupancy_pct": round(s2_occ_pct, 1),
@@ -224,7 +225,7 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
             "data_source_mode": data_source_mode
         }
         results.append(rec)
-        print(f"Plot #{pno:4s} ({erow['farmer_name'][:18]:18s}) | GT: {gt_area_acres:.2f} ac | Empirical S2: {s2_strict_iou:4.1f}% IoU -> 5.8m Fused: {fused_strict_iou:4.1f}% IoU (Delta: {iou_gain:+4.1f}%)")
+        print(f"Plot #{pno:4s} ({erow['farmer_name'][:18]:18s}) | Ref: {ref_area_acres:.2f} ac | Empirical S2: {s2_strict_iou:4.1f}% IoU -> 5.8m Fused: {fused_strict_iou:4.1f}% IoU (Delta: {iou_gain:+4.1f}%)")
 
     df_comp = pd.DataFrame(results)
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
@@ -242,6 +243,6 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--liss4-path", type=str, default=None, help="Path to genuine Resourcesat-2A LISS-4 GeoTIFF product")
+    parser.add_argument("--liss4-product", type=str, default=None, help="Path to genuine Resourcesat-2A LISS-4 product (ZIP, HDF5, or GeoTIFF)")
     args = parser.parse_args()
-    run_fusion_experiment(liss4_geotiff_path=args.liss4_path)
+    run_fusion_experiment(liss4_product_path=args.liss4_product)
