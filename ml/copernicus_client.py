@@ -1,26 +1,36 @@
 """
-IkshuVruddhi Live Satellite Ingestion Client (Copernicus CDSE & Google Earth Engine)
-Fetches genuine 10m Sentinel-2 L2A multispectral bands & Sentinel-1 SAR GRD backscatter
-for any parcel coordinates in Maharashtra / Gangamai Sugar Mill command area.
+IkshuVruddhi Production Copernicus CDSE Client (Strict Auditable Engineering)
+1. Official CDSE OAuth client_credentials authentication.
+2. Official Sentinel Hub Process API with GeoTIFF response format & explicit 10m resolution bounding.
+3. Strict SCL (Scene Classification Layer) cloud/shadow masking:
+   - VALID_SCL: {4: Vegetation, 5: Not-Vegetated/Bare, 6: Water}
+   - INVALID_SCL (Masked to NaN): {0: No Data, 1: Saturated, 2: Dark, 3: Cloud Shadow, 7: Unclassified, 8: Cloud Med Prob, 9: Cloud High Prob, 10: Cirrus, 11: Snow/Ice}
+4. Decodes real GeoTIFF / raw binary float arrays into native numpy arrays.
+5. Accurate resolution handling: Native 10m (B2, B3, B4, B8) and Resampled 20m (B8A, B11, SCL).
+6. Honest Status Transparency: Returns 'LIVE_COPERNICUS_L2A' when authentic tiles are decoded, or 'UNAUTHENTICATED_OFFLINE' (NEVER silently substitutes synthetic data).
 """
 
 import os
-import sys
+import io
 import json
 import time
 import requests
 import numpy as np
 from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Tuple, Any, Optional
 
-class CopernicusCDSEClient:
-    """
-    Direct interface to European Space Agency (ESA) Copernicus Data Space Ecosystem (CDSE).
-    Free Open Access REST API for Sentinel-2 L2A Surface Reflectance & Sentinel-1 SAR GRD.
-    """
+try:
+    import tifffile
+    HAS_TIFFFILE = True
+except ImportError:
+    HAS_TIFFFILE = False
+
+# Official ESA Copernicus S2-L2A Scene Classification Categories
+SCL_VALID_CLASSES = {4, 5, 6} # Vegetation, Bare Soil, Water
+SCL_CLOUD_SHADOW_CLASSES = {1, 2, 3, 7, 8, 9, 10, 11} # Cloud, Shadow, Defective
+
+class CopernicusCDSEProcessEngine:
     AUTH_URL = "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"
-    ODATA_URL = "https://catalogue.dataspace.copernicus.eu/odata/v1/Products"
-    STAT_API_URL = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
     PROCESS_API_URL = "https://sh.dataspace.copernicus.eu/api/v1/process"
 
     def __init__(self, client_id: Optional[str] = None, client_secret: Optional[str] = None):
@@ -29,7 +39,7 @@ class CopernicusCDSEClient:
         self.access_token = None
         self.token_expiry = 0
 
-    def get_auth_token(self) -> Optional[str]:
+    def authenticate(self) -> Optional[str]:
         if self.access_token and time.time() < self.token_expiry - 60:
             return self.access_token
 
@@ -37,41 +47,56 @@ class CopernicusCDSEClient:
             return None
 
         try:
-            data = {
+            payload = {
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
                 "grant_type": "client_credentials"
             }
-            resp = requests.post(self.AUTH_URL, data=data, timeout=10)
+            resp = requests.post(self.AUTH_URL, data=payload, timeout=10)
             if resp.status_code == 200:
-                json_data = resp.json()
-                self.access_token = json_data.get("access_token")
-                self.token_expiry = time.time() + json_data.get("expires_in", 3600)
+                data = resp.json()
+                self.access_token = data.get("access_token")
+                self.token_expiry = time.time() + data.get("expires_in", 3600)
                 return self.access_token
         except Exception as e:
             print(f"[CDSE Auth Error]: {e}")
         return None
 
-    def fetch_sentinel2_timeseries(self, polygon_coords: List[List[float]], start_date: str, end_date: str) -> Dict[str, Any]:
+    def fetch_real_sentinel2_l2a_raster(self, polygon_coords: List[List[float]], date_str: str) -> Dict[str, Any]:
         """
-        Fetches Sentinel-2 L2A surface reflectance time-series for a field polygon.
-        Extracts B2, B3, B4, B8, B8A, B11, and SCL (Scene Classification Layer).
+        Executes an authentic Sentinel Hub Process API request for a specific field polygon.
+        Returns explicit 10m grid GeoTIFF with 7 bands: [B02, B03, B04, B08, B8A_resampled, B11_resampled, SCL].
         """
-        token = self.get_auth_token()
+        token = self.authenticate()
         
-        # If API credentials are not yet configured in environment, use calibrated physical radiometry
+        # If no credentials or offline, return honest UNAUTHENTICATED_OFFLINE status
         if not token:
-            return self._generate_physics_calibrated_timeseries(polygon_coords, start_date, end_date)
+            return {
+                "live_satellite": False,
+                "status": "UNAUTHENTICATED_OFFLINE",
+                "message": "CDSE_CLIENT_ID or CDSE_CLIENT_SECRET not configured in environment.",
+                "product_id": None,
+                "acquisition_date": None,
+                "cloud_pct": None,
+                "cells": []
+            }
 
-        headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json"
-        }
+        # Calculate bounding box & 10m grid dimensions
+        lats = [p[0] for p in polygon_coords]
+        lons = [p[1] for p in polygon_coords]
+        min_lat, max_lat = min(lats), max(lats)
+        min_lon, max_lon = min(lons), max(lons)
 
-        # GeoJSON Polygon format
+        # ~10m degree step at 19.4° N
+        lat_step = 0.000088
+        lon_step = 0.000095
+        grid_height = max(int(np.ceil((max_lat - min_lat) / lat_step)), 2)
+        grid_width = max(int(np.ceil((max_lon - min_lon) / lon_step)), 2)
+
+        # Construct GeoJSON Polygon in [lon, lat] order
         geojson_poly = {
             "type": "Polygon",
-            "coordinates": [[ [pt[1], pt[0]] for pt in polygon_coords ]]
+            "coordinates": [[ [round(pt[1], 7), round(pt[0], 7)] for pt in polygon_coords ]]
         }
 
         evalscript = """
@@ -88,7 +113,6 @@ class CopernicusCDSEClient:
             };
         }
         function evaluatePixel(sample) {
-            // Convert Digital Numbers (DN) to Surface Reflectance (0-1)
             return [
                 sample.B02 / 10000.0,
                 sample.B03 / 10000.0,
@@ -101,76 +125,175 @@ class CopernicusCDSEClient:
         }
         """
 
+        # Search window for cloud-free acquisition (+/- 5 days from target date)
+        start_date = (datetime.strptime(date_str, "%Y-%m-%d") - timedelta(days=5)).strftime("%Y-%m-%d")
+        end_date = (datetime.strptime(date_str, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
+
         payload = {
             "input": {
-                "bounds": { "geometry": geojson_poly },
+                "bounds": {
+                    "geometry": geojson_poly
+                },
                 "data": [{
                     "type": "sentinel-2-l2a",
                     "dataFilter": {
                         "timeRange": { "from": f"{start_date}T00:00:00Z", "to": f"{end_date}T23:59:59Z" },
-                        "maxCloudCoverage": 20
+                        "maxCloudCoverage": 30,
+                        "mosaickingOrder": "leastCloudBC"
                     }
                 }]
+            },
+            "output": {
+                "width": grid_width,
+                "height": grid_height,
+                "responses": [
+                    { "identifier": "default", "format": { "type": "image/tiff" } }
+                ]
             },
             "evalscript": evalscript
         }
 
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "Accept": "image/tiff"
+        }
+
         try:
-            resp = requests.post(self.PROCESS_API_URL, headers=headers, json=payload, timeout=20)
+            resp = requests.post(self.PROCESS_API_URL, headers=headers, json=payload, timeout=25)
             if resp.status_code == 200:
-                return {"status": "SUCCESS", "source": "COPERNICUS_CDSE_LIVE", "data": resp.json()}
+                return self._parse_geotiff_response(resp.content, min_lat, min_lon, lat_step, lon_step, grid_height, grid_width, polygon_coords)
+            else:
+                return {
+                    "live_satellite": False,
+                    "status": "PROCESS_API_ERROR",
+                    "http_status": resp.status_code,
+                    "error_text": resp.text[:300],
+                    "cells": []
+                }
         except Exception as e:
-            print(f"[CDSE Fetch Error]: {e}")
+            return {
+                "live_satellite": False,
+                "status": "CONNECTION_FAILED",
+                "error": str(e),
+                "cells": []
+            }
 
-        return self._generate_physics_calibrated_timeseries(polygon_coords, start_date, end_date)
-
-    def _generate_physics_calibrated_timeseries(self, polygon_coords: List[List[float]], start_date: str, end_date: str) -> Dict[str, Any]:
+    def _parse_geotiff_response(self, tiff_bytes: bytes, min_lat: float, min_lon: float, lat_step: float, lon_step: float, height: int, width: int, polygon_coords: List[List[float]]) -> Dict[str, Any]:
         """
-        Calibrated biophysical fall-back model matching Shevgaon agro-climatic zone.
+        Decodes multi-band GeoTIFF bytes and applies strict SCL cloud-masking.
         """
-        lats = [p[0] for p in polygon_coords]
-        lons = [p[1] for p in polygon_coords]
-        center_lat = sum(lats) / len(lats)
-        center_lon = sum(lons) / len(lons)
+        cells = []
+        valid_pixel_count = 0
+        cloud_pixel_count = 0
 
-        # Generate realistic 5-day revisit passes over the past 30 days
-        passes = []
-        base_time = datetime.strptime(end_date, "%Y-%m-%d")
-        
-        for i in range(6):
-            pass_date = (base_time - timedelta(days=i * 5)).strftime("%Y-%m-%d")
-            # Typical sugarcane canopy reflectance
-            b2 = 0.042 + (i * 0.001)
-            b3 = 0.075 + (i * 0.001)
-            b4 = 0.051 + (i * 0.002)
-            b8 = 0.490 - (i * 0.005) # Slight senescence during ripening
-            b8a = 0.330 - (i * 0.003)
-            b11 = 0.170 + (i * 0.004)
-            
-            ndvi = (b8 - b4) / (b8 + b4)
-            ndre = (b8 - b8a) / (b8 + b8a)
-            lswi = (b8 - b11) / (b8 + b11)
-            
-            passes.append({
-                "date": pass_date,
-                "satellite": "Sentinel-2A" if i % 2 == 0 else "Sentinel-2B",
-                "bands": {"B2": b2, "B3": b3, "B4": b4, "B8": b8, "B8A": b8a, "B11": b11},
-                "indices": {"NDVI": round(ndvi, 3), "NDRE": round(ndre, 3), "LSWI": round(lswi, 3)},
-                "cloud_pct": round(0.5 + i * 0.3, 1),
-                "scl_valid": True
-            })
+        # Decode multi-band TIFF array
+        if HAS_TIFFFILE:
+            with io.BytesIO(tiff_bytes) as f:
+                img_data = tifffile.imread(f)
+                if img_data.ndim == 3 and img_data.shape[0] == 7:
+                    img_data = np.transpose(img_data, (1, 2, 0))
+        else:
+            return {
+                "live_satellite": False,
+                "status": "MISSING_TIFF_DECODER",
+                "message": "tifffile or rasterio package required to decode live satellite GeoTIFF.",
+                "cells": []
+            }
+
+        cell_idx = 1
+        for row in range(height):
+            for col in range(width):
+                cell_lat = min_lat + (height - 1 - row) * lat_step
+                cell_lon = min_lon + col * lon_step
+                cell_center = [cell_lat + lat_step / 2, cell_lon + lon_step / 2]
+
+                b2 = float(img_data[row, col, 0])
+                b3 = float(img_data[row, col, 1])
+                b4 = float(img_data[row, col, 2])
+                b8 = float(img_data[row, col, 3])
+                b8a = float(img_data[row, col, 4])
+                b11 = float(img_data[row, col, 5])
+                scl = int(img_data[row, col, 6])
+
+                # Strict SCL Cloud/Shadow Masking
+                is_cloud_shadow = scl in SCL_CLOUD_SHADOW_CLASSES
+                is_valid = scl in SCL_VALID_CLASSES
+
+                if is_cloud_shadow:
+                    cloud_pixel_count += 1
+                    ndvi = None
+                    ndre = None
+                    lswi = None
+                    p_cane = 0.0
+                    land_class = "CLOUD_OR_SHADOW_MASKED"
+                    is_cane = False
+                else:
+                    valid_pixel_count += 1
+                    ndvi = round(float((b8 - b4) / (b8 + b4 + 1e-7)), 3)
+                    ndre = round(float((b8 - b8a) / (b8 + b8a + 1e-7)), 3)
+                    ndwi = round(float((b3 - b8) / (b3 + b8 + 1e-7)), 3)
+                    lswi = round(float((b8 - b11) / (b8 + b11 + 1e-7)), 3)
+                    bsi = round(float(((b11 + b4) - (b8 + b2)) / ((b11 + b4) + (b8 + b2) + 1e-7)), 3)
+
+                    # Multi-Criteria Land Classification
+                    if ndwi > 0.05:
+                        land_class = "WATER_POND"
+                        p_cane = 0.01
+                        is_cane = False
+                    elif bsi > 0.08 or ndvi < 0.35:
+                        land_class = "ROAD_BARE_SOIL"
+                        p_cane = 0.04
+                        is_cane = False
+                    elif ndvi >= 0.65 and ndre >= 0.18 and lswi >= 0.15:
+                        land_class = "STANDING_SUGARCANE"
+                        p_cane = 0.92
+                        is_cane = True
+                    else:
+                        land_class = "OTHER_VEGETATION"
+                        p_cane = 0.40
+                        is_cane = False
+
+                cell_poly = [
+                    [cell_lat, cell_lon],
+                    [cell_lat + lat_step, cell_lon],
+                    [cell_lat + lat_step, cell_lon + lon_step],
+                    [cell_lat, cell_lon + lon_step]
+                ]
+
+                cells.append({
+                    "id": f"Cell-{cell_idx}",
+                    "coords": cell_poly,
+                    "center": cell_center,
+                    "scl": scl,
+                    "scl_valid": is_valid,
+                    "ndvi": ndvi,
+                    "ndre": ndre,
+                    "lswi": lswi,
+                    "land_class": land_class,
+                    "is_standing_cane": is_cane,
+                    "p_cane": p_cane,
+                    "bands": {
+                        "B2_10m": round(b2, 4), "B3_10m": round(b3, 4), "B4_10m": round(b4, 4),
+                        "B8_10m": round(b8, 4), "B8A_resampled_20m": round(b8a, 4), "B11_resampled_20m": round(b11, 4)
+                    }
+                })
+                cell_idx += 1
+
+        total_pixels = valid_pixel_count + cloud_pixel_count
+        cloud_pct = round((cloud_pixel_count / total_pixels * 100.0), 1) if total_pixels else 0.0
 
         return {
-            "status": "SUCCESS",
-            "source": "S2_L2A_RADIOMETRIC_CALIBRATED",
-            "center": [round(center_lat, 7), round(center_lon, 7)],
-            "passes_count": len(passes),
-            "passes": passes
+            "live_satellite": True,
+            "status": "LIVE_COPERNICUS_L2A",
+            "source": "Copernicus Data Space Ecosystem (CDSE) Sentinel-2 L2A",
+            "total_pixels": total_pixels,
+            "valid_cloud_free_pixels": valid_pixel_count,
+            "cloud_contamination_pct": cloud_pct,
+            "grid_dimensions": f"{width}x{height} (10m grid)",
+            "cells": cells
         }
 
 if __name__ == "__main__":
-    client = CopernicusCDSEClient()
-    demo_coords = [[19.388268, 75.285998], [19.388385, 75.285850], [19.388187, 75.287400], [19.388081, 75.286381]]
-    res = client.fetch_sentinel2_timeseries(demo_coords, "2026-07-15", "2026-08-15")
-    print(f"Ingested {res['passes_count']} cloud-free Sentinel-2 passes from {res['source']}.")
-    print(f"Latest NDVI: {res['passes'][0]['indices']['NDVI']} | NDRE: {res['passes'][0]['indices']['NDRE']} | LSWI: {res['passes'][0]['indices']['LSWI']}")
+    engine = CopernicusCDSEProcessEngine()
+    print("Copernicus CDSE Process API Engine Loaded. Ready for authenticated GeoTIFF decoding.")

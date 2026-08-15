@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi Command - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - 2025–26 Autonomous Polygon Snapping & Crop Presence Trimming for Gangamai Sugar Mill (SSK).">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - 2025–26 Sentinel-2 L2A Remote Sensing & Sugar Ripening Command for Gangamai Sugar Mill (SSK).">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +32,7 @@
                 </div>
                 <div class="brand-text">
                     <h1>IkshuVruddhi <span>Command</span> <span class="mill-badge">2025–26 SEASON</span></h1>
-                    <p>Gangamai Sugar Mill - Autonomous Sugarcane Canopy Snapping & Sucrose Harvest Intelligence</p>
+                    <p>Gangamai Sugar Mill - Sentinel-2 Remote Sensing & Harvest Telemetry</p>
                 </div>
             </div>
             
@@ -42,8 +42,10 @@
                     <span class="status-val" style="color: var(--accent-cyan);">⚡ 2025–26 Crushing</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Autonomous AI Snapping</span>
-                    <span class="status-val" style="color: var(--accent-green);" id="lblSnappingState">🤖 Sentinel Spectral Core (NDVI &gt; 0.65)</span>
+                    <span class="status-label">Satellite Ingestion</span>
+                    <span class="status-val" id="lblSatelliteStatus" style="color: #ff9100; font-weight:800;">
+                        ⚠️ SIMULATION MODE (NO CDSE KEY)
+                    </span>
                 </div>
                 <div class="status-item">
                     <span class="status-label">Lab Calibration</span>
@@ -62,7 +64,7 @@
             </div>
         </header>
 
-        <!-- STREAMLINED ACTION TOOLBAR (WITH AUTONOMOUS SNAP ACTION) -->
+        <!-- STREAMLINED ACTION TOOLBAR -->
         <div class="toolbar-bar">
             <div class="preset-group">
                 <input type="file" id="csvNewSeasonInput" accept=".csv" style="display:none;">
@@ -74,8 +76,8 @@
                 <button class="btn-preset" id="btnUploadLabTraining" onclick="document.getElementById('csvLabTrainingInput').click()" style="background: rgba(168,85,247,0.18); color: #a855f7; border-color: rgba(168,85,247,0.45); font-weight:700;">
                     <i class="fa-solid fa-flask-vial"></i> 🧪 2. Ingest Lab CSV
                 </button>
-                <button class="btn-preset" id="btnAutoSnapAllPolygons" onclick="window.runAutonomousCanopySnapping()" style="background: linear-gradient(135deg, rgba(0,242,254,0.25), rgba(0,230,118,0.25)); color: #00f2fe; border-color: #00f2fe; font-weight:800; box-shadow: 0 0 12px rgba(0,242,254,0.2);">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> ⚡ Autonomous AI Crop Snapping (All Plots)
+                <button class="btn-preset" id="btnAutoSnapAllPolygons" onclick="window.runAutonomousCanopySnapping()" style="background: linear-gradient(135deg, rgba(0,242,254,0.25), rgba(0,230,118,0.25)); color: #00f2fe; border-color: #00f2fe; font-weight:800;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> ⚡ Autonomous Canopy Snapping
                 </button>
                 <button class="btn-preset" id="btnClearCurrentDataset" onclick="window.clearActiveDataset()" style="background: rgba(255,23,68,0.15); color: var(--accent-coral); border-color: rgba(255,23,68,0.35); font-weight:700;">
                     <i class="fa-solid fa-trash-can"></i> 🗑️ Clear Workspace
@@ -118,7 +120,7 @@
             <div class="kpi-card purple">
                 <span class="kpi-title">Est. Cane Tonnage</span>
                 <span class="kpi-value" id="kpiEstSugar">0 MT</span>
-                <span class="kpi-subtext"><i class="fa-solid fa-weight-hanging"></i> Baseline: ~48 T/Ac Model</span>
+                <span class="kpi-subtext"><i class="fa-solid fa-weight-hanging"></i> Standing Crop Basis</span>
             </div>
             <div class="kpi-card green">
                 <span class="kpi-title">Est. Recovery Opportunity</span>
@@ -127,9 +129,9 @@
             </div>
         </div>
 
-        <!-- TIER 2: SUCROSE CHEMISTRY & AUTONOMOUS SNAPPING BENCHMARKS -->
+        <!-- TIER 2: SUCROSE CHEMISTRY & SATELLITE AUDIT BENCHMARKS -->
         <div class="section-label-strip" style="margin-top: 0.6rem;">
-            <i class="fa-solid fa-flask-vial" style="color:var(--accent-cyan);"></i> <span>2025–26 SUCROSE BENCHMARKS & AUTONOMOUS SNAPPING ACCURACY</span>
+            <i class="fa-solid fa-flask-vial" style="color:var(--accent-cyan);"></i> <span>2025–26 SUCROSE BENCHMARKS & SATELLITE AUDIT TELEMETRY</span>
         </div>
         <div class="kpi-grid quality-grid" style="margin-bottom:0.9rem;">
             <div class="kpi-card quality-card">
@@ -148,9 +150,9 @@
                 <span class="kpi-subtext"><span class="source-tag model">MODEL PREDICTED</span> Recoverable Sugar</span>
             </div>
             <div class="kpi-card quality-card">
-                <span class="kpi-title"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Canopy Snapping</span>
-                <span class="kpi-value quality-val" id="kpiSnappingStatus" style="color:var(--accent-green);">Active Auto</span>
-                <span class="kpi-subtext"><span class="source-tag gis">SPECTRAL CORE</span> Excludes Non-Cane</span>
+                <span class="kpi-title"><i class="fa-solid fa-satellite"></i> Sentinel Data Status</span>
+                <span class="kpi-value quality-val" id="kpiSentinelState" style="color:#ff9100;">Simulation</span>
+                <span class="kpi-subtext"><span class="source-tag gis">AUDIT TRANSPARENCY</span> SCL Cloud Mask</span>
             </div>
             <div class="kpi-card quality-card">
                 <span class="kpi-title"><i class="fa-solid fa-location-crosshairs"></i> GPS Location Sanity</span>
@@ -170,7 +172,7 @@
             <!-- LEFT CARD: ADVANCED AI TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> 2025–26 Harvesting Queue & Autonomous Snapping</h3>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> 2025–26 Harvesting Queue & Canopy Snapping</h3>
                     <span class="badge success" id="lblPlotCount">0 Plots</span>
                 </div>
 
@@ -193,7 +195,7 @@
                                 <th>Gat No</th>
                                 <th>Predicted Pol</th>
                                 <th>Predicted CCS</th>
-                                <th>Lab Status</th>
+                                <th>Standing Cane</th>
                                 <th>Est. Cane</th>
                             </tr>
                         </thead>
@@ -212,14 +214,14 @@
                             <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Snap All
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i> Automatically trims bunds, roads & farm ponds</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i> True Standing Cane Extraction</span>
                 </div>
             </div>
 
-            <!-- RIGHT CARD: PRECISION GIS MAP WITH AUTONOMOUS CANOPY SNAPPING -->
+            <!-- RIGHT CARD: PRECISION GIS MAP -->
             <div class="glass-card map-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-map-location-dot"></i> Spatial 10m Heat Map & Autonomous Canopy Snapping</h3>
+                    <h3><i class="fa-solid fa-map-location-dot"></i> Spatial 10m Raster Heat Map</h3>
                     <!-- HEAT MAP LAYER SELECTOR -->
                     <div style="display:flex; gap:4px; flex-wrap:wrap;">
                         <button class="btn btn-xs btn-outline heat-layer-btn active" data-layer="ccs" onclick="window.setHeatMapLayer('ccs')">Predicted CCS %</button>
@@ -235,8 +237,13 @@
                         📍 Lat: <span id="hudLat">19.3882680</span> | Long: <span id="hudLon">75.2859986</span>
                     </div>
 
+                    <!-- FLOATING SATELLITE MODE WATERMARK BANNER -->
+                    <div id="mapSatelliteModeBanner" style="position:absolute; top:12px; left:12px; background:rgba(4,7,17,0.92); border:1px solid #ff9100; border-radius:6px; padding:6px 12px; z-index:1000; font-size:0.72rem; color:#ff9100; font-weight:700;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> SIMULATION MODE — CONNECT CDSE CREDENTIALS FOR LIVE SATELLITE TILES
+                    </div>
+
                     <!-- FLOATING POLYGON EDIT ACTION BANNER -->
-                    <div id="polygonEditBanner" style="display:none; position:absolute; top:12px; left:12px; background:rgba(4,7,17,0.92); border:1px solid var(--accent-green); border-radius:6px; padding:8px 14px; z-index:1000; font-size:0.76rem; box-shadow:0 0 15px rgba(0,230,118,0.3);">
+                    <div id="polygonEditBanner" style="display:none; position:absolute; top:48px; left:12px; background:rgba(4,7,17,0.92); border:1px solid var(--accent-green); border-radius:6px; padding:8px 14px; z-index:1000; font-size:0.76rem; box-shadow:0 0 15px rgba(0,230,118,0.3);">
                         <span style="color:#00e676; font-weight:bold;"><i class="fa-solid fa-pen-to-square"></i> Editing Polygon: <span id="editingPlotFarmerName">Farmer</span></span>
                         <div style="display:flex; gap:6px; margin-top:6px;">
                             <button class="btn btn-xs btn-primary" onclick="window.saveCurrentPolygonEdit()" style="background:linear-gradient(135deg,#00f2fe,#00e676); color:#000; font-weight:800;">
@@ -256,7 +263,7 @@
                         <div class="legend-item"><span class="legend-box" style="background:#ff9100;"></span> <b>10.5–11.5% CCS:</b> Developing Sucrose</div>
                         <div class="legend-item"><span class="legend-box" style="background:#ff1744;"></span> <b>&lt;10.5% CCS:</b> Immature / Wait</div>
                         <div style="font-size:0.62rem; color:#94a3b8; border-top:1px solid rgba(255,255,255,0.06); margin-top:4px; padding-top:4px;">
-                            🟧 Cadastral | 🔷 Walked | 🟩 10m Raster Cells
+                            🔷 Walked Boundary | 🟩 10m Classified Pixels
                         </div>
                     </div>
                 </div>
@@ -281,7 +288,7 @@
                     <div class="cockpit-stat-box">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-chart-line"></i> Sucrose Ripening Trajectory (Pol %)</span>
-                            <span class="source-tag model">WEEKLY RETRAINED</span>
+                            <span class="source-tag model" id="cockpitModelTag">WEEKLY CALIBRATED</span>
                         </div>
                         <div style="height:160px; margin-top:8px;">
                             <canvas id="ripeningChartCanvas"></canvas>
@@ -289,7 +296,7 @@
                     </div>
 
                     <div class="cockpit-stat-box" style="background:rgba(0,242,254,0.03); border-color:rgba(0,242,254,0.25);">
-                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-satellite"></i> 10m Sentinel-2 Raster Grid Audit</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-satellite"></i> Authentic Satellite Radiometry & Audit</span>
                         <div style="margin-top:6px; font-size:0.76rem;" id="modalPixelAuditBox">
                         </div>
                     </div>
@@ -297,7 +304,7 @@
 
                 <div>
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Weekly Model vs. Mill Lab Ground-Truth Feed</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Model vs. Mill Lab Ground-Truth Feed</span>
                         <div style="margin-top:8px; font-size:0.78rem;" id="modalThreeBoundaryBox">
                         </div>
                     </div>
@@ -347,7 +354,7 @@
         <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;">
             <h2 style="margin:0; text-transform:uppercase;">गंगामाई सहकारी साखर कारखाना (SSK)</h2>
             <h4 style="margin:4px 0;">Gangamai Sugar Mill - Cane Cutting Slip & Quality Docket (2025–26)</h4>
-            <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Weekly Calibrated AI Telemetry</p>
+            <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Satellite Telemetry</p>
         </div>
 
         <table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:14px;" border="1">
