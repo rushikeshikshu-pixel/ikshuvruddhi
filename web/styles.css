@@ -317,3 +317,41 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.6);
     flex-shrink: 0;
 }
+
+/* Advanced 2026 Core AI Engine Additions */
+.zone-pill-bar {
+    display: flex;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+    background: rgba(255,255,255,0.05);
+}
+.zone-pill-seg {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.ai-diagnostic-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.ai-tag-optimal { background: rgba(0,230,118,0.15); color: #00e676; border: 1px solid rgba(0,230,118,0.3); }
+.ai-tag-npk { background: rgba(255,234,0,0.15); color: #ffea00; border: 1px solid rgba(255,234,0,0.3); }
+.ai-tag-water { background: rgba(255,145,0,0.15); color: #ff9100; border: 1px solid rgba(255,145,0,0.3); }
+.ai-tag-lodging { background: rgba(255,23,68,0.15); color: #ff1744; border: 1px solid rgba(255,23,68,0.4); }
+
+.ripening-badge {
+    background: rgba(0,242,254,0.12);
+    color: #00f2fe;
+    border: 1px solid rgba(0,242,254,0.3);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
