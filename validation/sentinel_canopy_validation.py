@@ -1,14 +1,14 @@
-﻿from rasterio.features import rasterize
-"""
+﻿"""
 validation/sentinel_canopy_validation.py
 Permanent, Reproducible Sentinel-2 Ground-Truth Validation Pipeline
 
 Features:
   1. Exact EPSG:32643 UTM Zone 43N metric projection.
   2. Single Source of Truth Canopy Classifier (ml.canopy_classifier).
-  3. Strict 20m -> 10m band reprojection (B05/B11 Bilinear, SCL Nearest) using rasterio.warp.reproject.
-  4. Exact Geometric Sub-Pixel Intersection Area: Sum(Area(Cell_i ∩ Parcel)).
-  5. Multi-Tile Auto-Discovery (43QDB, 43QEB, 43QFB).
+  3. Standardized Multi-Spectral Bands: B02 (Blue), B03 (Green), B04 (Red), B05 (RedEdge-1), B08 (NIR), B11 (SWIR-1), SCL (Scene Classification).
+  4. Exact 20m -> 10m band reprojection (B05/B11 Bilinear, SCL Nearest) using rasterio.warp.reproject.
+  5. Exact Geometric Sub-Pixel Intersection Area: Sum(Area(Cell_i ∩ Parcel)).
+  6. Shared feature derivation (NDVI, NDRE, LSWI, NDWI, BSI).
 """
 
 import os
@@ -22,6 +22,7 @@ from shapely.geometry import Polygon, box
 from shapely.ops import transform
 import pyproj
 import rasterio
+from rasterio.features import rasterize
 from rasterio.windows import from_bounds
 from rasterio.warp import reproject, Resampling
 
@@ -30,7 +31,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-from ml.canopy_classifier import classify_sugarcane_raster
+from ml.canopy_classifier import compute_spectral_indices, classify_sugarcane_raster
 from validation.metrics import compute_exact_subpixel_intersection_area, compute_boundary_pixel_exposure
 
 wgs84_to_utm43n = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:32643", always_xy=True).transform
@@ -68,17 +69,19 @@ def run_validation(limit_plots=88, output_csv="data/output/refined_empirical_sen
             tiles_features[tile] = f
             print(f"  [Tile {tile}] -> {f['id']} (Acquisition: {f['properties']['datetime'][:10]}, Cloud: {f['properties'].get('eo:cloud_cover'):.4f}%)")
 
-    # Open COG Readers
+    # Open COG Readers for all 7 bands
     tile_readers = {}
     for tile, f in tiles_features.items():
         tile_readers[tile] = {
             "scene_id": f["id"],
             "date": f["properties"]["datetime"][:10],
-            "red": rasterio.open(f["assets"]["red"]["href"]),
-            "nir": rasterio.open(f["assets"]["nir"]["href"]),
-            "re": rasterio.open(f["assets"]["rededge1"]["href"]),
-            "swir": rasterio.open(f["assets"]["swir16"]["href"]),
-            "scl": rasterio.open(f["assets"]["scl"]["href"])
+            "blue": rasterio.open(f["assets"]["blue"]["href"]),       # B02 (10m)
+            "green": rasterio.open(f["assets"]["green"]["href"]),     # B03 (10m)
+            "red": rasterio.open(f["assets"]["red"]["href"]),         # B04 (10m)
+            "nir": rasterio.open(f["assets"]["nir"]["href"]),         # B08 (10m)
+            "re": rasterio.open(f["assets"]["rededge1"]["href"]),     # B05 (20m)
+            "swir": rasterio.open(f["assets"]["swir16"]["href"]),     # B11 (20m)
+            "scl": rasterio.open(f["assets"]["scl"]["href"])          # SCL (20m)
         }
 
     results = []
@@ -117,6 +120,8 @@ def run_validation(limit_plots=88, output_csv="data/output/refined_empirical_sen
         if not target_reader:
             continue
             
+        src_blue = target_reader["blue"]
+        src_green = target_reader["green"]
         src_red = target_reader["red"]
         src_nir = target_reader["nir"]
         src_re = target_reader["re"]
@@ -127,11 +132,15 @@ def run_validation(limit_plots=88, output_csv="data/output/refined_empirical_sen
         win_10m = from_bounds(minx, miny, maxx, maxy, src_red.transform)
         win_10m_transform = rasterio.windows.transform(win_10m, src_red.transform)
         
-        red_10m = src_red.read(1, window=win_10m).astype(np.float32)
-        nir_10m = src_nir.read(1, window=win_10m).astype(np.float32)
+        # Read 10m bands (scaled to surface reflectance 0.0 - 1.0)
+        # Note: AWS Earth Search COGs are DN integers (scale factor 0.0001)
+        blue_10m = src_blue.read(1, window=win_10m).astype(np.float32) / 10000.0
+        green_10m = src_green.read(1, window=win_10m).astype(np.float32) / 10000.0
+        red_10m = src_red.read(1, window=win_10m).astype(np.float32) / 10000.0
+        nir_10m = src_nir.read(1, window=win_10m).astype(np.float32) / 10000.0
         out_shape_10m = red_10m.shape
         
-        # Exact Bilinear / Nearest Reprojection
+        # Exact Bilinear Reprojection for 20m B05 RedEdge-1 & B11 SWIR-1
         re_10m = np.zeros(out_shape_10m, dtype=np.float32)
         reproject(
             source=rasterio.band(src_re, 1),
@@ -142,6 +151,7 @@ def run_validation(limit_plots=88, output_csv="data/output/refined_empirical_sen
             dst_crs=src_red.crs,
             resampling=Resampling.bilinear
         )
+        re_10m = re_10m / 10000.0
         
         swir_10m = np.zeros(out_shape_10m, dtype=np.float32)
         reproject(
@@ -153,7 +163,9 @@ def run_validation(limit_plots=88, output_csv="data/output/refined_empirical_sen
             dst_crs=src_red.crs,
             resampling=Resampling.bilinear
         )
+        swir_10m = swir_10m / 10000.0
         
+        # Exact Nearest Neighbor Reprojection for SCL (categorical)
         scl_10m = np.zeros(out_shape_10m, dtype=np.uint8)
         reproject(
             source=rasterio.band(src_scl, 1),
@@ -165,22 +177,23 @@ def run_validation(limit_plots=88, output_csv="data/output/refined_empirical_sen
             resampling=Resampling.nearest
         )
         
-        # Multi-Spectral Indices
-        with np.errstate(divide="ignore", invalid="ignore"):
-            ndvi = (nir_10m - red_10m) / (nir_10m + red_10m + 1e-7)
-            ndre = (nir_10m - re_10m) / (nir_10m + re_10m + 1e-7)
-            lswi = (nir_10m - swir_10m) / (nir_10m + swir_10m + 1e-7)
+        # Shared Multi-Spectral Indices Calculation (Identical to production)
+        indices = compute_spectral_indices(blue_10m, green_10m, red_10m, re_10m, nir_10m, swir_10m)
+        ndvi = indices["ndvi"]
+        ndre = indices["ndre"]
+        lswi = indices["lswi"]
+        ndwi = indices["ndwi"]
+        bsi = indices["bsi"]
             
-        # Unified Classifier Call
-        cane_mask_2d = classify_sugarcane_raster(ndvi, ndre, lswi, scl_10m)
+        # Unified Vectorized Classifier Call (with water and bare-soil rejection)
+        cane_mask_2d = classify_sugarcane_raster(ndvi, ndre, lswi, scl_10m, ndwi, bsi)
         
-        # Build cell bounding boxes for exact sub-pixel intersection
+        # Build cell bounding boxes for exact sub-pixel polygon intersection
         cell_boxes = []
         cane_flat = []
         rows, cols = out_shape_10m
         for r in range(rows):
             for c in range(cols):
-                # Calculate pixel corners in UTM
                 px_minx, px_maxy = win_10m_transform * (c, r)
                 px_maxx, px_miny = win_10m_transform * (c + 1, r + 1)
                 cell_boxes.append((min(px_minx, px_maxx), min(px_miny, px_maxy), max(px_minx, px_maxx), max(px_miny, px_maxy)))
@@ -195,7 +208,6 @@ def run_validation(limit_plots=88, output_csv="data/output/refined_empirical_sen
         parcel_occupancy_pct = (sat_cane_m2 / max(1.0, total_gt_m2)) * 100.0
         
         # Strict IoU: Intersection / Union
-        # Union = Total Parcel Area + any cane outside parcel in this tight bbox
         cane_cells_m2_total = np.sum(cane_mask_2d) * 100.0
         union_m2 = total_gt_m2 + max(0.0, cane_cells_m2_total - sat_cane_m2)
         strict_parcel_iou_pct = (sat_cane_m2 / max(1.0, union_m2)) * 100.0

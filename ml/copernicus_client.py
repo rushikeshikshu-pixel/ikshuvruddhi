@@ -1,4 +1,4 @@
-from ml.canopy_classifier import classify_sugarcane_pixel, SCL_VALID_CLASSES
+from ml.canopy_classifier import compute_spectral_indices, classify_sugarcane_pixel, SCL_VALID_CLASSES
 """
 IkshuVruddhi Production Copernicus CDSE Client (Strict Auditable Remote Sensing)
 1. Official CDSE Process API endpoint: https://sh.dataspace.copernicus.eu/process/v1
@@ -23,7 +23,6 @@ try:
 except ImportError:
     HAS_TIFFFILE = False
 
-SCL_VALID_CLASSES = {4, 5, 6} # 4: Vegetation, 5: Bare Soil, 6: Water
 
 class CopernicusCDSEProcessEngine:
     AUTH_URL = "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"
@@ -99,7 +98,7 @@ class CopernicusCDSEProcessEngine:
         function setup() {
             return {
                 input: [{
-                    bands: ["B02", "B03", "B04", "B08", "B8A", "B11", "SCL"],
+                    bands: ["B02", "B03", "B04", "B08", "B05", "B11", "SCL"],
                     units: "DN"
                 }],
                 output: [
@@ -113,7 +112,7 @@ class CopernicusCDSEProcessEngine:
                 sample.B03 / 10000.0,
                 sample.B04 / 10000.0,
                 sample.B08 / 10000.0,
-                sample.B8A / 10000.0,
+                sample.B05 / 10000.0,
                 sample.B11 / 10000.0,
                 sample.SCL
             ];
@@ -211,7 +210,7 @@ class CopernicusCDSEProcessEngine:
                 b3 = float(img_data[row, col, 1])
                 b4 = float(img_data[row, col, 2])
                 b8 = float(img_data[row, col, 3])
-                b8a = float(img_data[row, col, 4])
+                b5 = float(img_data[row, col, 4])
                 b11 = float(img_data[row, col, 5])
                 scl = int(img_data[row, col, 6])
 
@@ -229,17 +228,12 @@ class CopernicusCDSEProcessEngine:
                     is_cane = False
                 else:
                     valid_pixel_count += 1
-                    ndvi = round(float((b8 - b4) / (b8 + b4 + 1e-7)), 3)
-                    ndre = round(float((b8 - b8a) / (b8 + b8a + 1e-7)), 3)
-                    ndwi = round(float((b3 - b8) / (b3 + b8 + 1e-7)), 3)
-                    lswi = round(float((b8 - b11) / (b8 + b11 + 1e-7)), 3)
-                    bsi = round(float(((b11 + b4) - (b8 + b2)) / ((b11 + b4) + (b8 + b2) + 1e-7)), 3)
-
-                    # Continuous Cane Signature Score calculation
-                    cane_score = round(min(max(
-                        0.35 * ((ndvi - 0.40) / 0.40) +
-                        0.35 * ((ndre - 0.10) / 0.20) +
-                        0.30 * ((lswi - 0.05) / 0.25), 0.01), 0.98), 2)
+                    indices = compute_spectral_indices(b2, b3, b4, b5, b8, b11)
+                    ndvi = round(float(indices["ndvi"]), 3)
+                    ndre = round(float(indices["ndre"]), 3)
+                    ndwi = round(float(indices["ndwi"]), 3)
+                    lswi = round(float(indices["lswi"]), 3)
+                    bsi = round(float(indices["bsi"]), 3)
 
                     classification = classify_sugarcane_pixel(ndvi, ndre, lswi, ndwi, bsi, scl)
                     land_class = classification["land_class"]
