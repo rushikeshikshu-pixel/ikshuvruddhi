@@ -18,7 +18,6 @@ class TestCanopyClassifierEquivalence(unittest.TestCase):
 
     def test_spectral_indices_consistency(self):
         b2, b3, b4, b5, b8, b11 = 0.035, 0.075, 0.045, 0.125, 0.485, 0.165
-        
         scalar_ind = compute_spectral_indices(b2, b3, b4, b5, b8, b11)
         
         b2_arr = np.array([[b2, b2 * 1.1]])
@@ -36,9 +35,20 @@ class TestCanopyClassifierEquivalence(unittest.TestCase):
         self.assertAlmostEqual(scalar_ind["ndwi"], float(vec_ind["ndwi"][0, 0]), places=6)
         self.assertAlmostEqual(scalar_ind["bsi"], float(vec_ind["bsi"][0, 0]), places=6)
 
-    def test_classifier_mathematical_equivalence(self):
+    def test_boundary_threshold_precision_equivalence(self):
+        # Explicitly test threshold boundaries near 0.550 (e.g. 0.5496 vs 0.5501)
+        test_ndvis = [0.5494, 0.5499, 0.5500, 0.5501, 0.5505]
+        for ndvi_val in test_ndvis:
+            scalar_res = classify_sugarcane_pixel(ndvi_val, 0.15, 0.10, 0.0, 0.0, 4)
+            vec_res = classify_sugarcane_raster(
+                np.array([ndvi_val]), np.array([0.15]), np.array([0.10]),
+                np.array([4]), np.array([0.0]), np.array([0.0])
+            )
+            self.assertEqual(scalar_res["is_standing_cane"], bool(vec_res[0]))
+
+    def test_full_random_sample_equivalence(self):
         np.random.seed(42)
-        n_samples = 250
+        n_samples = 500
         
         ndvis = np.random.uniform(0.1, 0.9, n_samples)
         ndres = np.random.uniform(-0.1, 0.5, n_samples)
@@ -60,7 +70,7 @@ class TestCanopyClassifierEquivalence(unittest.TestCase):
         )
         
         np.testing.assert_array_equal(scalar_results, vec_results)
-        print(f"PASS: Verified {n_samples} random test cases. 100% exact mathematical match between scalar and vectorized classifiers.")
+        print(f"PASS: Verified {n_samples} random + boundary test cases. 100% exact mathematical match.")
 
 if __name__ == "__main__":
     unittest.main()

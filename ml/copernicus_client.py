@@ -77,10 +77,13 @@ class CopernicusCDSEProcessEngine:
         min_lat, max_lat = min(lats), max(lats)
         min_lon, max_lon = min(lons), max(lons)
 
-        lat_step = 0.000088
-        lon_step = 0.000095
-        grid_height = max(int(np.ceil((max_lat - min_lat) / lat_step)), 2)
-        grid_width = max(int(np.ceil((max_lon - min_lon) / lon_step)), 2)
+        # Derive exact 10m grid dimensions (~0.00008983 degrees latitude per 10m at equator)
+        # and georeference exact cell bounds across the parcel extent
+        approx_10m_deg = 0.000090
+        grid_height = max(int(np.ceil((max_lat - min_lat) / approx_10m_deg)), 2)
+        grid_width = max(int(np.ceil((max_lon - min_lon) / approx_10m_deg)), 2)
+        lat_step = (max_lat - min_lat) / float(grid_height)
+        lon_step = (max_lon - min_lon) / float(grid_width)
 
         geojson_poly = {
             "type": "Polygon",
@@ -229,16 +232,26 @@ class CopernicusCDSEProcessEngine:
                 else:
                     valid_pixel_count += 1
                     indices = compute_spectral_indices(b2, b3, b4, b5, b8, b11)
+                    
+                    # Full precision for classification decision
+                    classification = classify_sugarcane_pixel(
+                        float(indices["ndvi"]),
+                        float(indices["ndre"]),
+                        float(indices["lswi"]),
+                        float(indices["ndwi"]),
+                        float(indices["bsi"]),
+                        scl
+                    )
+                    land_class = classification["land_class"]
+                    cane_score = classification["cane_signature_score"]
+                    is_cane = classification["is_standing_cane"]
+
+                    # Display / JSON values
                     ndvi = round(float(indices["ndvi"]), 3)
                     ndre = round(float(indices["ndre"]), 3)
                     ndwi = round(float(indices["ndwi"]), 3)
                     lswi = round(float(indices["lswi"]), 3)
                     bsi = round(float(indices["bsi"]), 3)
-
-                    classification = classify_sugarcane_pixel(ndvi, ndre, lswi, ndwi, bsi, scl)
-                    land_class = classification["land_class"]
-                    cane_score = classification["cane_signature_score"]
-                    is_cane = classification["is_standing_cane"]
 
                 cell_poly = [
                     [cell_lat, cell_lon],
@@ -264,7 +277,7 @@ class CopernicusCDSEProcessEngine:
                     "p_cane": cane_score,
                     "bands": {
                         "B2_10m": round(b2, 4), "B3_10m": round(b3, 4), "B4_10m": round(b4, 4),
-                        "B8_10m": round(b8, 4), "B8A_resampled_20m": round(b8a, 4), "B11_resampled_20m": round(b11, 4)
+                        "B8_10m": round(b8, 4), "B05_resampled_20m": round(b5, 4), "B11_resampled_20m": round(b11, 4)
                     }
                 })
                 cell_idx += 1
