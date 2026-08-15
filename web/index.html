@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi Command - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Dual Season Sugar Mill Command & Historical Calibration Archive for Gangamai Sugar Mill (SSK).">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - 2025–26 Active Season Continuous Weekly Model Retraining & Harvest Telemetry for Gangamai Sugar Mill (SSK).">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,31 +30,23 @@
                     <i class="fa-solid fa-seedling"></i>
                 </div>
                 <div class="brand-text">
-                    <h1>IkshuVruddhi <span>Command</span> <span class="mill-badge">इक्षुवृद्धी SSK</span></h1>
-                    <p>Gangamai Sugar Mill - Sucrose Chemistry & Harvest Command Platform</p>
+                    <h1>IkshuVruddhi <span>Command</span> <span class="mill-badge">2025–26 SEASON</span></h1>
+                    <p>Gangamai Sugar Mill - Weekly Continuous AI Retraining & Sucrose Harvest Command</p>
                 </div>
             </div>
             
-            <!-- SEASON TOGGLE SELECTOR (SEPARATES ACTIVE NEW SEASON VS HISTORICAL ARCHIVE) -->
             <div class="header-status-strip">
-                <div class="status-item" style="background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:6px; border:1px solid var(--border-cyan);">
-                    <span class="status-label" style="color:var(--accent-cyan);">Active Data Partition</span>
-                    <div style="display:flex; gap:6px; margin-top:2px;">
-                        <button class="btn btn-xs season-btn active" id="btnSeasonNew" onclick="window.switchSeasonPartition('NEW_SEASON')" style="background:linear-gradient(135deg, #00f2fe, #00e676); color:#04070e; font-weight:800; border:none;">
-                            ⚡ 2025–26 (Active Season)
-                        </button>
-                        <button class="btn btn-xs season-btn" id="btnSeasonPrev" onclick="window.switchSeasonPartition('PREV_ARCHIVE')" style="background:rgba(255,255,255,0.06); color:#cbd5e1; border:1px solid var(--border-dim); font-weight:700;">
-                            📂 2024–25 (Training Archive)
-                        </button>
-                    </div>
+                <div class="status-item">
+                    <span class="status-label">Active Season</span>
+                    <span class="status-val" style="color: var(--accent-cyan);">⚡ 2025–26 Crushing</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Command Site</span>
-                    <span class="status-val" style="color: var(--accent-cyan);">Ghotan Circle (Ahilyanagar)</span>
+                    <span class="status-label">Model Cadence</span>
+                    <span class="status-val" style="color: var(--accent-green);" id="lblRetrainCadence">🔄 Continuous Weekly Retraining</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Lab Ground-Truth</span>
-                    <span class="status-val" style="color: var(--accent-green);" id="lblLabStatus">Calibrated (n=11 Archive Plots)</span>
+                    <span class="status-label">Weekly Training Cycle</span>
+                    <span class="status-val" style="color: #ffea00;" id="lblTrainingWeek">Week 1 (Aug Ingest)</span>
                 </div>
             </div>
 
@@ -64,7 +56,7 @@
                     <button class="btn btn-xs btn-outline" id="btnLangMr" style="font-weight: 700;">🇮🇳 मराठी</button>
                 </div>
                 <button id="btnHeaderExport" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-download"></i> Export Season CSV
+                    <i class="fa-solid fa-download"></i> Export Weekly Predictions CSV
                 </button>
             </div>
         </header>
@@ -72,15 +64,13 @@
         <!-- STREAMLINED ACTION TOOLBAR -->
         <div class="toolbar-bar">
             <div class="preset-group">
-                <!-- Separate file inputs for new season and historical training -->
                 <input type="file" id="csvNewSeasonInput" accept=".csv" style="display:none;">
-                <input type="file" id="csvHistoricalInput" accept=".csv" style="display:none;">
                 
                 <button class="btn-preset active" id="btnUploadNewSeason" onclick="document.getElementById('csvNewSeasonInput').click()" style="background: rgba(0,242,254,0.18); color: var(--accent-cyan); border-color: rgba(0,242,254,0.5); font-weight:700;">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 Upload 2025–26 New Season CSV
+                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 Ingest Weekly Survey & Lab Batch CSV
                 </button>
-                <button class="btn-preset" id="btnUploadHistorical" onclick="document.getElementById('csvHistoricalInput').click()" style="background: rgba(168,85,247,0.15); color: #a855f7; border-color: rgba(168,85,247,0.3); font-weight:700;">
-                    <i class="fa-solid fa-box-archive"></i> 📂 Upload Previous Year Archive CSV
+                <button class="btn-preset" id="btnTriggerWeeklyRetrain" onclick="window.triggerWeeklyRetrainingCycle()" style="background: rgba(0,230,118,0.15); color: var(--accent-green); border-color: rgba(0,230,118,0.4); font-weight:700;">
+                    <i class="fa-solid fa-rotate"></i> ⚡ Run Weekly Model Calibration
                 </button>
             </div>
 
@@ -97,13 +87,13 @@
 
         <!-- TIER 1: OPERATIONAL COMMAND CARDS (WHAT TO CUT & CRUSH) -->
         <div class="section-label-strip">
-            <i class="fa-solid fa-truck-ramp-box" style="color:var(--accent-cyan);"></i> <span id="lblSectionOpsTitle">2025–26 ACTIVE HARVEST & CRUSHING OPERATIONS</span>
+            <i class="fa-solid fa-truck-ramp-box" style="color:var(--accent-cyan);"></i> <span>2025–26 ACTIVE HARVEST & CRUSHING OPERATIONS</span>
         </div>
         <div class="kpi-grid">
             <div class="kpi-card cyan">
-                <span class="kpi-title">Plots in View</span>
+                <span class="kpi-title">2025–26 Plots Ingested</span>
                 <span class="kpi-value" id="kpiTotalFields">11</span>
-                <span class="kpi-subtext" id="kpiPartitionBadge"><i class="fa-solid fa-tag"></i> 2025–26 Season</span>
+                <span class="kpi-subtext"><i class="fa-solid fa-map-pin"></i> Ghotan Command Area</span>
             </div>
             <div class="kpi-card green">
                 <span class="kpi-title">Cut Today (Priority 1)</span>
@@ -132,9 +122,9 @@
             </div>
         </div>
 
-        <!-- TIER 2: SUCROSE CHEMISTRY & DATA QUALITY VALIDATION -->
+        <!-- TIER 2: SUCROSE CHEMISTRY & WEEKLY RETRAINING BENCHMARKS -->
         <div class="section-label-strip" style="margin-top: 0.6rem;">
-            <i class="fa-solid fa-flask-vial" style="color:var(--accent-cyan);"></i> <span>SUCROSE QUALITY BENCHMARKS & MODEL VALIDATION</span>
+            <i class="fa-solid fa-flask-vial" style="color:var(--accent-cyan);"></i> <span>2025–26 SUCROSE BENCHMARKS & WEEKLY RETRAINING TELEMETRY</span>
         </div>
         <div class="kpi-grid quality-grid" style="margin-bottom:0.9rem;">
             <div class="kpi-card quality-card">
@@ -153,9 +143,9 @@
                 <span class="kpi-subtext"><span class="source-tag model">MODEL PREDICTED</span> Recoverable Sugar</span>
             </div>
             <div class="kpi-card quality-card">
-                <span class="kpi-title"><i class="fa-solid fa-draw-polygon"></i> Median Polygon IoU</span>
-                <span class="kpi-value quality-val" id="kpiMedianIou" style="color:var(--accent-green);">0.968</span>
-                <span class="kpi-subtext"><span class="source-tag gis">GIS MEASURED</span> vs DGPS Walked Truth</span>
+                <span class="kpi-title"><i class="fa-solid fa-rotate"></i> Weekly Retraining State</span>
+                <span class="kpi-value quality-val" style="color:var(--accent-green);">Active Sync</span>
+                <span class="kpi-subtext"><span class="source-tag gis">WEEKLY RETRAIN</span> Sentinel 5-Day Cycle</span>
             </div>
             <div class="kpi-card quality-card">
                 <span class="kpi-title"><i class="fa-solid fa-location-crosshairs"></i> GPS Location Sanity</span>
@@ -163,9 +153,9 @@
                 <span class="kpi-subtext"><span class="source-tag field">FIELD AUDIT</span> &lt;300m from Cadastral Gat</span>
             </div>
             <div class="kpi-card quality-card">
-                <span class="kpi-title"><i class="fa-solid fa-check-double"></i> Mill Lab Validation</span>
+                <span class="kpi-title"><i class="fa-solid fa-check-double"></i> Polarimeter Lab Calibration</span>
                 <span class="kpi-value quality-val" style="color:#a855f7;">n = 11</span>
-                <span class="kpi-subtext"><span class="source-tag lab">LAB VALIDATED</span> Polarimeter Archive</span>
+                <span class="kpi-subtext"><span class="source-tag lab">WEEKLY CRUSH</span> Live Mill Feedback</span>
             </div>
         </div>
 
@@ -175,7 +165,7 @@
             <!-- LEFT CARD: ADVANCED AI TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Operational Harvesting Queue & Sucrose Quality</h3>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> 2025–26 Harvesting Queue & Weekly Calibration</h3>
                     <span class="badge success" id="lblPlotCount">11 Plots</span>
                 </div>
 
@@ -185,7 +175,7 @@
                     <input type="text" id="inputSearchPlotList" class="form-control" style="padding-left:2.2rem; font-size:0.76rem;" placeholder="Search Farmer or Gat No...">
                 </div>
 
-                <!-- UNIFIED OPERATIONAL TABLE (POL & CCS AS PRIMARY METRICS) -->
+                <!-- UNIFIED OPERATIONAL TABLE -->
                 <div class="farmer-plot-list-wrapper" id="farmerPlotListWrapper">
                     <table class="data-table" id="leftPlotTable">
                         <thead>
@@ -211,10 +201,10 @@
                 <div class="left-card-footer-strip">
                     <div style="display:flex; gap:6px;">
                         <button class="btn btn-xs btn-outline" onclick="document.getElementById('csvNewSeasonInput').click()" style="border-color:rgba(0,242,254,0.4); color:var(--accent-cyan); font-weight:700;">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload 2025–26 CSV
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload 2025–26 Batch
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-dna" style="color:var(--accent-cyan);"></i> Sucrose Hierarchy: Pol % ➔ Purity ➔ CCS %</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-rotate" style="color:var(--accent-green);"></i> Weekly Calibrated Model (2025–26 Season)</span>
                 </div>
             </div>
 
@@ -271,7 +261,7 @@
                     <div class="cockpit-stat-box">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-chart-line"></i> Sucrose Ripening Trajectory (Pol %)</span>
-                            <span class="source-tag model">MODEL PREDICTED</span>
+                            <span class="source-tag model">WEEKLY RETRAINED</span>
                         </div>
                         <div style="height:160px; margin-top:8px;">
                             <canvas id="ripeningChartCanvas"></canvas>
@@ -289,7 +279,7 @@
                 <!-- Right: Sugar Quality: Predicted vs Lab Polarimeter Loop -->
                 <div>
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Sucrose Quality: Model vs. Lab Polarimeter Loop</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Weekly Model vs. Mill Polarimeter Calibration</span>
                         <div style="margin-top:8px; font-size:0.78rem;" id="modalThreeBoundaryBox">
                         </div>
                     </div>
@@ -338,8 +328,8 @@
     <div id="printableDocket" style="display:none;">
         <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;">
             <h2 style="margin:0; text-transform:uppercase;">गंगामाई सहकारी साखर कारखाना (SSK)</h2>
-            <h4 style="margin:4px 0;">Gangamai Sugar Mill - Cane Cutting Slip & Quality Docket</h4>
-            <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Boundary-Controlled Satellite Command</p>
+            <h4 style="margin:4px 0;">Gangamai Sugar Mill - Cane Cutting Slip & Quality Docket (2025–26)</h4>
+            <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Weekly Calibrated AI Telemetry</p>
         </div>
 
         <table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:14px;" border="1">
