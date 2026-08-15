@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IkshuVruddhi AI Engine - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Administrative Cadastral Parcel Resolution, GPS Sanity Checking & Measured IoU Cane Segmentation for Gangamai Sugar Mill.">
+    <title>IkshuVruddhi Command - Gangamai Sugar Mill Precision Platform</title>
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Sugar Mill Harvest Command & Operational Telemetry for Gangamai Sugar Mill (SSK).">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,23 +30,23 @@
                     <i class="fa-solid fa-seedling"></i>
                 </div>
                 <div class="brand-text">
-                    <h1>IkshuVruddhi <span>AI Engine</span> <span class="mill-badge">इक्षुवृद्धी 2026</span></h1>
-                    <p>Gangamai Sugar Mill Command - Administrative Cadastral Resolution & Measured IoU Audit</p>
+                    <h1>IkshuVruddhi <span>Command</span> <span class="mill-badge">इक्षुवृद्धी SSK</span></h1>
+                    <p>Gangamai Sugar Mill - Harvest Prioritization, Cadastral Intelligence & Factory Logistics</p>
                 </div>
             </div>
             
             <div class="header-status-strip">
                 <div class="status-item">
-                    <span class="status-label">Factory</span>
-                    <span class="status-val">Gangamai Sugar Mill (SSK)</span>
+                    <span class="status-label">Factory Command</span>
+                    <span class="status-val">Gangamai SSK (7,500 TCD)</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Spatial DB Key</span>
-                    <span class="status-val" style="color: var(--accent-cyan);">District ➔ Taluka ➔ Village ➔ Gat</span>
+                    <span class="status-label">Command Site</span>
+                    <span class="status-val" style="color: var(--accent-cyan);">Ghotan Circle (Ahilyanagar)</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Spatial Agreement</span>
-                    <span class="status-val" style="color: var(--accent-green);">Measured IoU: 0.968</span>
+                    <span class="status-label">GPS Sanity Status</span>
+                    <span class="status-val" style="color: var(--accent-green);" id="lblGpsSanityStatus">✅ 11/11 Verified (&lt;300m)</span>
                 </div>
             </div>
 
@@ -56,7 +56,7 @@
                     <button class="btn btn-xs btn-outline" id="btnLangMr" style="font-weight: 700;">🇮🇳 मराठी</button>
                 </div>
                 <button id="btnHeaderExport" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-download"></i> Export Cadastral IoU CSV
+                    <i class="fa-solid fa-download"></i> Export Operations CSV
                 </button>
             </div>
         </header>
@@ -67,7 +67,7 @@
                 <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
                 
                 <button class="btn-preset active" id="btnUploadCsvDirect" style="background: rgba(0,242,254,0.18); color: var(--accent-cyan); border-color: rgba(0,242,254,0.5); font-weight:700;">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 Upload Walked Survey CSV
+                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 Upload Survey CSV
                 </button>
             </div>
 
@@ -82,37 +82,77 @@
             </div>
         </div>
 
-        <!-- Industry-Standard KPI Ribbon -->
+        <!-- TIER 1: OPERATIONAL COMMAND CARDS (WHAT TO CUT & CRUSH) -->
+        <div class="section-label-strip">
+            <i class="fa-solid fa-truck-ramp-box" style="color:var(--accent-cyan);"></i> <span>FACTORY HARVEST & CRUSHING OPERATIONS</span>
+        </div>
         <div class="kpi-grid">
-            <div class="kpi-card green">
-                <span class="kpi-title">Walked Plots Audited</span>
+            <div class="kpi-card cyan">
+                <span class="kpi-title">Plots Monitored</span>
                 <span class="kpi-value" id="kpiTotalFields">11</span>
-                <span class="kpi-subtext"><i class="fa-solid fa-map-pin"></i> Ghotan Site (100% DGPS)</span>
-            </div>
-            <div class="kpi-card coral">
-                <span class="kpi-title">Priority 1 Cutting Slips</span>
-                <span class="kpi-value" id="kpiPrio1Slips">9</span>
-                <span class="kpi-subtext positive"><i class="fa-solid fa-circle-exclamation"></i> Immediate Harvest (>10.5% CCS)</span>
+                <span class="kpi-subtext"><i class="fa-solid fa-map-pin"></i> Ghotan Command Area</span>
             </div>
             <div class="kpi-card green">
-                <span class="kpi-title">Median Measured IoU</span>
-                <span class="kpi-value" id="kpiAvgCcs" style="color:#00f2fe;">0.968</span>
-                <span class="kpi-subtext positive"><i class="fa-solid fa-shield-halved"></i> 2.1% Area Error vs Walked Truth</span>
+                <span class="kpi-title">Cut Today (Priority 1)</span>
+                <span class="kpi-value" id="kpiCutToday" style="color:var(--accent-green);">4</span>
+                <span class="kpi-subtext positive"><i class="fa-solid fa-bolt"></i> Peak Maturity (&gt;12.0% CCS)</span>
             </div>
             <div class="kpi-card amber">
-                <span class="kpi-title">SAR Radar Stalk Yield</span>
-                <span class="kpi-value" id="kpiEstSugar">588 MT</span>
-                <span class="kpi-subtext"><i class="fa-solid fa-cubes-stacked"></i> ~48.0 T/Ac Average</span>
+                <span class="kpi-title">Cut in 3–7 Days</span>
+                <span class="kpi-value" id="kpiCut3to7Days" style="color:#ffea00;">4</span>
+                <span class="kpi-subtext" style="color:#ffea00;"><i class="fa-solid fa-hourglass-half"></i> Approaching Optimal Window</span>
+            </div>
+            <div class="kpi-card coral">
+                <span class="kpi-title">Wait / Vegetative</span>
+                <span class="kpi-value" id="kpiWaitCount" style="color:var(--accent-coral);">3</span>
+                <span class="kpi-subtext" style="color:var(--accent-coral);"><i class="fa-solid fa-clock"></i> Accumulating Sucrose</span>
             </div>
             <div class="kpi-card purple">
-                <span class="kpi-title">GPS Sanity Proximity</span>
-                <span class="kpi-value" style="color:var(--accent-cyan);">100%</span>
-                <span class="kpi-subtext" style="color:var(--accent-green);"><i class="fa-solid fa-check"></i> Within 300m Buffer Threshold</span>
+                <span class="kpi-title">Est. Cane Tonnage</span>
+                <span class="kpi-value" id="kpiEstSugar">553 MT</span>
+                <span class="kpi-subtext"><i class="fa-solid fa-weight-hanging"></i> Baseline: ~48 T/Ac Model</span>
             </div>
             <div class="kpi-card green">
-                <span class="kpi-title">Maturity Optimization</span>
-                <span class="kpi-value">+ ₹ 6.2 L</span>
-                <span class="kpi-subtext positive"><i class="fa-solid fa-coins"></i> High-CCS Recovery Gain</span>
+                <span class="kpi-title">Est. Recovery Opportunity</span>
+                <span class="kpi-value" id="kpiBonusRevenue">+ ₹ 6.2 L</span>
+                <span class="kpi-subtext positive"><i class="fa-solid fa-circle-info" title="Model calculation: CCS Gain x Tonnage x Sugar Price"></i> vs. Late Cutting Inversion</span>
+            </div>
+        </div>
+
+        <!-- TIER 2: MODEL & DATA QUALITY VALIDATION (ENGINEERING & AUDIT TRUST) -->
+        <div class="section-label-strip" style="margin-top: 0.6rem;">
+            <i class="fa-solid fa-microchip" style="color:var(--accent-green);"></i> <span>DATA QUALITY & MODEL VALIDATION BENCHMARKS</span>
+        </div>
+        <div class="kpi-grid quality-grid" style="margin-bottom:0.9rem;">
+            <div class="kpi-card quality-card">
+                <span class="kpi-title"><i class="fa-solid fa-flask"></i> Median Predicted CCS</span>
+                <span class="kpi-value quality-val" id="kpiMedianCcs" style="color:#00f2fe;">12.05%</span>
+                <span class="kpi-subtext"><span class="source-tag model">MODEL PREDICTED</span> ±0.28% Conformal</span>
+            </div>
+            <div class="kpi-card quality-card">
+                <span class="kpi-title"><i class="fa-solid fa-draw-polygon"></i> Median Polygon IoU</span>
+                <span class="kpi-value quality-val" id="kpiMedianIou" style="color:var(--accent-green);">0.968</span>
+                <span class="kpi-subtext"><span class="source-tag gis">GIS MEASURED</span> vs DGPS Walked Truth</span>
+            </div>
+            <div class="kpi-card quality-card">
+                <span class="kpi-title"><i class="fa-solid fa-ruler-combined"></i> Median Area Error</span>
+                <span class="kpi-value quality-val" id="kpiAreaError" style="color:#f8fafc;">2.1%</span>
+                <span class="kpi-subtext"><span class="source-tag gis">GIS MEASURED</span> ±0.02 Acres Tolerance</span>
+            </div>
+            <div class="kpi-card quality-card">
+                <span class="kpi-title"><i class="fa-solid fa-location-crosshairs"></i> GPS Location Sanity</span>
+                <span class="kpi-value quality-val" style="color:var(--accent-green);">11/11 Passed</span>
+                <span class="kpi-subtext"><span class="source-tag field">FIELD AUDIT</span> &lt;300m from Cadastral Gat</span>
+            </div>
+            <div class="kpi-card quality-card">
+                <span class="kpi-title"><i class="fa-solid fa-satellite"></i> 10m Core Purity</span>
+                <span class="kpi-value quality-val" style="color:#00f2fe;">97.8%</span>
+                <span class="kpi-subtext"><span class="source-tag sat">SATELLITE AUDIT</span> ≥95% Footprint Overlap</span>
+            </div>
+            <div class="kpi-card quality-card">
+                <span class="kpi-title"><i class="fa-solid fa-check-double"></i> Mill Lab Validation</span>
+                <span class="kpi-value quality-val" style="color:#a855f7;">n = 11</span>
+                <span class="kpi-subtext"><span class="source-tag lab">LAB VALIDATED</span> 2024-25 Crush Archive</span>
             </div>
         </div>
 
@@ -122,8 +162,8 @@
             <!-- LEFT CARD: ADVANCED AI TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Cadastral Database & Measured IoU Intelligence</h3>
-                    <span class="badge success" id="lblPlotCount">11 Plots Audited</span>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Operational Harvesting Queue & Field Intelligence</h3>
+                    <span class="badge success" id="lblPlotCount">11 Plots</span>
                 </div>
 
                 <!-- Quick Search Input -->
@@ -132,18 +172,21 @@
                     <input type="text" id="inputSearchPlotList" class="form-control" style="padding-left:2.2rem; font-size:0.76rem;" placeholder="Search Farmer or Gat No...">
                 </div>
 
-                <!-- UNIFIED ADVANCED TELEMETRY TABLE -->
+                <!-- UNIFIED OPERATIONAL TABLE (FROZEN FIRST COLUMNS & CLEAR DECISION STATUS) -->
                 <div class="farmer-plot-list-wrapper" id="farmerPlotListWrapper">
                     <table class="data-table" id="leftPlotTable">
                         <thead>
                             <tr>
+                                <th>Decision</th>
                                 <th>📍 Map</th>
                                 <th>🔍 Cockpit</th>
-                                <th>Farmer Name & Gat No</th>
-                                <th>📅 Variety & Plantation</th>
-                                <th>🍬 CCS % (Measured IoU)</th>
-                                <th>⏳ 30-Day Peak Ripening</th>
-                                <th>🛡️ GPS Sanity Status</th>
+                                <th>Farmer Name</th>
+                                <th>Gat No</th>
+                                <th>Crop & Variety</th>
+                                <th>Plantation</th>
+                                <th>Predicted CCS</th>
+                                <th>Est. Cane</th>
+                                <th>Confidence</th>
                             </tr>
                         </thead>
                         <tbody id="leftPlotTableBody">
@@ -158,7 +201,7 @@
                             <i class="fa-solid fa-cloud-arrow-up"></i> Upload CSV
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-database" style="color:var(--accent-cyan);"></i> Key: District ➔ Taluka ➔ Village ➔ Gat No</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);"></i> Boundary-Controlled Satellite Sampling</span>
                 </div>
             </div>
 
@@ -169,7 +212,7 @@
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">
                         <button class="btn btn-xs btn-outline active">Esri Satellite</button>
                         <button class="btn btn-xs btn-outline" style="font-weight:700; color:var(--accent-green); border-color:var(--accent-green); background: rgba(0,230,118,0.15);">
-                            <i class="fa-solid fa-layer-group"></i> 3-Boundary System
+                            <i class="fa-solid fa-layer-group"></i> 3-Boundary Measurable View
                         </button>
                     </div>
                 </div>
@@ -180,12 +223,12 @@
                         📍 Lat: <span id="hudLat">19.3882680</span> | Long: <span id="hudLon">75.2859986</span>
                     </div>
 
-                    <!-- 3-BOUNDARY GIS LEGEND -->
+                    <!-- 3-BOUNDARY GIS LEGEND WITH MEASURABLE EXPLANATION -->
                     <div class="contour-floating-legend" id="contourLegend" style="display:block;">
-                        <div class="legend-header"><i class="fa-solid fa-layer-group"></i> 3 Boundary Tiers</div>
-                        <div class="legend-item"><span class="legend-box" style="background:transparent; border:2px dashed #ff9100;"></span> <b>Orange Dashed:</b> Cadastral 7/12 Gat Parcel</div>
-                        <div class="legend-item"><span class="legend-box" style="background:transparent; border:2px solid #00f2fe;"></span> <b>Cyan Solid:</b> Field-Walked Physical Survey</div>
-                        <div class="legend-item"><span class="legend-box" style="background:#00e676;"></span> <b>Green Solid:</b> Active Standing Sugarcane Canopy</div>
+                        <div class="legend-header"><i class="fa-solid fa-layer-group"></i> 3 Measurable Boundaries</div>
+                        <div class="legend-item"><span class="legend-box" style="background:transparent; border:2px dashed #ff9100;"></span> <b>Orange:</b> Cadastral Gat (Revenue Parcel)</div>
+                        <div class="legend-item"><span class="legend-box" style="background:transparent; border:2px solid #00f2fe;"></span> <b>Cyan:</b> Field-Walked (DGPS Survey)</div>
+                        <div class="legend-item"><span class="legend-box" style="background:#00e676;"></span> <b>Green:</b> Standing Cane Canopy (Pure Core)</div>
                     </div>
                 </div>
             </div>
@@ -193,73 +236,76 @@
         </main>
     </div>
 
-    <!-- 1. AUDIT COCKPIT DEEP-DIVE MODAL WITH IoU EXPERIMENTAL METRICS -->
+    <!-- 1. FULL OPERATIONAL & SATELLITE AUDIT DECISION COCKPIT -->
     <div class="cockpit-modal-overlay hidden" id="cockpitModal">
         <div class="cockpit-card">
             <div class="cockpit-header">
                 <div>
-                    <h3 style="color:#00f2fe; margin:0; font-size:1.1rem;" id="modalFarmerTitle">Farmer Intelligence Cockpit</h3>
-                    <span style="font-size:0.75rem; color:#94a3b8;" id="modalGatSubtitle">Spatial DB Key</span>
+                    <h3 style="color:#00f2fe; margin:0; font-size:1.15rem;" id="modalFarmerTitle">Farmer Decision Cockpit</h3>
+                    <span style="font-size:0.75rem; color:#94a3b8;" id="modalGatSubtitle">Plot ID & Verification</span>
                 </div>
                 <button style="background:transparent; border:none; color:#cbd5e1; font-size:1.6rem; cursor:pointer;" onclick="document.getElementById('cockpitModal').classList.add('hidden')">&times;</button>
             </div>
             
             <div class="cockpit-body">
-                <!-- Left: Dynamic Ripening Chart & Administrative Lookup Box -->
+                <!-- Left: Ripening Chart & Native Pixel Audit Box -->
                 <div>
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-chart-line"></i> Sucrose Ripening Trajectory</span>
-                        <div style="height:170px; margin-top:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-chart-line"></i> Sucrose Ripening Trajectory</span>
+                            <span class="source-tag model">MODEL PREDICTED</span>
+                        </div>
+                        <div style="height:160px; margin-top:8px;">
                             <canvas id="ripeningChartCanvas"></canvas>
                         </div>
                     </div>
 
-                    <!-- ADMINISTRATIVE KEY & MEASURED IOU REPORT -->
-                    <div class="cockpit-stat-box" style="background:rgba(0,242,254,0.04); border-color:rgba(0,242,254,0.2);">
-                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-landmark"></i> Administrative Cadastral & IoU Report</span>
-                        <div style="margin-top:6px; font-size:0.76rem;" id="modalMultiYearHistory">
+                    <!-- NATIVE RESOLUTION DUAL-BAND AUDIT CARD -->
+                    <div class="cockpit-stat-box" style="background:rgba(0,242,254,0.03); border-color:rgba(0,242,254,0.25);">
+                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-satellite"></i> Sentinel-2 Pixel-Purity Audit</span>
+                        <div style="margin-top:6px; font-size:0.76rem;" id="modalPixelAuditBox">
                         </div>
                     </div>
                 </div>
 
-                <!-- Right: 3-Boundary Breakdown & Financials -->
+                <!-- Right: 3-Boundary Measurable Comparison & Decision Metrics -->
                 <div>
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-layer-group"></i> 3-Boundary Separation Breakdown</span>
-                        <div style="margin-top:8px; font-size:0.80rem;" id="modalZoneBreakdownList">
+                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-layer-group"></i> 3-Boundary Measurable Comparison</span>
+                        <div style="margin-top:8px; font-size:0.78rem;" id="modalThreeBoundaryBox">
                         </div>
                     </div>
 
                     <div class="cockpit-stat-box" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                         <div>
-                            <span style="font-size:0.70rem; color:#94a3b8;">📐 Measured IoU Score</span>
-                            <div style="font-size:1.05rem; font-weight:800; color:#00e676;" id="modalSoilMoisture">0.968</div>
-                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalDripAdvice">Area Error: 2.1%</span>
+                            <span style="font-size:0.70rem; color:#94a3b8;">🍬 Predicted CCS Sugar %</span>
+                            <div style="font-size:1.15rem; font-weight:800; color:#00e676;" id="modalPredictedCcs">12.18%</div>
+                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalCcsMargin">±0.28% (95% Conformal)</span>
                         </div>
                         <div>
-                            <span style="font-size:0.70rem; color:#94a3b8;">📅 Plantation Date</span>
-                            <div style="font-size:1.05rem; font-weight:800; color:#00f2fe;" id="modalPlantingDate">01-12-2024</div>
-                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalCropAge">Khodwa (0.5 Ha)</span>
+                            <span style="font-size:0.70rem; color:#94a3b8;">📅 Harvest Decision</span>
+                            <div style="font-size:1.0rem; font-weight:800;" id="modalHarvestDecision"><span class="decision-badge cut-now">CUT NOW</span></div>
+                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalPeakWindow">Immediate Peak Window</span>
                         </div>
                     </div>
 
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#00e676; text-transform:uppercase;"><i class="fa-solid fa-sack-dollar"></i> Sugar Mill Recovery Value</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#00e676; text-transform:uppercase;"><i class="fa-solid fa-sack-dollar"></i> Sugar Mill Recovery Opportunity</span>
                         <div style="display:flex; justify-content:space-between; margin-top:8px;">
                             <div>
-                                <span style="font-size:0.70rem; color:#94a3b8;">Crushing Yield:</span>
+                                <span style="font-size:0.70rem; color:#94a3b8;">Est. Cane Tonnage:</span>
                                 <div style="font-size:1.05rem; font-weight:800; color:#f8fafc;" id="modalTotalYieldTons">55.7 MT</div>
                             </div>
                             <div>
-                                <span style="font-size:0.70rem; color:#94a3b8;">Commercial Sugar:</span>
-                                <div style="font-size:1.05rem; font-weight:800; color:#00e676;" id="modalRecoverableSugar">6.8 MT Sugar</div>
+                                <span style="font-size:0.70rem; color:#94a3b8;">Est. Sugar Recovery:</span>
+                                <div style="font-size:1.05rem; font-weight:800; color:#00e676;" id="modalRecoverableSugar">6.8 MT Commercial Sugar</div>
                             </div>
                         </div>
                     </div>
 
                     <div style="display:flex; gap:8px; margin-top:10px;">
                         <button class="btn btn-primary btn-sm" id="btnModalPrintDocket" style="flex:1;">
-                            <i class="fa-solid fa-print"></i> Print Harvest Docket
+                            <i class="fa-solid fa-print"></i> Generate Cutting Slip Docket
                         </button>
                         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('cockpitModal').classList.add('hidden')">
                             Close
@@ -274,8 +320,8 @@
     <div id="printableDocket" style="display:none;">
         <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;">
             <h2 style="margin:0; text-transform:uppercase;">गंगामाई सहकारी साखर कारखाना (SSK)</h2>
-            <h4 style="margin:4px 0;">Gangamai Sugar Mill - Precision Agriculture & Harvest Department</h4>
-            <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Cadastral & IoU Validated Docket</p>
+            <h4 style="margin:4px 0;">Gangamai Sugar Mill - Cane Cutting Slip & Quality Docket</h4>
+            <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Boundary-Controlled Satellite Command</p>
         </div>
 
         <table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:14px;" border="1">
@@ -294,14 +340,14 @@
             <tr>
                 <td style="padding:6px; background:#f0f0f0;"><b>Walked Area:</b></td>
                 <td style="padding:6px;" id="docketNetArea">1.16 Acres (0.50 Ha Walked Boundary)</td>
-                <td style="padding:6px; background:#f0f0f0;"><b>SAR Radar Stalk Yield:</b></td>
-                <td style="padding:6px;" id="docketYield">55.7 MT (~48.0 T/Ac)</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Est. Cane Tonnage:</b></td>
+                <td style="padding:6px;" id="docketYield">55.7 MT (~48.0 T/Ac Model)</td>
             </tr>
             <tr>
-                <td style="padding:6px; background:#f0f0f0;"><b>Conformal CCS Sugar %:</b></td>
-                <td style="padding:6px; font-weight:bold;" id="docketCcs">12.18% (Measured IoU: 0.968)</td>
-                <td style="padding:6px; background:#f0f0f0;"><b>Recommended Harvest Date:</b></td>
-                <td style="padding:6px; font-weight:bold; color:green;" id="docketHarvestDate">In 7-10 Days (Peak Window)</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Predicted CCS Sugar %:</b></td>
+                <td style="padding:6px; font-weight:bold;" id="docketCcs">12.18% (±0.28% Model Conformal Confidence)</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Operational Decision:</b></td>
+                <td style="padding:6px; font-weight:bold; color:green;" id="docketHarvestDate">CUT NOW (Priority 1)</td>
             </tr>
         </table>
 
