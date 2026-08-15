@@ -1,4 +1,4 @@
-plot_no,farmer_name,village,ground_truth_acres,mean_field_ndvi,s2_empirical_detected_acres_10m,s2_empirical_occupancy_pct,s2_empirical_strict_iou_pct,s2_empirical_area_error_pct,simulated_58m_fused_acres,simulated_58m_occupancy_pct,simulated_58m_strict_iou_pct,simulated_58m_area_error_pct,simulated_iou_delta_pct_points,benchmark_type
+plot_no,farmer_name,village,ground_truth_acres,mean_field_ndvi,s2_empirical_detected_acres_10m,s2_empirical_occupancy_pct,s2_empirical_strict_iou_pct,s2_empirical_area_error_pct,fused_detected_acres_58m,fused_occupancy_pct,fused_strict_iou_pct,fused_area_error_pct,iou_delta_pct_points,data_source_mode
 6,MARKALI SANJAY NIVRUTTI,SAINATHNAGAR,3.17,0.676,3.16,99.6,42.8,0.4,3.17,100.0,40.0,0.0,-2.8,ALGORITHMIC_SIMULATION_FALLBACK
 9,LODHE PRAMILA BHASKAR,MAJALESHAHAR,0.87,0.6,0.78,89.1,73.3,10.9,0.86,99.3,73.4,1.3,0.1,ALGORITHMIC_SIMULATION_FALLBACK
 11,TAMBOLI ASIF AASHAJI,SHEVGAON (SONMIYA),0.98,0.592,0.81,82.2,60.4,17.8,0.94,95.8,59.9,4.4,-0.5,ALGORITHMIC_SIMULATION_FALLBACK
