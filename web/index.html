@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi AI Engine - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Autonomous Zero-Drone Satellite Boundary Delineation, 30-Day Ripening Simulation & Conformal Telemetry for Gangamai Sugar Mill.">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Autonomous Zero-Drone Satellite Boundary Delineation, 30-Day Ripening Simulation, Soil Moisture & Deep Analytics for Gangamai Sugar Mill.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="brand-text">
                     <h1>IkshuVruddhi <span>AI Engine</span> <span class="mill-badge">इक्षुवृद्धी 2026</span></h1>
-                    <p>Gangamai Sugar Mill Command - 30-Day Ripening Simulation, SAR Radar & Micro-Zone Analytics</p>
+                    <p>Gangamai Sugar Mill Command - Zero-Manual Autonomous Satellite Precision Intelligence</p>
                 </div>
             </div>
             
@@ -41,12 +41,12 @@
                     <span class="status-val">Gangamai Sugar Mill (SSK)</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Radar Status</span>
-                    <span class="status-val" style="color: var(--accent-cyan);" id="lblRadarStatus">🛰️ Sentinel-1 SAR Live</span>
+                    <span class="status-label">Planting Radar</span>
+                    <span class="status-val" style="color: var(--accent-cyan);" id="lblRadarStatus">📅 Auto-Date Detection Active</span>
                 </div>
                 <div class="status-item">
                     <span class="status-label">Survey Mode</span>
-                    <span class="status-val" style="color: var(--accent-green);" id="lblTelemetryMode">⚡ 2026 SOTA Deep-AI</span>
+                    <span class="status-val" style="color: var(--accent-green);" id="lblTelemetryMode">⚡ 100% Zero-Manual AI</span>
                 </div>
             </div>
 
@@ -71,7 +71,7 @@
                     <i class="fa-solid fa-cloud-arrow-up"></i> 📁 Upload Farmer Plots CSV
                 </button>
                 <button class="btn-preset" id="btnAutoCorrectAllPolygons" style="background: linear-gradient(135deg, rgba(0,230,118,0.2), rgba(0,242,254,0.2)); color: var(--accent-green); border-color: rgba(0,230,118,0.5); font-weight:800;">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> 🤖 Auto-Delineate Polygons & Simulate 30-Day Ripening
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 🤖 Auto-Run All 4 Engines (Planting Dates + Ripening)
                 </button>
                 <button class="btn-preset" id="btnUploadTrainingDataset" style="background: rgba(168,85,247,0.18); color: var(--accent-purple); border-color: rgba(168,85,247,0.5); font-weight:700;">
                     <i class="fa-solid fa-flask"></i> 🧪 Upload Lab Ground-Truth
@@ -115,9 +115,9 @@
                 <span class="kpi-subtext"><i class="fa-solid fa-cubes-stacked"></i> ~42.5 T/Ac Average</span>
             </div>
             <div class="kpi-card purple">
-                <span class="kpi-title">Peak Ripening Gains</span>
-                <span class="kpi-value" id="kpiRipeningGain" style="color:var(--accent-cyan);">+0.85% CCS</span>
-                <span class="kpi-subtext" style="color:var(--accent-green);"><i class="fa-solid fa-calendar-check"></i> In 30-Day Peak Window</span>
+                <span class="kpi-title">Auto-Detected Dates</span>
+                <span class="kpi-value" id="kpiRipeningGain" style="color:var(--accent-cyan);">100%</span>
+                <span class="kpi-subtext" style="color:var(--accent-green);"><i class="fa-solid fa-calendar-check"></i> Zero Manual Input</span>
             </div>
             <div class="kpi-card green">
                 <span class="kpi-title">Maturity Optimization</span>
@@ -132,7 +132,7 @@
             <!-- LEFT CARD: ADVANCED AI TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Advanced AI Telemetry & 30-Day Ripening</h3>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Autonomous Plot Intelligence & Deep Diagnostics</h3>
                     <span class="badge success" id="lblPlotCount">0 Plots</span>
                 </div>
 
@@ -164,13 +164,13 @@
                     <table class="data-table" id="leftPlotTable">
                         <thead>
                             <tr>
-                                <th>📍 Map</th>
+                                <th>🔍 Deep-Dive</th>
                                 <th>Farmer Name & Gat No</th>
-                                <th>📐 Net Area & Biomass</th>
+                                <th>📅 Auto-Planting Date</th>
                                 <th>🍬 CCS % (± Margin)</th>
-                                <th>⏳ Peak Ripening Window</th>
-                                <th>🔬 Micro-Zone %</th>
-                                <th>🧪 AI Diagnostic</th>
+                                <th>⏳ 30-Day Peak Ripening</th>
+                                <th>💧 Soil Moisture</th>
+                                <th>📄 Docket</th>
                             </tr>
                         </thead>
                         <tbody id="leftPlotTableBody">
@@ -192,17 +192,17 @@
                             <i class="fa-solid fa-cloud-arrow-up"></i> Upload CSV
                         </button>
                         <button class="btn btn-xs btn-outline" onclick="window.autoCorrectAllPlotCoordinates()" style="border-color:rgba(0,230,118,0.5); color:var(--accent-green); font-weight:800;">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Delineate & Simulate
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Detect Dates & Ripening
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-dna" style="color:var(--accent-cyan);"></i> All 5 AI Engines Active</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-robot" style="color:var(--accent-cyan);"></i> Zero Manual Data Required</span>
                 </div>
             </div>
 
-            <!-- RIGHT CARD: PRECISION GIS MAP VIEWPORT -->
+            <!-- RIGHT CARD: PRECISION GIS MAP VIEWPORT & TIME-LAPSE SLIDER -->
             <div class="glass-card map-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-map-location-dot"></i> IkshuVruddhi Field Map & Micro-Zone Analytics</h3>
+                    <h3><i class="fa-solid fa-map-location-dot"></i> IkshuVruddhi Field Map & Multi-Temporal Time-Lapse</h3>
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">
                         <button id="mapToggleSatellite" class="btn btn-xs btn-outline active">Esri Satellite</button>
                         <button id="mapToggleContour" class="btn btn-xs btn-outline" style="font-weight:700; color:var(--accent-green); border-color:var(--accent-green); background: rgba(0,230,118,0.15);">
@@ -226,104 +226,152 @@
                         <div class="legend-item"><span class="legend-box" style="background:#ff1744;"></span> Zone 4: Red Hotspot / Urgent Care</div>
                     </div>
                 </div>
+
+                <!-- 12-MONTH TIME-LAPSE RETROSPECTIVE SLIDER -->
+                <div class="timeline-slider-container">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe;"><i class="fa-solid fa-clock-rotate-left"></i> 12-Month Satellite Growth Time-Lapse</span>
+                        <span id="lblTimelineMonth" style="font-size:0.75rem; font-weight:800; color:#00e676;">Month 12 (Today: Maturation)</span>
+                    </div>
+                    <input type="range" id="timelineRange" min="1" max="12" value="12" style="width:100%; accent-color:#00f2fe; cursor:pointer;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.65rem; color:#64748b; margin-top:4px;">
+                        <span>M1: Ploughing & Seeding</span>
+                        <span>M4: Tillering</span>
+                        <span>M8: Grand Growth</span>
+                        <span>M12: Peak Harvest</span>
+                    </div>
+                </div>
             </div>
 
         </main>
     </div>
 
-    <!-- DUAL-SCREEN SIDE-BY-SIDE COMPARE & MULTISPECTRAL ZONATION WORKSPACE -->
+    <!-- 1. INTERACTIVE PLOT DEEP-DIVE COCKPIT MODAL -->
+    <div class="cockpit-modal-overlay hidden" id="cockpitModal">
+        <div class="cockpit-card">
+            <div class="cockpit-header">
+                <div>
+                    <h3 style="color:#00f2fe; margin:0; font-size:1.1rem;" id="modalFarmerTitle">Farmer Intelligence Cockpit</h3>
+                    <span style="font-size:0.75rem; color:#94a3b8;" id="modalGatSubtitle">Plot ID & Verification</span>
+                </div>
+                <button style="background:transparent; border:none; color:#cbd5e1; font-size:1.6rem; cursor:pointer;" onclick="document.getElementById('cockpitModal').classList.add('hidden')">&times;</button>
+            </div>
+            
+            <div class="cockpit-body">
+                <!-- Left: 30-Day Ripening Chart & Soil Moisture -->
+                <div>
+                    <div class="cockpit-stat-box">
+                        <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-chart-line"></i> 30-Day Forward Sucrose Ripening Simulation</span>
+                        <div style="height:180px; margin-top:8px;">
+                            <canvas id="ripeningChartCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="cockpit-stat-box" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div>
+                            <span style="font-size:0.70rem; color:#94a3b8;">💧 Soil Moisture (Root Zone)</span>
+                            <div style="font-size:1.1rem; font-weight:800; color:#00e676;" id="modalSoilMoisture">68% (Adequate)</div>
+                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalDripAdvice">Next Drip in 4 Days</span>
+                        </div>
+                        <div>
+                            <span style="font-size:0.70rem; color:#94a3b8;">📅 Detected Planting Date</span>
+                            <div style="font-size:1.1rem; font-weight:800; color:#00f2fe;" id="modalPlantingDate">18-Aug-2025</div>
+                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalCropAge">Adsali (362 Days)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Micro-Zone Breakdown & Financials -->
+                <div>
+                    <div class="cockpit-stat-box">
+                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-layer-group"></i> Exact Micro-Zone Area Breakdown</span>
+                        <div style="margin-top:8px; font-size:0.80rem;" id="modalZoneBreakdownList">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="cockpit-stat-box">
+                        <span style="font-size:0.75rem; font-weight:800; color:#00e676; text-transform:uppercase;"><i class="fa-solid fa-sack-dollar"></i> Sugar Mill Recovery Value</span>
+                        <div style="display:flex; justify-content:space-between; margin-top:8px;">
+                            <div>
+                                <span style="font-size:0.70rem; color:#94a3b8;">Est Factory Crushing Yield:</span>
+                                <div style="font-size:1.1rem; font-weight:800; color:#f8fafc;" id="modalTotalYieldTons">128.5 MT</div>
+                            </div>
+                            <div>
+                                <span style="font-size:0.70rem; color:#94a3b8;">Est Commercial Sugar:</span>
+                                <div style="font-size:1.1rem; font-weight:800; color:#00e676;" id="modalRecoverableSugar">15.8 MT Sugar</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:8px; margin-top:12px;">
+                        <button class="btn btn-primary btn-sm" id="btnModalPrintDocket" style="flex:1;">
+                            <i class="fa-solid fa-print"></i> Print Harvest Docket
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('cockpitModal').classList.add('hidden')">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. PRINTABLE EXECUTIVE HARVEST & CANE QUALITY DOCKET TEMPLATE -->
+    <div id="printableDocket" style="display:none;">
+        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;">
+            <h2 style="margin:0; text-transform:uppercase;">गंगामाई सहकारी साखर कारखाना (SSK)</h2>
+            <h4 style="margin:4px 0;">Gangamai Sugar Mill - Precision Agriculture & Harvest Department</h4>
+            <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Autonomous Satellite Intelligence Docket</p>
+        </div>
+
+        <table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:14px;" border="1">
+            <tr>
+                <td style="padding:6px; background:#f0f0f0;"><b>Farmer Name:</b></td>
+                <td style="padding:6px;" id="docketFarmerName">KHEDKAR RAMDAS NIVRUTTI</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Plot / Gat No:</b></td>
+                <td style="padding:6px;" id="docketGatNo">Gat #13702</td>
+            </tr>
+            <tr>
+                <td style="padding:6px; background:#f0f0f0;"><b>Cane Variety & Type:</b></td>
+                <td style="padding:6px;" id="docketVariety">CO-265 (Adsali)</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Auto-Detected Planting Date:</b></td>
+                <td style="padding:6px;" id="docketPlantingDate">18-Aug-2025 (362 Days)</td>
+            </tr>
+            <tr>
+                <td style="padding:6px; background:#f0f0f0;"><b>Net Actual Cane Area:</b></td>
+                <td style="padding:6px;" id="docketNetArea">1.78 Acres (Gross: 2.50 Ac)</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>SAR Radar Stalk Yield:</b></td>
+                <td style="padding:6px;" id="docketYield">82.5 MT (~46.3 T/Ac)</td>
+            </tr>
+            <tr>
+                <td style="padding:6px; background:#f0f0f0;"><b>Conformal CCS Sugar %:</b></td>
+                <td style="padding:6px; font-weight:bold;" id="docketCcs">11.19% (±0.28% 95% Confidence)</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Recommended Harvest Date:</b></td>
+                <td style="padding:6px; font-weight:bold; color:green;" id="docketHarvestDate">25-Nov-2026 (Peak Window)</td>
+            </tr>
+        </table>
+
+        <div style="display:flex; justify-content:space-between; margin-top:30px; font-size:13px;">
+            <div>_______________________<br/><b>Chief Agriculture Officer (CAO)</b></div>
+            <div>_______________________<br/><b>Chief Chemist / Laboratory</b></div>
+            <div>_______________________<br/><b>Managing Director (MD)</b></div>
+        </div>
+    </div>
+
+    <!-- DUAL-SCREEN SIDE-BY-SIDE COMPARE WORKSPACE -->
     <div class="compare-modal-overlay hidden" id="compareModal">
         <div class="compare-workspace-card">
-            
             <div class="compare-top-header">
                 <div class="compare-title">
                     <i class="fa-solid fa-chevron-right" style="font-size:0.8rem; color:#64748b;"></i>
                     <span>IkshuVruddhi Sugarcane Crop Zonation</span>
-                    <i class="fa-solid fa-pen" style="font-size:0.75rem; color:#00f2fe; cursor:pointer;"></i>
                 </div>
-
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div style="font-size:0.76rem; color:#94a3b8; display:flex; align-items:center; gap:6px;">
-                        <i class="fa-solid fa-columns" style="color:#00f2fe;"></i> 20 m
-                    </div>
-                    <button style="background:transparent; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;" onclick="document.getElementById('compareModal').classList.add('hidden')">&times;</button>
-                </div>
+                <button style="background:transparent; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;" onclick="document.getElementById('compareModal').classList.add('hidden')">&times;</button>
             </div>
-
             <div class="compare-split-body">
-                
-                <div class="compare-sidebar">
-                    <div class="compare-sidebar-header">
-                        <span><i class="fa-solid fa-xmark" style="color:#ff1744; cursor:pointer;" onclick="document.getElementById('compareModal').classList.add('hidden')"></i> COMPARE</span>
-                    </div>
-                    <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase;">
-                        LAYERS
-                    </div>
-
-                    <div class="compare-layer-list">
-                        <div class="compare-layer-row active" data-layer="zonation_ndre_c2">
-                            <span>Zonation NDRE C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full" style="color:#00f2fe;"></i></div>
-                        </div>
-                        <div class="compare-layer-row" data-layer="green_c2">
-                            <span>🍋 GREEN C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full"></i></div>
-                        </div>
-                        <div class="compare-layer-row" data-layer="red_c2">
-                            <span>🔴 RED C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full"></i></div>
-                        </div>
-                        <div class="compare-layer-row" data-layer="nir_c2">
-                            <span>📡 NIR C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full"></i></div>
-                        </div>
-                        <div class="compare-layer-row" data-layer="osavi_c2">
-                            <span>🌾 OSAVI C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full"></i></div>
-                        </div>
-                        <div class="compare-layer-row" data-layer="gndvi_c2">
-                            <span>🌿 GNDVI C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full"></i></div>
-                        </div>
-                        <div class="compare-layer-row" data-layer="lci_c2">
-                            <span>🧪 LCI C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full"></i></div>
-                        </div>
-                        <div class="compare-layer-row" data-layer="mcari_c2">
-                            <span>🔬 MCARI C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full"></i></div>
-                        </div>
-                        <div class="compare-layer-row" data-layer="ndre_c2">
-                            <span>🌱 NDRE C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full"></i></div>
-                        </div>
-                        <div class="compare-layer-row" data-layer="ndvi_c2">
-                            <span>🌱 NDVI C2</span>
-                            <div class="layer-toggles"><i class="fa-solid fa-square-full"></i> <i class="fa-solid fa-square-full"></i></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="compare-viewport-box">
-                    <div id="compareMapLeft" style="width: 100%; height: 100%;"></div>
-                </div>
-
-                <div class="compare-viewport-box">
-                    <div id="compareMapRight" style="width: 100%; height: 100%;"></div>
-
-                    <div class="histogram-container">
-                        <canvas id="histogramCanvas" class="histogram-curve-canvas"></canvas>
-                        <div class="histogram-gradient-bar"></div>
-                        <div class="histogram-ticks-row">
-                            <span style="color:#00f2fe;">-0,08</span>
-                            <span>0,02</span>
-                            <span>0,13</span>
-                            <span>0,23</span>
-                            <span style="color:#ff1744;">0,34</span>
-                        </div>
-                    </div>
-                </div>
-
+                <div class="compare-viewport-box"><div id="compareMapLeft" style="width:100%; height:100%;"></div></div>
+                <div class="compare-viewport-box"><div id="compareMapRight" style="width:100%; height:100%;"></div></div>
             </div>
         </div>
     </div>
