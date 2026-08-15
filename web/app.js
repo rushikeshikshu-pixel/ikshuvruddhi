@@ -1,5 +1,5 @@
 /**
- * IkshuVruddhi AI Engine - Complete Zero-Manual Precision Pipeline
+ * IkshuVruddhi AI Engine - Dynamic Sugarcane Variety Lifecycle Intelligence Pipeline
  * Factory: Gangamai Sugar Mill (गंगामाई सहकारी साखर कारखाना SSK)
  */
 
@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showContourZonation: true,
         snappingPlotId: null,
         ripeningChartInstance: null,
-        currentTimelineMonth: 12,
         
         // Compare Maps
         compareMapLeft: null,
@@ -85,8 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
         contourLegend: document.getElementById('contourLegend'),
         compareModal: document.getElementById('compareModal'),
         cockpitModal: document.getElementById('cockpitModal'),
-        timelineRange: document.getElementById('timelineRange'),
-        lblTimelineMonth: document.getElementById('lblTimelineMonth'),
         btnModalPrintDocket: document.getElementById('btnModalPrintDocket'),
         csvFileInput: document.getElementById('csvFileInput'),
         trainingDatasetFileInput: document.getElementById('trainingDatasetFileInput')
@@ -168,51 +165,79 @@ Lon: ${newLon}`);
         return { coords: [c1, c2, c3, c4], polygonStr: polygonStr };
     }
 
-    // AUTONOMOUS PLANTING DATE ESTIMATOR (SATELLITE PLOUGHING & EMERGENCE INVERSION)
+    // DYNAMIC VARIETY-SPECIFIC LIFECYCLE MODELING
     function autoDetectPlantingDate(cropAgeDays, plantingType) {
         const age = parseInt(cropAgeDays) || 340;
-        const now = new Date(2026, 7, 15); // Current Season Reference
+        const now = new Date(2026, 7, 15);
         const plantDate = new Date(now.getTime() - (age * 24 * 60 * 60 * 1000));
         
+        let inferredType = plantingType;
+        if (!inferredType || inferredType === 'undefined') {
+            if (age >= 440) inferredType = 'Adsali (15-18 M)';
+            else if (age >= 390) inferredType = 'Pre-Seasonal (13-15 M)';
+            else if (age >= 320) inferredType = 'Suru (11-12 M)';
+            else inferredType = 'Khodwa / Ratoon (10-11 M)';
+        }
+
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const formatted = `${plantDate.getDate().toString().padStart(2, '0')}-${monthNames[plantDate.getMonth()]}-${plantDate.getFullYear()}`;
         return {
             dateStr: formatted,
             ageDays: age,
-            seasonType: plantingType || ((age > 420) ? 'Adsali' : 'Suru')
+            seasonType: inferredType
         };
     }
 
-    // 1. 30-DAY FORWARD SUCROSE RIPENING SIMULATION
-    function simulateRipeningTrajectory(currentCcs, cropAgeDays, isAdsali) {
+    // DYNAMIC RIPENING ACCUMULATION BY CANE LIFECYCLE
+    function simulateRipeningTrajectory(currentCcs, cropAgeDays, seasonType) {
         const ccs = parseFloat(currentCcs);
         const age = parseInt(cropAgeDays) || 330;
+        const type = (seasonType || '').toLowerCase();
 
         let daysToPeak = 0;
         let peakCcs = ccs;
         let windowStr = "Immediate Harvest (Peak)";
         let status = "PEAK";
 
-        if (age < 330) {
-            daysToPeak = 28;
-            peakCcs = (ccs + 0.92).toFixed(2);
-            windowStr = "In 25-30 Days";
-            status = "ACCUMULATING";
-        } else if (age < 360) {
-            daysToPeak = 14;
-            peakCcs = (ccs + 0.55).toFixed(2);
-            windowStr = "In 10-15 Days";
-            status = "OPTIMAL_WINDOW";
-        } else if (age > 420 && !isAdsali) {
-            daysToPeak = 0;
-            peakCcs = ccs;
-            windowStr = "Over-Ripe (Cut Now)";
-            status = "OVER_RIPE";
+        if (type.includes('adsali')) {
+            // Adsali target: 480-510 days
+            if (age < 450) {
+                daysToPeak = 35;
+                peakCcs = (ccs + 0.85).toFixed(2);
+                windowStr = "In 30-35 Days (Adsali Peak)";
+                status = "ACCUMULATING";
+            } else {
+                daysToPeak = 10;
+                peakCcs = (ccs + 0.30).toFixed(2);
+                windowStr = "In 7-10 Days (Peak Adsali)";
+                status = "PEAK";
+            }
+        } else if (type.includes('khodwa') || type.includes('ratoon')) {
+            // Khodwa matures early at 300-330 days
+            if (age < 300) {
+                daysToPeak = 20;
+                peakCcs = (ccs + 0.60).toFixed(2);
+                windowStr = "In 15-20 Days";
+                status = "ACCUMULATING";
+            } else {
+                daysToPeak = 0;
+                peakCcs = ccs;
+                windowStr = "Cut Immediately (Khodwa Peak)";
+                status = "OVER_RIPE";
+            }
         } else {
-            daysToPeak = 7;
-            peakCcs = (ccs + 0.25).toFixed(2);
-            windowStr = "In 5-7 Days";
-            status = "PEAK";
+            // Suru / Pre-seasonal
+            if (age < 330) {
+                daysToPeak = 25;
+                peakCcs = (ccs + 0.75).toFixed(2);
+                windowStr = "In 20-25 Days";
+                status = "ACCUMULATING";
+            } else {
+                daysToPeak = 7;
+                peakCcs = (ccs + 0.25).toFixed(2);
+                windowStr = "In 5-7 Days";
+                status = "PEAK";
+            }
         }
 
         return {
@@ -224,7 +249,7 @@ Lon: ${newLon}`);
         };
     }
 
-    // 2. MICRO-ZONE EXACT ACREAGE & PERCENTAGE BREAKDOWN
+    // MICRO-ZONE EXACT ACREAGE & PERCENTAGE BREAKDOWN
     function calculateMicroZoneBreakdown(totalNetAcres, ndvi, cwsi) {
         const net = parseFloat(totalNetAcres) || 2.0;
         const v = parseFloat(ndvi) || 0.78;
@@ -244,7 +269,7 @@ Lon: ${newLon}`);
         };
     }
 
-    // 3. SOIL MOISTURE & DRIP IRRIGATION ADVISORY
+    // SOIL MOISTURE & DRIP IRRIGATION ADVISORY
     function calculateSoilMoisture(lswi, cwsi) {
         const l = parseFloat(lswi) || 0.56;
         const c = parseFloat(cwsi) || 0.25;
@@ -257,7 +282,7 @@ Lon: ${newLon}`);
         return { moisturePct: `${moisturePct}%`, advice: dripAdvice };
     }
 
-    // 4. SAR RADAR (VV/VH) STALK BIOMASS YIELD PREDICTOR
+    // SAR RADAR (VV/VH) STALK BIOMASS YIELD PREDICTOR
     function calculateSarBiomassYield(netCaneAcres, ndvi, plantingType) {
         const net = parseFloat(netCaneAcres) || 2.0;
         const v = parseFloat(ndvi) || 0.78;
@@ -346,9 +371,8 @@ Lon: ${newLon}`);
                 state.autoDelineatedPlots[farmId] = plotPolygon;
             }
 
-            // ALL 4 CORE ENGINES
             const plantDateInfo = autoDetectPlantingDate(cropAge, plantingType);
-            const ripening = simulateRipeningTrajectory(ccs, cropAge, plantingType.includes('Adsali'));
+            const ripening = simulateRipeningTrajectory(ccs, cropAge, plantDateInfo.seasonType);
             const microZones = calculateMicroZoneBreakdown(netCaneAcres, ndvi, cwsi);
             const soilMoisture = calculateSoilMoisture(lswi, cwsi);
             const sarBiomass = calculateSarBiomassYield(netCaneAcres, ndvi, plantingType);
@@ -358,7 +382,7 @@ Lon: ${newLon}`);
                 farm_id: farmId,
                 farmer_name: farmerName,
                 cane_variety: caneVariety,
-                planting_type: plantingType,
+                planting_type: plantDateInfo.seasonType,
                 latitude: lat.toFixed(7),
                 longitude: lon.toFixed(7),
                 plot_area_polygon: plotPolygon,
@@ -497,10 +521,20 @@ Lon: ${newLon}`);
                 
                 const marker = L.marker([lat, lon], { draggable: true }).addTo(state.map);
                 
+                marker.on('dragend', (ev) => {
+                    const pos = ev.target.getLatLng();
+                    state.userGpsOverrides[farmId] = { lat: pos.lat.toFixed(7), lon: pos.lng.toFixed(7) };
+                    localStorage.setItem('satcane_saved_gps_overrides', JSON.stringify(state.userGpsOverrides));
+                    runEngine();
+                    alert(`📍 Marker repositioned! Saved corrected GPS for Plot #${farmId}:
+Lat: ${pos.lat.toFixed(7)}
+Lon: ${pos.lng.toFixed(7)}`);
+                });
+
                 marker.bindPopup(`
                     <div style="font-family:'Outfit', sans-serif; font-size:0.80rem;">
                         <strong style="color:${isMaize ? '#ff1744' : 'var(--accent-cyan)'}; font-size:14px;">${farmerName} (Plot ${farmId})</strong><br/>
-                        <b>Planting Date:</b> <strong style="color:#00f2fe;">${item.plantDateInfo.dateStr} (${item.plantDateInfo.seasonType})</strong><br/>
+                        <b>Planting Phenology:</b> <strong style="color:#00f2fe;">${item.plantDateInfo.dateStr} (${item.plantDateInfo.seasonType})</strong><br/>
                         <b>Net Cane Area:</b> <strong style="color:#00e676;">${item.net_cane_acres} Ac</strong> | <b>Radar Yield:</b> <strong style="color:#ffea00;">${item.sarBiomass.totalFieldTons} MT</strong><br/>
                         <b>Conformal CCS %:</b> <strong style="color:#00e676;">${item.ccs_val}% (±${item.ccs_margin}%)</strong><br/>
                         <b>💧 Soil Moisture:</b> <span>${item.soilMoisture.moisturePct} (${item.soilMoisture.advice})</span><br/><br/>
@@ -615,7 +649,7 @@ Lon: ${newLon}`);
         });
     }
 
-    // 1. OPEN EXECUTIVE COCKPIT DEEP-DIVE MODAL & CHART.JS
+    // OPEN EXECUTIVE COCKPIT DEEP-DIVE MODAL & DYNAMIC CHART.JS
     window.openCockpitDeepDive = function(farmId) {
         const item = state.enrichedData.find(d => getFarmId(d) === farmId);
         if (!item) return;
@@ -642,22 +676,21 @@ Lon: ${newLon}`);
         el.btnModalPrintDocket.onclick = () => window.printHarvestDocket(farmId);
         el.cockpitModal.classList.remove('hidden');
 
-        // Draw Chart.js 30-Day Forward Ripening Curve
+        // Draw Dynamic Variety Ripening Curve
         setTimeout(() => {
             const ctx = document.getElementById('ripeningChartCanvas').getContext('2d');
             if (state.ripeningChartInstance) state.ripeningChartInstance.destroy();
 
             const cur = parseFloat(item.ccs_val);
             const peak = parseFloat(item.ripening.peakCcs);
-            const labels = ["Today", "+5 Days", "+10 Days", "+15 Days (Peak)", "+20 Days", "+25 Days", "+30 Days"];
+            const labels = ["Current", "+7 Days", "+14 Days", "+21 Days", "+28 Days (Peak)", "+35 Days"];
             const dataPoints = [
                 cur,
-                (cur + (peak - cur) * 0.4).toFixed(2),
-                (cur + (peak - cur) * 0.8).toFixed(2),
+                (cur + (peak - cur) * 0.35).toFixed(2),
+                (cur + (peak - cur) * 0.70).toFixed(2),
+                (cur + (peak - cur) * 0.90).toFixed(2),
                 peak,
-                (peak - 0.05).toFixed(2),
-                (peak - 0.15).toFixed(2),
-                (peak - 0.35).toFixed(2)
+                (peak - 0.12).toFixed(2)
             ];
 
             state.ripeningChartInstance = new Chart(ctx, {
@@ -665,7 +698,7 @@ Lon: ${newLon}`);
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Projected Sucrose Recovery (CCS %)',
+                        label: `${item.plantDateInfo.seasonType} Sucrose Trajectory (CCS %)`,
                         data: dataPoints,
                         borderColor: '#00f2fe',
                         backgroundColor: 'rgba(0, 242, 254, 0.15)',
@@ -688,7 +721,7 @@ Lon: ${newLon}`);
         }, 150);
     };
 
-    // 4. 1-CLICK PRINTABLE HARVEST & CANE QUALITY DOCKET
+    // PRINTABLE HARVEST & CANE QUALITY DOCKET
     window.printHarvestDocket = function(farmId) {
         const item = state.enrichedData.find(d => getFarmId(d) === farmId);
         if (!item) return;
@@ -729,13 +762,11 @@ Lon: ${newLon}`);
         localStorage.setItem('satcane_saved_delineations', JSON.stringify(state.autoDelineatedPlots));
         runEngine();
 
-        alert(`🎉 ALL 4 AUTONOMOUS ENGINES EXECUTED!
+        alert(`🎉 DYNAMIC VARIETY LIFECYCLES EXECUTED!
 
 • Plots Processed: ${count}
-• Auto-Planting Dates Detected: ✅ 100%
-• 30-Day Forward Ripening Simulated: ✅ 100%
-• Soil Moisture Depletion Analyzed: ✅ 100%
-• Zero Manual Input Required!`);
+• Dynamic Lifecycles Modeled: (Adsali 18M / Pre-Season 15M / Suru 12M / Khodwa 11M)
+• Full Ripening & Soil Moisture Loaded!`);
     };
 
     window.focusFarmerPlotOnMap = function(farmId) {
@@ -779,21 +810,6 @@ Lon: ${newLon}`);
             });
         }
 
-        // Timeline Slider Interaction
-        if (el.timelineRange) {
-            el.timelineRange.addEventListener('input', (e) => {
-                const month = parseInt(e.target.value);
-                state.currentTimelineMonth = month;
-                const labels = [
-                    "Month 1 (Ploughing & Seeding)", "Month 2 (Early Sprouting)", "Month 3 (Tillering Phase)",
-                    "Month 4 (Vegetative Growth)", "Month 5 (Canopy Closure)", "Month 6 (Formative Stage)",
-                    "Month 7 (Grand Growth)", "Month 8 (Stalk Elongation)", "Month 9 (Early Sucrose Synthesis)",
-                    "Month 10 (Maturation Phase)", "Month 11 (High Sucrose Ripening)", "Month 12 (Peak Harvest Today)"
-                ];
-                if (el.lblTimelineMonth) el.lblTimelineMonth.textContent = labels[month - 1];
-            });
-        }
-
         if (el.btnAutoCorrectAllPolygons) el.btnAutoCorrectAllPolygons.addEventListener('click', window.autoCorrectAllPlotCoordinates);
         
         if (el.btnHeaderExport) {
@@ -806,6 +822,7 @@ Lon: ${newLon}`);
                     farm_id: d.farm_id,
                     farmer_name: d.farmer_name,
                     cane_variety: d.cane_variety,
+                    cane_lifecycle_type: d.plantDateInfo.seasonType,
                     auto_planting_date: d.plantDateInfo.dateStr,
                     crop_age_days: d.plantDateInfo.ageDays,
                     net_cane_acres: d.net_cane_acres,
@@ -822,7 +839,7 @@ Lon: ${newLon}`);
                 const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.setAttribute('download', `Gangamai_Autonomous_Intelligence_${new Date().toISOString().slice(0,10)}.csv`);
+                link.setAttribute('download', `Gangamai_Variety_Intelligence_${new Date().toISOString().slice(0,10)}.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -884,7 +901,7 @@ Lon: ${newLon}`);
                             runEngine();
                             alert(`💾 ${res.data.length} plots loaded!
 
-All 4 Autonomous Engines executed in real-time!`);
+All Dynamic Variety Lifecycles modeled in real-time!`);
                         }
                     });
                 }
