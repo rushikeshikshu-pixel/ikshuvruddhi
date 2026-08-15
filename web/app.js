@@ -5,7 +5,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    let ACTIVE_SEASON_DATA = [];
+    let ACTIVE_SEASON_DATA = (typeof window !== 'undefined' && window.DEFAULT_ADSALI_DATASET) ? window.DEFAULT_ADSALI_DATASET : [];
     let LAB_GROUND_TRUTH_DB = {};
 
     const BACKEND_BASE_URL = window.IKSHU_BACKEND_URL || (

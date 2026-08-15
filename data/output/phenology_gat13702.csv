@@ -1,0 +1,2 @@
+boundary_source,cane_type,clear_scenes,cycle_amplitude,error_days,farmer,gat_no,germination_lag_used,harvest_date,harvest_ndvi_drop,is_ratoon,median_core_px,ndvi_amplitude,ndvi_max,ndvi_min,net_acres_from_boundary,peak_ndvi_date,planting_basis,planting_date_est,recorded_planting_date,sos_date,variety,village
+walked-boundary,Suru,35,0.6172,32,KHEDKAR RAMDAS NIVRUTTI..,13702,25,2024-12-29,0.491,False,7,0.6172,0.7794,0.1622,0.458,2025-09-30,start-of-season minus 25 d germination lag,2025-03-04,31-01-2025,2025-03-29,CO-265,GHOTAN (BHARAT WASTI)

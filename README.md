@@ -1,72 +1,84 @@
-# ?? SatCane AI Engine — 2026 SOTA Conformal Sugarcane Sucrose Predictor
+# IkshuVruddhi â€” Gangamai Sugar Mill Harvest Console
 
-Universal Satellite Telemetry & Sugarcane Sucrose % Predictor Platform with
-95% Conformal Prediction Confidence Guarantee.
+Harvest sequencing and cane-quality planning for Gangamai Sahakari Sakhar
+Karkhana (Shevgaon / Ahilyanagar, Maharashtra).
 
----
-
-## ?? Project Structure
-
-```
-SatCane-AI-Engine/
-+-- web/                          # Web Dashboard (Frontend)
-¦   +-- index.html                # Main dashboard HTML
-¦   +-- app.js                    # Map, Chart, CSV parsing & ML engine
-¦   +-- styles.css                # Premium dark glassmorphism design
-¦
-+-- ml/                           # Machine Learning Scripts (Backend)
-¦   +-- clean_data.py             # Automated CSV cleaning pipeline
-¦   +-- predict_sucrose.py        # SOTA Conformal AI prediction engine
-¦   +-- sota_sugar_ai_engine.py   # Tabular Transformer ensemble model
-¦   +-- train_high_precision_95.py # Training data generator
-¦   +-- train_sugarcane_model.py  # Legacy model trainer
-¦   +-- maharashtra_sucrose_model.py # Maharashtra-specific model
-¦   +-- satellite_csv_linker.py   # Satellite API CSV enrichment CLI
-¦
-+-- models/                       # Pre-trained ML Model Binaries (.pkl)
-¦   +-- sota_ai_model.pkl         # SOTA Conformal AI model (94.16% R²)
-¦   +-- high_precision_95_model.pkl
-¦   +-- sugarcane_model.pkl
-¦
-+-- data/
-¦   +-- sample/                   # Input sample datasets
-¦   ¦   +-- farmer_sample_input.csv
-¦   ¦   +-- ahilyanagar_maharashtra_sugarcane.csv
-¦   ¦   +-- sugarcane_sucrose_dataset.csv
-¦   +-- output/                   # Prediction output CSVs
-¦   ¦   +-- farmer_predictions_output.csv
-¦   ¦   +-- sucrose_predictions.csv
-¦   ¦   +-- ahilyanagar_sucrose_predictions.csv
-¦   +-- *.csv                     # Training datasets (500-1500 fields)
-¦
-+-- README.md
-```
+The console reads the mill's existing harvest register, works out which plots
+are losing the most sucrose to standing, and sequences them against daily
+crushing capacity. **Every value it shows carries a tag saying where it came
+from** â€” see [CAPABILITIES.md](CAPABILITIES.md) for what is and is not claimed.
 
 ---
 
-## ?? Quick Start
+## Source tags
 
-### Option A: Web Dashboard
-1. Open `web/index.html` in your browser (or serve via local server).
-2. Upload your CSV with `latitude`, `longitude`, and `plantation_date` columns.
-3. Click **"Run Machine Learning Sucrose Predictor"**.
-4. View results on the interactive satellite map, charts, and data table.
+| Tag | Meaning |
+|---|---|
+| `M` Measured | Read directly from the uploaded register |
+| `D` Derived | Arithmetic or geometry on measured inputs â€” no model error |
+| `X` Modelled | Variety maturity-curve estimate, carries a stated margin |
+| `?` Unverified | No input existed; planning placeholder, not valid for payment |
 
-### Option B: Python CLI
+A plot's **record confidence** is the weighted mix of these across the fields
+that drive money â€” boundary, area, planting date and CCS. Below 65% the
+harvest docket prints *PLANNING ONLY â€” NOT VALID FOR PAYMENT*.
+
+---
+
+## Running it
+
 ```bash
-cd ml/
+python -m http.server 8123 --directory web
+```
 
-# Clean raw input CSV:
-python clean_data.py ../data/sample/farmer_sample_input.csv ../data/output/cleaned.csv
+Then open <http://localhost:8123> and upload the season register CSV.
 
-# Run SOTA Conformal Prediction:
-python predict_sucrose.py ../data/sample/farmer_sample_input.csv ../data/output/predictions.csv
+Column names are matched loosely (exact, then normalised, then prefix), so the
+factory's own headers work unchanged â€” including the unbalanced
+`Area (Hectare` header in the sample file. Hectares are detected from the
+header and converted at 2.4711 ac/ha.
+
+Recognised columns: `Plot No` / `Gut`, `Farmer`, `Village`, `Variety Name`,
+`Cane Type`, `Plantation Date`, `Area (Hectare)`, `Lat 1` / `Long 1`,
+`Plot Area Lat Long`, plus optional `Contact`, lab `CCS` / `Pol` / `Brix`,
+`NDWI` / `LSWI` / `CWSI`, and `Yield`.
+
+---
+
+## What it does
+
+- **Harvest queue** â€” plots ranked by sucrose lost to standing, sortable on any
+  column, filterable by readiness, record state and circle.
+- **Harvest program** â€” plots packed against daily crush capacity (MT/day) over
+  a chosen horizon, with per-day tonnage, tonnage-weighted CCS and an explicit
+  flag when one field pushes a day over capacity. Exports as a dispatch CSV.
+- **Planning date** â€” set any date; crop ages, harvest windows and queue order
+  all recompute against it.
+- **Area reconciliation** â€” geodesic area from the walked boundary, compared
+  against the registered hectarage, flagged past 12% divergence.
+- **Data quality panel** â€” the source mix across every field, plus a
+  field-verification worklist export sized for staffing.
+- **Plot detail** â€” sucrose trajectory anchored to the real planting date, and
+  a line-by-line account of which column each number came from.
+- **Harvest docket** â€” printable, with source tags and a payment-validity stamp.
+
+---
+
+## Project layout
+
+```
+web/          Console â€” index.html, app.js, styles.css (no build step)
+ml/           Python training and prediction scripts
+models/       Pre-trained .pkl binaries
+data/         Sample registers and prediction outputs
+backend_main.py   FastAPI service
 ```
 
 ---
 
-## ?? Model Performance
-- **Out-of-Sample CV R² Accuracy**: 94.16%
-- **Conformal Uncertainty Margin**: ± 0.092% (95% Mathematical Guarantee)
-- **Supported Indices**: NDVI, NDRE, NDWI, EVI
-- **Output**: CCS % [95% Range], Juice Pol % [95% Range], Harvest Recommendation
+## Not connected in this build
+
+No satellite, SAR, weather or laboratory feed is wired in. Soil moisture and
+the within-field zone overlay are placeholders and are labelled as such
+throughout the UI and on the printed docket. Cane weight and CCS for payment
+come from the factory weighbridge and laboratory only.
