@@ -13,7 +13,7 @@ from typing import List, Dict, Any, Optional
 from ml.copernicus_client import CopernicusCDSEProcessEngine
 from ml.satellite_engine import polygonize_cane_mask
 
-app = FastAPI(title="IkshuVruddhi Real Satellite Ingestion API", version="2.1.0")
+app = FastAPI(title="IkshuVruddhi Real Satellite Ingestion API", version="2.2.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,7 +46,6 @@ def process_plot_satellite_raster(req: PolygonRequest):
     if len(coords) < 3:
         raise HTTPException(status_code=400, detail="Polygon must contain at least 3 coordinates.")
 
-    # 1. Fetch authentic Sentinel-2 L2A raster
     raster_result = engine.fetch_real_sentinel2_l2a_raster(coords, req.date)
 
     if not raster_result.get("live_satellite", False):
@@ -54,10 +53,11 @@ def process_plot_satellite_raster(req: PolygonRequest):
             "live_satellite": False,
             "status": raster_result.get("status", "SIMULATION_MODE_OFFLINE"),
             "message": raster_result.get("message", "CDSE credentials not active. Simulation fallback mode."),
-            "farm_id": req.farm_id
+            "farm_id": req.farm_id,
+            "valid_pixels": 0,
+            "cells": []
         }
 
-    # 2. Polygonize genuine standing cane mask
     cells = raster_result.get("cells", [])
     snapped = polygonize_cane_mask(cells, coords)
 
@@ -74,7 +74,7 @@ def process_plot_satellite_raster(req: PolygonRequest):
         "snapped_polygon": snapped["snapped_polygon"],
         "detected_cane_acres": snapped["standing_cane_acres"],
         "standing_fraction_pct": snapped["standing_fraction_pct"],
-        "confidence_pct": snapped["mean_confidence_pct"],
+        "cane_signature_score_mean": snapped.get("cane_signature_score_mean", 0.0),
         "cells": cells
     }
 
