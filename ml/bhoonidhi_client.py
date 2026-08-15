@@ -3,12 +3,11 @@ ml/bhoonidhi_client.py
 Official ISRO / NRSC Bhoonidhi OpenSearch & STAC REST API Client & LISS-4 Product Ingestion Engine
 Documentation: https://bhoonidhi-api.nrsc.gov.in/bhoonidhi-api/
 
-Hardened Features:
-  1. Token Refresh: Includes {"userId", "refresh_token", "grant_type"}.
-  2. Complete 3-band calibration check: Requires {"B2_GREEN", "B3_RED", "B4_NIR"} subset before calibrating.
-  3. Fail-Closed Radiometry: Returns radiometry_status="UNCALIBRATED_DN" when calibration is missing.
-  4. Native Grid + Native CRS propagation with spatial intersection check.
-  5. Real HDF5 & GeoTIFF raster window ingestion with per-parcel coverage % calculation.
+Scientific Ingestion Rules:
+  1. Fail-Closed Georeferencing: NEVER fabricate CRS or Affine transforms; fail closed if georeferencing is missing.
+  2. Polygon-Specific Coverage: Computes exact parcel polygon raster mask overlap against valid sensor pixels.
+  3. Fail-Closed Radiometry: Converts to TOA Reflectance only when complete 3-band calibration metadata is present.
+  4. Token Caching & Refresh: Full userId + refresh_token support conforming to NRSC limits.
 """
 
 import os
@@ -26,9 +25,10 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, List, Tuple, Optional
 import rasterio
 from rasterio.windows import from_bounds
+from rasterio.features import geometry_mask
 from rasterio.warp import reproject, Resampling, transform_bounds
 from rasterio.transform import Affine
-from shapely.geometry import Polygon, box
+from shapely.geometry import Polygon, box, mapping
 from shapely.ops import transform
 import pyproj
 
@@ -38,6 +38,8 @@ try:
 except ImportError:
     HAS_H5PY = False
 
+# ISRO Resourcesat-2A / 2 LISS-4 Exoatmospheric Solar Irradiance (ESUN) in W/(m2.um)
+# Reference: NRSC Resourcesat-2/2A Data User Handbook
 ESUN_LISS4 = {
     "B2_GREEN": 1853.0, # Band 2: 0.52 - 0.59 um
     "B3_RED":   1580.0, # Band 3: 0.62 - 0.68 um
@@ -63,11 +65,9 @@ class BhoonidhiClient:
 
     def get_valid_token(self) -> Optional[str]:
         now = time.time()
-        # 1. Reuse unexpired access token
         if self.access_token and now < (self.token_expiry_timestamp - 120):
             return self.access_token
 
-        # 2. Try refresh token if available
         if self.refresh_token and self.user_id:
             try:
                 payload = {
@@ -86,7 +86,6 @@ class BhoonidhiClient:
             except Exception as e:
                 print(f"[Bhoonidhi Refresh Token Fallback]: {e}")
 
-        # 3. Authenticate with primary credentials
         if not self.user_id or not self.password:
             return None
 
@@ -414,6 +413,13 @@ def crop_and_reproject_liss4_product(
     poly_wgs84: Polygon,
     target_crs: str = "EPSG:32643"
 ) -> Optional[Dict[str, Any]]:
+    """
+    Ingests a genuine Resourcesat-2A/2 LISS-4 product:
+      1. Parses package (ZIP / HDF5 / Multi-band TIFF / Stacked GeoTIFF).
+      2. Strictly reads native georeferencing; FAILS CLOSED if CRS or transform cannot be determined.
+      3. Computes polygon-specific coverage (rasterized parcel mask ∩ valid sensor pixels).
+      4. Fails closed to UNCALIBRATED_DN if calibration is incomplete.
+    """
     parsed = extract_and_parse_liss4_package(product_path)
     if not parsed:
         return None
@@ -450,7 +456,13 @@ def crop_and_reproject_liss4_product(
                             with rasterio.open(f'HDF5:"{h5_path}"://{b2_key}') as s2, \
                                  rasterio.open(f'HDF5:"{h5_path}"://{b3_key}') as s3, \
                                  rasterio.open(f'HDF5:"{h5_path}"://{b4_key}') as s4:
-                                src_crs = s2.crs or "EPSG:32643"
+                                
+                                # FAIL CLOSED: Verify georeferencing exists
+                                if s2.crs is None or s2.transform is None or s2.transform.is_identity:
+                                    print(f"[HDF5 Ingestion Rejected]: {h5_path} lacks valid GDAL geotransform/CRS. Failing closed.")
+                                    return None
+
+                                src_crs = s2.crs
                                 src_trans = s2.transform
                                 nodata_val = s2.nodata or 0.0
                                 
@@ -462,22 +474,19 @@ def crop_and_reproject_liss4_product(
                                 red_raw   = s3.read(1, window=win_nat).astype(np.float32)
                                 nir_raw   = s4.read(1, window=win_nat).astype(np.float32)
                                 win_trans = rasterio.windows.transform(win_nat, src_trans)
-                        except Exception:
-                            # Direct numpy slice fallback from HDF dataset if GDAL HDF5 driver is unconfigured
-                            d2 = hf[b2_key]
-                            d3 = hf[b3_key]
-                            d4 = hf[b4_key]
-                            green_raw = np.array(d2, dtype=np.float32)
-                            red_raw = np.array(d3, dtype=np.float32)
-                            nir_raw = np.array(d4, dtype=np.float32)
-                            src_crs = target_crs
-                            src_trans = Affine(5.8, 0, 500000, 0, -5.8, 2135000)
-                            win_trans = src_trans
+                        except Exception as e:
+                            print(f"[HDF5 Subdataset Open Exception]: {e}. Failing closed.")
+                            return None
 
         elif fmt == "INDIVIDUAL_BAND_TIFFS":
             with rasterio.open(parsed["b2_green"]) as s2, \
                  rasterio.open(parsed["b3_red"])   as s3, \
                  rasterio.open(parsed["b4_nir"])   as s4:
+                
+                if s2.crs is None or s2.transform is None:
+                    print(f"[TIFF Ingestion Rejected]: Missing georeferencing in {parsed['b2_green']}")
+                    return None
+
                 src_crs = s2.crs
                 src_trans = s2.transform
                 nodata_val = s2.nodata or 0.0
@@ -493,6 +502,10 @@ def crop_and_reproject_liss4_product(
 
         elif fmt == "STACKED_GEOTIFF":
             with rasterio.open(parsed["stacked_tif"]) as src:
+                if src.crs is None or src.transform is None:
+                    print(f"[Stacked TIFF Ingestion Rejected]: Missing georeferencing in {parsed['stacked_tif']}")
+                    return None
+
                 src_crs = src.crs
                 src_trans = src.transform
                 nodata_val = src.nodata or 0.0
@@ -513,14 +526,20 @@ def crop_and_reproject_liss4_product(
         valid_mask = (green_raw != nodata_val) & (red_raw != nodata_val) & (nir_raw != nodata_val) & \
                      ~np.isnan(green_raw) & ~np.isnan(red_raw) & ~np.isnan(nir_raw) & (green_raw > 0)
 
-        # Calculate exact coverage % of parcel
+        # Compute EXACT POLYGON-SPECIFIC COVERAGE %
+        # Rasterize parcel polygon onto native window grid
         to_nat = pyproj.Transformer.from_crs("EPSG:4326", src_crs, always_xy=True).transform
         poly_native = transform(to_nat, poly_wgs84)
         
-        # Calculate coverage fraction
-        total_px = max(1, valid_mask.size)
-        valid_px = int(np.sum(valid_mask))
-        coverage_pct = (valid_px / total_px) * 100.0
+        # geometry_mask returns True outside geometry, False inside -> invert
+        parcel_mask = ~geometry_mask([poly_native], out_shape=green_raw.shape, transform=win_trans, invert=False)
+        total_parcel_pixels = int(np.sum(parcel_mask))
+        
+        if total_parcel_pixels == 0:
+            coverage_pct = 0.0
+        else:
+            valid_parcel_pixels = int(np.sum(parcel_mask & valid_mask))
+            coverage_pct = (valid_parcel_pixels / total_parcel_pixels) * 100.0
 
         # Complete 3-band calibration requirement check
         required_bands = {"B2_GREEN", "B3_RED", "B4_NIR"}
@@ -550,6 +569,7 @@ def crop_and_reproject_liss4_product(
             "red_58m": red_toa,
             "nir_58m": nir_toa,
             "valid_mask": valid_mask,
+            "parcel_mask": parcel_mask,
             "affine_transform": win_trans,
             "crs": src_crs,
             "shape": green_raw.shape,

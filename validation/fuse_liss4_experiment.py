@@ -1,15 +1,19 @@
 ﻿"""
 validation/fuse_liss4_experiment.py
-Multi-Resolution Feasibility Benchmark: Baseline Sentinel-2 (10m) vs. 5.8m Guided Fusion
+Multi-Resolution Benchmark: Baseline Sentinel-2 (10m) vs. 5.8m Multi-Sensor Guided Fusion
 Evaluated across the 36 High-NDVI / Strong-Vegetation Parcels (NDVI >= 0.55).
 
-Includes:
-  1. Per-Plot Provenance Tracking (coverage %, date delta, radiometry status, native CRS).
-  2. Real-Data Validation Gates:
-     - LISS-4 Parcel Coverage > 95%
-     - |LISS-4 Date - S2 Date| <= 5 Days
-     - Radiometry Status == "TOA_PLANETARY_REFLECTANCE"
-  3. Seamless Algorithmic Simulation Fallback (explicitly annotated).
+Scientific Separation:
+  1. EMPIRICAL_ISRO_LISS4 Mode:
+     - Requires genuine LISS-4 product.
+     - Enforces STRICT physical validation gates:
+       * Exact Polygon-Specific Coverage >= 95.0%
+       * |LISS-4 Acquisition Date - S2 Acquisition Date| <= 5 Days
+       * Radiometry Status == "TOA_PLANETARY_REFLECTANCE"
+     - If any gate fails, empirical fusion is PHYSICALLY BLOCKED (never silently falls back to simulation).
+  2. ALGORITHMIC_SIMULATION_FALLBACK Mode:
+     - Benchmarks the mathematical guided filtering algorithm when real scenes are not provided.
+     - Kept strictly segregated in datasets and summary metrics.
 """
 
 import os
@@ -43,15 +47,17 @@ from validation.metrics import compute_exact_subpixel_intersection_area, compute
 wgs84_to_utm43n = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:32643", always_xy=True).transform
 
 def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_comparison.csv", liss4_product_path=None):
-    is_real_liss4_supplied = (liss4_product_path is not None and os.path.exists(liss4_product_path))
-    pipeline_mode = "EMPIRICAL_ISRO_LISS4" if is_real_liss4_supplied else "ALGORITHMIC_SIMULATION_FALLBACK"
+    is_empirical_run = (liss4_product_path is not None and os.path.exists(liss4_product_path))
+    target_mode = "EMPIRICAL_ISRO_LISS4" if is_empirical_run else "ALGORITHMIC_SIMULATION_FALLBACK"
 
     print("==================================================================")
-    print(" RESOURCESAT-2A LISS-4 (5.8m) + SENTINEL-2 (10m) FUSION EXPERIMENT")
-    print(f" Target Mode: {pipeline_mode}")
-    print(" Target Cohort: 36 High-NDVI / Strong-Vegetation Parcels (NDVI >= 0.55)")
-    if not is_real_liss4_supplied:
+    print(" RESOURCESAT-2A LISS-4 (5.8m) + SENTINEL-2 (10m) BENCHMARK")
+    print(f" Execution Mode: {target_mode}")
+    print(" Target Cohort : 36 High-NDVI / Strong-Vegetation Parcels (NDVI >= 0.55)")
+    if not is_empirical_run:
         print(" Note: Running in algorithmic simulation mode (real Bhoonidhi package not supplied).")
+    else:
+        print(f" Ingesting Real LISS-4 Product: {liss4_product_path}")
     print("==================================================================")
 
     df_emp = pd.read_csv("data/output/refined_empirical_sentinel_analysis_88plots.csv")
@@ -180,32 +186,26 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
         s2_strict_iou = (s2_cane_m2 / max(1.0, s2_union_m2)) * 100.0
         s2_area_error_pct = abs(s2_acres - ref_area_acres) / max(0.01, ref_area_acres) * 100.0
 
-        # Method B: 5.8m Multi-Sensor Guided Fusion (Real or Simulated)
-        liss4_green = None
-        liss4_red = None
-        liss4_nir = None
-        liss4_trans = None
-        liss4_crs = None
-        liss4_vmask = None
-        radiometry_status = "SIMULATED"
-        coverage_pct = 100.0
-        date_delta_days = 0
-        gate_passed = True
-        gate_rejection_reason = None
-
-        if is_real_liss4_supplied:
+        # Method B: 5.8m Multi-Sensor Guided Fusion (Strict Physical Gating)
+        fused_acres = None
+        fused_occ_pct = None
+        fused_strict_iou = None
+        fused_area_error_pct = None
+        iou_gain = None
+        
+        if is_empirical_run:
+            # Empirical Default Status: FAIL CLOSED
+            gate_passed = False
+            gate_rejection_reason = "LISS-4 ingestion failed"
+            coverage_pct = 0.0
+            date_delta_days = 999
+            radiometry_status = "NOT_INGESTED"
+            
             crop_res = crop_and_reproject_liss4_product(liss4_product_path, poly_wgs)
-            if crop_res:
-                liss4_green = crop_res["green_58m"]
-                liss4_red   = crop_res["red_58m"]
-                liss4_nir   = crop_res["nir_58m"]
-                liss4_trans = crop_res["affine_transform"]
-                liss4_crs   = crop_res["crs"]
-                liss4_vmask = crop_res.get("valid_mask")
+            if crop_res is not None:
                 coverage_pct = crop_res.get("coverage_pct", 0.0)
                 radiometry_status = crop_res.get("radiometry_status", "UNCALIBRATED_DN")
                 
-                # Check Date Gate
                 if crop_res.get("acquisition_date"):
                     try:
                         l4_dt = datetime.strptime(crop_res["acquisition_date"], "%Y-%m-%d")
@@ -213,47 +213,71 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
                     except Exception:
                         date_delta_days = 999
 
-                # Evaluate Real-Data Gates
+                # Strictly Evaluate Empirical Gates
                 if coverage_pct < 95.0:
-                    gate_passed = False
-                    gate_rejection_reason = f"LISS4 parcel coverage ({coverage_pct:.1f}%) < 95%"
+                    gate_rejection_reason = f"LISS-4 polygon coverage ({coverage_pct:.1f}%) < 95.0%"
                 elif date_delta_days > 5:
-                    gate_passed = False
-                    gate_rejection_reason = f"LISS4 date delta ({date_delta_days} days) > 5 days"
+                    gate_rejection_reason = f"Date delta ({date_delta_days} days) > 5 days"
                 elif radiometry_status != "TOA_PLANETARY_REFLECTANCE":
-                    gate_passed = False
                     gate_rejection_reason = f"Radiometry ({radiometry_status}) not TOA calibrated"
+                else:
+                    gate_passed = True
+                    gate_rejection_reason = None
 
-        fusion_out = fuse_sentinel2_with_liss4_canopy(
-            poly_utm=poly_utm,
-            s2_red_10m=red_10m,
-            s2_nir_10m=nir_10m,
-            s2_re_10m=re_10m,
-            s2_swir_10m=swir_10m,
-            s2_scl_10m=scl_10m,
-            s2_transform=win_10m_transform,
-            liss4_green_58m=liss4_green,
-            liss4_red_58m=liss4_red,
-            liss4_nir_58m=liss4_nir,
-            liss4_transform=liss4_trans,
-            liss4_crs=liss4_crs,
-            liss4_valid_mask=liss4_vmask,
-            radiometry_status=radiometry_status
-        )
+            # Execute Fusion ONLY IF GATES PASS (PHYSICAL BLOCKING)
+            if gate_passed:
+                fusion_out = fuse_sentinel2_with_liss4_canopy(
+                    poly_utm=poly_utm,
+                    s2_red_10m=red_10m,
+                    s2_nir_10m=nir_10m,
+                    s2_re_10m=re_10m,
+                    s2_swir_10m=swir_10m,
+                    s2_scl_10m=scl_10m,
+                    s2_transform=win_10m_transform,
+                    liss4_green_58m=crop_res["green_58m"],
+                    liss4_red_58m=crop_res["red_58m"],
+                    liss4_nir_58m=crop_res["nir_58m"],
+                    liss4_transform=crop_res["affine_transform"],
+                    liss4_crs=crop_res["crs"],
+                    liss4_valid_mask=crop_res.get("valid_mask"),
+                    radiometry_status=radiometry_status
+                )
+                fused_res = fusion_out.get("fused_liss4")
+                if fused_res:
+                    fused_acres = fused_res["fused_sat_acres"]
+                    fused_occ_pct = fused_res["fused_occupancy_pct"]
+                    fused_strict_iou = fused_res["fused_strict_iou_pct"]
+                    fused_area_error_pct = abs(fused_acres - ref_area_acres) / max(0.01, ref_area_acres) * 100.0
+                    iou_gain = fused_strict_iou - s2_strict_iou
+            
+            data_source_mode = "EMPIRICAL_ISRO_LISS4"
 
-        fused_res = fusion_out.get("fused_liss4")
-        if fused_res:
-            fused_acres = fused_res["fused_sat_acres"]
-            fused_occ_pct = fused_res["fused_occupancy_pct"]
-            fused_strict_iou = fused_res["fused_strict_iou_pct"]
-            fused_area_error_pct = abs(fused_acres - ref_area_acres) / max(0.01, ref_area_acres) * 100.0
-            iou_gain = fused_strict_iou - s2_strict_iou
         else:
-            fused_acres = None
-            fused_occ_pct = None
-            fused_strict_iou = None
-            fused_area_error_pct = None
-            iou_gain = None
+            # Algorithmic Simulation Mode
+            gate_passed = True
+            gate_rejection_reason = None
+            coverage_pct = 100.0
+            date_delta_days = 0
+            radiometry_status = "SIMULATED"
+            data_source_mode = "SIMULATED_5.8M_REGRIDDED"
+
+            fusion_out = fuse_sentinel2_with_liss4_canopy(
+                poly_utm=poly_utm,
+                s2_red_10m=red_10m,
+                s2_nir_10m=nir_10m,
+                s2_re_10m=re_10m,
+                s2_swir_10m=swir_10m,
+                s2_scl_10m=scl_10m,
+                s2_transform=win_10m_transform,
+                radiometry_status="SIMULATED"
+            )
+            fused_res = fusion_out.get("fused_liss4")
+            if fused_res:
+                fused_acres = fused_res["fused_sat_acres"]
+                fused_occ_pct = fused_res["fused_occupancy_pct"]
+                fused_strict_iou = fused_res["fused_strict_iou_pct"]
+                fused_area_error_pct = abs(fused_acres - ref_area_acres) / max(0.01, ref_area_acres) * 100.0
+                iou_gain = fused_strict_iou - s2_strict_iou
 
         rec = {
             "plot_no": pno,
@@ -270,7 +294,7 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
             "fused_strict_iou_pct": round(fused_strict_iou, 1) if fused_strict_iou is not None else None,
             "fused_area_error_pct": round(fused_area_error_pct, 1) if fused_area_error_pct is not None else None,
             "iou_delta_pct_points": round(iou_gain, 1) if iou_gain is not None else None,
-            "data_source_mode": fusion_out.get("data_source", pipeline_mode),
+            "data_source_mode": data_source_mode,
             "radiometry_status": radiometry_status,
             "liss4_parcel_coverage_pct": round(coverage_pct, 1),
             "date_delta_days": date_delta_days,
@@ -278,23 +302,36 @@ def run_fusion_experiment(output_csv="data/output/liss4_sentinel2_fusion_compari
             "gate_rejection_reason": gate_rejection_reason
         }
         results.append(rec)
-        fused_disp = f"{fused_strict_iou:4.1f}%" if fused_strict_iou is not None else "REJECTED"
+        
+        fused_disp = f"{fused_strict_iou:4.1f}%" if fused_strict_iou is not None else f"REJECTED ({gate_rejection_reason})"
         delta_disp = f"{iou_gain:+4.1f}%" if iou_gain is not None else "N/A"
-        print(f"Plot #{pno:4s} ({erow['farmer_name'][:18]:18s}) | Ref: {ref_area_acres:.2f} ac | Empirical S2: {s2_strict_iou:4.1f}% IoU -> 5.8m Fused: {fused_disp} (Delta: {delta_disp})")
+        print(f"Plot #{pno:4s} ({erow['farmer_name'][:18]:18s}) | Ref: {ref_area_acres:.2f} ac | Empirical S2: {s2_strict_iou:4.1f}% IoU -> 5.8m: {fused_disp} (Delta: {delta_disp})")
 
     df_comp = pd.DataFrame(results)
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
     df_comp.to_csv(output_csv, index=False)
 
     print("\n==================================================================")
-    print(f" FUSION EXPERIMENT BENCHMARK SUMMARY (N={len(df_comp)} High-NDVI Parcels)")
-    print(f" Pipeline Data Source Mode: {pipeline_mode}")
+    print(f" BENCHMARK SUMMARY REPORT (N={len(df_comp)} High-NDVI Parcels)")
+    print(f" Execution Mode: {target_mode}")
     print("==================================================================")
-    print(f" Empirical Sentinel-2 (10m)      : Mean IoU = {df_comp['s2_empirical_strict_iou_pct'].mean():.2f}% | Mean Occ = {df_comp['s2_empirical_occupancy_pct'].mean():.2f}% | Area Err = {df_comp['s2_empirical_area_error_pct'].mean():.2f}%")
-    valid_fused = df_comp[df_comp['fused_strict_iou_pct'].notnull()]
-    if len(valid_fused) > 0:
-        print(f" 5.8m Fused Pipeline (Valid N={len(valid_fused)}) : Mean IoU = {valid_fused['fused_strict_iou_pct'].mean():.2f}% | Mean Occ = {valid_fused['fused_occupancy_pct'].mean():.2f}% | Area Err = {valid_fused['fused_area_error_pct'].mean():.2f}%")
-        print(f" Net Mean IoU Delta              : {valid_fused['iou_delta_pct_points'].mean():+.2f} percentage points")
+    print(f" Empirical Sentinel-2 (10m) Baseline : Mean IoU = {df_comp['s2_empirical_strict_iou_pct'].mean():.2f}% | Mean Occ = {df_comp['s2_empirical_occupancy_pct'].mean():.2f}% | Area Err = {df_comp['s2_empirical_area_error_pct'].mean():.2f}%")
+    
+    if is_empirical_run:
+        # STRICT EMPIRICAL AGGREGATION: ONLY rows where gate_passed == True
+        df_emp_valid = df_comp[(df_comp["data_source_mode"] == "EMPIRICAL_ISRO_LISS4") & (df_comp["gate_passed"] == True) & df_comp["fused_strict_iou_pct"].notnull()]
+        print(f" Empirical LISS-4 Fusion Valid Plots : {len(df_emp_valid)} / {len(df_comp)} passed all gates")
+        if len(df_emp_valid) > 0:
+            print(f" Empirical LISS-4 Fused Results      : Mean IoU = {df_emp_valid['fused_strict_iou_pct'].mean():.2f}% | Mean Occ = {df_emp_valid['fused_occupancy_pct'].mean():.2f}% | Area Err = {df_emp_valid['fused_area_error_pct'].mean():.2f}%")
+            print(f" Net Empirical IoU Improvement       : {df_emp_valid['iou_delta_pct_points'].mean():+.2f} percentage points")
+        else:
+            print(" Note: No plots passed all empirical gates. Zero empirical LISS-4 gain claimed.")
+    else:
+        # ALGORITHMIC SIMULATION AGGREGATION
+        df_sim = df_comp[df_comp["data_source_mode"] == "SIMULATED_5.8M_REGRIDDED"]
+        print(f" Simulated 5.8m Guided Filtering     : Mean IoU = {df_sim['fused_strict_iou_pct'].mean():.2f}% | Mean Occ = {df_sim['fused_occupancy_pct'].mean():.2f}% | Area Err = {df_sim['fused_area_error_pct'].mean():.2f}%")
+        print(f" Net Simulated Algorithm Gain        : {df_sim['iou_delta_pct_points'].mean():+.2f} percentage points")
+        print(" Note: Results represent mathematical 5.8m regridding/filtering only, NOT empirical ISRO data.")
     print("==================================================================\n")
     return df_comp
 
