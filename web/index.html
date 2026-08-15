@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkshuVruddhi Command - Gangamai Sugar Mill Precision Platform</title>
-    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - 10m Sentinel-2 Raster Heat Map & Sugar Quality Telemetry for Gangamai Sugar Mill (SSK).">
+    <meta name="description" content="IkshuVruddhi AI Engine (इक्षुवृद्धी) - Sucrose Chemistry & Harvest Telemetry (Pol, CCS, Purity, Brix) for Gangamai Sugar Mill (SSK).">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="brand-text">
                     <h1>IkshuVruddhi <span>Command</span> <span class="mill-badge">इक्षुवृद्धी SSK</span></h1>
-                    <p>Gangamai Sugar Mill - 10m Spatial Heat Map & Predicted vs Lab Sugar Telemetry</p>
+                    <p>Gangamai Sugar Mill - Sucrose Chemistry Command (Pol % ➔ Purity ➔ CCS % ➔ Cutting Priority)</p>
                 </div>
             </div>
             
@@ -41,12 +41,12 @@
                     <span class="status-val">Gangamai SSK (7,500 TCD)</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Spatial Grid</span>
-                    <span class="status-val" style="color: var(--accent-cyan);">10m Native Sentinel-2 Cells</span>
+                    <span class="status-label">Primary Sucrose Metric</span>
+                    <span class="status-val" style="color: var(--accent-cyan);">Predicted Pol % (Apparent Sucrose)</span>
                 </div>
                 <div class="status-item">
                     <span class="status-label">Lab Ground-Truth</span>
-                    <span class="status-val" style="color: var(--accent-green);">Calibrated (n=11 Plots)</span>
+                    <span class="status-val" style="color: var(--accent-green);">Calibrated Polarimeter (n=11)</span>
                 </div>
             </div>
 
@@ -56,7 +56,7 @@
                     <button class="btn btn-xs btn-outline" id="btnLangMr" style="font-weight: 700;">🇮🇳 मराठी</button>
                 </div>
                 <button id="btnHeaderExport" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-download"></i> Export Heat Map CSV
+                    <i class="fa-solid fa-download"></i> Export Sugar Quality CSV
                 </button>
             </div>
         </header>
@@ -119,15 +119,25 @@
             </div>
         </div>
 
-        <!-- TIER 2: MODEL & DATA QUALITY VALIDATION (ENGINEERING & AUDIT TRUST) -->
+        <!-- TIER 2: SUCROSE CHEMISTRY & DATA QUALITY VALIDATION -->
         <div class="section-label-strip" style="margin-top: 0.6rem;">
-            <i class="fa-solid fa-microchip" style="color:var(--accent-green);"></i> <span>DATA QUALITY & MODEL VALIDATION BENCHMARKS</span>
+            <i class="fa-solid fa-flask-vial" style="color:var(--accent-cyan);"></i> <span>SUCROSE QUALITY BENCHMARKS & MODEL VALIDATION</span>
         </div>
         <div class="kpi-grid quality-grid" style="margin-bottom:0.9rem;">
             <div class="kpi-card quality-card">
+                <span class="kpi-title"><i class="fa-solid fa-dna"></i> Median Predicted Pol</span>
+                <span class="kpi-value quality-val" id="kpiMedianPol" style="color:#00f2fe;">16.0%</span>
+                <span class="kpi-subtext"><span class="source-tag model">MODEL PREDICTED</span> Apparent Sucrose</span>
+            </div>
+            <div class="kpi-card quality-card">
+                <span class="kpi-title"><i class="fa-solid fa-chart-pie"></i> Median Juice Purity</span>
+                <span class="kpi-value quality-val" id="kpiMedianPurity" style="color:#a855f7;">87.8%</span>
+                <span class="kpi-subtext"><span class="source-tag model">DERIVED</span> (Pol / Brix Ratio)</span>
+            </div>
+            <div class="kpi-card quality-card">
                 <span class="kpi-title"><i class="fa-solid fa-flask"></i> Median Predicted CCS</span>
-                <span class="kpi-value quality-val" id="kpiMedianCcs" style="color:#00f2fe;">12.05%</span>
-                <span class="kpi-subtext"><span class="source-tag model">MODEL PREDICTED</span> ±0.28% Conformal</span>
+                <span class="kpi-value quality-val" id="kpiMedianCcs" style="color:var(--accent-green);">12.05%</span>
+                <span class="kpi-subtext"><span class="source-tag model">MODEL PREDICTED</span> Recoverable Sugar</span>
             </div>
             <div class="kpi-card quality-card">
                 <span class="kpi-title"><i class="fa-solid fa-draw-polygon"></i> Median Polygon IoU</span>
@@ -135,24 +145,14 @@
                 <span class="kpi-subtext"><span class="source-tag gis">GIS MEASURED</span> vs DGPS Walked Truth</span>
             </div>
             <div class="kpi-card quality-card">
-                <span class="kpi-title"><i class="fa-solid fa-ruler-combined"></i> Median Area Error</span>
-                <span class="kpi-value quality-val" id="kpiAreaError" style="color:#f8fafc;">2.1%</span>
-                <span class="kpi-subtext"><span class="source-tag gis">GIS MEASURED</span> ±0.02 Acres Tolerance</span>
-            </div>
-            <div class="kpi-card quality-card">
                 <span class="kpi-title"><i class="fa-solid fa-location-crosshairs"></i> GPS Location Sanity</span>
                 <span class="kpi-value quality-val" style="color:var(--accent-green);">11/11 Passed</span>
                 <span class="kpi-subtext"><span class="source-tag field">FIELD AUDIT</span> &lt;300m from Cadastral Gat</span>
             </div>
             <div class="kpi-card quality-card">
-                <span class="kpi-title"><i class="fa-solid fa-satellite"></i> 10m Core Purity</span>
-                <span class="kpi-value quality-val" style="color:#00f2fe;">97.8%</span>
-                <span class="kpi-subtext"><span class="source-tag sat">SATELLITE AUDIT</span> ≥95% Footprint Overlap</span>
-            </div>
-            <div class="kpi-card quality-card">
                 <span class="kpi-title"><i class="fa-solid fa-check-double"></i> Mill Lab Validation</span>
                 <span class="kpi-value quality-val" style="color:#a855f7;">n = 11</span>
-                <span class="kpi-subtext"><span class="source-tag lab">LAB VALIDATED</span> 2024-25 Crush Archive</span>
+                <span class="kpi-subtext"><span class="source-tag lab">LAB VALIDATED</span> Polarimeter Archive</span>
             </div>
         </div>
 
@@ -162,7 +162,7 @@
             <!-- LEFT CARD: ADVANCED AI TELEMETRY TABLE -->
             <div class="glass-card farmer-plot-list-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Operational Harvesting Queue & Sugar Quality</h3>
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Operational Harvesting Queue & Sucrose Quality</h3>
                     <span class="badge success" id="lblPlotCount">11 Plots</span>
                 </div>
 
@@ -172,7 +172,7 @@
                     <input type="text" id="inputSearchPlotList" class="form-control" style="padding-left:2.2rem; font-size:0.76rem;" placeholder="Search Farmer or Gat No...">
                 </div>
 
-                <!-- UNIFIED OPERATIONAL TABLE -->
+                <!-- UNIFIED OPERATIONAL TABLE (POL & CCS AS PRIMARY METRICS) -->
                 <div class="farmer-plot-list-wrapper" id="farmerPlotListWrapper">
                     <table class="data-table" id="leftPlotTable">
                         <thead>
@@ -182,10 +182,10 @@
                                 <th>🔍 Cockpit</th>
                                 <th>Farmer Name</th>
                                 <th>Gat No</th>
-                                <th>Crop & Variety</th>
-                                <th>Plantation</th>
+                                <th>Predicted Pol</th>
                                 <th>Predicted CCS</th>
-                                <th>Predicted Brix</th>
+                                <th>Juice Purity</th>
+                                <th>Brix °Bx</th>
                                 <th>Est. Cane</th>
                             </tr>
                         </thead>
@@ -201,7 +201,7 @@
                             <i class="fa-solid fa-cloud-arrow-up"></i> Upload CSV
                         </button>
                     </div>
-                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);"></i> 10m Intra-Plot Raster Heat Map</span>
+                    <span style="font-size:0.70rem; color:var(--text-muted);"><i class="fa-solid fa-dna" style="color:var(--accent-cyan);"></i> Sucrose Hierarchy: Pol % ➔ Purity ➔ CCS %</span>
                 </div>
             </div>
 
@@ -212,7 +212,8 @@
                     <!-- HEAT MAP LAYER SELECTOR -->
                     <div style="display:flex; gap:4px; flex-wrap:wrap;">
                         <button class="btn btn-xs btn-outline heat-layer-btn active" data-layer="ccs" onclick="window.setHeatMapLayer('ccs')">Predicted CCS %</button>
-                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="brix" onclick="window.setHeatMapLayer('brix')">Predicted Brix</button>
+                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="pol" onclick="window.setHeatMapLayer('pol')">Predicted Pol %</button>
+                        <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="brix" onclick="window.setHeatMapLayer('brix')">Brix °Bx</button>
                         <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="ndvi" onclick="window.setHeatMapLayer('ndvi')">NDVI Canopy</button>
                     </div>
                 </div>
@@ -225,7 +226,7 @@
 
                     <!-- 10M RASTER HEAT MAP NUMERIC LEGEND -->
                     <div class="contour-floating-legend" id="contourLegend" style="display:block;">
-                        <div class="legend-header"><i class="fa-solid fa-fire"></i> 10m Predicted CCS % Legend</div>
+                        <div class="legend-header" id="heatLegendHeader"><i class="fa-solid fa-fire"></i> 10m Predicted CCS % Legend</div>
                         <div class="legend-item"><span class="legend-box" style="background:#00e676;"></span> <b>&gt;12.0% CCS:</b> Priority Cut (Peak Ripening)</div>
                         <div class="legend-item"><span class="legend-box" style="background:#ffea00;"></span> <b>11.5–12.0% CCS:</b> Near Peak (3–7 Days)</div>
                         <div class="legend-item"><span class="legend-box" style="background:#ff9100;"></span> <b>10.5–11.5% CCS:</b> Developing Sucrose</div>
@@ -256,7 +257,7 @@
                 <div>
                     <div class="cockpit-stat-box">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-chart-line"></i> Sucrose Ripening Trajectory</span>
+                            <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-chart-line"></i> Sucrose Ripening Trajectory (Pol %)</span>
                             <span class="source-tag model">MODEL PREDICTED</span>
                         </div>
                         <div style="height:160px; margin-top:8px;">
@@ -272,19 +273,19 @@
                     </div>
                 </div>
 
-                <!-- Right: Sugar Quality: Predicted vs Lab Reality Loop -->
+                <!-- Right: Sugar Quality: Predicted vs Lab Polarimeter Loop -->
                 <div>
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Sugar Quality: Model vs. Lab Loop</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Sucrose Quality: Model vs. Lab Polarimeter Loop</span>
                         <div style="margin-top:8px; font-size:0.78rem;" id="modalThreeBoundaryBox">
                         </div>
                     </div>
 
                     <div class="cockpit-stat-box" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                         <div>
-                            <span style="font-size:0.70rem; color:#94a3b8;">🍬 Predicted CCS Sugar %</span>
-                            <div style="font-size:1.15rem; font-weight:800; color:#00e676;" id="modalPredictedCcs">12.18%</div>
-                            <span style="font-size:0.68rem; color:#cbd5e1;" id="modalCcsMargin">±0.28% (95% Conformal)</span>
+                            <span style="font-size:0.70rem; color:#94a3b8;">🧬 Predicted Pol % (Sucrose)</span>
+                            <div style="font-size:1.15rem; font-weight:800; color:#00f2fe;" id="modalPredictedPol">16.1%</div>
+                            <span style="font-size:0.68rem; color:#a855f7;" id="modalPredictedPurity">88.4% Purity</span>
                         </div>
                         <div>
                             <span style="font-size:0.70rem; color:#94a3b8;">📅 Harvest Decision</span>
@@ -294,15 +295,15 @@
                     </div>
 
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#00e676; text-transform:uppercase;"><i class="fa-solid fa-sack-dollar"></i> Sugar Mill Recovery Opportunity</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#00e676; text-transform:uppercase;"><i class="fa-solid fa-sack-dollar"></i> Commercial Sugar (CCS %) & Recovery</span>
                         <div style="display:flex; justify-content:space-between; margin-top:8px;">
                             <div>
-                                <span style="font-size:0.70rem; color:#94a3b8;">Est. Cane Tonnage:</span>
-                                <div style="font-size:1.05rem; font-weight:800; color:#f8fafc;" id="modalTotalYieldTons">55.7 MT</div>
+                                <span style="font-size:0.70rem; color:#94a3b8;">Predicted CCS %:</span>
+                                <div style="font-size:1.05rem; font-weight:800; color:#00e676;" id="modalPredictedCcs">12.05%</div>
                             </div>
                             <div>
                                 <span style="font-size:0.70rem; color:#94a3b8;">Est. Sugar Recovery:</span>
-                                <div style="font-size:1.05rem; font-weight:800; color:#00e676;" id="modalRecoverableSugar">6.8 MT Commercial Sugar</div>
+                                <div style="font-size:1.05rem; font-weight:800; color:#00e676;" id="modalRecoverableSugar">6.8 MT Sugar</div>
                             </div>
                         </div>
                     </div>
@@ -342,14 +343,14 @@
                 <td style="padding:6px;" id="docketPlantingDate">01-12-2024 (Season 2526)</td>
             </tr>
             <tr>
-                <td style="padding:6px; background:#f0f0f0;"><b>Walked Area:</b></td>
-                <td style="padding:6px;" id="docketNetArea">1.16 Acres (0.50 Ha Walked Boundary)</td>
-                <td style="padding:6px; background:#f0f0f0;"><b>Est. Cane Tonnage:</b></td>
-                <td style="padding:6px;" id="docketYield">55.7 MT (~48.0 T/Ac Model)</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Predicted Pol %:</b></td>
+                <td style="padding:6px; font-weight:bold; color:#00f2fe;" id="docketPol">16.1% (Apparent Sucrose)</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Predicted CCS %:</b></td>
+                <td style="padding:6px; font-weight:bold; color:green;" id="docketCcs">12.05% (88.4% Purity)</td>
             </tr>
             <tr>
-                <td style="padding:6px; background:#f0f0f0;"><b>Predicted CCS Sugar %:</b></td>
-                <td style="padding:6px; font-weight:bold;" id="docketCcs">12.18% (Lab Verified: 12.05%)</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Est. Cane Tonnage:</b></td>
+                <td style="padding:6px;" id="docketYield">55.7 MT (~48.0 T/Ac Model)</td>
                 <td style="padding:6px; background:#f0f0f0;"><b>Operational Decision:</b></td>
                 <td style="padding:6px; font-weight:bold; color:green;" id="docketHarvestDate">CUT NOW (Priority 1)</td>
             </tr>
