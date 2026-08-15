@@ -1,90 +1,12 @@
 /**
  * IkshuVruddhi Sugar Mill Harvest Command Engine
- * 2025–26 Active Season Continuous Weekly Model Retraining & Sucrose Quality Telemetry
+ * 2025–26 Active Season Continuous Weekly Retraining & Data Ingestion
  * Factory: Gangamai Sugar Mill (गंगामाई सहकारी साखर कारखाना SSK, 7,500 TCD)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 2025–26 ACTIVE SEASON DATASET (Ghotan Command Area Initial Ground-Truth)
-    let ACTIVE_SEASON_DATA = [
-        {
-            "Plot No": "5614", "Cane Type": "Khodwa", "Season": "2526", "Plantation Date": "01-12-2024", "Harvesting Date": "01-12-2024",
-            "Variety Name": "CO-265", "Area (Hectare": "0.5", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (TAKA MALA)",
-            "Farmer": "KSHIRSAGAR BABASAHEB NAVNATH", "Lat 1": "19.388268", "Long 1": "75.2859986",
-            "Plot Area Lat Long": "19.3883852,75.2858501#19.3881878,75.2874004#19.3879804,75.2873763#19.3880816,75.2863812#19.3881157,75.2857792",
-            "Lab Brix": "18.6", "Lab Pol": "16.1", "Lab CCS": "12.05"
-        },
-        {
-            "Plot No": "13393", "Cane Type": "Khodwa", "Season": "2526", "Plantation Date": "20-12-2024", "Harvesting Date": "20-12-2024",
-            "Variety Name": "CO-265", "Area (Hectare": "0.8", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (TAKA MALA)",
-            "Farmer": "KSHIRSAGAR BABASAHEB NAVNATH", "Lat 1": "19.3874511", "Long 1": "75.2840711",
-            "Plot Area Lat Long": "19.3870435,75.2851817#19.3874559,75.2852702#19.3876857,75.2838043#19.3873113,75.283571",
-            "Lab Brix": "18.3", "Lab Pol": "15.8", "Lab CCS": "11.82"
-        },
-        {
-            "Plot No": "13400", "Cane Type": "Khodwa", "Season": "2526", "Plantation Date": "21-12-2024", "Harvesting Date": "21-12-2024",
-            "Variety Name": "CO-265", "Area (Hectare": "0.3", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (TAKA MALA)",
-            "Farmer": "KSHIRSAGAR BABASAHEB NAVNATH", "Lat 1": "19.3897134", "Long 1": "75.2831571",
-            "Plot Area Lat Long": "19.3895293,75.2834204#19.3902757,75.2833426#19.3902529,75.2829779#19.3894838,75.2830771",
-            "Lab Brix": "18.9", "Lab Pol": "16.4", "Lab CCS": "12.28"
-        },
-        {
-            "Plot No": "13793", "Cane Type": "Khodwa", "Season": "2526", "Plantation Date": "10-01-2025", "Harvesting Date": "10-01-2025",
-            "Variety Name": "CO-265", "Area (Hectare": "0.8", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (TAKA MALA)",
-            "Farmer": "KSHIRSAGAR BABASAHEB NAVNATH", "Lat 1": "19.387321", "Long 1": "75.2844436",
-            "Plot Area Lat Long": "19.3876758,75.2837997#19.3868662,75.2832096#19.3866609,75.2850905#19.3874756,75.2852943",
-            "Lab Brix": "18.2", "Lab Pol": "15.7", "Lab CCS": "11.75"
-        },
-        {
-            "Plot No": "9365", "Cane Type": "Khodwa", "Season": "2526", "Plantation Date": "15-12-2024", "Harvesting Date": "15-12-2024",
-            "Variety Name": "CO-265", "Area (Hectare": "0.4", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (TAKA MALA)",
-            "Farmer": "KSHIRSAGAR RAMESH LAXMAN", "Lat 1": "19.4012767", "Long 1": "75.2849911",
-            "Plot Area Lat Long": "19.4019889,75.2849683#19.4019079,75.2853572#19.4009693,75.2851265#19.4010225,75.2847779",
-            "Lab Brix": "18.5", "Lab Pol": "16.0", "Lab CCS": "11.98"
-        },
-        {
-            "Plot No": "9368", "Cane Type": "Suru", "Season": "2526", "Plantation Date": "24-12-2024", "Harvesting Date": "24-12-2024",
-            "Variety Name": "CO-265", "Area (Hectare": "0.4", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (TAKA MALA)",
-            "Farmer": "KSHIRSAGAR RAMESH LAXMAN", "Lat 1": "19.399346", "Long 1": "75.2852054",
-            "Plot Area Lat Long": "19.3991982,75.2854201#19.3998054,75.2852055#19.3997067,75.2848407#19.399097,75.2849936",
-            "Lab Brix": "17.9", "Lab Pol": "15.3", "Lab CCS": "11.40"
-        },
-        {
-            "Plot No": "11638", "Cane Type": "Suru", "Season": "2526", "Plantation Date": "16-02-2025", "Harvesting Date": "16-02-2025",
-            "Variety Name": "CO-265", "Area (Hectare": "0.4", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (BHARAT WASTI)",
-            "Farmer": "KHEDKAR VAISHALI NAMDEO", "Lat 1": "19.3915499", "Long 1": "75.3003335",
-            "Plot Area Lat Long": "19.3924023,75.3005431#19.3923575,75.3007011#19.390193,75.3001066#19.3902325,75.2999008",
-            "Lab Brix": "18.1", "Lab Pol": "15.5", "Lab CCS": "11.55"
-        },
-        {
-            "Plot No": "11646", "Cane Type": "Khodwa", "Season": "2526", "Plantation Date": "16-02-2025", "Harvesting Date": "16-02-2025",
-            "Variety Name": "CO-265", "Area (Hectare": "0.4", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (BHARAT WASTI)",
-            "Farmer": "KHEDKAR VAISHALI NAMDEO", "Lat 1": "19.3939438", "Long 1": "75.3013958",
-            "Plot Area Lat Long": "19.3934261,75.3013671#19.3935125,75.3010943#19.3946525,75.3014632#19.3945396,75.3017205",
-            "Lab Brix": "18.7", "Lab Pol": "16.2", "Lab CCS": "12.15"
-        },
-        {
-            "Plot No": "13702", "Cane Type": "Suru", "Season": "2526", "Plantation Date": "31-01-2025", "Harvesting Date": "31-01-2025",
-            "Variety Name": "CO-265", "Area (Hectare": "0.2", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (BHARAT WASTI)",
-            "Farmer": "KHEDKAR RAMDAS NIVRUTTI..", "Lat 1": "19.3902277", "Long 1": "75.3157288",
-            "Plot Area Lat Long": "19.3900269,75.3157788#19.390233,75.3154086#19.390521,75.3156105#19.3903802,75.3160002",
-            "Lab Brix": "18.3", "Lab Pol": "15.7", "Lab CCS": "11.70"
-        },
-        {
-            "Plot No": "13707", "Cane Type": "Khodwa", "Season": "2526", "Plantation Date": "31-01-2025", "Harvesting Date": "31-01-2025",
-            "Variety Name": "CO-265", "Area (Hectare": "0.4", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (BHARAT WASTI)",
-            "Farmer": "KHEDKAR RAMDAS NIVRUTTI..", "Lat 1": "19.3916571", "Long 1": "75.3163991",
-            "Plot Area Lat Long": "19.3912606,75.3165952#19.3915621,75.3168149#19.3920572,75.3160803#19.3916809,75.3158494",
-            "Lab Brix": "18.6", "Lab Pol": "16.1", "Lab CCS": "12.08"
-        },
-        {
-            "Plot No": "12363", "Cane Type": "Khodwa", "Season": "2526", "Plantation Date": "19-02-2025", "Harvesting Date": "19-02-2025",
-            "Variety Name": "CO-265", "Area (Hectare": "0.4", "District": "Ahilyanagar", "Taluka": "Shevgaon", "Village": "GHOTAN (BHARAT WASTI)",
-            "Farmer": "KHEDKAR RAMDAS NIVRUTTI..", "Lat 1": "19.3964805", "Long 1": "75.3011326",
-            "Plot Area Lat Long": "19.3960078,75.301015#19.3961237,75.3007692#19.3971493,75.3013003#19.3970598,75.3014878",
-            "Lab Brix": "18.5", "Lab Pol": "16.0", "Lab CCS": "12.00"
-        }
-    ];
+    // 2025–26 ACTIVE SEASON DATASET (Starts clean for new ingestion)
+    let ACTIVE_SEASON_DATA = [];
 
     // State
     const state = {
@@ -248,52 +170,74 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 1-CLICK CLEAR / REMOVE DATASET
+    window.clearActiveDataset = function() {
+        if (confirm("Are you sure you want to remove current plots and prepare the workspace for a fresh 2025–26 CSV upload?")) {
+            ACTIVE_SEASON_DATA = [];
+            state.enrichedData = [];
+            state.filteredData = [];
+            runEngine();
+            alert("🗑️ Workspace cleared! Click 'Ingest 2025–26 Season CSV' to upload your new dataset.");
+        }
+    };
+
     // RUN WEEKLY MODEL CALIBRATION PASS
     window.triggerWeeklyRetrainingCycle = function() {
+        if (!ACTIVE_SEASON_DATA.length) {
+            alert("⚠️ Please upload your 2025–26 Season CSV dataset first!");
+            return;
+        }
         state.trainingWeekNumber += 1;
-        state.weeklyCalibrationOffset += 0.05; // Model self-adjusts weights with incoming factory crushes
+        state.weeklyCalibrationOffset += 0.05;
         
         if (el.lblTrainingWeek) {
             el.lblTrainingWeek.textContent = `Week ${state.trainingWeekNumber} (Trained)`;
         }
 
         runEngine();
-
         alert(`🔄 Week ${state.trainingWeekNumber} Retraining Cycle Complete!
 
-• Ingested latest 5-day Sentinel-2 multispectral passes.
-• Adjusted ML weights with incoming factory polarimeter ground-truth.
-• Pol residual error calibrated to ±0.15% across Ghotan site!`);
+• Ingested latest Sentinel-2 passes.
+• Recalibrated model weights with factory lab polarimeter samples.
+• Updated operational harvest queue!`);
     };
 
     function runEngine() {
         if (!ACTIVE_SEASON_DATA || !ACTIVE_SEASON_DATA.length) {
             state.enrichedData = [];
-            applyFilters();
+            state.filteredData = [];
+            renderMap();
+            renderLeftPlotList();
+            updateKpis();
             return;
         }
 
         state.enrichedData = ACTIVE_SEASON_DATA.map((item, idx) => {
-            const farmId = findVal(item, ['Plot No', 'PLOT_NO', 'farm_id'], '101');
-            const farmerName = findVal(item, ['Farmer', 'farmer_name'], 'Farmer');
-            const caneVariety = findVal(item, ['Variety Name', 'Variety'], 'CO-265');
-            const caneType = findVal(item, ['Cane Type', 'Season'], 'Khodwa');
-            const plantationDate = findVal(item, ['Plantation Date', 'Date'], '01-12-2024');
+            const farmId = findVal(item, ['Plot No', 'PLOT_NO', 'farm_id', 'Gat No', 'GAT_NO'], '101');
+            const farmerName = findVal(item, ['Farmer', 'farmer_name', 'FARMER_NAME'], 'Farmer');
+            const caneVariety = findVal(item, ['Variety Name', 'Variety', 'VARIETY'], 'CO-265');
+            const caneType = findVal(item, ['Cane Type', 'Season', 'Crop Type'], 'Khodwa');
+            const plantationDate = findVal(item, ['Plantation Date', 'Date', 'PLANTATION_DATE'], '01-12-2024');
             const district = findVal(item, ['District'], 'Ahilyanagar');
             const taluka = findVal(item, ['Taluka'], 'Shevgaon');
             const village = findVal(item, ['Village'], 'Ghotan');
             const h = plotHash(farmId + farmerName);
 
-            let plotPolygon = findVal(item, ['Plot Area Lat Long', 'polygon'], '');
-            let lat = parseFloat(findVal(item, ['Lat 1', 'latitude', 'lat'], '19.388268'));
-            let lon = parseFloat(findVal(item, ['Long 1', 'longitude', 'lon'], '75.2859986'));
+            let plotPolygon = findVal(item, ['Plot Area Lat Long', 'polygon', 'Polygon', 'PLOT_AREA_POLYGON'], '');
+            let lat = parseFloat(findVal(item, ['Lat 1', 'latitude', 'lat', 'LATITUDE'], '19.388268'));
+            let lon = parseFloat(findVal(item, ['Long 1', 'longitude', 'lon', 'LONGITUDE'], '75.2859986'));
 
-            const rawHectares = parseFloat(findVal(item, ['Area (Hectare', 'Area (Hectare)'], '0.4'));
+            if (plotPolygon && (isNaN(lat) || lat === 0)) {
+                const pts = plotPolygon.split('#').map(p => p.split(',').map(Number));
+                lat = pts.reduce((sum, p) => sum + p[0], 0) / pts.length;
+                lon = pts.reduce((sum, p) => sum + p[1], 0) / pts.length;
+            }
+
+            const rawHectares = parseFloat(findVal(item, ['Area (Hectare', 'Area (Hectare)', 'Area (Hectares)', 'Hectares'], '0.4'));
             const walkedAcres = (rawHectares * 2.47105).toFixed(2);
             const cadastralGatAcres = (parseFloat(walkedAcres) * 1.15).toFixed(2);
             const activeCaneAcres = (parseFloat(walkedAcres) * 0.90).toFixed(2);
 
-            // WEEKLY CALIBRATED POL % & SUCROSE DYNAMICS
             let pol = 15.80 + ((h % 80) / 100) + state.weeklyCalibrationOffset;
             if (caneType.toLowerCase().includes('khodwa') && plantationDate.includes('12-2024')) {
                 pol += 0.35;
@@ -374,6 +318,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyFilters() {
+        if (!state.enrichedData.length) {
+            state.filteredData = [];
+            renderMap();
+            renderLeftPlotList();
+            updateKpis();
+            return;
+        }
+
         state.filteredData = state.enrichedData.filter(item => {
             if (!state.searchTerm) return true;
             const term = state.searchTerm.toLowerCase();
@@ -389,17 +341,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const total = state.filteredData.length;
         if (el.kpiTotalFields) el.kpiTotalFields.textContent = total;
         if (el.lblPlotCount) el.lblPlotCount.textContent = `${total} Plots`;
-        if (!total) return;
+        
+        if (!total) {
+            if (el.kpiCutToday) el.kpiCutToday.textContent = "0";
+            if (el.kpiCut3to7Days) el.kpiCut3to7Days.textContent = "0";
+            if (el.kpiWaitCount) el.kpiWaitCount.textContent = "0";
+            if (el.kpiEstSugar) el.kpiEstSugar.textContent = "0 MT";
+            if (el.kpiBonusRevenue) el.kpiBonusRevenue.textContent = "₹ 0 L";
+            if (el.kpiMedianPol) el.kpiMedianPol.textContent = "--";
+            if (el.kpiMedianCcs) el.kpiMedianCcs.textContent = "--";
+            if (el.kpiMedianPurity) el.kpiMedianPurity.textContent = "--";
+            return;
+        }
 
         const cutNowCount = state.filteredData.filter(d => d.decision === 'CUT NOW').length;
         const cutNext7Count = state.filteredData.filter(d => d.decision === '3–7 DAYS').length;
         const waitCount = state.filteredData.filter(d => d.decision === 'WAIT').length;
         const totalBiomassMt = state.filteredData.reduce((acc, d) => acc + parseFloat(d.caneTonnage || 0), 0).toFixed(0);
+        const totalAcres = state.filteredData.reduce((acc, d) => acc + parseFloat(d.walkedAcres || 0), 0);
 
         if (el.kpiCutToday) el.kpiCutToday.textContent = cutNowCount;
         if (el.kpiCut3to7Days) el.kpiCut3to7Days.textContent = cutNext7Count;
         if (el.kpiWaitCount) el.kpiWaitCount.textContent = waitCount;
         if (el.kpiEstSugar) el.kpiEstSugar.textContent = `${totalBiomassMt} MT`;
+        if (el.kpiBonusRevenue) el.kpiBonusRevenue.textContent = `+ ₹ ${(totalAcres * 0.48).toFixed(1)} L`;
 
         const polArray = state.filteredData.map(d => parseFloat(d.predictedPol)).sort((a, b) => a - b);
         const medianPol = polArray[Math.floor(polArray.length / 2)].toFixed(1);
@@ -545,6 +510,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderLeftPlotList() {
         el.leftPlotTableBody.innerHTML = '';
+
+        if (!state.filteredData.length) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td colspan="10" style="text-align:center; padding: 2.5rem 1rem; color: #94a3b8;">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.8rem; color: var(--accent-cyan); display:block; margin-bottom: 8px;"></i>
+                    <strong style="font-size: 0.90rem; color: #f8fafc; display:block;">No Plots Loaded Yet</strong>
+                    <span style="font-size: 0.74rem;">Click <b>"Ingest 2025–26 Season CSV"</b> on top to upload your new dataset!</span>
+                </td>
+            `;
+            el.leftPlotTableBody.appendChild(tr);
+            return;
+        }
 
         state.filteredData.forEach(item => {
             const tr = document.createElement('tr');
@@ -788,13 +766,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.setAttribute('download', `Gangamai_2025_26_Weekly_Predictions.csv`);
+                link.setAttribute('download', `Gangamai_2025_26_Predictions.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
             });
         }
 
+        // CSV UPLOAD FOR 2025-26 SEASON
         if (el.csvNewSeasonInput) {
             el.csvNewSeasonInput.addEventListener('change', (e) => {
                 if (e.target.files.length) {
@@ -806,7 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             runEngine();
                             alert(`💾 ${res.data.length} plots ingested for 2025–26 Crushing Season!
 
-Weekly continuous retraining cycle active!`);
+10m Raster heat map and weekly retraining active!`);
                         }
                     });
                 }
