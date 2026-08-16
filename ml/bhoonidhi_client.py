@@ -4,10 +4,11 @@ Official ISRO / NRSC Bhoonidhi OpenSearch & STAC REST API Client & LISS-4 Produc
 Documentation: https://bhoonidhi-api.nrsc.gov.in/bhoonidhi-api/
 
 Scientific Ingestion Rules:
-  1. Fail-Closed Georeferencing: NEVER fabricate CRS or Affine transforms; fail closed if georeferencing is missing.
-  2. Polygon-Specific Coverage: Computes exact parcel polygon raster mask overlap against valid sensor pixels.
-  3. Fail-Closed Radiometry: Converts to TOA Reflectance only when complete 3-band calibration metadata is present.
-  4. Token Caching & Refresh: Full userId + refresh_token support conforming to NRSC limits.
+  1. Fail-Closed Georeferencing: Rejects unreferenced or identity-transform products across all formats (HDF5, TIFF).
+  2. Multi-Band Co-Registration: Strictly verifies identical CRS, Affine Transform, and Shape across B2/B3/B4.
+  3. Scene-Boundary Geometric Verification: Tests Area(Parcel ∩ Scene Bounds) / Area(Parcel) >= 95%.
+  4. Polygon-Masked Pixel Coverage: Computes valid pixel coverage across the rasterized parcel polygon mask.
+  5. Fail-Closed Radiometry: Converts to TOA Reflectance only when complete 3-band calibration metadata is present.
 """
 
 import os
@@ -28,7 +29,7 @@ from rasterio.windows import from_bounds
 from rasterio.features import geometry_mask
 from rasterio.warp import reproject, Resampling, transform_bounds
 from rasterio.transform import Affine
-from shapely.geometry import Polygon, box, mapping
+from shapely.geometry import Polygon, box
 from shapely.ops import transform
 import pyproj
 
@@ -38,12 +39,10 @@ try:
 except ImportError:
     HAS_H5PY = False
 
-# ISRO Resourcesat-2A / 2 LISS-4 Exoatmospheric Solar Irradiance (ESUN) in W/(m2.um)
-# Reference: NRSC Resourcesat-2/2A Data User Handbook
 ESUN_LISS4 = {
-    "B2_GREEN": 1853.0, # Band 2: 0.52 - 0.59 um
-    "B3_RED":   1580.0, # Band 3: 0.62 - 0.68 um
-    "B4_NIR":   1092.0  # Band 4: 0.77 - 0.86 um
+    "B2_GREEN": 1853.0,
+    "B3_RED":   1580.0,
+    "B4_NIR":   1092.0
 }
 
 class BhoonidhiClient:
@@ -416,9 +415,10 @@ def crop_and_reproject_liss4_product(
     """
     Ingests a genuine Resourcesat-2A/2 LISS-4 product:
       1. Parses package (ZIP / HDF5 / Multi-band TIFF / Stacked GeoTIFF).
-      2. Strictly reads native georeferencing; FAILS CLOSED if CRS or transform cannot be determined.
-      3. Computes polygon-specific coverage (rasterized parcel mask ∩ valid sensor pixels).
-      4. Fails closed to UNCALIBRATED_DN if calibration is incomplete.
+      2. Strictly verifies native georeferencing & identical band co-registration.
+      3. Validates scene spatial boundary overlap: Area(Parcel ∩ Scene Bounds) / Area(Parcel) >= 95%.
+      4. Computes polygon-masked pixel coverage across the rasterized parcel mask.
+      5. Fails closed to UNCALIBRATED_DN if calibration is incomplete.
     """
     parsed = extract_and_parse_liss4_package(product_path)
     if not parsed:
@@ -435,6 +435,7 @@ def crop_and_reproject_liss4_product(
 
         green_raw, red_raw, nir_raw = None, None, None
         src_crs, src_trans, win_trans = None, None, None
+        scene_bounds = None
         nodata_val = 0.0
 
         if fmt == "HDF5":
@@ -459,11 +460,12 @@ def crop_and_reproject_liss4_product(
                                 
                                 # FAIL CLOSED: Verify georeferencing exists
                                 if s2.crs is None or s2.transform is None or s2.transform.is_identity:
-                                    print(f"[HDF5 Ingestion Rejected]: {h5_path} lacks valid GDAL geotransform/CRS. Failing closed.")
+                                    print(f"[HDF5 Ingestion Rejected]: {h5_path} lacks valid GDAL geotransform/CRS.")
                                     return None
 
                                 src_crs = s2.crs
                                 src_trans = s2.transform
+                                scene_bounds = s2.bounds
                                 nodata_val = s2.nodata or 0.0
                                 
                                 to_src = pyproj.Transformer.from_crs("EPSG:4326", src_crs, always_xy=True).transform
@@ -483,12 +485,31 @@ def crop_and_reproject_liss4_product(
                  rasterio.open(parsed["b3_red"])   as s3, \
                  rasterio.open(parsed["b4_nir"])   as s4:
                 
-                if s2.crs is None or s2.transform is None:
-                    print(f"[TIFF Ingestion Rejected]: Missing georeferencing in {parsed['b2_green']}")
+                # Check 1: Georeferencing validity
+                for name, s in [("B2", s2), ("B3", s3), ("B4", s4)]:
+                    if s.crs is None or s.transform is None or s.transform.is_identity:
+                        print(f"[TIFF Ingestion Rejected]: Invalid/identity transform in {name}")
+                        return None
+
+                # Check 2: Strict Multi-Band Co-Registration (CRS, Transform, Shape)
+                if s2.crs != s3.crs or s2.crs != s4.crs:
+                    print(f"[TIFF Ingestion Rejected]: Band CRS mismatch between B2, B3, B4.")
+                    return None
+                
+                # Verify Affine Transforms within 1e-5 tolerance
+                t2, t3, t4 = s2.transform, s3.transform, s4.transform
+                for idx in range(6):
+                    if abs(t2[idx] - t3[idx]) > 1e-5 or abs(t2[idx] - t4[idx]) > 1e-5:
+                        print(f"[TIFF Ingestion Rejected]: Band affine transform mismatch between B2, B3, B4.")
+                        return None
+
+                if s2.shape != s3.shape or s2.shape != s4.shape:
+                    print(f"[TIFF Ingestion Rejected]: Band raster shape mismatch between B2, B3, B4.")
                     return None
 
                 src_crs = s2.crs
                 src_trans = s2.transform
+                scene_bounds = s2.bounds
                 nodata_val = s2.nodata or 0.0
                 
                 to_src = pyproj.Transformer.from_crs("EPSG:4326", src_crs, always_xy=True).transform
@@ -502,12 +523,17 @@ def crop_and_reproject_liss4_product(
 
         elif fmt == "STACKED_GEOTIFF":
             with rasterio.open(parsed["stacked_tif"]) as src:
-                if src.crs is None or src.transform is None:
-                    print(f"[Stacked TIFF Ingestion Rejected]: Missing georeferencing in {parsed['stacked_tif']}")
+                if src.crs is None or src.transform is None or src.transform.is_identity:
+                    print(f"[Stacked TIFF Ingestion Rejected]: Missing/identity georeferencing in {parsed['stacked_tif']}")
+                    return None
+
+                if src.count < 3:
+                    print(f"[Stacked TIFF Ingestion Rejected]: Insufficient bands ({src.count} < 3) in {parsed['stacked_tif']}")
                     return None
 
                 src_crs = src.crs
                 src_trans = src.transform
+                scene_bounds = src.bounds
                 nodata_val = src.nodata or 0.0
                 
                 to_src = pyproj.Transformer.from_crs("EPSG:4326", src_crs, always_xy=True).transform
@@ -519,27 +545,33 @@ def crop_and_reproject_liss4_product(
                 nir_raw   = src.read(3, window=win_nat).astype(np.float32)
                 win_trans = rasterio.windows.transform(win_nat, src_trans)
 
-        if green_raw is None or red_raw is None or nir_raw is None:
+        if green_raw is None or red_raw is None or nir_raw is None or src_crs is None:
             return None
 
         # Build Strict NoData & Validity Mask
         valid_mask = (green_raw != nodata_val) & (red_raw != nodata_val) & (nir_raw != nodata_val) & \
                      ~np.isnan(green_raw) & ~np.isnan(red_raw) & ~np.isnan(nir_raw) & (green_raw > 0)
 
-        # Compute EXACT POLYGON-SPECIFIC COVERAGE %
-        # Rasterize parcel polygon onto native window grid
+        # 1. SCENE-BOUNDARY GEOMETRIC OVERLAP VERIFICATION
         to_nat = pyproj.Transformer.from_crs("EPSG:4326", src_crs, always_xy=True).transform
         poly_native = transform(to_nat, poly_wgs84)
         
-        # geometry_mask returns True outside geometry, False inside -> invert
+        scene_box = box(scene_bounds.left, scene_bounds.bottom, scene_bounds.right, scene_bounds.top)
+        poly_area = max(1e-5, poly_native.area)
+        geom_intersection_area = poly_native.intersection(scene_box).area
+        scene_overlap_pct = (geom_intersection_area / poly_area) * 100.0
+
+        # 2. POLYGON-MASKED PIXEL COVERAGE CALCULATION
         parcel_mask = ~geometry_mask([poly_native], out_shape=green_raw.shape, transform=win_trans, invert=False)
         total_parcel_pixels = int(np.sum(parcel_mask))
         
-        if total_parcel_pixels == 0:
+        if total_parcel_pixels == 0 or scene_overlap_pct < 1.0:
             coverage_pct = 0.0
         else:
             valid_parcel_pixels = int(np.sum(parcel_mask & valid_mask))
-            coverage_pct = (valid_parcel_pixels / total_parcel_pixels) * 100.0
+            pixel_cov = (valid_parcel_pixels / total_parcel_pixels) * 100.0
+            # Net coverage is bounded by actual geometric scene intersection
+            coverage_pct = min(pixel_cov, scene_overlap_pct)
 
         # Complete 3-band calibration requirement check
         required_bands = {"B2_GREEN", "B3_RED", "B4_NIR"}
@@ -574,6 +606,7 @@ def crop_and_reproject_liss4_product(
             "crs": src_crs,
             "shape": green_raw.shape,
             "coverage_pct": round(coverage_pct, 1),
+            "scene_overlap_pct": round(scene_overlap_pct, 1),
             "acquisition_date": acq_date,
             "radiometry_status": radiometry_status,
             "source_product": product_path

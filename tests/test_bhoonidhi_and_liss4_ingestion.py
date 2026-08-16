@@ -1,7 +1,7 @@
 ﻿"""
 tests/test_bhoonidhi_and_liss4_ingestion.py
-Unit tests for ISRO Bhoonidhi REST Client, Fail-Closed Georeferencing,
-Exact Polygon-Specific Coverage, Fail-Closed Radiometry, and Physical Gate Blocking.
+Comprehensive unit tests for ISRO Bhoonidhi REST Client, Fail-Closed Georeferencing,
+Scene-Boundary Geometric Verification, Multi-Band Alignment, and Fail-Closed Radiometry.
 """
 
 import os
@@ -64,9 +64,8 @@ def test_exact_polygon_specific_coverage_calculation():
         tif_path = os.path.join(tmpdir, "test_coverage.tif")
         transform_affine = Affine(5.8, 0, 500000, 0, -5.8, 2135000)
         
-        # Create a 100x100 raster where left half is valid (500 DN) and right half is nodata (0 DN)
         arr = np.zeros((3, 100, 100), dtype=np.float32)
-        arr[:, :, :50] = 500.0
+        arr[:, :, :50] = 500.0 # Left half valid, right half nodata
         
         with rasterio.open(
             tif_path, "w",
@@ -80,8 +79,6 @@ def test_exact_polygon_specific_coverage_calculation():
         ) as dst:
             dst.write(arr)
             
-        # Polygon A: completely within the valid left half -> Expected ~100% coverage
-        # (X from 500050 to 500200, Y from 2134800 to 2134950)
         to_wgs = pyproj.Transformer.from_crs("EPSG:32643", "EPSG:4326", always_xy=True).transform
         poly_utm_a = Polygon([(500050, 2134800), (500200, 2134800), (500200, 2134950), (500050, 2134950)])
         poly_wgs_a = transform(to_wgs, poly_utm_a)
@@ -90,14 +87,97 @@ def test_exact_polygon_specific_coverage_calculation():
         assert res_a is not None
         assert res_a["coverage_pct"] >= 99.0
 
-        # Polygon B: spans across the middle (half valid, half nodata) -> Expected ~50% coverage
-        # (X from 500200 to 500400, where boundary is at X = 500000 + 50*5.8 = 500290)
         poly_utm_b = Polygon([(500200, 2134800), (500400, 2134800), (500400, 2134950), (500200, 2134950)])
         poly_wgs_b = transform(to_wgs, poly_utm_b)
         
         res_b = crop_and_reproject_liss4_product(tif_path, poly_wgs_b)
         assert res_b is not None
         assert 40.0 <= res_b["coverage_pct"] <= 55.0
+
+def test_parcel_partially_outside_scene_boundary():
+    """Verifies that when a parcel crosses the outer satellite scene boundary, coverage falls proportionally."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tif_path = os.path.join(tmpdir, "scene_edge.tif")
+        # 100x100 raster starting at X=500000, Y=2135000 (X max = 500580)
+        transform_affine = Affine(5.8, 0, 500000, 0, -5.8, 2135000)
+        arr = np.full((3, 100, 100), 500.0, dtype=np.float32) # All pixels valid inside scene
+        
+        with rasterio.open(
+            tif_path, "w",
+            driver="GTiff",
+            height=100, width=100,
+            count=3,
+            dtype=np.float32,
+            crs="EPSG:32643",
+            transform=transform_affine,
+            nodata=0.0
+        ) as dst:
+            dst.write(arr)
+            
+        to_wgs = pyproj.Transformer.from_crs("EPSG:32643", "EPSG:4326", always_xy=True).transform
+        # Polygon spanning from X=500480 to 500680 (100m inside, 100m outside scene)
+        poly_utm_outside = Polygon([(500480, 2134800), (500680, 2134800), (500680, 2134950), (500480, 2134950)])
+        poly_wgs_outside = transform(to_wgs, poly_utm_outside)
+        
+        res = crop_and_reproject_liss4_product(tif_path, poly_wgs_outside)
+        assert res is not None
+        assert res["scene_overlap_pct"] <= 60.0
+        assert res["coverage_pct"] <= 60.0 # Bounded by geometric intersection
+
+def test_band_alignment_mismatch_rejection():
+    """Verifies that individual band TIFFs with mismatched affine transforms are rejected."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        b2_path = os.path.join(tmpdir, "BAND2.tif")
+        b3_path = os.path.join(tmpdir, "BAND3.tif")
+        b4_path = os.path.join(tmpdir, "BAND4.tif")
+        
+        t_b2 = Affine(5.8, 0, 500000, 0, -5.8, 2135000)
+        t_b3_shifted = Affine(5.8, 0, 500050, 0, -5.8, 2135000) # 50m shift!
+        
+        arr = np.full((1, 50, 50), 400.0, dtype=np.float32)
+        
+        for p, trans in [(b2_path, t_b2), (b3_path, t_b3_shifted), (b4_path, t_b2)]:
+            with rasterio.open(p, "w", driver="GTiff", height=50, width=50, count=1, dtype=np.float32, crs="EPSG:32643", transform=trans) as dst:
+                dst.write(arr)
+                
+        to_wgs = pyproj.Transformer.from_crs("EPSG:32643", "EPSG:4326", always_xy=True).transform
+        poly_utm = Polygon([(500050, 2134800), (500150, 2134800), (500150, 2134900), (500050, 2134900)])
+        poly_wgs = transform(to_wgs, poly_utm)
+        
+        # Ingestion of multi-file directory must fail closed
+        res = crop_and_reproject_liss4_product(tmpdir, poly_wgs)
+        assert res is None
+
+def test_identity_transform_geotiff_rejection():
+    """Verifies that GeoTIFFs with identity transforms are rejected."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tif_path = os.path.join(tmpdir, "identity_trans.tif")
+        arr = np.full((3, 50, 50), 500.0, dtype=np.float32)
+        
+        with rasterio.open(
+            tif_path, "w", driver="GTiff", height=50, width=50, count=3, dtype=np.float32, crs="EPSG:32643", transform=Affine.identity()
+        ) as dst:
+            dst.write(arr)
+            
+        poly_wgs = Polygon([(75.001, 19.305), (75.002, 19.305), (75.002, 19.306), (75.001, 19.306)])
+        res = crop_and_reproject_liss4_product(tif_path, poly_wgs)
+        assert res is None
+
+def test_stacked_geotiff_insufficient_bands_rejection():
+    """Verifies that stacked GeoTIFFs with fewer than 3 bands are rejected."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tif_path = os.path.join(tmpdir, "two_bands.tif")
+        arr = np.full((2, 50, 50), 500.0, dtype=np.float32) # Only 2 bands
+        trans = Affine(5.8, 0, 500000, 0, -5.8, 2135000)
+        
+        with rasterio.open(
+            tif_path, "w", driver="GTiff", height=50, width=50, count=2, dtype=np.float32, crs="EPSG:32643", transform=trans
+        ) as dst:
+            dst.write(arr)
+            
+        poly_wgs = Polygon([(75.001, 19.305), (75.002, 19.305), (75.002, 19.306), (75.001, 19.306)])
+        res = crop_and_reproject_liss4_product(tif_path, poly_wgs)
+        assert res is None
 
 @pytest.mark.skipif(not HAS_H5PY, reason="h5py not installed")
 def test_fail_closed_on_unreferenced_hdf5():
@@ -110,7 +190,6 @@ def test_fail_closed_on_unreferenced_hdf5():
             hf.create_dataset("Band4", data=np.full((50, 50), 600, dtype=np.uint16))
             
         poly_wgs = Polygon([(75.000, 19.305), (75.003, 19.305), (75.003, 19.308), (75.000, 19.308)])
-        # Must fail closed and return None
         res = crop_and_reproject_liss4_product(h5_path, poly_wgs)
         assert res is None
 
