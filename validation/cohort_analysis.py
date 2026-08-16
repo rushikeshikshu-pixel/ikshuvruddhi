@@ -17,6 +17,7 @@ def analyze_cohorts(csv_path=CSV_PATH):
         return
         
     df = pd.read_csv(csv_path)
+    disc_col = "registered_cane_canopy_discrepancy" if "registered_cane_canopy_discrepancy" in df.columns else "standing_cane_discrepancy_score"
     stratum_col = "diagnostic_stratum" if "diagnostic_stratum" in df.columns else "primary_error_attribution"
     
     print("==================================================================")
@@ -25,38 +26,39 @@ def analyze_cohorts(csv_path=CSV_PATH):
     print(f" Total Plots: {len(df)}")
     print("==================================================================")
     
-    print(f" Overall Dataset Metrics (N={len(df)}):")
+    valid_df = df[df["mean_field_ndvi"].notnull()]
+    print(f" Overall Dataset Metrics (N={len(df)} total, {len(valid_df)} usable):")
     print(f"   -> Mean Usable Observation Coverage        : {df['parcel_valid_observation_pct'].mean():.2f}%")
-    print(f"   -> Mean Parcel-Masked NDVI                 : {df['mean_field_ndvi'].mean():.3f}")
-    print(f"   -> Mean Parcel-Masked NDRE                 : {df['mean_field_ndre'].mean():.3f}")
-    print(f"   -> Mean Parcel-Masked LSWI                 : {df['mean_field_lswi'].mean():.3f}")
+    print(f"   -> Mean Parcel-Masked NDVI                 : {valid_df['mean_field_ndvi'].mean():.3f}")
+    print(f"   -> Mean Parcel-Masked NDRE                 : {valid_df['mean_field_ndre'].mean():.3f}")
+    print(f"   -> Mean Parcel-Masked LSWI                 : {valid_df['mean_field_lswi'].mean():.3f}")
     print(f"   -> Mean Parcel Canopy Occupancy            : {df['parcel_cane_occupancy_pct'].mean():.2f}%")
     print(f"   -> Mean Strict Parcel IoU                  : {df['strict_parcel_iou_pct'].mean():.2f}%")
-    print(f"   -> Mean Standing Cane Discrepancy Score    : {df['standing_cane_discrepancy_score'].mean():.3f}")
+    print(f"   -> Mean Registered Cane Discrepancy        : {df[disc_col].mean():.3f}")
     print("------------------------------------------------------------------")
     
-    high_ndvi = df[df['mean_field_ndvi'] >= 0.55]
+    high_ndvi = valid_df[valid_df['mean_field_ndvi'] >= 0.55]
     print(f" Registered Cane + Strong Standing Canopy (NDVI >= 0.55, N={len(high_ndvi)}):")
     print(f"   -> Mean Parcel-Masked NDVI                 : {high_ndvi['mean_field_ndvi'].mean():.3f}")
     print(f"   -> Mean Parcel Canopy Occupancy            : {high_ndvi['parcel_cane_occupancy_pct'].mean():.2f}%")
     print(f"   -> Mean Strict Parcel IoU                  : {high_ndvi['strict_parcel_iou_pct'].mean():.2f}%")
-    print(f"   -> Mean Standing Cane Discrepancy Score    : {high_ndvi['standing_cane_discrepancy_score'].mean():.3f}")
+    print(f"   -> Mean Registered Cane Discrepancy        : {high_ndvi[disc_col].mean():.3f}")
     print("------------------------------------------------------------------")
 
-    mid_ndvi = df[(df['mean_field_ndvi'] >= 0.35) & (df['mean_field_ndvi'] < 0.55)]
+    mid_ndvi = valid_df[(valid_df['mean_field_ndvi'] >= 0.35) & (valid_df['mean_field_ndvi'] < 0.55)]
     print(f" Partial / Stressed / Mixed Canopy Stratum (0.35 <= NDVI < 0.55, N={len(mid_ndvi)}):")
     print(f"   -> Mean Parcel-Masked NDVI                 : {mid_ndvi['mean_field_ndvi'].mean():.3f}")
     print(f"   -> Mean Parcel Canopy Occupancy            : {mid_ndvi['parcel_cane_occupancy_pct'].mean():.2f}%")
     print(f"   -> Mean Strict Parcel IoU                  : {mid_ndvi['strict_parcel_iou_pct'].mean():.2f}%")
-    print(f"   -> Mean Standing Cane Discrepancy Score    : {mid_ndvi['standing_cane_discrepancy_score'].mean():.3f}")
+    print(f"   -> Mean Registered Cane Discrepancy        : {mid_ndvi[disc_col].mean():.3f}")
     print("------------------------------------------------------------------")
     
-    low_ndvi = df[df['mean_field_ndvi'] < 0.35]
+    low_ndvi = valid_df[valid_df['mean_field_ndvi'] < 0.35]
     print(f" No Strong Standing Canopy / Fallow Stratum (NDVI < 0.35, N={len(low_ndvi)}):")
     print(f"   -> Mean Parcel-Masked NDVI                 : {low_ndvi['mean_field_ndvi'].mean():.3f}")
     print(f"   -> Mean Parcel Canopy Occupancy            : {low_ndvi['parcel_cane_occupancy_pct'].mean():.2f}%")
     print(f"   -> Mean Strict Parcel IoU                  : {low_ndvi['strict_parcel_iou_pct'].mean():.2f}%")
-    print(f"   -> Mean Standing Cane Discrepancy Score    : {low_ndvi['standing_cane_discrepancy_score'].mean():.3f}")
+    print(f"   -> Mean Registered Cane Discrepancy        : {low_ndvi[disc_col].mean():.3f}")
     print("------------------------------------------------------------------")
     
     print(" Diagnostic Stratum Breakdown:")
