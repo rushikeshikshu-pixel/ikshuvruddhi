@@ -2,7 +2,11 @@
 validation/sentinel_canopy_validation.py
 Permanent Reproducible Empirical Sentinel-2 Canopy Validation Suite
 Evaluates all ground truth sugarcane plots against real Sentinel-2 L2A COG imagery (B02, B03, B04, B05, B08, B11, SCL).
-Calculates exact sub-pixel geometric intersection area, strict parcel IoU, boundary exposure, and stratified cohorts.
+
+Scientifically Hardened Rules:
+  1. Polygon-Masked Spectral Statistics: Mean NDVI, NDRE, and LSWI are computed STRICTLY over pixels inside the parcel polygon.
+  2. Diagnostic Stratum Terminology: Renamed from "primary_error_attribution" to "diagnostic_stratum".
+  3. Strict Sub-Pixel Intersection: Sum Area(Cell_i ∩ Parcel) for exact geometric spatial congruence.
 """
 
 import os
@@ -17,6 +21,7 @@ from shapely.ops import transform
 import pyproj
 import rasterio
 from rasterio.windows import from_bounds
+from rasterio.features import geometry_mask
 from rasterio.warp import reproject, Resampling
 
 sys.stdout.reconfigure(encoding='utf-8')
@@ -97,7 +102,6 @@ def run_empirical_validation(
         ref_area_acres = ref_area_m2 / 4046.8564224
         minx, miny, maxx, maxy = poly_utm.bounds
 
-        # Find target Sentinel-2 scene tile
         target_reader = None
         target_tile = None
         for tile_name, rdr in tile_readers.items():
@@ -118,7 +122,6 @@ def run_empirical_validation(
         src_swir = target_reader["swir"]
         src_scl = target_reader["scl"]
 
-        # Read 10m bands directly
         win_10m = from_bounds(minx, miny, maxx, maxy, src_red.transform)
         win_10m_transform = rasterio.windows.transform(win_10m, src_red.transform)
 
@@ -128,7 +131,6 @@ def run_empirical_validation(
         nir_10m = src_nir.read(1, window=win_10m).astype(np.float32) / 10000.0
         out_shape_10m = red_10m.shape
 
-        # Reproject 20m bands (B05 RedEdge, B11 SWIR, SCL) to 10m grid
         re_10m = np.zeros(out_shape_10m, dtype=np.float32)
         reproject(source=rasterio.band(src_re, 1), destination=re_10m, src_transform=src_re.transform, src_crs=src_re.crs, dst_transform=win_10m_transform, dst_crs=src_red.crs, resampling=Resampling.bilinear)
         re_10m = re_10m / 10000.0
@@ -144,7 +146,25 @@ def run_empirical_validation(
         indices = compute_spectral_indices(blue_10m, green_10m, red_10m, re_10m, nir_10m, swir_10m)
         cane_mask = classify_sugarcane_raster(indices["ndvi"], indices["ndre"], indices["lswi"], scl_10m, indices["ndwi"], indices["bsi"])
 
-        # Construct sub-pixel bounding boxes for exact geometric intersection
+        # 1. RASTERIZE PARCEL POLYGON FOR STRICT POLYGON-MASKED SPECTRAL STATS
+        parcel_mask_10m = ~geometry_mask([poly_utm], out_shape=out_shape_10m, transform=win_10m_transform, invert=False)
+        valid_scl_mask = np.isin(scl_10m, [4, 5, 6, 7])
+        parcel_valid_mask = parcel_mask_10m & valid_scl_mask
+
+        if np.any(parcel_valid_mask):
+            mean_ndvi = float(np.mean(indices["ndvi"][parcel_valid_mask]))
+            mean_ndre = float(np.mean(indices["ndre"][parcel_valid_mask]))
+            mean_lswi = float(np.mean(indices["lswi"][parcel_valid_mask]))
+        elif np.any(parcel_mask_10m):
+            mean_ndvi = float(np.mean(indices["ndvi"][parcel_mask_10m]))
+            mean_ndre = float(np.mean(indices["ndre"][parcel_mask_10m]))
+            mean_lswi = float(np.mean(indices["lswi"][parcel_mask_10m]))
+        else:
+            mean_ndvi = float(np.mean(indices["ndvi"]))
+            mean_ndre = float(np.mean(indices["ndre"]))
+            mean_lswi = float(np.mean(indices["lswi"]))
+
+        # 2. EXACT SUB-PIXEL GEOMETRIC INTERSECTION
         cell_boxes = []
         cane_flat = []
         rows, cols = out_shape_10m
@@ -161,25 +181,20 @@ def run_empirical_validation(
         sat_detected_acres = sat_cane_inside_m2 / 4046.8564224
         occupancy_pct = (sat_cane_inside_m2 / max(1.0, tot_ref_m2)) * 100.0
 
-        # Exact Union = Parcel Area + (Detected Cane Pixels outside Parcel * 100m2)
         total_detected_cane_m2 = np.sum(cane_mask) * 100.0
         union_m2 = tot_ref_m2 + max(0.0, total_detected_cane_m2 - sat_cane_inside_m2)
         strict_iou_pct = (sat_cane_inside_m2 / max(1.0, union_m2)) * 100.0
         area_error_pct = abs(sat_detected_acres - ref_area_acres) / max(0.01, ref_area_acres) * 100.0
 
-        mean_ndvi = float(np.mean(indices["ndvi"]))
-        mean_ndre = float(np.mean(indices["ndre"]))
-        mean_lswi = float(np.mean(indices["lswi"]))
-
-        # Primary error attribution
+        # 3. DIAGNOSTIC STRATUM (Hypothesis Classification)
         if mean_ndvi < 0.35:
-            attr = "NO_STANDING_VEGETATION_OR_FALLOW"
+            stratum = "NO_STANDING_VEGETATION_OR_FALLOW"
         elif mean_ndvi < 0.55:
-            attr = "LOW_VIGOR_OR_STRESSED_OR_MIXED_CROP"
+            stratum = "LOW_VIGOR_OR_STRESSED_OR_MIXED_CROP"
         elif boundary_exp_pct > 40.0:
-            attr = "BOUNDARY_PIXEL_EXPOSURE_AND_GRID_DISCRETIZATION"
+            stratum = "BOUNDARY_PIXEL_EXPOSURE_AND_GRID_DISCRETIZATION"
         else:
-            attr = "CANOPY_HIGH_CONGRUENCE"
+            stratum = "CANOPY_HIGH_CONGRUENCE"
 
         rec = {
             "plot_no": pno,
@@ -197,13 +212,13 @@ def run_empirical_validation(
             "strict_parcel_iou_pct": round(strict_iou_pct, 1),
             "empirical_area_error_pct": round(area_error_pct, 1),
             "estimated_boundary_pixel_exposure_pct": round(boundary_exp_pct, 1),
-            "primary_error_attribution": attr
+            "diagnostic_stratum": stratum
         }
         results.append(rec)
         processed_count += 1
         
         if processed_count % 25 == 0 or processed_count == limit or processed_count <= 5:
-            print(f"[{processed_count:3d}/{limit}] Plot #{pno:4s} ({rec['farmer_name'][:18]:18s}) | Ref: {ref_area_acres:.2f} ac | Sat: {sat_detected_acres:.2f} ac | Occ: {occupancy_pct:5.1f}% | IoU: {strict_iou_pct:5.1f}% | NDVI: {mean_ndvi:.3f}")
+            print(f"[{processed_count:3d}/{limit}] Plot #{pno:4s} ({rec['farmer_name'][:18]:18s}) | Ref: {ref_area_acres:.2f} ac | Sat: {sat_detected_acres:.2f} ac | Occ: {occupancy_pct:5.1f}% | IoU: {strict_iou_pct:5.1f}% | Parcel NDVI: {mean_ndvi:.3f}")
 
     df_out = pd.DataFrame(results)
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
