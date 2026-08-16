@@ -4,9 +4,11 @@ Permanent Reproducible Empirical Sentinel-2 Canopy Validation Suite
 Evaluates all ground truth sugarcane plots against real Sentinel-2 L2A COG imagery (B02, B03, B04, B05, B08, B11, SCL).
 
 Scientifically Hardened Rules:
-  1. Polygon-Masked Spectral Statistics: Mean NDVI, NDRE, and LSWI are computed STRICTLY over pixels inside the parcel polygon.
-  2. Diagnostic Stratum Terminology: Renamed from "primary_error_attribution" to "diagnostic_stratum".
-  3. Strict Sub-Pixel Intersection: Sum Area(Cell_i ∩ Parcel) for exact geometric spatial congruence.
+  1. Polygon-Masked Spectral Statistics: Mean NDVI, NDRE, and LSWI are computed strictly over valid pixels inside the parcel polygon.
+  2. Strict Usability Mask: Valid spectral pixels are restricted to SCL in {4 (Vegetation), 5 (Bare Soils)}.
+  3. Observation Usability Tracking: Stores `parcel_valid_observation_pct` to record data quality per parcel.
+  4. Discrepancy Scoring: Computes `standing_cane_discrepancy_score = 1.0 - (sat_detected_inside_acres / source_reference_acres)`.
+  5. Operational Terminology: Uses "Registered Cane + Strong Standing Canopy" for high-vigor stratum.
 """
 
 import os
@@ -40,7 +42,7 @@ def run_empirical_validation(
     output_csv: str = "data/output/refined_empirical_sentinel_analysis_320plots.csv"
 ):
     print("==================================================================")
-    print(" IKSHU EMPIRICAL SENTINEL-2 CANOPY VALIDATION PIPELINE")
+    print(" IKSHU EMPIRICAL SENTINEL-2 CANOPY & DISCREPANCY VALIDATION")
     print(f" Target: All {limit} Ground Truth Parcels | Output: {output_csv}")
     print("==================================================================")
 
@@ -146,10 +148,15 @@ def run_empirical_validation(
         indices = compute_spectral_indices(blue_10m, green_10m, red_10m, re_10m, nir_10m, swir_10m)
         cane_mask = classify_sugarcane_raster(indices["ndvi"], indices["ndre"], indices["lswi"], scl_10m, indices["ndwi"], indices["bsi"])
 
-        # 1. RASTERIZE PARCEL POLYGON FOR STRICT POLYGON-MASKED SPECTRAL STATS
+        # 1. RASTERIZE PARCEL POLYGON & COMPUTE USABILITY
         parcel_mask_10m = ~geometry_mask([poly_utm], out_shape=out_shape_10m, transform=win_10m_transform, invert=False)
-        valid_scl_mask = np.isin(scl_10m, [4, 5, 6, 7])
+        total_parcel_pixels = max(1, int(np.sum(parcel_mask_10m)))
+        
+        # Strict Spectral Usability: SCL in {4 (Vegetation), 5 (Bare Soil)}
+        valid_scl_mask = np.isin(scl_10m, [4, 5])
         parcel_valid_mask = parcel_mask_10m & valid_scl_mask
+        valid_parcel_pixels = int(np.sum(parcel_valid_mask))
+        parcel_valid_obs_pct = (valid_parcel_pixels / total_parcel_pixels) * 100.0
 
         if np.any(parcel_valid_mask):
             mean_ndvi = float(np.mean(indices["ndvi"][parcel_valid_mask]))
@@ -186,7 +193,10 @@ def run_empirical_validation(
         strict_iou_pct = (sat_cane_inside_m2 / max(1.0, union_m2)) * 100.0
         area_error_pct = abs(sat_detected_acres - ref_area_acres) / max(0.01, ref_area_acres) * 100.0
 
-        # 3. DIAGNOSTIC STRATUM (Hypothesis Classification)
+        # Standing Cane Discrepancy Score (0.0 = perfect match, 1.0 = total discrepancy)
+        discrepancy_score = max(0.0, 1.0 - (sat_detected_acres / max(0.01, ref_area_acres)))
+
+        # 3. DIAGNOSTIC STRATUM
         if mean_ndvi < 0.35:
             stratum = "NO_STANDING_VEGETATION_OR_FALLOW"
         elif mean_ndvi < 0.55:
@@ -200,10 +210,13 @@ def run_empirical_validation(
             "plot_no": pno,
             "farmer_name": str(r.get("Farmer", r.get("farmer_name", ""))).strip(),
             "village": str(r.get("Village", "")).strip(),
+            "plantation_date": str(r.get("Plantation Date", "")).strip(),
+            "cane_variety": str(r.get("cane_variety", r.get("Variety Name", ""))).strip(),
             "source_reference_acres": round(ref_area_acres, 2),
             "sentinel_scene_id": target_reader["scene_id"],
             "scene_acquisition_date": target_reader["date"],
             "tile": target_tile,
+            "parcel_valid_observation_pct": round(parcel_valid_obs_pct, 1),
             "mean_field_ndvi": round(mean_ndvi, 3),
             "mean_field_ndre": round(mean_ndre, 3),
             "mean_field_lswi": round(mean_lswi, 3),
@@ -211,6 +224,7 @@ def run_empirical_validation(
             "parcel_cane_occupancy_pct": round(occupancy_pct, 1),
             "strict_parcel_iou_pct": round(strict_iou_pct, 1),
             "empirical_area_error_pct": round(area_error_pct, 1),
+            "standing_cane_discrepancy_score": round(discrepancy_score, 3),
             "estimated_boundary_pixel_exposure_pct": round(boundary_exp_pct, 1),
             "diagnostic_stratum": stratum
         }
@@ -218,7 +232,7 @@ def run_empirical_validation(
         processed_count += 1
         
         if processed_count % 25 == 0 or processed_count == limit or processed_count <= 5:
-            print(f"[{processed_count:3d}/{limit}] Plot #{pno:4s} ({rec['farmer_name'][:18]:18s}) | Ref: {ref_area_acres:.2f} ac | Sat: {sat_detected_acres:.2f} ac | Occ: {occupancy_pct:5.1f}% | IoU: {strict_iou_pct:5.1f}% | Parcel NDVI: {mean_ndvi:.3f}")
+            print(f"[{processed_count:3d}/{limit}] Plot #{pno:4s} ({rec['farmer_name'][:18]:18s}) | Ref: {ref_area_acres:.2f} ac | Sat: {sat_detected_acres:.2f} ac | Occ: {occupancy_pct:5.1f}% | Usable: {parcel_valid_obs_pct:5.1f}% | Discrepancy: {discrepancy_score:.2f}")
 
     df_out = pd.DataFrame(results)
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
