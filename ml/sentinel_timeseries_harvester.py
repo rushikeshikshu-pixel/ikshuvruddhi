@@ -1,7 +1,8 @@
 ﻿"""
 ml/sentinel_timeseries_harvester.py
-Multi-Temporal Sentinel-2 L2A Time-Series Harvester & Quality-Ranked Scene Selector
-Fetches, ranks, and streams real polygon-masked pixel observations across 12-18 month multi-season windows.
+Multi-Temporal Sentinel-2 L2A Time-Series Harvester & Parcel-Specific Scene Ranker
+Fetches, ranks, and streams real polygon-masked pixel observations across multi-season windows.
+Directly computes mean NDVI/NDRE/LSWI, SCL usability, and direct pixel canopy fractions.
 """
 
 import os
@@ -66,11 +67,14 @@ def extract_parcel_spectral_observation(
     min_usability_scl: Tuple[int, ...] = (4, 5) # Vegetation & Bare Soil
 ) -> Dict[str, Any]:
     """
-    Extracts exact polygon-masked spectral indices (NDVI, NDRE, LSWI) and usable pixel fraction
-    from remote COG readers for a single date.
+    Extracts exact polygon-masked spectral indices (NDVI, NDRE, LSWI), usable pixel fraction,
+    and DIRECT PIXEL-MEASURED CANOPY OCCUPANCY FRACTION (NDVI >= 0.50).
     """
     if poly_wgs84 is None or poly_wgs84.is_empty:
-        return {"ndvi": None, "ndre": None, "lswi": None, "usability_pct": 0.0, "usable_pixels": 0}
+        return {
+            "ndvi": None, "ndre": None, "lswi": None, 
+            "canopy_fraction_pct": 0.0, "usability_pct": 0.0, "usable_pixels": 0
+        }
 
     # Transform to raster CRS
     if str(red_reader.crs) not in ["EPSG:4326", "WGS84", "+init=epsg:4326"]:
@@ -82,7 +86,10 @@ def extract_parcel_spectral_observation(
     minx, miny, maxx, maxy = poly_raster.bounds
     tb = red_reader.bounds
     if not (tb.left <= minx and maxx <= tb.right and tb.bottom <= miny and maxy <= tb.top):
-        return {"ndvi": None, "ndre": None, "lswi": None, "usability_pct": 0.0, "usable_pixels": 0}
+        return {
+            "ndvi": None, "ndre": None, "lswi": None, 
+            "canopy_fraction_pct": 0.0, "usability_pct": 0.0, "usable_pixels": 0
+        }
 
     # Read 10m window
     win_10m = from_bounds(minx, miny, maxx, maxy, transform=red_reader.transform)
@@ -92,7 +99,10 @@ def extract_parcel_spectral_observation(
     nir_arr = nir_reader.read(1, window=win_10m)
 
     if red_arr.size == 0 or nir_arr.size == 0:
-        return {"ndvi": None, "ndre": None, "lswi": None, "usability_pct": 0.0, "usable_pixels": 0}
+        return {
+            "ndvi": None, "ndre": None, "lswi": None, 
+            "canopy_fraction_pct": 0.0, "usability_pct": 0.0, "usable_pixels": 0
+        }
 
     # Read and reproject SCL (20m -> 10m)
     win_scl = from_bounds(minx, miny, maxx, maxy, transform=scl_reader.transform)
@@ -118,7 +128,10 @@ def extract_parcel_spectral_observation(
             invert=True
         )
     except Exception:
-        return {"ndvi": None, "ndre": None, "lswi": None, "usability_pct": 0.0, "usable_pixels": 0}
+        return {
+            "ndvi": None, "ndre": None, "lswi": None, 
+            "canopy_fraction_pct": 0.0, "usability_pct": 0.0, "usable_pixels": 0
+        }
 
     parcel_red = red_arr[mask].astype(np.float64)
     parcel_nir = nir_arr[mask].astype(np.float64)
@@ -126,14 +139,20 @@ def extract_parcel_spectral_observation(
 
     total_pixels = len(parcel_red)
     if total_pixels == 0:
-        return {"ndvi": None, "ndre": None, "lswi": None, "usability_pct": 0.0, "usable_pixels": 0}
+        return {
+            "ndvi": None, "ndre": None, "lswi": None, 
+            "canopy_fraction_pct": 0.0, "usability_pct": 0.0, "usable_pixels": 0
+        }
 
     valid_mask = np.isin(parcel_scl, min_usability_scl)
     valid_count = int(np.sum(valid_mask))
     usability_pct = round((valid_count / float(total_pixels)) * 100.0, 1)
 
     if valid_count < 3 or usability_pct < 50.0:
-        return {"ndvi": None, "ndre": None, "lswi": None, "usability_pct": usability_pct, "usable_pixels": valid_count}
+        return {
+            "ndvi": None, "ndre": None, "lswi": None, 
+            "canopy_fraction_pct": 0.0, "usability_pct": usability_pct, "usable_pixels": valid_count
+        }
 
     v_red = parcel_red[valid_mask]
     v_nir = parcel_nir[valid_mask]
@@ -141,10 +160,17 @@ def extract_parcel_spectral_observation(
     denom_ndvi = v_nir + v_red
     valid_denom = denom_ndvi > 1e-4
     if np.sum(valid_denom) < 3:
-        return {"ndvi": None, "ndre": None, "lswi": None, "usability_pct": usability_pct, "usable_pixels": valid_count}
+        return {
+            "ndvi": None, "ndre": None, "lswi": None, 
+            "canopy_fraction_pct": 0.0, "usability_pct": usability_pct, "usable_pixels": valid_count
+        }
 
     ndvis = (v_nir[valid_denom] - v_red[valid_denom]) / denom_ndvi[valid_denom]
     mean_ndvi = round(float(np.mean(ndvis)), 3)
+
+    # DIRECT PIXEL MEASURED CANOPY FRACTION (NDVI >= 0.50)
+    canopy_pixel_count = int(np.sum(ndvis >= 0.50))
+    canopy_fraction_pct = round((canopy_pixel_count / float(len(ndvis))) * 100.0, 1)
 
     # NDRE & LSWI optional reads if readers supplied
     mean_ndre = None
@@ -196,6 +222,7 @@ def extract_parcel_spectral_observation(
         "ndvi": mean_ndvi,
         "ndre": mean_ndre,
         "lswi": mean_lswi,
+        "canopy_fraction_pct": canopy_fraction_pct,
         "usability_pct": usability_pct,
         "usable_pixels": valid_count
     }
