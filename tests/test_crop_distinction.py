@@ -12,9 +12,6 @@ def test_exact_directional_green_duration_interpolation():
     """Verifies that upward and downward threshold crossings compute correct fractional durations."""
     dates = ["2025-07-01", "2025-07-11", "2025-07-21"] # 10 days each interval
     thresh = 0.45
-
-    # Interval 1: 0.25 -> 0.65 (Upward crossing, 5 days above)
-    # Interval 2: 0.70 -> 0.40 (Downward crossing, 8.33 days above)
     ndvi = [0.25, 0.65, 0.40]
     
     feats = extract_phenological_trajectory_features(dates, ndvi, min_ndvi_green_threshold=thresh)
@@ -28,14 +25,15 @@ def test_missing_spectral_indices_neutrality():
         "2026-03-01", "2026-04-01", "2026-05-01", "2026-06-01"
     ]
     ndvi = [0.25, 0.45, 0.65, 0.75, 0.78, 0.75, 0.72, 0.68, 0.65, 0.61, 0.58, 0.52]
-    # Completely missing NDRE and LSWI
     feats = extract_phenological_trajectory_features(dates, ndvi, ndre_series=None, lswi_series=None)
-    assert feats["mean_ripening_lswi"] is None
-    assert feats["mean_ripening_ndre"] is None
+    assert feats["late_window_mean_lswi"] is None
+    assert feats["late_window_mean_ndre"] is None
     assert feats["green_duration_days"] >= 240
 
     pred = classify_crop_from_phenology(feats)
     assert pred["predicted_crop"] == "SUGARCANE"
+    assert pred["features_available_count"] == "3/6"
+    assert pred["evidence_completeness_pct"] == 50.0
 
 def test_sugarcane_15month_perennial_profile():
     """Sugarcane Adsali 15-month profile: gradual emergence, sustained greenness for 270+ days, high LSWI & NDRE."""
@@ -51,12 +49,14 @@ def test_sugarcane_15month_perennial_profile():
     feats = extract_phenological_trajectory_features(dates, ndvi, ndre, lswi)
     assert feats["green_duration_days"] >= 240
     assert feats["is_perennial_profile"] == True
-    assert feats["mean_ripening_lswi"] >= 0.14
+    assert feats["late_window_mean_lswi"] >= 0.14
 
     pred = classify_crop_from_phenology(feats, sar_vh_db=-11.5)
     assert pred["predicted_crop"] == "SUGARCANE"
-    assert pred["heuristic_crop_score_pct"]["SUGARCANE"] > 0.70
+    assert pred["heuristic_crop_score_pct"]["SUGARCANE"] > 70.0 # Consistent percentage scale
     assert pred["heuristic_confidence_score"] >= 70.0
+    assert pred["evidence_completeness_pct"] == 100.0
+    assert pred["features_available_count"] == "6/6"
 
 def test_banana_perennial_profile():
     """Banana profile: continuous evergreen broadleaf canopy with high baseline minimum NDVI (>= 0.50)."""
@@ -92,7 +92,7 @@ def test_maize_90day_short_duration_profile():
 
     pred = classify_crop_from_phenology(feats, sar_vh_db=-15.0)
     assert pred["predicted_crop"] == "MAIZE_OR_SEASONAL_GRAIN"
-    assert pred["heuristic_crop_score_pct"]["SUGARCANE"] < 0.10
+    assert pred["heuristic_crop_score_pct"]["SUGARCANE"] < 10.0
 
 def test_cotton_160day_semi_perennial_profile():
     """Cotton profile: moderate growth, duration ~150-170 days, senescence by December."""

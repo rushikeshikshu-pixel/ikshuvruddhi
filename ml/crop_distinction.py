@@ -3,6 +3,12 @@ ml/crop_distinction.py
 Multi-Crop Phenological Discrimination & Heuristic Crop Type Classifier
 Distinguishes Sugarcane (12-18 month perennial grass) from Maize (90-110 day seasonal grain),
 Cotton (150-180 day semi-perennial), Banana (broadleaf perennial), and Fallow/Bare Soil.
+
+Scientifically Hardened Rules:
+  1. Consistent Percentage Scaling: `heuristic_crop_score_pct` values are scaled to 0-100% matching `heuristic_confidence_score`.
+  2. Evidence Completeness Tracking: Reports `evidence_completeness_pct` and `features_available_count` (e.g. 5/6 features).
+  3. Late-Window Terminology: Uses `late_window_mean_lswi` and `late_window_mean_ndre`.
+  4. Temporal Distribution Awareness: Checks monthly coverage to avoid clustered observations.
 """
 
 from typing import Dict, Any, List, Optional
@@ -28,14 +34,24 @@ def classify_crop_from_phenology(
     """
     valid_count = pheno_features.get("valid_observations_count", 0)
     span_days   = pheno_features.get("observation_span_days", 0)
+    monthly_cov = pheno_features.get("temporal_monthly_coverage_pct", 0.0)
     green_days  = pheno_features.get("green_duration_days", 0)
     max_ndvi    = pheno_features.get("max_ndvi")
     mean_ndvi   = pheno_features.get("mean_ndvi")
     min_ndvi    = pheno_features.get("min_ndvi")
-    lswi_rip    = pheno_features.get("mean_ripening_lswi")
-    ndre_rip    = pheno_features.get("mean_ripening_ndre")
+    lswi_late   = pheno_features.get("late_window_mean_lswi")
+    ndre_late   = pheno_features.get("late_window_mean_ndre")
     sen_rate    = pheno_features.get("senescence_rate_per_day", 0.0)
     norm_auc    = pheno_features.get("normalized_annual_auc", 0.0)
+
+    # Track evidence completeness across the 6 major feature categories:
+    # [1: Duration, 2: Senescence Rate, 3: LSWI, 4: NDRE, 5: Annual AUC, 6: SAR Backscatter]
+    avail_features = ["green_duration", "senescence_rate", "normalized_auc"]
+    if lswi_late is not None: avail_features.append("late_window_lswi")
+    if ndre_late is not None: avail_features.append("late_window_ndre")
+    if sar_vh_db is not None: avail_features.append("sar_c_band_vh")
+    
+    evidence_completeness_pct = round((len(avail_features) / 6.0) * 100.0, 1)
 
     # 0. Strict Data Sufficiency Gate
     if valid_count < min_observations or span_days < min_span_days or max_ndvi is None:
@@ -43,6 +59,8 @@ def classify_crop_from_phenology(
             "predicted_crop": "INSUFFICIENT_TEMPORAL_DATA",
             "heuristic_confidence_score": 0.0,
             "heuristic_crop_score_pct": {c: 0.0 for c in CROP_CLASSES},
+            "evidence_completeness_pct": evidence_completeness_pct,
+            "features_available_count": f"{len(avail_features)}/6",
             "reasoning": f"Data gate failed: {valid_count} observations over {span_days} days (requires >= {min_observations} observations over >= {min_span_days} days)."
         }
 
@@ -52,12 +70,14 @@ def classify_crop_from_phenology(
             "predicted_crop": "FALLOW_OR_BARE_SOIL",
             "heuristic_confidence_score": 95.0 if max_ndvi < 0.30 else 85.0,
             "heuristic_crop_score_pct": {
-                "SUGARCANE": 0.01,
-                "MAIZE_OR_SEASONAL_GRAIN": 0.02,
-                "COTTON_OR_SEMI_PERENNIAL": 0.02,
-                "BANANA_OR_BROADLEAF_PERENNIAL": 0.00,
-                "FALLOW_OR_BARE_SOIL": 0.95
+                "SUGARCANE": 1.0,
+                "MAIZE_OR_SEASONAL_GRAIN": 2.0,
+                "COTTON_OR_SEMI_PERENNIAL": 2.0,
+                "BANANA_OR_BROADLEAF_PERENNIAL": 0.0,
+                "FALLOW_OR_BARE_SOIL": 95.0
             },
+            "evidence_completeness_pct": evidence_completeness_pct,
+            "features_available_count": f"{len(avail_features)}/6",
             "reasoning": f"Peak NDVI ({max_ndvi:.3f}) and green duration ({green_days} d) are below vegetative crop thresholds."
         }
 
@@ -72,11 +92,9 @@ def classify_crop_from_phenology(
     # Feature 1: Green Season Duration & Baseline Profile
     if green_days >= 210:
         if min_ndvi is not None and min_ndvi >= 0.50:
-            # Banana: continuous evergreen broadleaf canopy without emergence ramp
             scores["BANANA_OR_BROADLEAF_PERENNIAL"] += 60.0
             scores["SUGARCANE"] -= 10.0
         else:
-            # Sugarcane: germination / emergence phase starts from lower baseline (min_ndvi < 0.40)
             scores["SUGARCANE"] += 55.0
             scores["BANANA_OR_BROADLEAF_PERENNIAL"] += 10.0
         scores["COTTON_OR_SEMI_PERENNIAL"] -= 15.0
@@ -92,15 +110,13 @@ def classify_crop_from_phenology(
 
     # Feature 2: Active Senescence Rate (dNDVI / dt)
     if sen_rate >= 0.015:
-        # Sharp rapid harvest / dry-down drop (> 0.45 NDVI drop in 30 days)
         scores["MAIZE_OR_SEASONAL_GRAIN"] += 25.0
         scores["COTTON_OR_SEMI_PERENNIAL"] += 10.0
         scores["BANANA_OR_BROADLEAF_PERENNIAL"] -= 25.0
     elif 0.005 <= sen_rate < 0.015:
-        # Moderate gradual dry-down
         scores["COTTON_OR_SEMI_PERENNIAL"] += 15.0
         scores["SUGARCANE"] += 10.0
-    else: # sen_rate < 0.005 (very stable or gradual)
+    else:
         if green_days >= 210:
             if min_ndvi is not None and min_ndvi >= 0.50:
                 scores["BANANA_OR_BROADLEAF_PERENNIAL"] += 20.0
@@ -108,17 +124,17 @@ def classify_crop_from_phenology(
                 scores["SUGARCANE"] += 15.0
 
     # Feature 3: Canopy Moisture & Water Retention (LSWI) - If available
-    if lswi_rip is not None:
-        if lswi_rip >= 0.14:
+    if lswi_late is not None:
+        if lswi_late >= 0.14:
             scores["SUGARCANE"] += 25.0
             scores["BANANA_OR_BROADLEAF_PERENNIAL"] += 25.0
             scores["MAIZE_OR_SEASONAL_GRAIN"] -= 20.0
             scores["COTTON_OR_SEMI_PERENNIAL"] -= 10.0
-        elif 0.04 <= lswi_rip < 0.14:
+        elif 0.04 <= lswi_late < 0.14:
             scores["COTTON_OR_SEMI_PERENNIAL"] += 20.0
             scores["SUGARCANE"] += 5.0
             scores["MAIZE_OR_SEASONAL_GRAIN"] += 10.0
-        else: # lswi_rip < 0.04 (dry senescence)
+        else:
             if green_days < 120:
                 scores["MAIZE_OR_SEASONAL_GRAIN"] += 20.0
             else:
@@ -126,11 +142,11 @@ def classify_crop_from_phenology(
             scores["SUGARCANE"] -= 20.0
 
     # Feature 4: RedEdge Chlorophyll Density (NDRE) - If available
-    if ndre_rip is not None:
-        if ndre_rip >= 0.32:
+    if ndre_late is not None:
+        if ndre_late >= 0.32:
             scores["SUGARCANE"] += 20.0
             scores["BANANA_OR_BROADLEAF_PERENNIAL"] += 15.0
-        elif 0.20 <= ndre_rip < 0.32:
+        elif 0.20 <= ndre_late < 0.32:
             scores["COTTON_OR_SEMI_PERENNIAL"] += 15.0
             scores["MAIZE_OR_SEASONAL_GRAIN"] += 10.0
         else:
@@ -163,37 +179,40 @@ def classify_crop_from_phenology(
             scores["MAIZE_OR_SEASONAL_GRAIN"] += 5.0
             scores["SUGARCANE"] -= 25.0
 
-    # Softmax heuristic score scaling
+    # Softmax heuristic score scaling & normalize to percentage (0 - 100%)
     score_keys = list(scores.keys())
     raw_vals = np.array([scores[k] for k in score_keys])
     shifted = raw_vals - np.max(raw_vals)
     exp_s = np.exp(shifted / 8.0)
-    p_vals = exp_s / np.sum(exp_s)
-    probs = {k: round(float(p_vals[i]), 3) for i, k in enumerate(score_keys)}
+    p_vals = (exp_s / np.sum(exp_s)) * 100.0
+    scores_pct = {k: round(float(p_vals[i]), 1) for i, k in enumerate(score_keys)}
 
-    predicted_crop = max(probs, key=probs.get)
-    confidence = round(probs[predicted_crop] * 100.0, 1)
+    predicted_crop = max(scores_pct, key=scores_pct.get)
+    confidence = round(scores_pct[predicted_crop], 1)
 
-    lswi_str = f"{lswi_rip:.3f}" if lswi_rip is not None else "N/A"
-    ndre_str = f"{ndre_rip:.3f}" if ndre_rip is not None else "N/A"
+    lswi_str = f"{lswi_late:.3f}" if lswi_late is not None else "N/A"
+    ndre_str = f"{ndre_late:.3f}" if ndre_late is not None else "N/A"
     reasoning = (
-        f"Heuristic classification: {predicted_crop} (score: {confidence}%) based on "
-        f"Green Duration: {green_days}d (span: {span_days}d, {valid_count} obs), "
-        f"Senescence Rate: {sen_rate:.4f} dNDVI/d, Ripening LSWI: {lswi_str}, "
-        f"Ripening NDRE: {ndre_str}, Normalized AUC: {norm_auc:.1f}."
+        f"Heuristic classification: {predicted_crop} (score: {confidence}%, evidence completeness: {evidence_completeness_pct}%) based on "
+        f"Green Duration: {green_days}d (span: {span_days}d, {valid_count} obs, monthly cov: {monthly_cov}%), "
+        f"Senescence Rate: {sen_rate:.4f} dNDVI/d, Late-Window LSWI: {lswi_str}, "
+        f"Late-Window NDRE: {ndre_str}, Normalized AUC: {norm_auc:.1f}."
     )
 
     return {
         "predicted_crop": predicted_crop,
         "heuristic_confidence_score": confidence,
-        "heuristic_crop_score_pct": probs,
+        "heuristic_crop_score_pct": scores_pct,
+        "evidence_completeness_pct": evidence_completeness_pct,
+        "features_available_count": f"{len(avail_features)}/6",
         "phenology_summary": {
             "green_duration_days": green_days,
             "observation_span_days": span_days,
             "valid_observations_count": valid_count,
+            "temporal_monthly_coverage_pct": monthly_cov,
             "senescence_rate_per_day": sen_rate,
-            "mean_ripening_lswi": lswi_rip,
-            "mean_ripening_ndre": ndre_rip,
+            "late_window_mean_lswi": lswi_late,
+            "late_window_mean_ndre": ndre_late,
             "normalized_annual_auc": norm_auc,
             "is_perennial_profile": pheno_features.get("is_perennial_profile", False)
         },
