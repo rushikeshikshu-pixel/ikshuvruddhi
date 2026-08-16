@@ -2,11 +2,11 @@
 validation/run_spatio_temporal_audit.py
 Runs the True Empirical 3-Layer Spatio-Temporal Intelligence Audit across the 320 Registered Mill Parcels.
 Features:
-  - Parcel-Specific Scene Ranking via rank_scene_quality()
+  - Season-Specific Reference Target Date Scene Ranking
   - Direct Pixel-Measured Canopy Fractions (NDVI >= 0.50)
-  - Explicit Step-Function Canopy Collapse Event Detection
-  - Strict Absence of Silent Fallbacks for Missing Current State
-  - Streaming Real Multi-Date COG Pixels (Kharif 2025, Post-Monsoon 2025, January 2026, Summer 2026, August 2026)
+  - Dual-Metric Step-Function Canopy Collapse Event Detection (NDVI drop + Canopy pp drop + 10-95d gap)
+  - Guarded Boundary Discrepancy Detection (requires inside canopy < 20%)
+  - Record-Level vs Unique Physical Land Unit Deduplication Statistics
 """
 
 import os
@@ -39,9 +39,9 @@ def run_empirical_spatio_temporal_audit(
     output_54_csv: str = "data/output/spatio_temporal_54_low_canopy_audit.csv"
 ):
     print("==================================================================")
-    print(" IKSHU GENUINE EMPIRICAL SPATIO-TEMPORAL AUDIT (320 REGISTERED PARCELS)")
+    print(" IKSHU MULTI-DIMENSIONAL EMPIRICAL AUDIT (320 REGISTERED PARCELS)")
     print(f" Source: {spatial_csv} | Output: {output_csv}")
-    print(" Direct Pixel Fractions + Canopy Collapse Detection + No Silent Fallbacks")
+    print(" Dual-Metric Collapse + Guarded Boundary + Land Unit Dedup")
     print("==================================================================")
 
     df_spatial = pd.read_csv(os.path.join(REPO_ROOT, spatial_csv))
@@ -50,18 +50,18 @@ def run_empirical_spatio_temporal_audit(
     # 1. Discover Multi-Season Sentinel-2 Scenes from AWS Earth Search STAC
     STAC_ENDPOINT = "https://earth-search.aws.element84.com/v1/search"
     seasonal_windows = [
-        ("2025-08-01", "2025-08-30", "Kharif_2025"),
-        ("2025-11-01", "2025-11-30", "PostMonsoon_2025"),
-        ("2026-01-20", "2026-01-26", "January_2026"),
-        ("2026-05-01", "2026-05-30", "Summer_2026"),
-        ("2026-08-01", "2026-08-16", "Current_August_2026")
+        ("2025-08-01", "2025-08-30", "Kharif_2025", "2025-08-15"),
+        ("2025-11-01", "2025-11-30", "PostMonsoon_2025", "2025-11-15"),
+        ("2026-01-20", "2026-01-26", "January_2026", "2026-01-23"),
+        ("2026-05-01", "2026-05-30", "Summer_2026", "2026-05-15"),
+        ("2026-08-01", "2026-08-16", "Current_August_2026", "2026-08-16")
     ]
 
     target_tiles = ["43QDB", "43QEB", "43QFB"]
     scenes_by_season_tile = {}
 
     print("\nDiscovering STAC candidate scenes per tile and season...")
-    for start_d, end_d, season_tag in seasonal_windows:
+    for start_d, end_d, season_tag, ref_date in seasonal_windows:
         payload = {
             "collections": ["sentinel-2-l2a"],
             "bbox": [74.85, 19.15, 76.25, 19.70],
@@ -78,15 +78,15 @@ def run_empirical_spatio_temporal_audit(
                     key = (season_tag, tile)
                     if key not in scenes_by_season_tile:
                         scenes_by_season_tile[key] = []
-                    scenes_by_season_tile[key].append(f)
+                    scenes_by_season_tile[key].append((f, ref_date))
         except Exception as e:
             print(f"  Warning querying {season_tag}: {e}")
 
     # Open remote COG readers for all candidates
     print("\nOpening Remote Cloud-Optimized GeoTIFF Readers...")
     open_readers = {}
-    for (season_tag, tile), feat_list in scenes_by_season_tile.items():
-        for idx, f in enumerate(feat_list[:2]): # Top 2 candidate scenes per window
+    for (season_tag, tile), feat_ref_list in scenes_by_season_tile.items():
+        for idx, (f, ref_date) in enumerate(feat_ref_list[:2]): # Top 2 candidate scenes per window
             key = (season_tag, tile, idx)
             try:
                 open_readers[key] = {
@@ -95,6 +95,7 @@ def run_empirical_spatio_temporal_audit(
                     "scene_id": f["id"],
                     "season": season_tag,
                     "tile": tile,
+                    "target_ref_date": ref_date,
                     "red": rasterio.open(f["assets"]["red"]["href"]),
                     "nir": rasterio.open(f["assets"]["nir"]["href"]),
                     "scl": rasterio.open(f["assets"]["scl"]["href"]),
@@ -144,7 +145,7 @@ def run_empirical_spatio_temporal_audit(
         if not target_tile:
             continue
 
-        # Extract genuine multi-date observations with Parcel-Specific Scene Ranking
+        # Extract genuine multi-date observations with Parcel-Specific Scene Ranking & Seasonal Reference Date
         season_order = ["Kharif_2025", "PostMonsoon_2025", "January_2026", "Summer_2026", "Current_August_2026"]
         dates_list = []
         ndvi_series = []
@@ -156,7 +157,6 @@ def run_empirical_spatio_temporal_audit(
         date_obs_map = {}
 
         for st in season_order:
-            # Find candidate readers for this season & tile
             candidates = [rdr for (s, t, _), rdr in open_readers.items() if s == st and t == target_tile]
             if not candidates:
                 continue
@@ -178,7 +178,7 @@ def run_empirical_spatio_temporal_audit(
                     parcel_valid_coverage_pct=obs["usability_pct"],
                     cloud_cover_pct=cand_rdr["cloud_pct"],
                     acquisition_datetime=cand_rdr["date"],
-                    target_reference_datetime="2026-08-16"
+                    target_reference_datetime=cand_rdr["target_ref_date"]
                 )
                 if score > best_rank_score:
                     best_rank_score = score
@@ -206,6 +206,7 @@ def run_empirical_spatio_temporal_audit(
         aug_date = aug_obs.get("date")
 
         jan_ndvi = jan_obs.get("ndvi") or (float(r["inside_mean_ndvi"]) if pd.notna(r["inside_mean_ndvi"]) else None)
+        jan_occ = float(r["inside_canopy_occupancy_pct"]) if pd.notna(r["inside_canopy_occupancy_pct"]) else 0.0
         may_ndvi = may_obs.get("ndvi")
 
         # Measured 60-90d delta
@@ -226,7 +227,6 @@ def run_empirical_spatio_temporal_audit(
             "days_span": 84
         }
 
-        # Compute genuine phenology features from measured series
         pheno = extract_phenological_trajectory_features(
             dates=dates_list,
             ndvi_series=ndvi_series,
@@ -248,7 +248,9 @@ def run_empirical_spatio_temporal_audit(
             spatial_context=spatial_ctx,
             recent_delta_obs=recent_delta_dict,
             dates_list=dates_list,
-            ndvi_series=ndvi_series
+            ndvi_series=ndvi_series,
+            canopy_frac_series=canopy_frac_series,
+            january_canopy_occ=jan_occ
         )
 
         results.append({
@@ -262,22 +264,25 @@ def run_empirical_spatio_temporal_audit(
             "measured_jan26_ndvi": jan_ndvi,
             "measured_may26_ndvi": may_ndvi,
             "measured_aug26_ndvi": aug_ndvi,
+            "measured_nov25_direct_canopy_pct": date_obs_map.get("PostMonsoon_2025", {}).get("canopy_fraction_pct"),
+            "measured_jan26_direct_canopy_pct": jan_obs.get("canopy_fraction_pct"),
             "measured_aug26_direct_canopy_pct": aug_canopy,
             "measured_60_90d_delta_ndvi": delta_60_90d,
             "measured_green_duration_days": pheno["green_duration_days"],
             "measured_max_annual_ndvi": pheno["max_ndvi"],
-            "measured_senescence_rate": pheno["senescence_rate_per_day"],
             "canopy_collapse_detected": diag.get("collapse_event", {}).get("collapse_detected", False),
             "canopy_collapse_window": diag.get("collapse_event", {}).get("clearing_window"),
-            "canopy_collapse_drop_magnitude": diag.get("collapse_event", {}).get("drop_magnitude", 0.0),
+            "canopy_collapse_drop_magnitude_ndvi": diag.get("collapse_event", {}).get("drop_magnitude_ndvi", 0.0),
+            "canopy_collapse_drop_magnitude_canopy_pp": diag.get("collapse_event", {}).get("drop_magnitude_canopy_pp", 0.0),
+            "canopy_collapse_gap_days": diag.get("collapse_event", {}).get("gap_days", 0),
+            "current_vegetative_state": diag["current_vegetative_state"],
+            "spatial_neighborhood_flag": diag["spatial_neighborhood_flag"],
+            "phenological_profile_type": diag["phenological_profile_type"],
+            "spatio_temporal_status": diag["spatio_temporal_status"],
+            "operational_mill_action": diag["operational_mill_action"],
             "current_observation_valid": diag.get("current_observation_valid", False),
             "current_observation_age_days": diag.get("current_observation_age_days"),
-            "spatial_discrepancy_stratum": r.get("spatial_discrepancy_stratum"),
             "nearest_high_canopy_dist_m": r.get("nearest_high_canopy_dist_m"),
-            "spatio_temporal_status": diag["spatio_temporal_status"],
-            "canopy_trajectory_phase": diag["canopy_trajectory_phase"],
-            "harvest_detected_flag": diag["harvest_detected_flag"],
-            "operational_mill_recommendation": diag["operational_mill_recommendation"],
             "diagnostic_rationale": diag["diagnostic_rationale"]
         })
 
@@ -305,14 +310,16 @@ def run_empirical_spatio_temporal_audit(
     print(" EMPIRICAL SPATIO-TEMPORAL AUDIT SUMMARY (320 REGISTERED PARCELS)")
     print("==================================================================")
     for status, grp in df_out.groupby("spatio_temporal_status"):
-        print(f"  • {status:<55}: {len(grp):>3} plots ({len(grp)/len(df_out)*100.0:>5.1f}%)")
+        unique_units = grp["geometry_group_id"].nunique()
+        print(f"  • {status:<55}: {len(grp):>3} records ({len(grp)/len(df_out)*100.0:>5.1f}%) | {unique_units:>3} unique land units")
 
     print("\n==================================================================")
     print(" RESOLUTION OF THE 54 LOW-CANOPY PARCELS FROM REAL SENTINEL PIXELS")
     print("==================================================================")
-    print(f"Total Low-Canopy Parcels: {len(df_54)}")
+    print(f"Total Low-Canopy Records: {len(df_54)} | Unique Land Units: {df_54['geometry_group_id'].nunique()}")
     for status, grp in df_54.groupby("spatio_temporal_status"):
-        print(f"  • {status:<55}: {len(grp):>2} / {len(df_54)} ({len(grp)/len(df_54)*100.0:>5.1f}%)")
+        unique_units = grp["geometry_group_id"].nunique()
+        print(f"  • {status:<55}: {len(grp):>2} / {len(df_54)} records ({len(grp)/len(df_54)*100.0:>5.1f}%) | {unique_units} unique units")
 
 if __name__ == "__main__":
     run_empirical_spatio_temporal_audit()
