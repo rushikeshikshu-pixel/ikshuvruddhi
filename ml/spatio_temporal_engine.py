@@ -43,7 +43,7 @@ def evaluate_spatio_temporal_profile(
     # 1. Check for Active / Standing Cane Current State
     if curr_ndvi is not None and curr_ndvi >= 0.50 and curr_occ >= 50.0:
         if is_perennial or hist_green_days >= 180:
-            status = "CONFIRMED_STANDING_SUGARCANE_MATURE"
+            status = "SUGARCANE_COMPATIBLE_STRONG_LONG_DURATION_CANOPY"
             phase  = "STANDING_MATURE_CANOPY"
             rec    = "SCHEDULE_FOR_HARVEST_SUPPLY"
             reason = f"High current canopy ({curr_occ:.1f}%, NDVI: {curr_ndvi:.3f}) with continuous 12-month green duration ({hist_green_days}d)."
@@ -72,9 +72,9 @@ def evaluate_spatio_temporal_profile(
         }
 
     # 3. Check for Harvest Event (High historical canopy -> sudden collapse -> currently low)
-    if (hist_max_ndvi is not None and hist_max_ndvi >= 0.60 and 
-        hist_sen_rate >= 0.010 and 
-        hist_green_days >= 120 and 
+    if (hist_max_ndvi is not None and hist_max_ndvi >= 0.55 and 
+        hist_sen_rate >= 0.008 and 
+        hist_green_days >= 90 and 
         (curr_ndvi is None or curr_ndvi < 0.40)):
         return {
             "spatio_temporal_status": "LIKELY_HARVESTED_CANE_PARCEL",
@@ -103,7 +103,7 @@ def evaluate_spatio_temporal_profile(
         return {
             "spatio_temporal_status": "FIELD_SPECIFIC_DISCREPANCY_ACTIVE_CLUSTER",
             "canopy_trajectory_phase": "INDIVIDUAL_FIELD_FALLOW_OR_HARVEST",
-            "harvest_detected_flag": True if hist_sen_rate >= 0.008 else False,
+            "harvest_detected_flag": True if hist_sen_rate >= 0.006 else False,
             "operational_mill_recommendation": "FIELD_OFFICER_CONFIRMATION",
             "diagnostic_rationale": f"Individual parcel low, but active high-canopy cane parcel exists {nearest_cane_m:.0f}m away in same cluster."
         }
