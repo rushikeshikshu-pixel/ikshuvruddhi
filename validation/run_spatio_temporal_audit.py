@@ -1,23 +1,19 @@
 ﻿"""
 validation/run_spatio_temporal_audit.py
-Runs the True Empirical 3-Layer Spatio-Temporal Intelligence Audit across the 320 Registered Mill Parcels.
-Features:
-  - Season-Specific Reference Target Date Scene Ranking
-  - Direct Pixel-Measured Canopy Fractions (NDVI >= 0.50)
-  - Dual-Metric Step-Function Canopy Collapse Event Detection (NDVI drop + Canopy pp drop + 10-95d gap)
-  - Guarded Boundary Discrepancy Detection (requires inside canopy < 20%)
-  - Record-Level vs Unique Physical Land Unit Deduplication Statistics
+High-Speed Empirical Spatio-Temporal Audit across 320 Registered Mill Parcels.
+Uses Tile-Specific BBox Envelope Memory Caching with Cleanest Scene Selection.
 """
 
 import os
 import sys
-import json
+import time
 import requests
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 import pandas as pd
 from shapely.geometry import Polygon
-from shapely.ops import transform
+from shapely.ops import transform, unary_union
 import pyproj
 import rasterio
 
@@ -27,7 +23,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-from ml.sentinel_timeseries_harvester import rank_scene_quality, extract_parcel_spectral_observation
+from ml.sentinel_timeseries_harvester import rank_scene_quality, TileSceneMemoryCache
 from ml.phenology_features import extract_phenological_trajectory_features
 from ml.spatio_temporal_engine import evaluate_spatio_temporal_profile, detect_canopy_collapse_events
 
@@ -38,74 +34,17 @@ def run_empirical_spatio_temporal_audit(
     output_csv: str = "data/output/spatio_temporal_audit_320plots.csv",
     output_54_csv: str = "data/output/spatio_temporal_54_low_canopy_audit.csv"
 ):
+    start_time = time.time()
     print("==================================================================")
-    print(" IKSHU MULTI-DIMENSIONAL EMPIRICAL AUDIT (320 REGISTERED PARCELS)")
+    print(" IKSHU HIGH-SPEED EMPIRICAL SPATIO-TEMPORAL AUDIT (320 PARCELS)")
     print(f" Source: {spatial_csv} | Output: {output_csv}")
-    print(" Dual-Metric Collapse + Guarded Boundary + Land Unit Dedup")
+    print(" Engine: Per-Tile BBox Envelope Memory Caching (Cleanest STAC Scenes)")
     print("==================================================================")
 
     df_spatial = pd.read_csv(os.path.join(REPO_ROOT, spatial_csv))
     print(f"Loaded {len(df_spatial)} registered parcel records.")
 
-    # 1. Discover Multi-Season Sentinel-2 Scenes from AWS Earth Search STAC
-    STAC_ENDPOINT = "https://earth-search.aws.element84.com/v1/search"
-    seasonal_windows = [
-        ("2025-08-01", "2025-08-30", "Kharif_2025", "2025-08-15"),
-        ("2025-11-01", "2025-11-30", "PostMonsoon_2025", "2025-11-15"),
-        ("2026-01-20", "2026-01-26", "January_2026", "2026-01-23"),
-        ("2026-05-01", "2026-05-30", "Summer_2026", "2026-05-15"),
-        ("2026-08-01", "2026-08-16", "Current_August_2026", "2026-08-16")
-    ]
-
-    target_tiles = ["43QDB", "43QEB", "43QFB"]
-    scenes_by_season_tile = {}
-
-    print("\nDiscovering STAC candidate scenes per tile and season...")
-    for start_d, end_d, season_tag, ref_date in seasonal_windows:
-        payload = {
-            "collections": ["sentinel-2-l2a"],
-            "bbox": [74.85, 19.15, 76.25, 19.70],
-            "datetime": f"{start_d}T00:00:00Z/{end_d}T23:59:59Z",
-            "query": {"eo:cloud_cover": {"lt": 20}},
-            "limit": 20
-        }
-        try:
-            resp = requests.post(STAC_ENDPOINT, json=payload, timeout=20).json()
-            feats = resp.get("features", [])
-            for f in feats:
-                tile = f["id"].split("_")[1]
-                if tile in target_tiles:
-                    key = (season_tag, tile)
-                    if key not in scenes_by_season_tile:
-                        scenes_by_season_tile[key] = []
-                    scenes_by_season_tile[key].append((f, ref_date))
-        except Exception as e:
-            print(f"  Warning querying {season_tag}: {e}")
-
-    # Open remote COG readers for all candidates
-    print("\nOpening Remote Cloud-Optimized GeoTIFF Readers...")
-    open_readers = {}
-    for (season_tag, tile), feat_ref_list in scenes_by_season_tile.items():
-        for idx, (f, ref_date) in enumerate(feat_ref_list[:2]): # Top 2 candidate scenes per window
-            key = (season_tag, tile, idx)
-            try:
-                open_readers[key] = {
-                    "date": f["properties"]["datetime"][:10],
-                    "cloud_pct": f["properties"]["eo:cloud_cover"],
-                    "scene_id": f["id"],
-                    "season": season_tag,
-                    "tile": tile,
-                    "target_ref_date": ref_date,
-                    "red": rasterio.open(f["assets"]["red"]["href"]),
-                    "nir": rasterio.open(f["assets"]["nir"]["href"]),
-                    "scl": rasterio.open(f["assets"]["scl"]["href"]),
-                    "re": rasterio.open(f["assets"]["rededge1"]["href"]) if "rededge1" in f["assets"] else None,
-                    "swir": rasterio.open(f["assets"]["swir16"]["href"]) if "swir16" in f["assets"] else None
-                }
-            except Exception as e:
-                print(f"  Error opening reader for {season_tag}-{tile}-{idx}: {e}")
-
-    # Load ground-truth polygons
+    # Load polygon geometries
     src_csv = os.path.join(REPO_ROOT, "data", "sugarcane_adsali_season_2627.csv")
     df_raw = pd.read_csv(src_csv)
     poly_dict = {}
@@ -119,82 +58,122 @@ def run_empirical_spatio_temporal_audit(
         if len(pts) >= 3:
             poly_dict[p_no] = Polygon(pts)
 
-    print(f"\nStreaming parcel-ranked multi-date pixel extractions across 320 parcels...")
-    results = []
+    # 1. Discover Multi-Season Sentinel-2 Scenes from AWS Earth Search STAC (Sorted by Lowest Cloud Cover)
+    STAC_ENDPOINT = "https://earth-search.aws.element84.com/v1/search"
+    seasonal_windows = [
+        ("2025-08-01", "2025-08-30", "Kharif_2025", "2025-08-15"),
+        ("2025-11-15", "2025-11-30", "PostMonsoon_2025", "2025-11-20"),
+        ("2026-01-20", "2026-01-26", "January_2026", "2026-01-23"),
+        ("2026-05-15", "2026-05-30", "Summer_2026", "2026-05-20"),
+        ("2026-08-01", "2026-08-16", "Current_August_2026", "2026-08-16")
+    ]
+
+    target_tiles = ["43QDB", "43QEB", "43QFB"]
+    scenes_by_season_tile = {}
+
+    print("\nDiscovering STAC candidate scenes per tile and season...")
+    for start_d, end_d, season_tag, ref_date in seasonal_windows:
+        payload = {
+            "collections": ["sentinel-2-l2a"],
+            "bbox": [74.85, 19.15, 76.25, 19.70],
+            "datetime": f"{start_d}T00:00:00Z/{end_d}T23:59:59Z",
+            "query": {"eo:cloud_cover": {"lt": 15}},
+            "sortby": [{"field": "properties.eo:cloud_cover", "direction": "asc"}],
+            "limit": 30
+        }
+        try:
+            resp = requests.post(STAC_ENDPOINT, json=payload, timeout=20).json()
+            feats = resp.get("features", [])
+            for f in feats:
+                tile = f["id"].split("_")[1]
+                if tile in target_tiles:
+                    key = (season_tag, tile)
+                    if key not in scenes_by_season_tile:
+                        scenes_by_season_tile[key] = (f, ref_date)
+        except Exception as e:
+            print(f"  Warning querying {season_tag}: {e}")
+
+    # Group parcels by target tile
+    tile_polys = {"43QDB": [], "43QEB": [], "43QFB": []}
+    parcel_tile_map = {}
 
     for idx, r in df_spatial.iterrows():
-        if idx % 40 == 0:
-            print(f"  Extracted {idx}/{len(df_spatial)} parcel time-series...")
-
         pno = str(r["plot_no"]).strip()
         poly_wgs = poly_dict.get(pno)
         if poly_wgs is None:
             continue
-
         poly_utm = transform(wgs84_to_utm43n, poly_wgs)
-        minx, miny, maxx, maxy = poly_utm.bounds
+        
+        c_lon = poly_wgs.centroid.x
+        if c_lon < 75.0:
+            t = "43QDB"
+        elif c_lon > 75.8:
+            t = "43QFB"
+        else:
+            t = "43QEB"
 
-        # Determine target tile
-        target_tile = None
-        for (st, t, _), rdr in open_readers.items():
-            tb = rdr["red"].bounds
-            if tb.left <= minx and maxx <= tb.right and tb.bottom <= miny and maxy <= tb.top:
-                target_tile = t
-                break
+        tile_polys[t].append(poly_utm)
+        parcel_tile_map[pno] = t
 
-        if not target_tile:
+    tile_envelopes = {}
+    for t, plist in tile_polys.items():
+        if plist:
+            u_poly = unary_union(plist)
+            minx, miny, maxx, maxy = u_poly.bounds
+            tile_envelopes[t] = (minx - 300.0, miny - 300.0, maxx + 300.0, maxy + 300.0)
+
+    print("\nPreloading Cleanest Tile Sub-Regions into Local Memory...")
+    memory_caches = {}
+
+    def load_tile_cache(item):
+        (season_tag, tile), (feat, ref_date) = item
+        env = tile_envelopes.get(tile)
+        if not env:
+            return (season_tag, tile), None
+        try:
+            cache = TileSceneMemoryCache(feat, env)
+            return (season_tag, tile), cache
+        except Exception as e:
+            print(f"  Warning loading {season_tag}-{tile}: {e}")
+            return (season_tag, tile), None
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = [executor.submit(load_tile_cache, it) for it in scenes_by_season_tile.items()]
+        for fut in as_completed(futures):
+            k, cache = fut.result()
+            if cache and cache.is_valid:
+                memory_caches[k] = cache
+                print(f"  Cached [{k[0]:<18} | Tile {k[1]}] -> Date: {cache.date}, Cloud: {cache.cloud_pct:.1f}%")
+
+    print(f"\nStreaming fast in-memory extractions across 320 parcels...")
+    results = []
+    season_order = ["Kharif_2025", "PostMonsoon_2025", "January_2026", "Summer_2026", "Current_August_2026"]
+
+    for idx, r in df_spatial.iterrows():
+        pno = str(r["plot_no"]).strip()
+        poly_wgs = poly_dict.get(pno)
+        target_tile = parcel_tile_map.get(pno, "43QEB")
+        if poly_wgs is None:
             continue
 
-        # Extract genuine multi-date observations with Parcel-Specific Scene Ranking & Seasonal Reference Date
-        season_order = ["Kharif_2025", "PostMonsoon_2025", "January_2026", "Summer_2026", "Current_August_2026"]
         dates_list = []
         ndvi_series = []
-        ndre_series = []
-        lswi_series = []
         canopy_frac_series = []
         usability_series = []
-
         date_obs_map = {}
 
         for st in season_order:
-            candidates = [rdr for (s, t, _), rdr in open_readers.items() if s == st and t == target_tile]
-            if not candidates:
-                continue
+            cache = memory_caches.get((st, target_tile))
+            if cache and cache.is_valid:
+                obs = cache.extract_parcel(poly_wgs)
+                if obs.get("date"):
+                    dates_list.append(obs["date"])
+                    ndvi_series.append(obs["ndvi"])
+                    canopy_frac_series.append(obs["canopy_fraction_pct"])
+                    usability_series.append(obs["usability_pct"])
+                    date_obs_map[st] = obs
 
-            best_obs = None
-            best_rdr = None
-            best_rank_score = -1.0
-
-            for cand_rdr in candidates:
-                obs = extract_parcel_spectral_observation(
-                    poly_wgs84=poly_wgs,
-                    red_reader=cand_rdr["red"],
-                    nir_reader=cand_rdr["nir"],
-                    scl_reader=cand_rdr["scl"],
-                    re_reader=cand_rdr.get("re"),
-                    swir_reader=cand_rdr.get("swir")
-                )
-                score = rank_scene_quality(
-                    parcel_valid_coverage_pct=obs["usability_pct"],
-                    cloud_cover_pct=cand_rdr["cloud_pct"],
-                    acquisition_datetime=cand_rdr["date"],
-                    target_reference_datetime=cand_rdr["target_ref_date"]
-                )
-                if score > best_rank_score:
-                    best_rank_score = score
-                    best_obs = obs
-                    best_rdr = cand_rdr
-
-            if best_obs and best_rdr:
-                dates_list.append(best_rdr["date"])
-                ndvi_series.append(best_obs["ndvi"])
-                ndre_series.append(best_obs["ndre"])
-                lswi_series.append(best_obs["lswi"])
-                canopy_frac_series.append(best_obs["canopy_fraction_pct"])
-                usability_series.append(best_obs["usability_pct"])
-                date_obs_map[st] = {**best_obs, "date": best_rdr["date"], "scene_id": best_rdr["scene_id"]}
-
-        # Current State Evaluation (No Silent Fallback)
+        # Current State Evaluation
         aug_obs = date_obs_map.get("Current_August_2026", {})
         may_obs = date_obs_map.get("Summer_2026", {})
         jan_obs = date_obs_map.get("January_2026", {})
@@ -230,8 +209,6 @@ def run_empirical_spatio_temporal_audit(
         pheno = extract_phenological_trajectory_features(
             dates=dates_list,
             ndvi_series=ndvi_series,
-            ndre_series=ndre_series,
-            lswi_series=lswi_series,
             scl_usability_series=usability_series
         )
 
@@ -286,25 +263,20 @@ def run_empirical_spatio_temporal_audit(
             "diagnostic_rationale": diag["diagnostic_rationale"]
         })
 
-    # Close remote readers
-    for rdr_dict in open_readers.values():
-        rdr_dict["red"].close()
-        rdr_dict["nir"].close()
-        rdr_dict["scl"].close()
-        if rdr_dict.get("re"): rdr_dict["re"].close()
-        if rdr_dict.get("swir"): rdr_dict["swir"].close()
-
     df_out = pd.DataFrame(results)
     out_path = os.path.join(REPO_ROOT, output_csv)
     df_out.to_csv(out_path, index=False)
-    print(f"\nSaved master empirical spatio-temporal dataset to: {out_path}")
+    print(f"\nSaved master dataset to: {out_path}")
 
     # Extract 54 low-canopy parcel subset
     low54_pnos = set(df_spatial[df_spatial["diagnostic_stratum"] == "NO_STANDING_VEGETATION_OR_FALLOW"]["plot_no"].astype(str))
     df_54 = df_out[df_out["plot_no"].astype(str).isin(low54_pnos)]
     out_54_path = os.path.join(REPO_ROOT, output_54_csv)
     df_54.to_csv(out_54_path, index=False)
-    print(f"Saved dedicated 54 low-canopy empirical audit dataset to: {out_54_path}")
+    print(f"Saved 54 low-canopy audit dataset to: {out_54_path}")
+
+    elapsed = round(time.time() - start_time, 2)
+    print(f"\n⚡ Total Execution Time: {elapsed} seconds (across 320 parcels x 5 seasons)")
 
     print("\n==================================================================")
     print(" EMPIRICAL SPATIO-TEMPORAL AUDIT SUMMARY (320 REGISTERED PARCELS)")
