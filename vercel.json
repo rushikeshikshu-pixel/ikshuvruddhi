@@ -1,0 +1,10 @@
+﻿{
+  "version": 2,
+  "public": false,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/web/$1"
+    }
+  ]
+}
