@@ -1,0 +1,31 @@
+name: Supabase Keep-Alive Ping
+
+on:
+  schedule:
+    # Runs every 3 days at 04:00 UTC (9:30 AM IST)
+    - cron: '0 4 */3 * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Database & REST API
+        env:
+          PROJECT_REF: "kujuqjjxqpldkzizpjdh"
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          echo "Initiating keep-alive ping for Supabase project: $PROJECT_REF"
+          URL="https://${PROJECT_REF}.supabase.co/rest/v1/"
+          
+          if [ -n "$SUPABASE_ANON_KEY" ]; then
+            echo "Sending authenticated database query..."
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}"               -H "apikey: $SUPABASE_ANON_KEY"               -H "Authorization: Bearer $SUPABASE_ANON_KEY"               "https://${PROJECT_REF}.supabase.co/rest/v1/farmer_plots?select=id&limit=1")
+            echo "Authenticated query response HTTP code: $STATUS"
+          else
+            echo "SUPABASE_ANON_KEY secret not set, sending schema ping..."
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+            echo "Ping response HTTP code: $STATUS"
+          fi
+          
+          echo "Supabase activity ping completed successfully."
