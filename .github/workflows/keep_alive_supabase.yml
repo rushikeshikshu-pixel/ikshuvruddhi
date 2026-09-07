@@ -5,6 +5,11 @@ on:
     # Runs every 3 days at 04:00 UTC (9:30 AM IST)
     - cron: '0 4 */3 * *'
   workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/keep_alive_supabase.yml'
 
 jobs:
   ping-supabase:
@@ -18,13 +23,13 @@ jobs:
           echo "Initiating keep-alive ping for Supabase project: $PROJECT_REF"
           URL="https://${PROJECT_REF}.supabase.co/rest/v1/"
           
-          # Attempt ping with error tolerance (does not fail if project is paused)
+          # Attempt ping with error tolerance
           HTTP_CODE=$(curl -s -w "%{http_code}" -o /tmp/resp.txt --connect-timeout 10 --max-time 15 "$URL" || echo "FAILED_DNS")
           
           echo "Base URL response: $HTTP_CODE"
           
           if [ "$HTTP_CODE" = "FAILED_DNS" ]; then
-            echo "::warning ::Could not resolve https://${PROJECT_REF}.supabase.co. The project is currently PAUSED in Supabase. Please click 'Restore project' in the Supabase dashboard."
+            echo "::warning ::Project https://${PROJECT_REF}.supabase.co is currently PAUSED by Supabase due to inactivity. Once restored from the Supabase dashboard, this automated ping will keep it active."
             exit 0
           fi
           
