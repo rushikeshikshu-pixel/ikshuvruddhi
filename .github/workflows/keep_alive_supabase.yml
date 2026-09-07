@@ -1,4 +1,4 @@
-name: Supabase Keep-Alive Ping
+﻿name: Supabase Keep-Alive Ping
 
 on:
   schedule:
@@ -18,14 +18,24 @@ jobs:
           echo "Initiating keep-alive ping for Supabase project: $PROJECT_REF"
           URL="https://${PROJECT_REF}.supabase.co/rest/v1/"
           
-          if [ -n "$SUPABASE_ANON_KEY" ]; then
-            echo "Sending authenticated database query..."
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}"               -H "apikey: $SUPABASE_ANON_KEY"               -H "Authorization: Bearer $SUPABASE_ANON_KEY"               "https://${PROJECT_REF}.supabase.co/rest/v1/farmer_plots?select=id&limit=1")
-            echo "Authenticated query response HTTP code: $STATUS"
-          else
-            echo "SUPABASE_ANON_KEY secret not set, sending schema ping..."
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-            echo "Ping response HTTP code: $STATUS"
+          # Attempt ping with error tolerance (does not fail if project is paused)
+          HTTP_CODE=$(curl -s -w "%{http_code}" -o /tmp/resp.txt --connect-timeout 10 --max-time 15 "$URL" || echo "FAILED_DNS")
+          
+          echo "Base URL response: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" = "FAILED_DNS" ]; then
+            echo "::warning ::Could not resolve https://${PROJECT_REF}.supabase.co. The project is currently PAUSED in Supabase. Please click 'Restore project' in the Supabase dashboard."
+            exit 0
           fi
           
-          echo "Supabase activity ping completed successfully."
+          if [ -n "$SUPABASE_ANON_KEY" ]; then
+            echo "Sending authenticated query..."
+            AUTH_CODE=$(curl -s -w "%{http_code}" -o /dev/null \
+              -H "apikey: $SUPABASE_ANON_KEY" \
+              -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+              --connect-timeout 10 --max-time 15 \
+              "https://${PROJECT_REF}.supabase.co/rest/v1/farmer_plots?select=id&limit=1" || echo "FAILED")
+            echo "Authenticated query HTTP code: $AUTH_CODE"
+          fi
+          
+          echo "Supabase keep-alive ping routine finished."
