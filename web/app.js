@@ -709,6 +709,39 @@ document.addEventListener('DOMContentLoaded', () => {
                             is_live_geotiff: true
                         }));
 
+                        // ── SATELLITE FEEDBACK INTO PREDICTION ──────────────────────
+                        // Compute mean spectral indices from live SCL-valid pixels
+                        // and write them back onto the ACTIVE_SEASON_DATA row so
+                        // calculatePlotSucrose() uses real Sentinel-2 values instead
+                        // of the hardcoded 0.55 NDVI fallback.
+                        const _validCells = data.cells.filter(c => c.scl_valid);
+                        if (_validCells.length > 0) {
+                            const _mean = (key) => _validCells.reduce((s, c) => s + (parseFloat(c[key]) || 0), 0) / _validCells.length;
+                            const _liveNdvi  = parseFloat(_mean('ndvi').toFixed(4));
+                            const _liveNdre  = parseFloat(_mean('ndre').toFixed(4));
+                            const _liveLswi  = parseFloat((_mean('lswi') || _mean('ndwi')).toFixed(4));
+                            const _liveBsi   = parseFloat(_mean('bsi').toFixed(4));
+
+                            // Write to the raw data row (picked up by runEngine -> calculatePlotSucrose)
+                            const _rawRow = ACTIVE_SEASON_DATA.find(d => {
+                                const id = findVal(d, ['Plot No','PLOT_NO','farm_id','Gat No','GAT_NO']);
+                                return String(id) === String(farmId);
+                            });
+                            if (_rawRow) {
+                                _rawRow['real_satellite_mean_ndvi'] = _liveNdvi;
+                                _rawRow['sat_ndvi']  = _liveNdvi;
+                                _rawRow['sat_ndre']  = _liveNdre;
+                                _rawRow['sat_lswi']  = _liveLswi;
+                                _rawRow['sat_bsi']   = _liveBsi;
+                                _rawRow['satellite_acquisition_date'] = data.acquisition_date || null;
+                                _rawRow['satellite_source']           = data.source || 'Copernicus CDSE Sentinel-2 L2A';
+                                _rawRow['satellite_valid_pixels']     = data.valid_pixels || 0;
+                                _rawRow['detected_cane_acres']        = data.detected_cane_acres || _rawRow['detected_cane_acres'];
+                                console.log('[SatFeedback] Gat #' + farmId + ' NDVI=' + _liveNdvi + ' NDRE=' + _liveNdre + ' LSWI=' + _liveLswi + ' | Pol/Brix will now use live Sentinel-2 indices.');
+                            }
+                        }
+                        // ────────────────────────────────────────────────────────────
+
                         if (data.geojson) {
                             state.liveGeoJsonByFarmId[farmId] = data.geojson;
                         }
@@ -860,6 +893,22 @@ Plot remains flagged as STALE — SATELLITE REFRESH REQUIRED.`);
                                 const snappedStr = data.snapped_polygon.map(p => `${p[0].toFixed(7)},${p[1].toFixed(7)}`).join('#');
                                 row['snapped_canopy_polygon'] = snappedStr;
                                 row['snappedGeoJson'] = data.geojson;
+
+                                // ── SATELLITE FEEDBACK (bulk path) ───────────────────
+                                const _bValidCells = data.cells.filter(c => c.scl_valid);
+                                if (_bValidCells.length > 0) {
+                                    const _bMean = (key) => _bValidCells.reduce((s, c) => s + (parseFloat(c[key]) || 0), 0) / _bValidCells.length;
+                                    row['real_satellite_mean_ndvi'] = parseFloat(_bMean('ndvi').toFixed(4));
+                                    row['sat_ndvi']  = row['real_satellite_mean_ndvi'];
+                                    row['sat_ndre']  = parseFloat(_bMean('ndre').toFixed(4));
+                                    row['sat_lswi']  = parseFloat((_bMean('lswi') || _bMean('ndwi')).toFixed(4));
+                                    row['sat_bsi']   = parseFloat(_bMean('bsi').toFixed(4));
+                                    row['detected_cane_acres']        = data.detected_cane_acres || row['detected_cane_acres'];
+                                    row['satellite_acquisition_date'] = data.acquisition_date || null;
+                                    row['satellite_source']           = data.source || 'Copernicus CDSE Sentinel-2 L2A';
+                                }
+                                // ─────────────────────────────────────────────────────
+
                                 liveFetchedCount++;
                                 fetchSuccess = true;
                                 continue;
