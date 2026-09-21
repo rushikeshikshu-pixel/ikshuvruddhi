@@ -1206,7 +1206,8 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             const clearSkyCoveragePct = snappedObj.clearSkyCoveragePct || "100.0";
             const meanScore = snappedObj.caneSignatureScoreMean;
 
-            const totalTons = (isStale || sucroseRes.isInspectionRequired) ? "--" : (parseFloat(detectedCaneAcres || 0) * 48.0).toFixed(1);
+            const caneAcresForTons = (parseFloat(detectedCaneAcres) > 0) ? parseFloat(detectedCaneAcres) : parseFloat(registeredAcres || 0);
+            const totalTons = (isStale || sucroseRes.isInspectionRequired) ? "--" : (caneAcresForTons * 48.0).toFixed(1);
 
             let decision = isStale ? "STALE" : sucroseRes.decision;
             let decisionClass = isStale ? "wait" : sucroseRes.decisionClass;
@@ -1837,7 +1838,8 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                     "Predicted Pol": d.predictedPol,
                     "Brix": d.predictedBrix,
                     "CCS": d.predictedCcs,
-                    "Purity": d.predictedPurity
+                    "Purity": d.predictedPurity,
+                    "Estimated Tonnage (MT)": d.caneTonnage
                 })));
 
                 const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
