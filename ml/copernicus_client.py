@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 from ml.canopy_classifier import compute_spectral_indices, classify_sugarcane_pixel, SCL_VALID_CLASSES
 """
 IkshuVruddhi Production Copernicus CDSE Client (Strict Auditable Remote Sensing)
@@ -85,9 +87,12 @@ class CopernicusCDSEProcessEngine:
         lat_step = (max_lat - min_lat) / float(grid_height)
         lon_step = (max_lon - min_lon) / float(grid_width)
 
+        ring = [[round(pt[1], 7), round(pt[0], 7)] for pt in polygon_coords]
+        if ring and (ring[0] != ring[-1]):
+            ring.append(ring[0])
         geojson_poly = {
             "type": "Polygon",
-            "coordinates": [[ [round(pt[1], 7), round(pt[0], 7)] for pt in polygon_coords ]]
+            "coordinates": [ring]
         }
 
         if not date_str:

@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 """
 IkshuVruddhi FastAPI Satellite Engine Backend
 Exposes authentic Sentinel-2 L2A raster sampling, SCL cloud-masking, and morphological snapping.
