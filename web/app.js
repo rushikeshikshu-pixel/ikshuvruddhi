@@ -1830,26 +1830,20 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
         if (el.btnHeaderExport) {
             el.btnHeaderExport.addEventListener('click', () => {
                 const csvStr = Papa.unparse(state.enrichedData.map(d => ({
-                    farm_id: d.farm_id,
-                    farmer_name: d.farmer_name,
-                    admin_key: d.adminKey,
-                    operational_decision: d.decision,
-                    predicted_pol_pct: d.predictedPol,
-                    predicted_ccs_pct: d.predictedCcs,
-                    predicted_purity_pct: d.predictedPurity,
-                    registered_walked_acres: d.registeredAcres,
-                    estimated_standing_cane_acres: d.detectedCaneAcres,
-                    observed_cane_fraction_pct: d.observedCaneFractionPct,
-                    clear_sky_coverage_pct: d.clearSkyCoveragePct,
-                    cane_signature_score_pct: d.caneSignatureScoreMean,
-                    est_cane_tonnage: d.caneTonnage,
-                    plot_area_polygon: d.plot_area_polygon
+                    "Plot No": d.farm_id,
+                    "Farmer Name": d.farmer_name,
+                    "Area (Hectare)": d.hectares,
+                    "Area (Acres)": d.registeredAcres,
+                    "Predicted Pol": d.predictedPol,
+                    "Brix": d.predictedBrix,
+                    "CCS": d.predictedCcs,
+                    "Purity": d.predictedPurity
                 })));
 
                 const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.setAttribute('download', `Gangamai_2025_26_Cane_Canopy_Snapped.csv`);
+                link.setAttribute('download', `Cane_Quality_Predictions_Pol_Brix_CCS_Purity.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
