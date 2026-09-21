@@ -1,5 +1,8 @@
-from dotenv import load_dotenv
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 from ml.canopy_classifier import compute_spectral_indices, classify_sugarcane_pixel, SCL_VALID_CLASSES
 """
 IkshuVruddhi Production Copernicus CDSE Client (Strict Auditable Remote Sensing)

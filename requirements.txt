@@ -9,3 +9,4 @@ shapely>=2.0.3
 scikit-learn>=1.4.0
 matplotlib>=3.8.0
 python-multipart>=0.0.9
+python-dotenv>=1.0.0
