@@ -21,7 +21,10 @@ def clean_and_sanitize_csv(input_file="sugarcane_sucrose_dataset.csv", output_fi
         print(f"[Error] File '{input_file}' does not exist!")
         return None, 0.0
 
-    df = pd.read_csv(input_file)
+    if input_file.lower().endswith(('.xlsx', '.xls')):
+        df = pd.read_excel(input_file)
+    else:
+        df = pd.read_csv(input_file)
     initial_rows = len(df)
     print(f"[1/5] Loaded raw dataset: {initial_rows} rows, {len(df.columns)} columns.")
 

@@ -22,7 +22,7 @@ _SOIL_CACHE: Dict[Tuple[float, float], Dict[str, float]] = {}
 def fetch_isric_soilgrids(
     latitude: float,
     longitude: float,
-    timeout_sec: int = 5,
+    timeout_sec: int = 15,
     allow_fallback: bool = True
 ) -> Dict[str, float]:
     """

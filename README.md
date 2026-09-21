@@ -82,3 +82,13 @@ No satellite, SAR, weather or laboratory feed is wired in. Soil moisture and
 the within-field zone overlay are placeholders and are labelled as such
 throughout the UI and on the printed docket. Cane weight and CCS for payment
 come from the factory weighbridge and laboratory only.
+
+
+---
+
+## Mill Register Reconciliation & Operational Integrity
+
+- **Active Register Scale**: 320 registered plots totaling 279.23 registered hectares under Adsali Season Code `2627` (crushed during 2025–26 / 2026–27 harvest campaign).
+- **Date Auditing**: In the mill's initial cadastral register, plantation and harvesting dates were recorded with identical values (`Plantation Date == Harvesting Date`). The engine treats these as registration dates with harvest dates managed through the active sequencing schedule.
+- **Boundary Collisions**: Plots 39/40 and Plots 54/55 share identical GPS polygon strings in the source data. The dashboard identifies boundary collisions and renders `⚠️ DUPLICATE BOUNDARY` badges across the queue and decision cockpit, alerting agricultural officers to verify parcel boundaries before issuing harvesting dockets.
+- **Scientific Validation**: Machine learning predictions are anchored by `ml/train_ccs_model.py` using genuine mill laboratory weighbridge data with GroupKFold cross-validation. Historical scripts that generated self-referential synthetic targets are deprecated and excluded from operational harvest decision paths.

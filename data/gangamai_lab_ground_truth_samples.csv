@@ -1,0 +1,79 @@
+sr_no,gat_no,farmer_name,village,circle,variety,crop_type,plantation_date,brix,pol,pol_cane,ccs,sample_date,crop_age_days,measured_brix,measured_pol,calculated_pol_cane,calculated_mill_recovery,standard_biological_ccs
+1,25016,Namane Pramod Ramkrishan,Chapadgaon,Chapadgaon,265,Adsali,11-08-2025,16.56,15.66,11.28,8.78,2026-09-15,400,16.56,15.66,11.28,8.78,11.17
+2,5324,Dhavane Gokul Eknath,Ghogegaon,Ghogegaon,265,Adsali,30-08-2025,17.08,16.12,11.6,9.1,2026-09-15,381,17.08,16.12,11.6,9.1,11.49
+3,17,Kapare Suresh Pujaram,Samangaon,Dheralgaon,265,Adsali,15-07-2025,15.86,15.21,10.95,8.45,2026-09-15,427,15.86,15.21,10.95,8.45,10.91
+4,27818,Barkafe Hemant Dnyandev,Dahiphal,Erandgaon,265,Adsali,06-08-2025,19.31,18.13,13.05,10.55,2026-09-15,405,19.31,18.13,13.05,10.55,12.89
+5,6494,Aute Sainath Nanasaheb,Gadewadi,Khanapur,265,Adsali,07-08-2025,15.05,14.94,10.76,8.26,2026-09-15,404,15.05,14.94,10.76,8.26,10.87
+6,24869,Shelke Amit Ganesh,Shevgaon,Shevgaon,265,Adsali,12-08-2025,16.14,15.94,11.48,8.98,2026-09-15,399,16.14,15.94,11.48,8.98,11.58
+7,5050,Raut Pradip Balasaheb,Shehar Takli,Bhatkudgaon,86032,Adsali,25-07-2025,15.91,14.73,10.61,8.11,2026-09-15,417,15.91,14.73,10.61,8.11,10.41
+8,20122,Nikam Babasaheb Sakharam,Devgaon,Kukana,86032,Adsali,01-07-2025,16.54,15.76,11.35,8.85,2026-09-15,441,16.54,15.76,11.35,8.85,11.28
+9,5154,Jagtap Laxman Manik,Brahmarangaon,Tuljapur,265,Pre-seasonal,15-10-2025,13.91,12.11,8.72,6.22,2026-09-15,335,13.91,12.11,8.72,6.22,8.31
+10,22618,Lipane Rohidas Harichandra,Nandur Shikari,Bhatkudgaon,265,Pre-seasonal,13-09-2025,17.46,16.33,11.76,9.26,2026-09-15,367,17.46,16.33,11.76,9.26,11.59
+11,21258,Tayade Usha Keshav,Bhangalgaon,Tirthpuri,86032,Pre-seasonal,01-10-2025,17.54,16.02,11.53,9.03,2026-09-15,349,17.54,16.02,11.53,9.03,11.25
+12,25046,Udhan Pallavi Mahesh,Banegaon,Tirthpuri,265,Pre-seasonal,01-10-2025,11.98,9.97,7.18,4.68,2026-09-15,349,11.98,9.97,7.18,4.68,6.69
+13,3581,Chede Bhaskar Ramkrishan,Dedgaon,Kukana,265,Pre-seasonal,25-10-2025,14.68,13.53,9.74,7.24,2026-09-15,325,14.68,13.53,9.74,7.24,9.54
+14,6185,Deshmukh Nikhil Arun,Shirsagaon,Shirsagaon,13007,Pre-seasonal,20-10-2025,13.48,12.54,9.02,6.52,2026-09-15,330,13.48,12.54,9.02,6.52,8.88
+15,26409,Khartude Jayaji Sakharam,Pimpari Shirsagaon,Ambad,265,Pre-seasonal,23-10-2025,12.17,11.02,7.93,5.43,2026-09-15,327,12.17,11.02,7.93,5.43,7.71
+16,1210,Dushing Ramnath Kashinath,Ghogegaon,Nevasa Phata,265,Pre-seasonal,30-10-2025,16.62,13.81,9.94,7.44,2026-09-15,320,16.62,13.81,9.94,7.44,9.26
+17,114,Sathe Kakasaheb Prakash,Mukundpur,Nevasa Phata,265,Pre-seasonal,10-10-2025,14.9,13.74,9.89,7.39,2026-09-15,340,14.9,13.74,9.89,7.39,9.69
+18,12575,Awhad Tukaram Baburao,Bodhegaon,Bodhegaon,265,Pre-seasonal,20-10-2025,14.71,13.37,9.63,7.13,2026-09-15,330,14.71,13.37,9.63,7.13,9.37
+19,3707,Arsul Ganesh Sureshrao,Antarwali,Bagpimplgaon,265,Pre-seasonal,02-10-2025,13.25,11.42,8.22,5.72,2026-09-15,348,13.25,11.42,8.22,5.72,7.8
+20,7001,Munde Mahadev Murlidhar,Sonavihir,Bodhegaon,265,Pre-seasonal,22-10-2025,13.93,13.18,9.48,6.98,2026-09-15,328,13.93,13.18,9.48,6.98,9.4
+21,785,Mule Minakshi Pradiprao,Takalvan,Takalvan,8005,Pre-seasonal,29-10-2025,14.85,13.54,9.75,7.25,2026-09-15,321,14.85,13.54,9.75,7.25,9.5
+22,14152,Dherkule Gokul Vilas,N. Babulgaon,Ghogegaon,265,Pre-seasonal,10-09-2025,11.96,11.96,8.61,6.11,2026-09-15,370,11.96,11.96,8.61,6.11,8.73
+23,18912,Pavase Laxmibai Kisan,Khamgaon Pimpri,Chapadgaon,265,Pre-seasonal,25-10-2025,13.46,11.89,8.56,6.06,2026-09-15,325,13.46,11.89,8.56,6.06,8.22
+24,4998,Pandav Baliram Narayan,Vadale Bu,Dheralgaon,265,Pre-seasonal,31-10-2025,14.94,13.05,9.4,6.9,2026-09-15,319,14.94,13.05,9.4,6.9,8.97
+25,26027,Dhamale Popat Navnath,Lolegaon,Dheralgaon,13007,Pre-seasonal,22-10-2025,16.26,13.98,10.06,7.56,2026-09-15,328,16.26,13.98,10.06,7.56,9.54
+26,1774,Shaikh Farjana Rajmohammad,Kordgaon,Shevgaon D,265,Pre-seasonal,20-10-2025,13.76,11.6,8.35,5.85,2026-09-15,330,13.76,11.6,8.35,5.85,7.84
+27,624,Bhagwat Ashok Sukhdev,Erandgaon,Erandgaon,265,Pre-seasonal,30-10-2025,13.36,13.43,9.67,7.17,2026-09-15,320,13.36,13.43,9.67,7.17,9.82
+28,1120,Madke Bappasaheb Bhujangrao,Antarwali,Khanapur,265,Pre-seasonal,30-10-2025,15.1,13.45,9.68,7.18,2026-09-15,320,15.1,13.45,9.68,7.18,9.34
+29,474,Patkal Pandharinath Santaram,Telwadi,Jaikwadi,13007,Pre-seasonal,02-10-2025,12.98,11.37,8.19,5.69,2026-09-15,348,12.98,11.37,8.19,5.69,7.83
+30,2180,Vetal Shivaji Ravsaheb,Bodkhe,Shevgaon,15006,Pre-seasonal,11-10-2025,14.54,13.59,9.78,7.28,2026-09-15,339,14.54,13.59,9.78,7.28,9.64
+31,8088,Gangamai Industries and Co Pvt Ltd,Ghogegaon,Ghogegaon,13007,Suru,16-11-2025,13.89,13.36,9.62,7.12,2026-09-15,303,13.89,13.36,9.62,7.12,9.6
+32,1946,Shelke Balasaheb Keshav,Khuntephal,Shevgaon,265,Suru,28-11-2025,14.34,12.83,9.23,6.73,2026-09-15,291,14.34,12.83,9.23,6.73,8.92
+33,1058,Waghmare Krishna Bhanudas,Dahiphal,Erandgaon,15006,Suru,30-11-2025,13.94,12.26,8.83,6.33,2026-09-15,289,13.94,12.26,8.83,6.33,8.46
+34,4797,Kavade Ashok Ambadas,Laxmipur,Chapadgaon,13007,Suru,14-11-2025,15.8,14.1,10.15,7.65,2026-09-15,305,15.8,14.1,10.15,7.65,9.8
+35,1436,Lavande Ravsaheb Mohan,Khanapur,Khanapur,15012,Suru,28-11-2025,13.94,11.97,8.62,6.12,2026-09-15,291,13.94,11.97,8.62,6.12,8.16
+36,15762,Dahiphal Sunita Shyam,Dadegaon J,Pategaon,15006,Suru,25-12-2025,14.41,12.7,9.14,6.64,2026-09-15,264,14.41,12.7,9.14,6.64,8.77
+37,6496,Kolhapure Ajay Laxman,Vadale Ne,Bhatkudgaon,13007,Suru,03-11-2025,16.91,15.95,11.48,8.98,2026-09-15,316,16.91,15.95,11.48,8.98,11.36
+38,4589,Chate Ashok Kalyan,Nalewadi,Ambad,13007,Suru,12-11-2025,14.55,13.61,9.8,7.3,2026-09-15,307,14.55,13.61,9.8,7.3,9.66
+39,2605,Take Digambar Uttam,Je ur Haibati,Kukana,265,Suru,14-11-2025,13.34,12.93,9.31,6.81,2026-09-15,305,13.34,12.93,9.31,6.81,9.32
+40,25721,Jadhav Suresh Janardhan,Mavasgavan,Dhorakin,265,Suru,15-11-2025,12.76,11.37,8.19,5.69,2026-09-15,304,12.76,11.37,8.19,5.69,7.89
+41,7338,Rajebhosale Ramraje Khanderao,Mungi,Chapadgaon,265,Suru,16-11-2025,15.44,13.76,9.91,7.41,2026-09-15,303,15.44,13.76,9.91,7.41,9.55
+42,10291,Andure Sandip Vishnupant,Umapur,Umapur,265,Suru,10-11-2025,12.48,10.97,7.9,5.4,2026-09-15,309,12.48,10.97,7.9,5.4,7.57
+43,9063,Pikwane Kanta Gangadhar,Pohlachivadi,Umapur,15012,Suru,01-11-2025,12.18,9.75,7.02,4.52,2026-09-15,318,12.18,9.75,7.02,4.52,6.41
+44,3681,Pahad Tanaji Ramrao,Mirgaon,Bagpimplgaon,265,Suru,01-11-2025,13.13,11.02,7.93,5.43,2026-09-15,318,13.13,11.02,7.93,5.43,7.43
+45,24884,Jadhav Suresh Babasaheb,Dhadrav,Umapur,265,Suru,01-11-2025,15.55,13.76,9.91,7.41,2026-09-15,318,15.55,13.76,9.91,7.41,9.52
+46,4748,Kale Mahesh Ashok,Gevrai,Bagpimplgaon,265,Suru,13-11-2025,11.33,9.76,7.03,4.53,2026-09-15,306,11.33,9.76,7.03,4.53,6.67
+47,2716,Jadhav Vikas Mansingrao,Borgaon,Bodhegaon,15012,Suru,10-11-2025,14.31,11.8,8.5,6.0,2026-09-15,309,14.31,11.8,8.5,6.0,7.88
+48,23314,Galande Sanjay Rambhau,Hatgaon,Bodhegaon,265,Suru,08-11-2025,14.08,13.1,9.43,6.93,2026-09-15,311,14.08,13.1,9.43,6.93,9.28
+49,24632,Bochare Dnyanoba Rajaram,Jadidjawala,Takalvan,265,Suru,05-11-2025,13.13,11.42,8.22,5.72,2026-09-15,314,13.13,11.42,8.22,5.72,7.84
+50,27086,Shinde Ramesh Sundarrao,Tapelimagao,Takalvan,265,Suru,01-11-2025,15.44,13.79,9.93,7.43,2026-09-15,318,15.44,13.79,9.93,7.43,9.58
+51,10863,Sabale Nandabai Shivaji,Pategaon,Pategaon,265,Khodwa,15-11-2025,15.64,13.25,9.54,7.04,2026-09-15,304,15.64,13.25,9.54,7.04,8.97
+52,22006,Natkar Atmaram Kantilal,Saygaon,Pategaon,265,Khodwa,10-11-2025,14.96,13.35,9.61,7.11,2026-09-15,309,14.96,13.35,9.61,7.11,9.28
+53,5235,Wakde Raghunath Babanrao,Takli Ambad,Tuljapur,265,Khodwa,11-11-2025,13.78,13.44,9.68,7.18,2026-09-15,308,13.78,13.44,9.68,7.18,9.71
+54,122,Shaikh Sattar Shaikh Mohammad,Navgaon,Tuljapur,265,Khodwa,01-11-2025,15.16,13.32,9.59,7.09,2026-09-15,318,15.16,13.32,9.59,7.09,9.19
+55,8158,Aher Pushpa Dnyandev,Bhatkudgaon,Bhatkudgaon,265,Khodwa,15-11-2025,16.31,14.79,10.65,8.15,2026-09-15,304,16.31,14.79,10.65,8.15,10.35
+56,4207,Gadekar Tulsiram Devidas,Churmapuri,Ambad,265,Khodwa,04-11-2025,12.04,11.0,7.92,5.42,2026-09-15,315,12.04,11.0,7.92,5.42,7.73
+57,16289,Pawal Bhimrao Janardhan,Dhakalgaon,Ambad,265,Khodwa,15-11-2025,13.21,11.75,8.46,5.96,2026-09-15,304,13.21,11.75,8.46,5.96,8.15
+58,23031,Gaikwad Durga Tulsiram,Jogaladevi,Tirthpuri,265,Khodwa,30-11-2025,15.38,13.91,10.02,7.52,2026-09-15,289,15.38,13.91,10.02,7.52,9.73
+59,188,Kadam Janardhan Pujaji,Khadegaon,Kukana,265,Khodwa,15-11-2025,16.32,15.52,11.17,8.67,2026-09-15,304,16.32,15.52,11.17,8.67,11.1
+60,5459,Pote Satish Harishchandra,Shirsagaon,Shirsagaon,265,Khodwa,12-11-2025,16.64,14.93,10.75,8.25,2026-09-15,307,16.64,14.93,10.75,8.25,10.4
+61,2663,Dholap Suman Bhaskar,Ghogegaon,Nevasa Phata,265,Khodwa,14-11-2025,14.65,13.82,9.95,7.45,2026-09-15,305,14.65,13.82,9.95,7.45,9.85
+62,3989,Varma Chanchalabai Prakash,Borgaon,Dhorakin,265,Khodwa,10-11-2025,14.38,13.82,9.95,7.45,2026-09-15,309,14.38,13.82,9.95,7.45,9.93
+63,25551,Mohite Dnyaneshwar Dada,Vadala,Dhorakin,265,Khodwa,15-11-2025,15.54,13.98,10.07,7.57,2026-09-15,304,15.54,13.98,10.07,7.57,9.75
+64,10382,Mirza Mujib Ahmad,Gulanj,Umapur,265,Khodwa,15-11-2025,11.41,10.59,7.62,5.12,2026-09-15,304,11.41,10.59,7.62,5.12,7.49
+65,2832,More Ashok Babaji,Kolhar,Bagpimplgaon,265,Khodwa,07-11-2025,12.25,11.29,8.13,5.63,2026-09-15,312,12.25,11.29,8.13,5.63,7.96
+66,17343,Pokale Nandu Raybhan,Balhegaon,Bodhegaon,265,Khodwa,08-11-2025,15.55,13.25,9.54,7.04,2026-09-15,311,15.55,13.25,9.54,7.04,9.0
+67,18586,Tehale Vitthal Pandurang,Chopdyachivadi,Takalvan,265,Khodwa,13-11-2025,14.55,13.57,9.77,7.27,2026-09-15,306,14.55,13.57,9.77,7.27,9.62
+68,7444,Pathan Jalil Hasankha,Ghogegaon,Ghogegaon,265,Khodwa,09-11-2025,17.16,15.63,11.25,8.75,2026-09-15,310,17.16,15.63,11.25,8.75,10.96
+69,1822,Dhangar Prayagabai Trimbak,Joharpur,Dheralgaon,265,Khodwa,24-11-2025,12.76,11.17,8.04,5.54,2026-09-15,295,12.76,11.17,8.04,5.54,7.69
+70,492,Dongare Abasaheb Laxman,Akhegaon,Shevgaon D,265,Khodwa,13-11-2025,16.04,15.31,11.02,8.52,2026-09-15,306,16.04,15.31,11.02,8.52,10.96
+71,20500,Aware Amol Rajendra,Erandgaon,Erandgaon,265,Khodwa,10-11-2025,14.11,13.04,9.39,6.89,2026-09-15,309,14.11,13.04,9.39,6.89,9.21
+72,268,Dhanwate Bhagwat Shivaji,Talani,Shevgaon,265,Khodwa,10-11-2025,16.65,15.19,10.94,8.44,2026-09-15,309,16.65,15.19,10.94,8.44,10.66
+73,7137,Gatkal Sadashiv Dagdu,Shevgaon,Khanapur,265,Khodwa,13-11-2025,14.34,13.77,9.91,7.41,2026-09-15,306,14.34,13.77,9.91,7.41,9.89
+74,1183,Magare Machhindra Anna,Chankavadi,Jaikwadi,265,Khodwa,13-11-2025,14.44,14.08,10.14,7.64,2026-09-15,306,14.44,14.08,10.14,7.64,10.17
+75,7231,Kale Kalu Eknath,Telwadi,Jaikwadi,265,Khodwa,13-11-2025,13.96,13.94,10.04,7.54,2026-09-15,306,13.96,13.94,10.04,7.54,10.17
+76,4864,Kanse Bhausaheb Asaram,Mohammadpur,Jaikwadi,265,Khodwa,15-11-2025,13.34,12.02,8.65,6.15,2026-09-15,304,13.34,12.02,8.65,6.15,8.39
+77,1031,Kakade Gangadhar Chandrabhan,Susare,Shevgaon D,13007,Khodwa,30-11-2025,14.44,14.36,10.34,7.84,2026-09-15,289,14.44,14.36,10.34,7.84,10.46
+78,379,Chitlesh Asaram Gangadhar,Varur,Shevgaon D,265,Khodwa,15-11-2025,14.15,13.89,10.0,7.5,2026-09-15,304,14.15,13.89,10.0,7.5,10.06

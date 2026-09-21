@@ -184,19 +184,51 @@ def evaluate_spatio_temporal_profile(
     else:
         pheno_profile = "INTERMEDIATE_MULTI_SEASON_PROFILE"
 
+    days_since_collapse = None
+    if collapse_info["collapse_detected"] and collapse_info.get("post_collapse_date"):
+        try:
+            dt_post_col = datetime.strptime(collapse_info["post_collapse_date"][:10], "%Y-%m-%d")
+            dt_ref = datetime.strptime(reference_date_str[:10], "%Y-%m-%d")
+            days_since_collapse = (dt_ref - dt_post_col).days
+        except Exception:
+            days_since_collapse = None
+
     # 4. Spatio-Temporal Synthesis & Primary Mill Action
-    if collapse_info["collapse_detected"]:
-        primary_status = "STRONG_CANOPY_CLEARING_EVENT_CONSISTENT_WITH_HARVEST"
-        primary_action = "LOG_HARVEST_AND_VERIFY_WEIGHBRIDGE_RECEIPT"
-        primary_rationale = (
-            f"Measured canopy collapse between {collapse_info['clearing_window']} "
-            f"(NDVI {collapse_info['pre_collapse_ndvi']:.3f} -> {collapse_info['post_collapse_ndvi']:.3f}, "
-            f"drop: -{collapse_info['drop_magnitude_ndvi']:.3f} dNDVI, {collapse_info['gap_days']}d gap). Consistent with previous crop harvest."
-        )
+    if not is_curr_valid:
+        # Strict Telemetry Guard: Never schedule harvest on invalid/missing current observations
+        primary_status = "CURRENT_OBSERVATION_UNAVAILABLE"
+        primary_action = "ACQUIRE_CLOUD_FREE_TELEMETRY"
+        primary_rationale = "Current satellite scene is obstructed or invalid (<50% usability). Cannot recommend operational action without fresh observation."
+    elif collapse_info["collapse_detected"]:
+        # Guard 1: Check for active vegetative regrowth post-collapse (ratoon or replanted)
+        if curr_ndvi is not None and curr_ndvi >= 0.50 and curr_canopy >= 40.0:
+            primary_status = "CONFIRMED_STANDING_RATOON_REGROWTH"
+            primary_action = "MONITOR_RATOON_CYCLE_DEVELOPMENT"
+            primary_rationale = (
+                f"Historic canopy clearing detected in {collapse_info['clearing_window']}, "
+                f"but current observation confirms standing vegetative regrowth "
+                f"(NDVI {curr_ndvi:.3f}, {curr_canopy:.1f}% canopy). Active ratoon cycle confirmed."
+            )
+        # Guard 2: Check recency of collapse event
+        elif days_since_collapse is not None and days_since_collapse > 60:
+            primary_status = "HISTORIC_HARVEST_FIELD_CURRENTLY_FALLOW"
+            primary_action = "VERIFY_PLANTING_CYCLE_OR_FALLOW"
+            primary_rationale = (
+                f"Historic canopy clearing detected in {collapse_info['clearing_window']} "
+                f"({days_since_collapse} days prior to {reference_date_str}). Field currently uncultivated or bare."
+            )
+        else:
+            primary_status = "STRONG_CANOPY_CLEARING_EVENT_CONSISTENT_WITH_HARVEST"
+            primary_action = "LOG_HARVEST_AND_VERIFY_WEIGHBRIDGE_RECEIPT"
+            primary_rationale = (
+                f"Measured recent canopy collapse between {collapse_info['clearing_window']} "
+                f"(NDVI {collapse_info['pre_collapse_ndvi']:.3f} -> {collapse_info['post_collapse_ndvi']:.3f}, "
+                f"drop: -{collapse_info['drop_magnitude_ndvi']:.3f} dNDVI, {collapse_info['gap_days']}d gap). Consistent with current campaign harvest."
+            )
     elif not inside_is_low:
         primary_status = "SUGARCANE_COMPATIBLE_STANDING_CANOPY"
         primary_action = "SCHEDULE_FOR_HARVEST_SUPPLY"
-        primary_rationale = f"Verified high standing canopy inside parcel ({january_canopy_occ:.1f}% occupancy in audit) consistent with registered cane."
+        primary_rationale = f"Verified high standing canopy inside parcel ({curr_canopy:.1f}% current / {january_canopy_occ:.1f}% January) consistent with mature standing cane."
     elif spatial_flag == "BOUNDARY_OR_REGISTRATION_DISCREPANCY":
         primary_status = "BOUNDARY_OR_REGISTRATION_DISCREPANCY"
         primary_action = "GPS_BOUNDARY_RE_SURVEY"

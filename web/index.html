@@ -67,14 +67,14 @@
         <!-- STREAMLINED ACTION TOOLBAR -->
         <div class="toolbar-bar">
             <div class="preset-group">
-                <input type="file" id="csvNewSeasonInput" accept=".csv" style="display:none;">
-                <input type="file" id="csvLabTrainingInput" accept=".csv" style="display:none;">
+                <input type="file" id="csvNewSeasonInput" accept=".csv, .xlsx, .xls" style="display:none;">
+                <input type="file" id="csvLabTrainingInput" accept=".csv, .xlsx, .xls" style="display:none;">
                 
                 <button class="btn-preset active" id="btnUploadNewSeason" onclick="document.getElementById('csvNewSeasonInput').click()" style="background: rgba(0,242,254,0.18); color: var(--accent-cyan); border-color: rgba(0,242,254,0.5); font-weight:700;">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 1. Ingest Field Plots CSV
+                    <i class="fa-solid fa-cloud-arrow-up"></i> 📁 1. Ingest Field Plots (Excel / CSV)
                 </button>
                 <button class="btn-preset" id="btnUploadLabTraining" onclick="document.getElementById('csvLabTrainingInput').click()" style="background: rgba(168,85,247,0.18); color: #a855f7; border-color: rgba(168,85,247,0.45); font-weight:700;">
-                    <i class="fa-solid fa-flask-vial"></i> 🧪 2. Ingest Lab CSV
+                    <i class="fa-solid fa-flask-vial"></i> 🧪 2. Ingest Lab Ground Truth (Excel / CSV)
                 </button>
                 <button class="btn-preset" id="btnAutoSnapAllPolygons" onclick="window.runAutonomousCanopySnapping()" style="background: linear-gradient(135deg, rgba(0,242,254,0.25), rgba(0,230,118,0.25)); color: #00f2fe; border-color: #00f2fe; font-weight:800;">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> ⚡ Autonomous Canopy Snapping
@@ -102,17 +102,17 @@
                 <span class="kpi-subtext"><i class="fa-solid fa-map-pin"></i> Command Area</span>
             </div>
             <div class="kpi-card green">
-                <span class="kpi-title">Cut Today (Priority 1)</span>
+                <span class="kpi-title">Batch 1: Nov 1–15 (Opening)</span>
                 <span class="kpi-value" id="kpiCutToday" style="color:var(--accent-green);">0</span>
                 <span class="kpi-subtext positive"><i class="fa-solid fa-bolt"></i> Peak Maturity (&gt;12.0% CCS)</span>
             </div>
             <div class="kpi-card amber">
-                <span class="kpi-title">Cut in 3–7 Days</span>
+                <span class="kpi-title">Batch 2: Nov 16–30</span>
                 <span class="kpi-value" id="kpiCut3to7Days" style="color:#ffea00;">0</span>
                 <span class="kpi-subtext" style="color:#ffea00;"><i class="fa-solid fa-hourglass-half"></i> Approaching Optimal Window</span>
             </div>
             <div class="kpi-card coral">
-                <span class="kpi-title">Wait / Vegetative</span>
+                <span class="kpi-title">Batch 3 & 4 (Dec+)</span>
                 <span class="kpi-value" id="kpiWaitCount" style="color:var(--accent-coral);">0</span>
                 <span class="kpi-subtext" style="color:var(--accent-coral);"><i class="fa-solid fa-clock"></i> Accumulating Sucrose</span>
             </div>
@@ -207,7 +207,7 @@
                 <div class="left-card-footer-strip">
                     <div style="display:flex; gap:6px;">
                         <button class="btn btn-xs btn-outline" onclick="document.getElementById('csvNewSeasonInput').click()" style="border-color:rgba(0,242,254,0.4); color:var(--accent-cyan); font-weight:700;">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Plots CSV
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Plots (Excel / CSV)
                         </button>
                         <button class="btn btn-xs btn-outline" onclick="window.runAutonomousCanopySnapping()" style="border-color:rgba(0,242,254,0.5); color:var(--accent-cyan); font-weight:700;">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Snap All
@@ -303,6 +303,16 @@
                 </div>
 
                 <div>
+                    <!-- TWO-STAGE TRUTH ARCHITECTURE: S0 vs FACTORY RECOVERY -->
+                    <div class="cockpit-stat-box" style="background:rgba(0,242,254,0.03); border-color:rgba(0,242,254,0.25);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <span style="font-size:0.75rem; font-weight:800; color:#00f2fe; text-transform:uppercase;"><i class="fa-solid fa-layer-group"></i> Two-Stage Truth Architecture (S₀ vs. Factory Recovery)</span>
+                            <span style="font-size:0.65rem; background:rgba(0,242,254,0.1); color:#00f2fe; border:1px solid rgba(0,242,254,0.3); padding:2px 6px; border-radius:4px; font-weight:bold;">50–100 Traceable Loads Pilot</span>
+                        </div>
+                        <div style="font-size:0.74rem;" id="modalTwoStageBox">
+                        </div>
+                    </div>
+
                     <div class="cockpit-stat-box">
                         <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Model vs. Mill Lab Ground-Truth Feed</span>
                         <div style="margin-top:8px; font-size:0.78rem;" id="modalThreeBoundaryBox">
@@ -311,22 +321,35 @@
 
                     <div class="cockpit-stat-box" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                         <div>
-                            <span style="font-size:0.70rem; color:#94a3b8;">🧬 Predicted Pol % (Sucrose)</span>
+                            <span style="font-size:0.70rem; color:#94a3b8;"><i class="fa-solid fa-calendar"></i> Plantation Date & Season</span>
+                            <div style="font-size:1.0rem; font-weight:800; color:#f1f5f9;" id="modalPlantingDate">--</div>
+                            <span style="font-size:0.68rem; color:#00f2fe;" id="modalCropAge">--</span>
+                        </div>
+                        <div>
+                            <span style="font-size:0.70rem; color:#94a3b8;"><i class="fa-solid fa-weight-hanging"></i> Est. Cane Tonnage</span>
+                            <div style="font-size:1.0rem; font-weight:800; color:#00e676;" id="modalTotalYieldTons">--</div>
+                            <span style="font-size:0.68rem; color:#94a3b8;">At Mill Gate Model</span>
+                        </div>
+                    </div>
+
+                    <div class="cockpit-stat-box" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div>
+                            <span style="font-size:0.70rem; color:#94a3b8;"><i class="fa-solid fa-dna"></i> Stage 1: Biological Stalk Pol (S₀)</span>
                             <div style="font-size:1.15rem; font-weight:800; color:#00f2fe;" id="modalPredictedPol">--</div>
                             <span style="font-size:0.68rem; color:#a855f7;" id="modalPredictedPurity">--</span>
                         </div>
                         <div>
-                            <span style="font-size:0.70rem; color:#94a3b8;">📅 Harvest Decision</span>
-                            <div style="font-size:1.0rem; font-weight:800;" id="modalHarvestDecision"><span class="decision-badge cut-now">--</span></div>
+                            <span style="font-size:0.70rem; color:#94a3b8;"><i class="fa-solid fa-truck-ramp-box"></i> Crushing Scheduling Batch</span>
+                            <div style="font-size:0.95rem; font-weight:800;" id="modalHarvestDecision"><span class="decision-badge cut-now">--</span></div>
                             <span style="font-size:0.68rem; color:#cbd5e1;" id="modalPeakWindow">--</span>
                         </div>
                     </div>
 
                     <div class="cockpit-stat-box">
-                        <span style="font-size:0.75rem; font-weight:800; color:#00e676; text-transform:uppercase;"><i class="fa-solid fa-sack-dollar"></i> Commercial Sugar (CCS %) & Recovery</span>
+                        <span style="font-size:0.75rem; font-weight:800; color:#00e676; text-transform:uppercase;"><i class="fa-solid fa-sack-dollar"></i> Stage 2: Commercial Sugar (CCS %) & Recovery</span>
                         <div style="display:flex; justify-content:space-between; margin-top:8px;">
                             <div>
-                                <span style="font-size:0.70rem; color:#94a3b8;">Predicted CCS %:</span>
+                                <span style="font-size:0.70rem; color:#94a3b8;">Expected Factory CCS %:</span>
                                 <div style="font-size:1.05rem; font-weight:800; color:#00e676;" id="modalPredictedCcs">--</div>
                             </div>
                             <div>
@@ -335,7 +358,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div style="display:flex; gap:8px; margin-top:10px;">
                         <button class="btn btn-primary btn-sm" id="btnModalPrintDocket" style="flex:1;">
                             <i class="fa-solid fa-print"></i> Generate Cutting Slip Docket
@@ -357,7 +379,7 @@
             <p style="margin:0; font-size:12px;">Shevgaon / Ahilyanagar District, Maharashtra | Satellite Telemetry</p>
         </div>
 
-        <table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:14px;" border="1">
+        <table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:13px;" border="1">
             <tr>
                 <td style="padding:6px; background:#f0f0f0;"><b>Farmer Name:</b></td>
                 <td style="padding:6px;" id="docketFarmerName">--</td>
@@ -371,16 +393,26 @@
                 <td style="padding:6px;" id="docketPlantingDate">--</td>
             </tr>
             <tr>
-                <td style="padding:6px; background:#f0f0f0;"><b>Predicted Pol %:</b></td>
-                <td style="padding:6px; font-weight:bold; color:#00f2fe;" id="docketPol">--</td>
-                <td style="padding:6px; background:#f0f0f0;"><b>Predicted CCS %:</b></td>
-                <td style="padding:6px; font-weight:bold; color:green;" id="docketCcs">--</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Stage 1: Biological Pol (S₀):</b></td>
+                <td style="padding:6px; font-weight:bold; color:#0066cc;" id="docketPol">--</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Stalk Maturity Index:</b></td>
+                <td style="padding:6px; font-weight:bold;" id="docketMaturityIndex">--</td>
             </tr>
             <tr>
+                <td style="padding:6px; background:#f0f0f0;"><b>Stage 2: Expected Factory CCS %:</b></td>
+                <td style="padding:6px; font-weight:bold; color:green;" id="docketCcs">--</td>
                 <td style="padding:6px; background:#f0f0f0;"><b>Est. Cane Tonnage:</b></td>
-                <td style="padding:6px;" id="docketYield">--</td>
-                <td style="padding:6px; background:#f0f0f0;"><b>Operational Decision:</b></td>
+                <td style="padding:6px; font-weight:bold;" id="docketYield">--</td>
+            </tr>
+            <tr>
+                <td style="padding:6px; background:#f0f0f0;"><b>Crushing Scheduling Window:</b></td>
                 <td style="padding:6px; font-weight:bold; color:green;" id="docketHarvestDate">--</td>
+                <td style="padding:6px; background:#f0f0f0;"><b>Net Detected Cane Area:</b></td>
+                <td style="padding:6px;" id="docketNetArea">--</td>
+            </tr>
+            <tr>
+                <td style="padding:6px; background:#f0f0f0;"><b>Cut-to-Crush Audit Target:</b></td>
+                <td style="padding:6px; color:#d97706; font-weight:bold;" id="docketTransitWindow" colspan="3">&lt; 48 Hours from cutting order to weighbridge (Prevents Post-Harvest Staling Inversion)</td>
             </tr>
         </table>
 
@@ -395,6 +427,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Main JS Application -->
