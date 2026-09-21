@@ -738,6 +738,50 @@ document.addEventListener('DOMContentLoaded', () => {
                                 _rawRow['satellite_valid_pixels']     = data.valid_pixels || 0;
                                 _rawRow['detected_cane_acres']        = data.detected_cane_acres || _rawRow['detected_cane_acres'];
                                 console.log('[SatFeedback] Gat #' + farmId + ' NDVI=' + _liveNdvi + ' NDRE=' + _liveNdre + ' LSWI=' + _liveLswi + ' | Pol/Brix will now use live Sentinel-2 indices.');
+
+                                // ── SOTA MODEL PREDICTION ─────────────────────────────
+                                // Call the trained model backend to get real Pol/Brix/CCS
+                                // using the live Sentinel-2 indices just computed.
+                                try {
+                                    const _plantDate = new Date(item['Plantation Date'] || item.plantation_date || '2025-07-20');
+                                    const _refDate   = new Date();
+                                    const _cropAgeDays = Math.max(60, Math.round((_refDate - _plantDate) / 86400000));
+
+                                    const _predRes = await fetch(`${BACKEND_BASE_URL}/api/predict`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            farm_id:      farmId,
+                                            crop_age_days: _cropAgeDays,
+                                            sat_ndvi:      _liveNdvi,
+                                            sat_ndre:      _liveNdre,
+                                            sat_ndwi:      parseFloat(_rawRow['sat_ndwi'] || 0.35),
+                                            sat_evi:       parseFloat(_rawRow['sat_evi']  || 0.55),
+                                            sat_temp_celsius:           parseFloat(_rawRow['sat_temp_celsius']           || 33.0),
+                                            sat_diurnal_temp_range:     parseFloat(_rawRow['sat_diurnal_temp_range']     || 11.5),
+                                            sat_solar_radiation_kwh_m2: parseFloat(_rawRow['sat_solar_radiation_kwh_m2'] || 6.2),
+                                            sat_precipitation_mm:       parseFloat(_rawRow['sat_precipitation_mm']       || 420.0)
+                                        })
+                                    });
+                                    if (_predRes.ok) {
+                                        const _pred = await _predRes.json();
+                                        // Write model predictions back to raw data row
+                                        _rawRow['predictedPol']         = _pred.predicted_pol;
+                                        _rawRow['predictedBrix']        = _pred.predicted_brix;
+                                        _rawRow['predictedCcs']         = _pred.predicted_ccs;
+                                        _rawRow['predictedPurity']      = _pred.predicted_purity;
+                                        _rawRow['pol_lower_95']         = _pred.pol_lower_95;
+                                        _rawRow['pol_upper_95']         = _pred.pol_upper_95;
+                                        _rawRow['ccs_lower_95']         = _pred.ccs_lower_95;
+                                        _rawRow['ccs_upper_95']         = _pred.ccs_upper_95;
+                                        _rawRow['conformal_margin_95']  = _pred.conformal_margin_95;
+                                        _rawRow['prediction_source']    = 'SOTA-AI-MODEL';
+                                        console.log('[SOTAModel] Gat #' + farmId + ' Pol=' + _pred.predicted_pol + '% CCS=' + _pred.predicted_ccs + '% (CV=' + _pred.cv_accuracy_pct + '%)');
+                                    }
+                                } catch (_predErr) {
+                                    console.warn('[SOTAModel] Prediction API call failed for Gat #' + farmId + ':', _predErr);
+                                }
+                                // ─────────────────────────────────────────────────────
                             }
                         }
                         // ────────────────────────────────────────────────────────────
