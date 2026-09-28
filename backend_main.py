@@ -5,8 +5,10 @@ except ImportError:
     pass
 """
 IkshuVruddhi FastAPI Satellite Engine Backend
-Exposes authentic Sentinel-2 L2A raster sampling, SCL cloud-masking, morphological snapping,
-and the trained SOTA AI model for Pol / Brix / CCS prediction.
+Exposes:
+  1. Authentic Sentinel-2 L2A raster sampling, SCL cloud-masking, morphological snapping
+  2. Trained SOTA AI model for Pol / Brix / CCS prediction
+  3. National Informatics Centre (NIC) MahaBhuNaksha Cadastral Gat (गट क्र.) land records integration & 7/12 audit
 """
 
 import os
@@ -24,8 +26,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'ml'))
 
 from ml.copernicus_client import CopernicusCDSEProcessEngine
 from ml.satellite_engine import polygonize_cane_mask
+from ml.bhunaksha_engine import (
+    get_bhunaksha_portal_url,
+    generate_cadastral_gat_boundary,
+    audit_plot_with_bhunaksha,
+    normalize_gat_no
+)
 
-app = FastAPI(title="IkshuVruddhi Real Satellite Ingestion API", version="2.4.0")
+app = FastAPI(title="IkshuVruddhi Real Satellite & BhuNaksha Ingestion API", version="2.5.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -68,19 +76,14 @@ class PolygonRequest(BaseModel):
 
 
 class PredictRequest(BaseModel):
-    """
-    Feature vector for the trained SOTA Pol/Brix/CCS model.
-    All satellite indices come from Sentinel-2 L2A SCL-valid pixels.
-    Missing values are filled with sensible regional defaults.
-    """
     farm_id: str
     crop_age_days: float
 
     # Sentinel-2 spectral indices (means over SCL-valid pixels)
-    sat_ndvi: Optional[float] = 0.72          # (NIR-Red)/(NIR+Red)
-    sat_ndre: Optional[float] = 0.58          # (NIR-RedEdge)/(NIR+RedEdge)
-    sat_ndwi: Optional[float] = 0.35          # (Green-NIR)/(Green+NIR)
-    sat_evi:  Optional[float] = 0.55          # Enhanced Vegetation Index
+    sat_ndvi: Optional[float] = 0.72
+    sat_ndre: Optional[float] = 0.58
+    sat_ndwi: Optional[float] = 0.35
+    sat_evi:  Optional[float] = 0.55
 
     # Thermal / climate
     sat_temp_celsius: Optional[float]          = 33.0
@@ -93,16 +96,75 @@ class PredictRequest(BaseModel):
     hydro_thermal_index: Optional[float] = None
 
 
+class CadastralAuditRequest(BaseModel):
+    farm_id: str
+    gat_no: Optional[str] = None
+    polygon: Optional[str] = None  # lat,lon#lat,lon#...
+    registered_hectares: Optional[float] = 0.8
+    detected_cane_acres: Optional[float] = 1.8
+    village: Optional[str] = "Shevgaon"
+    taluka: Optional[str] = "Shevgaon"
+    district: Optional[str] = "Ahilyanagar"
+
+
 @app.get("/api/health")
 def health_check():
     has_credentials = bool(os.getenv("CDSE_CLIENT_ID") and os.getenv("CDSE_CLIENT_SECRET"))
     return {
-        "service": "IkshuVruddhi Satellite API",
+        "service": "IkshuVruddhi Satellite & BhuNaksha API",
         "live_cdse_configured": has_credentials,
         "mode": "CDSE_CONFIGURED" if has_credentials else "SIMULATION_OFFLINE",
         "sota_model_loaded": _SOTA_MODEL is not None,
         "sota_cv_accuracy_pct": round(_SOTA_CV_ACCURACY, 2) if _SOTA_CV_ACCURACY else None,
+        "bhunaksha_integration_active": True,
+        "state_code": "27 (Maharashtra)"
     }
+
+
+# ── BhuNaksha Cadastral Endpoints ─────────────────────────────────────────────
+@app.get("/api/cadastral/bhunaksha_info")
+def get_bhunaksha_info(
+    gat_no: str = Query(..., description="Gat No / Survey Number (गट क्र.)"),
+    village: str = Query("Shevgaon", description="Village Name"),
+    taluka: str = Query("Shevgaon", description="Taluka Name"),
+    district: str = Query("Ahilyanagar", description="District Name")
+):
+    """Returns direct links to Maharashtra BhuNaksha portal and MahaBhulekh 7/12."""
+    return get_bhunaksha_portal_url(
+        gat_no=gat_no,
+        village=village,
+        taluka=taluka,
+        district=district
+    )
+
+
+@app.post("/api/cadastral/audit_gat")
+def audit_gat_compliance(req: CadastralAuditRequest):
+    """
+    Performs 3-Tier Cadastral Compliance Audit:
+      1. Location Sanity Check (<300m centroid proximity)
+      2. Legal Gat Area vs Registered Cane Area Fraud Check
+      3. Cadastral Parcel Geometry & Boundary generation
+    """
+    coords = []
+    if req.polygon and "#" in req.polygon:
+        try:
+            coords = [list(map(float, p.split(","))) for p in req.polygon.split("#")]
+        except Exception:
+            coords = []
+
+    gat = req.gat_no or req.farm_id
+    return audit_plot_with_bhunaksha(
+        plot_id=req.farm_id,
+        gat_no=gat,
+        plot_coords=coords,
+        registered_hectares=req.registered_hectares or 0.8,
+        detected_cane_acres=req.detected_cane_acres or 1.8,
+        village=req.village or "Shevgaon",
+        taluka=req.taluka or "Shevgaon",
+        district=req.district or "Ahilyanagar"
+    )
+# ──────────────────────────────────────────────────────────────────────────────
 
 
 @app.post("/api/predict")
@@ -110,24 +172,17 @@ def predict_sucrose(req: PredictRequest):
     """
     Run the trained SOTA AI model (HistGBR + ExtraTrees + RandomForest VotingRegressor)
     to predict Pol%, Brix degBx, and CCS% for a single plot.
-
-    Returns median prediction + 95% conformal uncertainty bounds.
-    The model was trained on real Gangamai mill lab data with Sentinel-2 L2A features.
     """
     if _SOTA_MODEL is None:
         raise HTTPException(status_code=503, detail="SOTA model not loaded on server.")
 
-    # ── Derive missing features ───────────────────────────────────────────────
     temp   = req.sat_temp_celsius or 33.0
     precip = req.sat_precipitation_mm or 420.0
     dtr    = req.sat_diurnal_temp_range or 11.5
     solar  = req.sat_solar_radiation_kwh_m2 or 6.2
     age    = req.crop_age_days
 
-    # Growing Degree Days (base 10 degC, simplified from daily mean)
     gdd = req.gdd if req.gdd is not None else max(0.0, (temp - 10.0) * age)
-
-    # Hydro-Thermal Index (GDD / cumulative precip — ripening quality metric)
     hydro_thermal = req.hydro_thermal_index if req.hydro_thermal_index is not None else (
         gdd / max(precip, 1.0)
     )
@@ -146,10 +201,8 @@ def predict_sucrose(req: PredictRequest):
         "hydro_thermal_index":        hydro_thermal,
     }
 
-    # Build feature array in exact training order
     X = np.array([[feature_vector[f] for f in _SOTA_FEATURES]], dtype=np.float64)
 
-    # ── Model inference ───────────────────────────────────────────────────────
     try:
         ccs_pred, conformal_margin, ccs_lower, ccs_upper = _SOTA_MODEL.predict_with_conformal_bounds(X, confidence=0.95)
     except Exception as e:
@@ -160,12 +213,10 @@ def predict_sucrose(req: PredictRequest):
     ccs_hi = float(ccs_upper[0])
     margin = float(conformal_margin)
 
-    # Derive Pol and Brix from predicted CCS using inverse of ICAR/VSI formula:
-    # CCS = 1.022 * Pol - 0.292 * Brix, with Purity = Pol/Brix*100
     age_months = age / 30.4
     opt_age_months = 16.0
     progress   = min(1.0, age_months / opt_age_months)
-    purity_pct = 83.5 + 5.5 * progress          # 83.5 at planting -> 89.0 at peak
+    purity_pct = 83.5 + 5.5 * progress
     purity_frac = purity_pct / 100.0
     pol  = ccs / (1.022 - 0.292 / purity_frac)
     brix = pol / purity_frac
@@ -178,20 +229,15 @@ def predict_sucrose(req: PredictRequest):
         "model":                 "SOTA-VotingEnsemble-ConformalBounds",
         "cv_accuracy_pct":       round(_SOTA_CV_ACCURACY, 2) if _SOTA_CV_ACCURACY else None,
         "features_used":         feature_vector,
-
-        # Primary predictions
         "predicted_pol":         round(pol,  2),
         "predicted_brix":        round(brix, 2),
         "predicted_ccs":         round(ccs,  2),
         "predicted_purity":      round(purity_pct, 1),
-
-        # 95% conformal uncertainty bounds
         "conformal_margin_95":   round(margin, 3),
         "pol_lower_95":          round(pol_lo,  2),
         "pol_upper_95":          round(pol_hi,  2),
         "ccs_lower_95":          round(ccs_lo,  2),
         "ccs_upper_95":          round(ccs_hi,  2),
-
         "source": "SOTA-AI-MODEL (Sentinel-2 L2A + Crop Age + Climate)"
     }
 

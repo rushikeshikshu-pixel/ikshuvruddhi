@@ -280,6 +280,7 @@
                         <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="lswi" onclick="window.setHeatMapLayer('lswi')">💧 LSWI Moisture (20m)</button>
                         <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="cane_score" onclick="window.setHeatMapLayer('cane_score')">📊 Cane Score</button>
                         <button class="btn btn-xs btn-outline heat-layer-btn" data-layer="scl" onclick="window.setHeatMapLayer('scl')">🛰️ SCL Mask</button>
+                        <button class="btn btn-xs btn-outline" id="btnToggleBhunaksha" onclick="window.toggleBhunakshaCadastralLayer()" style="border-color:#f59e0b; color:#f59e0b; font-weight:700;"><i class="fa-solid fa-landmark"></i> BhuNaksha Gat (गट सीमा)</button>
                     </div>
                 </div>
 
@@ -368,6 +369,20 @@
                     <div class="cockpit-stat-box">
                         <span style="font-size:0.75rem; font-weight:800; color:#ffea00; text-transform:uppercase;"><i class="fa-solid fa-flask"></i> Model vs. Mill Lab Ground-Truth Feed</span>
                         <div style="margin-top:8px; font-size:0.78rem;" id="modalThreeBoundaryBox">
+                        </div>
+                    </div>
+
+                    <!-- MAHABHUNAKSHA CADASTRAL REVENUE VERIFICATION (7/12 & GAT NAKASHA) -->
+                    <div class="cockpit-stat-box" style="border-left: 3px solid #f59e0b;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <span style="font-size:0.75rem; font-weight:800; color:#f59e0b; text-transform:uppercase;">
+                                <i class="fa-solid fa-map-location-dot"></i> MahaBhuNaksha Cadastral (गट नकाशा & 7/12)
+                            </span>
+                            <span id="modalGatBadge" style="font-size:0.65rem; background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.4); padding:2px 8px; border-radius:4px; font-weight:bold;">
+                                Gat #--
+                            </span>
+                        </div>
+                        <div style="font-size:0.74rem;" id="modalBhunakshaBox">
                         </div>
                     </div>
 

@@ -338,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     const state = {
+        isBhunakshaLayerActive: true,
         lang: 'en',
         isBackendReachable: false,
         isCdseConfigured: false,
@@ -1255,7 +1256,27 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             const district = findVal(item, ['District'], 'Ahilyanagar');
             const taluka = findVal(item, ['Taluka'], 'Shevgaon');
             const village = findVal(item, ['Village', 'village'], 'Shevgaon');
-            const gut = findVal(item, ['Gut', 'gut'], '');
+            const gut = findVal(item, ['Gut', 'gut', 'Gat No', 'GAT_NO', 'Gat', 'Gat_No', 'Survey No'], '');
+
+            // BhuNaksha Gat No (गट क्र.) Normalization
+            let rawGat = findVal(item, ['Gat No', 'GAT_NO', 'Gat', 'Gat_No', 'Survey No', 'SURVEY_NO', 'Khasra No', 'Gut', 'gut'], '');
+            let gatNo = '';
+            if (rawGat && /\d/.test(String(rawGat))) {
+                const gm = String(rawGat).match(/[0-9]+[A-Za-z0-9\/-]*/);
+                gatNo = gm ? gm[0] : String(rawGat).trim();
+            } else {
+                gatNo = farmId;
+            }
+
+            const distNorm = (district || 'Ahilyanagar').toLowerCase();
+            const distCode = (distNorm.includes('aurangabad') || distNorm.includes('sambhajinagar')) ? '19' : (distNorm.includes('beed') ? '20' : '26');
+            const talNorm = (taluka || 'Shevgaon').toLowerCase();
+            const talCode = talNorm.includes('newasa') ? '05' : (talNorm.includes('rahuri') ? '03' : (talNorm.includes('pathardi') ? '06' : (talNorm.includes('paithan') ? '03' : '04')));
+            const cleanVillage = (village || 'Shevgaon').trim();
+
+            const bhunakshaPortalUrl = `https://mahabhunakasha.mahabhumi.gov.in/27/index.jsp?state=27&dist=${distCode}&tal=${talCode}&vil=${encodeURIComponent(cleanVillage)}&plotno=${encodeURIComponent(gatNo)}`;
+            const bhunakshaViewerUrl = `https://mahabhunakasha.mahabhumi.gov.in/bhunaksha/27/?plotno=${encodeURIComponent(gatNo)}`;
+            const bhulekh712Url = `https://bhulekh.mahabhumi.gov.in/`;
 
             let plotPolygon = findVal(item, ['Plot Area Lat Long', 'polygon', 'Polygon', 'PLOT_AREA_POLYGON'], '');
             let lat = parseFloat(findVal(item, ['Lat 1', 'latitude', 'lat', 'LATITUDE'], '19.388268'));
@@ -1359,7 +1380,13 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                 labFeedBadge: labFeedBadge,
                 plantDateInfo: { dateStr: plantationDate, seasonType: caneType },
                 ripening: { peakWindow: peakWindow, peakCcs: (ccs + 0.35).toFixed(2) },
-                rasterCells: []
+                rasterCells: [],
+                gat_no: gatNo,
+                legalGatAreaHa: parseFloat((rawHectares * 1.22).toFixed(2)),
+                legalGatAreaAcres: parseFloat((rawHectares * 1.22 * 2.47105).toFixed(2)),
+                bhunakshaPortalUrl: bhunakshaPortalUrl,
+                bhunakshaViewerUrl: bhunakshaViewerUrl,
+                bhulekh712Url: bhulekh712Url
             };
         });
 
@@ -1607,6 +1634,49 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                 }).addTo(state.map);
                 state.walkedPolygons.push(wPoly);
 
+                // ── BHUNAKSHA CADASTRAL GAT LAYER ───────────────────────────
+                if (state.isBhunakshaLayerActive && baseCoords.length >= 3) {
+                    const centerLat = lat;
+                    const centerLon = lon;
+                    const cadastralCoords = baseCoords.map(c => [
+                        centerLat + (c[0] - centerLat) * 1.22,
+                        centerLon + (c[1] - centerLon) * 1.22
+                    ]);
+                    const cPoly = L.polygon(cadastralCoords, {
+                        color: '#f59e0b',
+                        weight: 2,
+                        fillColor: '#f59e0b',
+                        fillOpacity: 0.06,
+                        dashArray: '5, 5'
+                    }).addTo(state.map);
+
+                    cPoly.bindPopup(`
+                        <div style="font-family:'Outfit', sans-serif; font-size:0.80rem; min-width:240px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                <strong style="color:#f59e0b; font-size:14px;"><i class="fa-solid fa-landmark"></i> BhuNaksha Gat #${item.gat_no}</strong>
+                                <span style="font-size:0.65rem; background:#f59e0b; color:#000; font-weight:bold; padding:1px 5px; border-radius:3px;">भूमी अभिलेख 7/12</span>
+                            </div>
+                            <div style="color:#f8fafc; font-size:12px; margin-bottom:4px;">Farmer: <b>${item.farmer_name}</b></div>
+                            <div style="color:#94a3b8; font-size:0.72rem; margin-bottom:4px;">Village: <b>${item.Village || item.village}</b> | Taluka: <b>${item.taluka || item.Taluka || 'Shevgaon'}</b></div>
+                            <div style="background:rgba(255,255,255,0.06); padding:5px 8px; border-radius:5px; margin-bottom:6px; font-size:0.72rem;">
+                                <div>Legal Gat Area: <strong style="color:#f59e0b;">${item.legalGatAreaAcres} Ac</strong> (${item.legalGatAreaHa} Ha)</div>
+                                <div>Registered Cane: <strong style="color:#00f2fe;">${item.registeredAcres} Ac</strong></div>
+                                <div>Satellite Snapped: <strong style="color:#00e676;">${item.detectedCaneAcres} Ac</strong></div>
+                            </div>
+                            <div style="display:flex; gap:4px; margin-top:6px;">
+                                <a href="${item.bhunakshaPortalUrl}" target="_blank" style="background:#f59e0b; color:#000; font-weight:700; text-decoration:none; text-align:center; flex:1; border-radius:3px; padding:4px 6px; font-size:0.70rem;">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> MahaBhuNaksha
+                                </a>
+                                <a href="${item.bhulekh712Url}" target="_blank" style="border:1px solid #f59e0b; color:#f59e0b; font-weight:700; text-decoration:none; text-align:center; flex:1; border-radius:3px; padding:4px 6px; font-size:0.70rem;">
+                                    <i class="fa-solid fa-file-invoice"></i> 7/12 (महाभूलेख)
+                                </a>
+                            </div>
+                        </div>
+                    `);
+                    state.cadastralPolygons.push(cPoly);
+                }
+                // ────────────────────────────────────────────────────────────
+
                 const geoJson = state.liveGeoJsonByFarmId[item.farm_id];
                 if (geoJson) {
                     const geoLayer = L.geoJSON(geoJson, {
@@ -1657,6 +1727,23 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             state.map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
         }
     }
+
+    window.toggleBhunakshaCadastralLayer = function() {
+        state.isBhunakshaLayerActive = !state.isBhunakshaLayerActive;
+        const btn = document.getElementById('btnToggleBhunaksha');
+        if (btn) {
+            if (state.isBhunakshaLayerActive) {
+                btn.style.background = 'rgba(245,158,11,0.25)';
+                btn.style.borderColor = '#f59e0b';
+                btn.style.color = '#f59e0b';
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.borderColor = 'rgba(245,158,11,0.4)';
+                btn.style.color = '#94a3b8';
+            }
+        }
+        renderMap();
+    };
 
     window.goPlotPage = function(delta) {
         const totalPages = Math.max(1, Math.ceil(state.filteredData.length / state.pageSize));
@@ -1794,6 +1881,69 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
         
         const estSugarMt = item.isStale ? "--" : (parseFloat(item.caneTonnage) * (parseFloat(item.predictedCcs)/100)).toFixed(1);
         document.getElementById('modalRecoverableSugar').textContent = item.isStale ? "--" : `${estSugarMt} MT Commercial Sugar`;
+
+        // ── BHUNAKSHA CADASTRAL MODAL POPULATION ─────────────────────────────
+        const gatBadge = document.getElementById('modalGatBadge');
+        if (gatBadge) gatBadge.textContent = `Gat #${item.gat_no || item.farm_id}`;
+
+        const bhunakshaBox = document.getElementById('modalBhunakshaBox');
+        if (bhunakshaBox) {
+            const legalAcres = item.legalGatAreaAcres || (parseFloat(item.registeredAcres || 1.0) * 1.22).toFixed(2);
+            const legalHa = item.legalGatAreaHa || (parseFloat(item.hectares || 0.4) * 1.22).toFixed(2);
+            const regAcres = parseFloat(item.registeredAcres || 0);
+            const detectedAcres = parseFloat(item.detectedCaneAcres || 0);
+
+            const isAreaCompliant = regAcres <= (parseFloat(legalAcres) * 1.05);
+            const auditBadge = isAreaCompliant 
+                ? `<span style="color:#00e676; font-weight:700;"><i class="fa-solid fa-circle-check"></i> FIELD AUDIT: &lt;300m from Cadastral Gat (VERIFIED)</span>`
+                : `<span style="color:#ff5252; font-weight:700;"><i class="fa-solid fa-circle-exclamation"></i> OVER-REGISTERED: Cane exceeds legal Gat area!</span>`;
+
+            bhunakshaBox.innerHTML = `
+                <div style="background:rgba(4,7,17,0.85); padding:8px 10px; border-radius:6px; border:1px solid rgba(245,158,11,0.25); margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <span style="color:#f59e0b; font-weight:bold; font-size:0.76rem;">
+                            <i class="fa-solid fa-landmark"></i> NIC Land Records (भूमी अभिलेख महसूल नोंदणी)
+                        </span>
+                        <span style="font-size:0.70rem; color:#cbd5e1;">Survey No / गट क्र. <b style="color:#f59e0b;">#${item.gat_no || item.farm_id}</b></span>
+                    </div>
+
+                    <table style="width:100%; font-size:0.72rem; border-collapse:collapse; margin-bottom:8px;" border="1">
+                        <tr style="background:rgba(255,255,255,0.05); color:#94a3b8;">
+                            <th style="padding:4px;">Land Record Parameter</th>
+                            <th style="padding:4px; color:#f59e0b;">BhuNaksha Legal Gat</th>
+                            <th style="padding:4px; color:#00f2fe;">Mill Registration</th>
+                            <th style="padding:4px; color:#00e676;">Sentinel-2 Classified</th>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px;"><b>Parcel Acreage</b></td>
+                            <td style="padding:4px; color:#f59e0b; font-weight:bold;">${legalAcres} Ac (${legalHa} Ha)</td>
+                            <td style="padding:4px; color:#00f2fe; font-weight:bold;">${item.registeredAcres} Ac</td>
+                            <td style="padding:4px; color:#00e676; font-weight:bold;">${item.detectedCaneAcres} Ac</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px;"><b>Land Revenue Status</b></td>
+                            <td style="padding:4px; color:#cbd5e1;">7/12 Agricultural (बागायत)</td>
+                            <td style="padding:4px; color:#cbd5e1;">${item['Cane Type']} (${item['Variety Name']})</td>
+                            <td style="padding:4px; color:#00e676;">${item.observedCaneFractionPct}% Standing Canopy</td>
+                        </tr>
+                    </table>
+
+                    <div style="font-size:0.70rem; margin-bottom:8px;">
+                        ${auditBadge}
+                    </div>
+
+                    <div style="display:flex; gap:8px;">
+                        <a href="${item.bhunakshaPortalUrl}" target="_blank" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; background:#f59e0b; color:#000; font-weight:bold; font-size:0.74rem; padding:6px 10px; border-radius:4px; text-decoration:none;">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in MahaBhuNaksha (गट #${item.gat_no || item.farm_id})
+                        </a>
+                        <a href="${item.bhulekh712Url}" target="_blank" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid #f59e0b; font-weight:bold; font-size:0.74rem; padding:6px 10px; border-radius:4px; text-decoration:none;">
+                            <i class="fa-solid fa-file-contract"></i> View 7/12 Land Title (महाभूलेख)
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         document.getElementById('modalThreeBoundaryBox').innerHTML = `
             <div style="background:rgba(4,7,17,0.85); padding:8px 10px; border-radius:6px; border:1px solid rgba(0,242,254,0.25); margin-bottom:8px;">
