@@ -71,12 +71,16 @@
             <div class="preset-group">
                 <input type="file" id="csvNewSeasonInput" accept=".csv, .xlsx, .xls" style="display:none;">
                 <input type="file" id="csvLabTrainingInput" accept=".csv, .xlsx, .xls" style="display:none;">
+                <input type="file" id="cadastralGeoJsonInput" accept=".geojson, .json, .kml" style="display:none;">
                 
                 <button class="btn-preset active" id="btnUploadNewSeason" onclick="document.getElementById('csvNewSeasonInput').click()" style="background: rgba(0,242,254,0.18); color: var(--accent-cyan); border-color: rgba(0,242,254,0.5); font-weight:700;">
                     <i class="fa-solid fa-cloud-arrow-up"></i> 📁 1. Ingest Field Plots (Excel / CSV)
                 </button>
                 <button class="btn-preset" id="btnUploadLabTraining" onclick="document.getElementById('csvLabTrainingInput').click()" style="background: rgba(168,85,247,0.18); color: #a855f7; border-color: rgba(168,85,247,0.45); font-weight:700;">
                     <i class="fa-solid fa-flask-vial"></i> 🧪 2. Ingest Lab Ground Truth (Excel / CSV)
+                </button>
+                <button class="btn-preset" id="btnUploadCadastral" onclick="document.getElementById('cadastralGeoJsonInput').click()" style="background: rgba(245,158,11,0.18); color: #f59e0b; border-color: rgba(245,158,11,0.45); font-weight:700;">
+                    <i class="fa-solid fa-landmark"></i> 🏛️ 3. Ingest BhuNaksha Maps (GeoJSON / SHP)
                 </button>
                 <button class="btn-preset" id="btnAutoSnapAllPolygons" onclick="window.runAutonomousCanopySnapping()" style="background: linear-gradient(135deg, rgba(0,242,254,0.25), rgba(0,230,118,0.25)); color: #00f2fe; border-color: #00f2fe; font-weight:800;">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> ⚡ Autonomous Canopy Snapping

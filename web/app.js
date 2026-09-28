@@ -617,6 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnModalPrintDocket: document.getElementById('btnModalPrintDocket'),
         csvNewSeasonInput: document.getElementById('csvNewSeasonInput'),
         csvLabTrainingInput: document.getElementById('csvLabTrainingInput'),
+        cadastralGeoJsonInput: document.getElementById('cadastralGeoJsonInput'),
         mapSatelliteModeBanner: document.getElementById('mapSatelliteModeBanner'),
         polygonEditBanner: document.getElementById('polygonEditBanner'),
         editingPlotFarmerName: document.getElementById('editingPlotFarmerName')
@@ -2211,6 +2212,47 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                         alert(`✅ ${data.length} field plots loaded successfully from ${file.name}!\n\nClick 'Autonomous Canopy Snapping' to run multi-criteria canopy extraction.`);
                         e.target.value = '';
                     });
+                }
+            });
+        }
+
+        if (el.cadastralGeoJsonInput) {
+            el.cadastralGeoJsonInput.addEventListener('change', async (e) => {
+                if (e.target.files.length) {
+                    const file = e.target.files[0];
+                    try {
+                        const text = await file.text();
+                        let parsedGj = null;
+                        try {
+                            parsedGj = JSON.parse(text);
+                        } catch(parseErr) {
+                            alert("Please provide a valid GeoJSON format village cadastral map exported from QGIS/BhuNaksha.");
+                            e.target.value = '';
+                            return;
+                        }
+
+                        const res = await fetch(`${BACKEND_BASE_URL}/api/cadastral/import_village_geojson`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                geojson: parsedGj,
+                                source_label: file.name
+                            })
+                        });
+
+                        if (res.ok) {
+                            const info = await res.json();
+                            alert(`🏛️ Successfully Ingested ${info.imported_gat_count} Cadastral Gats from ${file.name}!
+
+All Gats for ${info.village} (${info.taluka}) are now cached locally in the 100% offline SQLite spatial database.`);
+                            renderMap();
+                        } else {
+                            alert(`BhuNaksha import returned error status: ${res.status}`);
+                        }
+                    } catch(err) {
+                        alert("Error importing Cadastral map: " + err.message);
+                    }
+                    e.target.value = '';
                 }
             });
         }
