@@ -710,12 +710,36 @@
     <!-- Enterprise Terminal Access Script -->
     <script>
         const VALID_IKSHU_KEYS = ['ikshu2026', 'ikshu-gangamai', 'sugar2026', 'ikshu-admin', 'rushikesh2026'];
+        
         function checkExistingAuth() {
-            if (sessionStorage.getItem('ikshu_enterprise_auth') === 'granted') {
-                const overlay = document.getElementById('enterpriseAuthOverlay');
+            const authGranted = sessionStorage.getItem('ikshu_enterprise_auth') === 'granted';
+            const overlay = document.getElementById('enterpriseAuthOverlay');
+            
+            if (authGranted) {
                 if (overlay) overlay.classList.add('unlocked');
+                applyMillProfile();
             }
         }
+        
+        function applyMillProfile() {
+            const rawProfile = sessionStorage.getItem('ikshu_mill_profile');
+            if (!rawProfile) return;
+            try {
+                const profile = JSON.parse(rawProfile);
+                const subTitle = document.getElementById('hdrMillSubTitle');
+                const badge = document.getElementById('hdrMillBadge');
+                
+                if (subTitle && profile.millName) {
+                    subTitle.innerHTML = '<strong>' + profile.millName + '</strong> (' + (profile.tcd || '4,500 TCD') + ') &bull; Role: <span style="color:#00f2fe; font-weight:700;">' + (profile.role || 'CAO') + '</span>';
+                }
+                if (badge && profile.shortName) {
+                    badge.textContent = profile.shortName.toUpperCase();
+                }
+            } catch(e) {
+                console.error('Error applying mill profile', e);
+            }
+        }
+        
         function handleAuthSubmit(e) {
             e.preventDefault();
             const input = document.getElementById('accessKeyInput');
@@ -723,16 +747,43 @@
             const val = (input.value || '').trim().toLowerCase();
             if (VALID_IKSHU_KEYS.includes(val)) {
                 sessionStorage.setItem('ikshu_enterprise_auth', 'granted');
-                document.getElementById('enterpriseAuthOverlay').classList.add('unlocked');
+                if (!sessionStorage.getItem('ikshu_mill_profile')) {
+                    sessionStorage.setItem('ikshu_mill_profile', JSON.stringify({
+                        millName: 'Gangamai Sahakari Sakhar Karkhana (SSK)',
+                        shortName: 'Gangamai SSK',
+                        tcd: '4,500 TCD',
+                        role: 'Chief Agriculture Officer (CAO)',
+                        shortRole: 'CAO'
+                    }));
+                }
+                const overlay = document.getElementById('enterpriseAuthOverlay');
+                if (overlay) overlay.classList.add('unlocked');
                 if (err) err.style.display = 'none';
+                applyMillProfile();
             } else {
                 if (err) err.style.display = 'flex';
                 input.value = '';
                 input.focus();
             }
         }
+        
+        function unlockWithSandbox(millName, role, tcd) {
+            sessionStorage.setItem('ikshu_enterprise_auth', 'granted');
+            sessionStorage.setItem('ikshu_mill_profile', JSON.stringify({
+                millName: millName,
+                shortName: millName.includes('Gangamai') ? 'Gangamai SSK' : 'Samarth SSK',
+                tcd: tcd,
+                role: role,
+                shortRole: role.includes('Agri') ? 'CAO' : 'MD'
+            }));
+            const overlay = document.getElementById('enterpriseAuthOverlay');
+            if (overlay) overlay.classList.add('unlocked');
+            applyMillProfile();
+        }
+        
         function lockTerminal() {
             sessionStorage.removeItem('ikshu_enterprise_auth');
+            sessionStorage.removeItem('ikshu_mill_profile');
             const overlay = document.getElementById('enterpriseAuthOverlay');
             if (overlay) overlay.classList.remove('unlocked');
             const input = document.getElementById('accessKeyInput');

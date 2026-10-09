@@ -38,6 +38,7 @@
                 <li><a href="#simulator">Sucrose Chemistry Sim</a></li>
                 <li><a href="#solutions">Factory Engines</a></li>
                 <li><a href="#cadastral-audit">7/12 Gat Fraud Buster</a></li>
+                <li><a href="#mill-portal">Enterprise Accounts</a></li>
                 <li><a href="#case-studies">Mill Case Studies</a></li>
                 <li><a href="#contact">Pilot Request</a></li>
             </ul>
@@ -46,9 +47,11 @@
                 <button id="langToggleBtn" class="lang-toggle-btn" title="Toggle Language">
                     🌐 EN | मराठी
                 </button>
-                <button id="btnOpenDnsModal" class="btn btn-secondary btn-dns-guide" style="padding: 7px 14px;">
-                    <i class="fa-solid fa-globe"></i> DNS Status
-                </button>
+                <div id="navMillAuthContainer" style="display:inline-flex; align-items:center;">
+                    <button id="btnOpenMillAuthModal" class="btn btn-secondary mill-portal-btn" style="padding: 7px 14px;">
+                        <i class="fa-solid fa-building-wheat"></i> Mill Portal Sign In
+                    </button>
+                </div>
                 <a href="console.html" class="btn btn-primary nav-console-btn">
                     <i class="fa-solid fa-gauge-high"></i> Launch Mill Console
                 </a>
@@ -857,5 +860,220 @@
 
     <!-- Scripts -->
     <script src="landing.js"></script>
+
+    <!-- 12. SUGAR MILL ENTERPRISE ACCOUNT & PORTAL MODAL -->
+    <div class="modal-overlay" id="millAuthModalOverlay">
+        <div class="mill-modal-card">
+            <button class="modal-close-btn" id="btnCloseMillAuthModal" aria-label="Close modal">&times;</button>
+            
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 8px;">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.3rem;">
+                    <i class="fa-solid fa-building-wheat"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.35rem; color: #ffffff;">Sugar Mill Enterprise Gateway</h3>
+                    <p style="font-size: 0.82rem; color: #00f2fe; font-weight: 700; letter-spacing: 0.05em;">SECURE MILL AUTHENTICATION & MULTI-TENANCY</p>
+                </div>
+            </div>
+
+            <!-- TAB NAVIGATION -->
+            <div class="auth-tab-nav">
+                <button class="auth-tab-btn active" id="tabBtnSignIn" onclick="switchMillAuthTab('signin')">
+                    <i class="fa-solid fa-lock"></i> Factory Sign In
+                </button>
+                <button class="auth-tab-btn" id="tabBtnSandbox" onclick="switchMillAuthTab('sandbox')">
+                    <i class="fa-solid fa-flask"></i> 1-Click Sandbox
+                </button>
+                <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchMillAuthTab('register')">
+                    <i class="fa-solid fa-plus-circle"></i> New Mill Onboarding
+                </button>
+            </div>
+
+            <!-- TAB 1: FACTORY SIGN IN -->
+            <div id="tabContentSignIn">
+                <p style="font-size: 0.86rem; color: #94a3b8; margin-bottom: 16px;">
+                    Select your provisioned sugar factory and departmental role to access live satellite telemetry and harvest schedules.
+                </p>
+
+                <form id="millSignInForm" onsubmit="handleMillSignIn(event)">
+                    <div style="margin-bottom: 14px;">
+                        <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">
+                            SELECT SUGAR FACTORY / CARRIER
+                        </label>
+                        <select id="selFactoryCode" style="width:100%; padding:12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.9rem; outline:none;">
+                            <option value="MILL-GM-414" data-name="Gangamai Sahakari Sakhar Karkhana (SSK)" data-tcd="4,500 TCD" data-loc="Shevgaon, Ahilyanagar">Gangamai Sahakari Sakhar Karkhana (4,500 TCD - Shevgaon)</option>
+                            <option value="MILL-SM-320" data-name="Karmayogi Ankushrao Tope Samarth SSK" data-tcd="3,500 TCD" data-loc="Ankushnagar, Jalna">Samarth Sahakari Sakhar Karkhana (3,500 TCD - Jalna)</option>
+                            <option value="MILL-BA-1200" data-name="Baramati Agro Sugar Division" data-tcd="12,000 TCD" data-loc="Shetphalgadhe, Pune">Baramati Agro Sugar Division (12,000 TCD - Pune)</option>
+                            <option value="MILL-CUSTOM" data-name="Custom Enterprise Evaluator" data-tcd="5,000 TCD" data-loc="Maharashtra">Other Provisioned Mill (Enter Key Below)</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 14px;">
+                        <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">
+                            SELECT FACTORY WORKSPACE ROLE
+                        </label>
+                        <div class="role-selector-grid">
+                            <div class="role-choice-card selected" onclick="selectMillRole(this, 'Managing Director (MD)')">
+                                <i class="fa-solid fa-briefcase"></i>
+                                <div>
+                                    <div class="role-title">Managing Director</div>
+                                    <div class="role-sub">Executive Recovery & ROI</div>
+                                </div>
+                            </div>
+                            <div class="role-choice-card" onclick="selectMillRole(this, 'Chief Agriculture Officer (CAO)')">
+                                <i class="fa-solid fa-wheat-awn"></i>
+                                <div>
+                                    <div class="role-title">Chief Agri Officer</div>
+                                    <div class="role-sub">Gat Harvest & Cutting Slips</div>
+                                </div>
+                            </div>
+                            <div class="role-choice-card" onclick="selectMillRole(this, 'Chief Chemist / Laboratory')">
+                                <i class="fa-solid fa-flask-vial"></i>
+                                <div>
+                                    <div class="role-title">Chief Chemist</div>
+                                    <div class="role-sub">Weighbridge Brix/Pol Lab</div>
+                                </div>
+                            </div>
+                            <div class="role-choice-card" onclick="selectMillRole(this, 'Circle Cane Inspector')">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                                <div>
+                                    <div class="role-title">Circle Inspector</div>
+                                    <div class="role-sub">7/12 Ground Truth Audits</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">
+                            ENTERPRISE PASSKEY / FACTORY PIN
+                        </label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="password" id="millAuthPin" placeholder="Enter PIN (Demo: ikshu2026)" value="ikshu2026" style="flex:1; padding:12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.9rem; outline:none;" required />
+                            <button type="button" onclick="document.getElementById('millAuthPin').value='ikshu2026'" class="btn btn-secondary" style="padding:8px 14px; font-size:0.75rem;">
+                                Fill Demo PIN
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="millAuthErr" style="display:none; color:#ef4444; font-size:0.82rem; font-weight:700; margin-bottom:12px; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Invalid Factory Key. Contact your Mill Admin.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-weight:800; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Authenticate & Enter Mill Command
+                    </button>
+                </form>
+            </div>
+
+            <!-- TAB 2: INSTANT EVALUATOR SANDBOX -->
+            <div id="tabContentSandbox" style="display:none;">
+                <p style="font-size: 0.86rem; color: #94a3b8; margin-bottom: 16px;">
+                    Evaluating for your sugar mill board? Launch pre-loaded production workspaces with verified Sentinel-2 radar telemetry, Gat boundary maps, and sucrose models.
+                </p>
+
+                <div class="evaluator-sandbox-grid">
+                    <div class="sandbox-mill-card">
+                        <div class="sandbox-mill-info">
+                            <h4>Gangamai Sahakari Sakhar Karkhana (SSK)</h4>
+                            <div class="sandbox-mill-meta">
+                                <span><i class="fa-solid fa-industry"></i> 4,500 TCD</span>
+                                <span><i class="fa-solid fa-map"></i> 22 Circles</span>
+                                <span><i class="fa-solid fa-wheat-awn"></i> 27,633 Plots</span>
+                            </div>
+                        </div>
+                        <button onclick="launchSandboxMill('Gangamai Sahakari Sakhar Karkhana (SSK)', 'Chief Agriculture Officer (CAO)', 'MILL-GM-414', '4,500 TCD')" class="btn btn-primary btn-sm">
+                            Launch Sandbox <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="sandbox-mill-card">
+                        <div class="sandbox-mill-info">
+                            <h4>Samarth Sahakari Sakhar Karkhana</h4>
+                            <div class="sandbox-mill-meta">
+                                <span><i class="fa-solid fa-industry"></i> 3,500 TCD</span>
+                                <span><i class="fa-solid fa-map"></i> 16 Circles</span>
+                                <span><i class="fa-solid fa-wheat-awn"></i> 18,400 Plots</span>
+                            </div>
+                        </div>
+                        <button onclick="launchSandboxMill('Samarth Sahakari Sakhar Karkhana', 'Managing Director (MD)', 'MILL-SM-320', '3,500 TCD')" class="btn btn-secondary btn-sm">
+                            Launch Sandbox <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="sandbox-mill-card">
+                        <div class="sandbox-mill-info">
+                            <h4>General Co-Operative Sugar Mill Sandbox</h4>
+                            <div class="sandbox-mill-meta">
+                                <span><i class="fa-solid fa-industry"></i> 5,000 TCD</span>
+                                <span><i class="fa-solid fa-flask"></i> Lab Calibrated</span>
+                                <span><i class="fa-solid fa-circle-check"></i> ISRO LISS-4</span>
+                            </div>
+                        </div>
+                        <button onclick="launchSandboxMill('Universal Sugar Mill Evaluator', 'Chief Chemist / Laboratory', 'MILL-UNIV-500', '5,000 TCD')" class="btn btn-secondary btn-sm">
+                            Launch Sandbox <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: NEW MILL ONBOARDING -->
+            <div id="tabContentRegister" style="display:none;">
+                <p style="font-size: 0.86rem; color: #94a3b8; margin-bottom: 16px;">
+                    Register your sugar factory or agricultural cooperative for a 2026-27 crushing season satellite pilot. Our remote sensing engineers will provision your factory tenant within 24 hours.
+                </p>
+
+                <form id="newMillRegisterForm" onsubmit="handleNewMillRegister(event)">
+                    <div class="form-row" style="margin-bottom:12px;">
+                        <div>
+                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">FACTORY NAME</label>
+                            <input type="text" id="regMillName" placeholder="e.g. Shri Chhatrapati SSK" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;" />
+                        </div>
+                        <div>
+                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">DISTRICT & STATE</label>
+                            <input type="text" id="regMillLocation" placeholder="e.g. Pune / Ahilyanagar, Maharashtra" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;" />
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom:12px;">
+                        <div>
+                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">DAILY CRUSHING CAPACITY (TCD)</label>
+                            <select id="regMillTcd" style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;">
+                                <option value="2,500 TCD">2,500 TCD (Small Cooperative SSK)</option>
+                                <option value="4,500 TCD" selected>4,500 TCD (Standard SSK)</option>
+                                <option value="7,500 TCD">7,500 TCD (Large Mill)</option>
+                                <option value="12,000+ TCD">12,000+ TCD (Mega Sugar & Ethanol Complex)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">YOUR DESIGNATION</label>
+                            <select id="regMillRole" style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;">
+                                <option value="Managing Director (MD)">Managing Director (MD) / Chairman</option>
+                                <option value="Chief Agriculture Officer (CAO)">Chief Agriculture Officer (CAO)</option>
+                                <option value="General Manager (GM)">General Manager (GM) / Executive</option>
+                                <option value="Chief Chemist">Chief Chemist / Factory Lab Head</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom:16px;">
+                        <div>
+                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">OFFICIAL EMAIL</label>
+                            <input type="email" id="regMillEmail" placeholder="director@sugarfactory.com" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;" />
+                        </div>
+                        <div>
+                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">MOBILE NUMBER</label>
+                            <input type="tel" id="regMillPhone" placeholder="+91 98XXX XXXXX" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width:100%; padding:13px; font-weight:800; font-size:0.92rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Factory Provisioning Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

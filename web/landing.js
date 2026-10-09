@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLanguageToggle();
     initDnsModal();
     initContactForm();
+    initMillAuthModal();
 });
 
 /* ==========================================================================
@@ -441,4 +442,190 @@ function initContactForm() {
             window.location.href = mailtoUri;
         }, 800);
     });
+}
+
+/* ==========================================================================
+   8. SUGAR MILL ENTERPRISE ACCOUNT & GATEWAY LOGIC
+   ========================================================================== */
+let selectedMillRole = 'Managing Director (MD)';
+
+function initMillAuthModal() {
+    const openBtn = document.getElementById('btnOpenMillAuthModal');
+    const modal = document.getElementById('millAuthModalOverlay');
+    const closeBtn = document.getElementById('btnCloseMillAuthModal');
+
+    if (openBtn && modal) {
+        openBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.classList.add('active');
+        });
+    }
+
+    if (closeBtn && modal) {
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+    }
+
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    }
+
+    renderActiveMillNavbar();
+}
+
+function renderActiveMillNavbar() {
+    const container = document.getElementById('navMillAuthContainer');
+    if (!container) return;
+
+    const rawProfile = sessionStorage.getItem('ikshu_mill_profile');
+    if (rawProfile) {
+        try {
+            const profile = JSON.parse(rawProfile);
+            container.innerHTML = `
+                <div class="mill-logged-in-container">
+                    <a href="console.html" class="mill-logged-in-badge" title="Active Factory: ${profile.millName}">
+                        <i class="fa-solid fa-circle" style="font-size:0.5rem; color:#10b981;"></i>
+                        <span>${profile.shortName || 'Factory'} (${profile.shortRole || 'Staff'})</span>
+                    </a>
+                    <button onclick="signOutMill()" class="mill-switch-btn" title="Sign out of factory account">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            `;
+        } catch (e) {
+            console.error('Error parsing mill profile', e);
+        }
+    }
+}
+
+function switchMillAuthTab(tab) {
+    const btnSignIn = document.getElementById('tabBtnSignIn');
+    const btnSandbox = document.getElementById('tabBtnSandbox');
+    const btnRegister = document.getElementById('tabBtnRegister');
+
+    const contentSignIn = document.getElementById('tabContentSignIn');
+    const contentSandbox = document.getElementById('tabContentSandbox');
+    const contentRegister = document.getElementById('tabContentRegister');
+
+    if (!btnSignIn || !contentSignIn) return;
+
+    btnSignIn.classList.remove('active');
+    btnSandbox.classList.remove('active');
+    btnRegister.classList.remove('active');
+
+    contentSignIn.style.display = 'none';
+    contentSandbox.style.display = 'none';
+    contentRegister.style.display = 'none';
+
+    if (tab === 'signin') {
+        btnSignIn.classList.add('active');
+        contentSignIn.style.display = 'block';
+    } else if (tab === 'sandbox') {
+        btnSandbox.classList.add('active');
+        contentSandbox.style.display = 'block';
+    } else if (tab === 'register') {
+        btnRegister.classList.add('active');
+        contentRegister.style.display = 'block';
+    }
+}
+
+function selectMillRole(el, roleName) {
+    document.querySelectorAll('.role-choice-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedMillRole = roleName;
+}
+
+function handleMillSignIn(e) {
+    e.preventDefault();
+    const sel = document.getElementById('selFactoryCode');
+    const opt = sel.options[sel.selectedIndex];
+    const pin = (document.getElementById('millAuthPin').value || '').trim().toLowerCase();
+    const err = document.getElementById('millAuthErr');
+
+    const validPins = ['ikshu2026', 'sugar2026', 'ikshu-gangamai', 'ikshu-admin', 'rushikesh2026'];
+
+    if (validPins.includes(pin)) {
+        const millProfile = {
+            millCode: sel.value,
+            millName: opt.dataset.name || opt.text,
+            shortName: (opt.dataset.name || '').includes('Gangamai') ? 'Gangamai SSK' : 
+                       (opt.dataset.name || '').includes('Samarth') ? 'Samarth SSK' : 'Sugar Mill',
+            tcd: opt.dataset.tcd || '4,500 TCD',
+            location: opt.dataset.loc || 'Maharashtra',
+            role: selectedMillRole,
+            shortRole: selectedMillRole.includes('Managing') ? 'MD' :
+                       selectedMillRole.includes('Agri') ? 'CAO' :
+                       selectedMillRole.includes('Chemist') ? 'Lab' : 'Field',
+            authTime: new Date().toISOString()
+        };
+
+        sessionStorage.setItem('ikshu_enterprise_auth', 'granted');
+        sessionStorage.setItem('ikshu_mill_profile', JSON.stringify(millProfile));
+
+        const modal = document.getElementById('millAuthModalOverlay');
+        if (modal) modal.classList.remove('active');
+
+        // Redirect to console
+        window.location.href = 'console.html';
+    } else {
+        if (err) err.style.display = 'flex';
+    }
+}
+
+function launchSandboxMill(millName, role, millCode, tcd) {
+    const millProfile = {
+        millCode: millCode,
+        millName: millName,
+        shortName: millName.includes('Gangamai') ? 'Gangamai SSK' : 
+                   millName.includes('Samarth') ? 'Samarth SSK' : 'Sandbox Mill',
+        tcd: tcd,
+        location: 'Maharashtra Command Area',
+        role: role,
+        shortRole: role.includes('Managing') ? 'MD' :
+                   role.includes('Agri') ? 'CAO' :
+                   role.includes('Chemist') ? 'Lab' : 'Field',
+        isSandbox: true,
+        authTime: new Date().toISOString()
+    };
+
+    sessionStorage.setItem('ikshu_enterprise_auth', 'granted');
+    sessionStorage.setItem('ikshu_mill_profile', JSON.stringify(millProfile));
+
+    const modal = document.getElementById('millAuthModalOverlay');
+    if (modal) modal.classList.remove('active');
+
+    window.location.href = 'console.html';
+}
+
+function openNewMillRegisterTab() {
+    const modal = document.getElementById('millAuthModalOverlay');
+    if (modal) {
+        modal.classList.add('active');
+        switchMillAuthTab('register');
+    }
+}
+
+function handleNewMillRegister(e) {
+    e.preventDefault();
+    const name = document.getElementById('regMillName').value;
+    const loc = document.getElementById('regMillLocation').value;
+    const tcd = document.getElementById('regMillTcd').value;
+    const role = document.getElementById('regMillRole').value;
+    const email = document.getElementById('regMillEmail').value;
+    const phone = document.getElementById('regMillPhone').value;
+
+    alert('Sugar Mill Provisioning Request Received for ' + name + ' (' + tcd + ').\n\nOur agricultural remote sensing team will contact ' + email + ' / ' + phone + ' within 24 hours with your customized factory tenant code.\n\nLaunching instant evaluator sandbox now...');
+
+    launchSandboxMill(name, role, 'MILL-PROV-' + Math.floor(Math.random() * 900 + 100), tcd);
+}
+
+function signOutMill() {
+    sessionStorage.removeItem('ikshu_enterprise_auth');
+    sessionStorage.removeItem('ikshu_mill_profile');
+    window.location.reload();
 }
