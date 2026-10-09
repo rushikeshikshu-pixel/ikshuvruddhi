@@ -1,0 +1,8 @@
+/* Design 1: high-contrast control room */
+:root { --bg-core:#07111d; --bg-card:#0e1d2b; --text-main:#edf8ff; --text-muted:#91a9b8; --accent-cyan:#39d5ff; --accent-green:#45e09a; --border-dim:#21394b; }
+body { background:radial-gradient(circle at 80% 0%,#12344a 0,#07111d 42%); color:var(--text-main); }
+.app-header { background:#0a1726; border:1px solid #23475d; }
+.kpi-card,.glass-card { background:#0e1d2b; border-color:#21394b; box-shadow:0 10px 25px #02091466; }
+.kpi-value,.card-header h3 { color:#edf8ff !important; }
+.form-control { background:#0a1726 !important; color:#eaf7ff !important; border-color:#27465a !important; }
+.section-label-strip { color:#9deaff; }

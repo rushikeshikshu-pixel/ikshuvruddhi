@@ -1,0 +1,606 @@
+﻿/* ==========================================================================
+   IKSHU INTELLIGENCE - SpaceX-Inspired Aerospace Aesthetic
+   Domain: ikshuintelligence.com | SatCane AI & IkshuVruddhi Engine
+   ========================================================================== */
+
+:root {
+    --bg-black: #000000;
+    --bg-dark: #080808;
+    --bg-card: rgba(15, 15, 15, 0.85);
+    --border-white: rgba(255, 255, 255, 0.3);
+    --border-white-light: rgba(255, 255, 255, 0.15);
+    
+    --text-white: #ffffff;
+    --text-gray: #a3a3a3;
+    --text-muted: #737373;
+    
+    --cane-green: #00e676;
+    --sat-cyan: #00f2fe;
+    --danger-red: #ef4444;
+    --amber-harvest: #f59e0b;
+    
+    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+    background-color: var(--bg-black);
+    color: var(--text-white);
+}
+
+body {
+    background-color: var(--bg-black);
+    color: var(--text-white);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ==========================================================================
+   SPACEX-STYLE NAVIGATION
+   ========================================================================== */
+.spacex-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+    transition: background 0.3s ease;
+}
+
+.spacex-nav.scrolled {
+    background: rgba(0, 0, 0, 0.95);
+    border-bottom: 1px solid var(--border-white-light);
+}
+
+.spacex-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text-white);
+}
+
+.spacex-logo-text {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+}
+
+.spacex-logo-text span {
+    color: var(--sat-cyan);
+    font-weight: 300;
+    margin-left: 6px;
+    letter-spacing: 0.15em;
+}
+
+.spacex-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+}
+
+.spacex-nav-links a {
+    color: var(--text-white);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+    opacity: 0.85;
+}
+
+.spacex-nav-links a:hover {
+    opacity: 1;
+    color: var(--sat-cyan);
+}
+
+.spacex-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-hamburger {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px;
+    z-index: 1002;
+}
+
+.btn-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #ffffff;
+    transition: all 0.3s ease;
+}
+
+/* ==========================================================================
+   SPACEX BUTTONS
+   ========================================================================== */
+.btn-spacex {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 38px;
+    border: 2px solid #ffffff;
+    background: transparent;
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-spacex:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+.btn-spacex-filled {
+    background: #ffffff;
+    color: #000000;
+}
+
+.btn-spacex-filled:hover {
+    background: #e2e8f0;
+    border-color: #e2e8f0;
+}
+
+.btn-spacex-cyan {
+    border-color: var(--sat-cyan);
+    color: var(--sat-cyan);
+}
+
+.btn-spacex-cyan:hover {
+    background: var(--sat-cyan);
+    color: #000000;
+}
+
+.btn-spacex-green {
+    border-color: var(--cane-green);
+    color: var(--cane-green);
+}
+
+.btn-spacex-green:hover {
+    background: var(--cane-green);
+    color: #000000;
+}
+
+.btn-spacex-sm {
+    padding: 10px 22px;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+}
+
+/* Domain Status Banner */
+.spacex-domain-ticker {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+}
+
+.spacex-domain-ticker span {
+    color: var(--text-gray);
+}
+
+.spacex-domain-ticker strong {
+    color: #ffffff;
+}
+
+.domain-action-link {
+    color: var(--sat-cyan);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.domain-action-link:hover {
+    text-decoration: underline;
+}
+/* ==========================================================================
+   FULL-SCREEN SECTIONS (SpaceX Signature Layout)
+   ========================================================================== */
+.spacex-section {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 0 100px 60px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+/* Background Gradients */
+.spacex-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 60%, rgba(0, 0, 0, 0.88) 100%);
+    z-index: 1;
+}
+
+/* Visual Backgrounds */
+.section-hero {
+    background: 
+        radial-gradient(circle at 75% 20%, rgba(0, 242, 254, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 20% 80%, rgba(0, 230, 118, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, #020409 0%, #060b14 50%, #000000 100%);
+}
+
+.section-hero::after {
+    content: '';
+    position: absolute;
+    top: 15%;
+    right: 5%;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    border: 1px dashed rgba(0, 242, 254, 0.2);
+    box-shadow: 0 0 100px rgba(0, 242, 254, 0.08);
+    pointer-events: none;
+    z-index: 0;
+    animation: rotateOrbit 60s infinite linear;
+}
+
+@keyframes rotateOrbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.section-orbit {
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(0, 230, 118, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #050a12 0%, #010204 100%);
+}
+
+.section-ml {
+    background: 
+        radial-gradient(circle at 70% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+        linear-gradient(180deg, #040810 0%, #000000 100%);
+}
+
+.section-cadastral {
+    background: 
+        radial-gradient(circle at 40% 50%, rgba(239, 68, 68, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #0a0507 0%, #000000 100%);
+}
+
+.section-dispatch {
+    background: 
+        radial-gradient(circle at 60% 30%, rgba(245, 158, 11, 0.14) 0%, transparent 50%),
+        linear-gradient(180deg, #090905 0%, #000000 100%);
+}
+
+.section-contact {
+    background: #020202;
+    padding-top: 120px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Section Content Block (SpaceX Bottom-Left Alignment) */
+.spacex-content-block {
+    position: relative;
+    z-index: 2;
+    max-width: 640px;
+}
+
+.spacex-tag {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-gray);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.spacex-heading {
+    font-family: var(--font-heading);
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.spacex-desc {
+    font-size: 1.05rem;
+    color: #d4d4d4;
+    line-height: 1.6;
+    margin-bottom: 34px;
+    max-width: 540px;
+}
+
+.spacex-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* Scroll Down Indicator */
+.spacex-scroll-indicator {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.spacex-scroll-indicator i {
+    font-size: 0.85rem;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(6px); }
+    60% { transform: translateY(3px); }
+}
+
+.spacex-scroll-indicator:hover {
+    color: #ffffff;
+}
+
+/* Stats Pill Bar on Orbit & ML Sections */
+.spacex-quick-stats {
+    display: flex;
+    gap: 28px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-white-light);
+}
+
+.quick-stat h4 {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.quick-stat p {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   SLIDE-OVER DRAWERS (Interactive Ripening Sim, ROI & Cadastral)
+   ========================================================================== */
+.spacex-drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.spacex-drawer-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+.spacex-drawer {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    max-width: 680px;
+    height: 100vh;
+    background: #09090b;
+    border-left: 1px solid var(--border-white-light);
+    z-index: 2001;
+    overflow-y: auto;
+    padding: 48px 40px;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.9);
+}
+
+.spacex-drawer.active {
+    right: 0;
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-white-light);
+    margin-bottom: 30px;
+}
+
+.drawer-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.btn-drawer-close {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.6rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Full-Screen Hamburger Menu Drawer */
+.spacex-menu-overlay {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    background: rgba(5, 5, 5, 0.98);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--border-white-light);
+    z-index: 1001;
+    padding: 100px 48px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: right 0.35s ease;
+}
+
+.spacex-menu-overlay.active {
+    right: 0;
+}
+
+.menu-nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.menu-nav-list a {
+    color: #ffffff;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: color 0.2s;
+}
+
+.menu-nav-list a:hover {
+    color: var(--sat-cyan);
+}
+
+/* FOOTER */
+.spacex-footer {
+    background: #000000;
+    padding: 40px 48px;
+    border-top: 1px solid var(--border-white-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.spacex-footer a {
+    color: var(--text-gray);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.spacex-footer a:hover {
+    color: #ffffff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .spacex-nav-links { display: none; }
+    .spacex-section { padding: 0 0 80px 32px; }
+    .spacex-heading { font-size: 2.8rem; }
+    .spacex-nav { padding: 0 24px; }
+    .spacex-domain-ticker { padding: 8px 24px; }
+}
+
+@media (max-width: 768px) {
+    .spacex-heading { font-size: 2.2rem; }
+    .spacex-section { padding: 0 0 60px 20px; }
+    .spacex-btn-group { flex-direction: column; width: 100%; }
+    .btn-spacex { width: 100%; text-align: center; }
+    .spacex-drawer { max-width: 100%; padding: 32px 20px; }
+    .spacex-footer { flex-direction: column; gap: 14px; text-align: center; }
+}

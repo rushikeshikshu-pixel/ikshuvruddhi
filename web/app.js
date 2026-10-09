@@ -365,6 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterVariety: '',
         filterBatch: '',
         filterVillage: '',
+        filterAuditVerdict: '',
 
         isEditingPolygon: false,
         editingPlotId: null,
@@ -386,6 +387,21 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const k of keys) {
             if (item[k] !== undefined && item[k] !== null && String(item[k]).trim() !== '') {
                 return String(item[k]).trim();
+            }
+        }
+        // Robust fallback: normalized case-insensitive & punctuation-insensitive matching
+        const itemKeys = Object.keys(item);
+        for (const k of keys) {
+            const normTarget = k.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (!normTarget) continue;
+            for (const ik of itemKeys) {
+                const normKey = ik.toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (normKey === normTarget || normKey.startsWith(normTarget) || normTarget.startsWith(normKey)) {
+                    const val = item[ik];
+                    if (val !== undefined && val !== null && String(val).trim() !== '') {
+                        return String(val).trim();
+                    }
+                }
             }
         }
         return defaultVal;
@@ -617,6 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnModalPrintDocket: document.getElementById('btnModalPrintDocket'),
         csvNewSeasonInput: document.getElementById('csvNewSeasonInput'),
         csvLabTrainingInput: document.getElementById('csvLabTrainingInput'),
+        cropTimeSeriesInput: document.getElementById('cropTimeSeriesInput'),
         cadastralGeoJsonInput: document.getElementById('cadastralGeoJsonInput'),
         mapSatelliteModeBanner: document.getElementById('mapSatelliteModeBanner'),
         polygonEditBanner: document.getElementById('polygonEditBanner'),
@@ -1410,6 +1427,7 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
         const varFilter = (state.filterVariety || '').toUpperCase().trim();
         const batchFilter = (state.filterBatch || '').toUpperCase().trim();
         const vilFilter = (state.filterVillage || '').toLowerCase().trim();
+        const verdictFilter = (state.filterAuditVerdict || (document.getElementById('filterAuditVerdict') ? document.getElementById('filterAuditVerdict').value : '') || '').toUpperCase().trim();
 
         state.filteredData = state.enrichedData.filter(item => {
             if (term) {
@@ -1436,6 +1454,10 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
             if (vilFilter) {
                 const vilVal = (item.village || item.Village || '').toLowerCase();
                 if (vilVal !== vilFilter) return false;
+            }
+            if (verdictFilter) {
+                const itemVerdict = (item.Real_Satellite_Verdict || item.real_satellite_verdict || '').toUpperCase().trim();
+                if (itemVerdict !== verdictFilter) return false;
             }
             return true;
         });
@@ -1874,6 +1896,21 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
         setEl('modalPredictedPol', (item.isStale || item.isInspectionRequired) ? "--" : `${item.predictedPol}%`);
         setEl('modalPredictedCcs', (item.isStale || item.isInspectionRequired) ? "--" : `${item.predictedCcs}%`);
         setEl('modalPredictedPurity', (item.isStale || item.isInspectionRequired) ? "--" : `${item.predictedPurity}% Purity`);
+        const cropBox = document.getElementById('modalCropClassificationBox');
+        if (cropBox) {
+            const crop = item.crop_type_screening;
+            const pheno = item.crop_type_phenology || {};
+            const cropLabel = crop && crop !== 'INSUFFICIENT_TEMPORAL_DATA'
+                ? crop.replaceAll('_', ' ')
+                : '';
+            cropBox.textContent = crop
+                ? (crop === 'INSUFFICIENT_TEMPORAL_DATA'
+                    ? `Crop-type screening: insufficient history (${pheno.valid_observations_count || 0} valid observations across ${pheno.observation_span_days || 0} days; need at least 5 observations spanning 120 days).`
+                    : (crop !== 'SUGARCANE'
+                        ? `⚠️ FIELD REVIEW FLAG — satellite history resembles ${cropLabel}, while the register lists ${item['Cane Type'] || 'sugarcane'}. This is an unvalidated heuristic, not a confirmed crop; verify on the ground before acting. ${pheno.valid_observations_count || 0} observations across ${pheno.observation_span_days || 0} days.`
+                        : `Satellite history is sugarcane-compatible (${pheno.valid_observations_count || 0} observations across ${pheno.observation_span_days || 0} days). Screening only—not proof of crop identity.`))
+                : 'Crop-type screening: no time-series result yet. Upload one row per plot/date with farm_id, date, and NDVI; NDRE/LSWI are optional. At least 5 usable dates spanning 120 days are required.';
+        }
         setEl('modalHarvestDecision', `<span class="decision-badge ${item.decisionClass}">${item.decision}</span>`, true);
         setEl('modalPeakWindow', item.ripening.peakWindow);
         setEl('modalPlantingDate', `${item.plantDateInfo.dateStr} (Season 2627)`);
@@ -2005,6 +2042,25 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
         const modalBox = document.getElementById('modalPixelAuditBox');
         if (modalBox) {
             modalBox.innerHTML = `
+                ${item.Real_Satellite_Verdict ? `
+                <div style="background:${item.Real_Satellite_Verdict === 'CONFIRMED_GHOST_BARE_SOIL' ? 'rgba(239,68,68,0.2)' : (item.Real_Satellite_Verdict === 'CONFIRMED_HEALTHY_CANE' ? 'rgba(16,185,129,0.2)' : 'rgba(59,130,246,0.2)')}; border:1px solid ${item.Real_Satellite_Verdict === 'CONFIRMED_GHOST_BARE_SOIL' ? '#ef4444' : (item.Real_Satellite_Verdict === 'CONFIRMED_HEALTHY_CANE' ? '#10b981' : '#3b82f6')}; padding:6px 10px; border-radius:6px; margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:700; font-size:0.78rem; color:${item.Real_Satellite_Verdict === 'CONFIRMED_GHOST_BARE_SOIL' ? '#f87171' : (item.Real_Satellite_Verdict === 'CONFIRMED_HEALTHY_CANE' ? '#34d399' : '#60a5fa')};">
+                            ??? S2 AUDIT: ${item.Real_Satellite_Verdict}
+                        </span>
+                        <span style="font-size:0.70rem; color:#94a3b8;">${item.Live_S2_Tile_Date || '2026-09-28'}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.72rem; margin-top:4px;">
+                        <span>Live NDVI: <strong style="color:#38bdf8;">${item.Live_S2_NDVI !== undefined ? item.Live_S2_NDVI : '--'}</strong> (Peak: <strong>${item.Live_S2_Peak_NDVI !== undefined ? item.Live_S2_Peak_NDVI : '--'}</strong>)</span>
+                        <span>SCL Veg: <strong style="color:#34d399;">${item.Live_S2_Veg_Pct !== undefined ? item.Live_S2_Veg_Pct + '%' : '--'}</strong></span>
+                        <span>Bare Soil: <strong style="color:#f87171;">${item.Live_S2_Bare_Soil_Pct !== undefined ? item.Live_S2_Bare_Soil_Pct + '%' : '--'}</strong></span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.72rem; margin-top:2px;">
+                        <span>Audited Cane: <strong style="color:#a7f3d0;">${item.Live_Satellite_Audited_MT !== undefined ? item.Live_Satellite_Audited_MT + ' MT' : '--'}</strong></span>
+                        <span>Discrepancy: <strong style="color:${(item.Tonnage_Discrepancy_MT || 0) < 0 ? '#fbbf24' : '#34d399'};">${item.Tonnage_Discrepancy_MT !== undefined ? (item.Tonnage_Discrepancy_MT > 0 ? '+' : '') + item.Tonnage_Discrepancy_MT + ' MT' : '--'}</strong></span>
+                    </div>
+                </div>
+                ` : ''}
                 ${item.isDuplicateBoundary ? '<div style="background:rgba(245,158,11,0.15); border:1px solid #f59e0b; padding:4px 8px; border-radius:4px; margin-bottom:6px; color:#fbbf24; font-weight:700;">⚠️ REGISTRY WARNING: Boundary coordinates identical to another registered plot. GPS re-survey recommended.</div>' : ''}
                 <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                     <span>Plot Telemetry Source:</span>
@@ -2131,6 +2187,15 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                 applyFilters();
             });
         }
+        ['filterCaneType', 'filterVariety', 'filterBatch', 'filterVillage', 'filterAuditVerdict'].forEach(id => {
+            const domEl = document.getElementById(id);
+            if (domEl) {
+                domEl.addEventListener('change', (e) => {
+                    state[id] = e.target.value;
+                    applyFilters();
+                });
+            }
+        });
 
         if (el.btnHeaderExport) {
             el.btnHeaderExport.addEventListener('click', () => {
@@ -2162,16 +2227,68 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     try {
+                        if (typeof XLSX === 'undefined') {
+                            throw new Error("SheetJS library is not loaded. Please verify internet connection or reload the page.");
+                        }
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: 'array', cellDates: true });
-                        const firstSheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[firstSheetName];
-                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-                            defval: "",
-                            raw: false,
-                            dateNF: 'yyyy-mm-dd'
-                        });
-                        onComplete(jsonData);
+                        
+                        let combinedRows = [];
+                        const keywords = ['plot', 'farmer', 'gut', 'gat', 'village', 'variety', 'cane', 'area', 'survey', 'acre', 'ha', 'tonnage', 'claim'];
+                        
+                        // Iterate through all sheets to support multi-tab workbooks (e.g. 18-circle mill registers)
+                        for (const sheetName of workbook.SheetNames) {
+                            const worksheet = workbook.Sheets[sheetName];
+                            if (!worksheet) continue;
+                            
+                            // Convert sheet to 2D array of rows
+                            const rawMatrix = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+                            if (!rawMatrix || rawMatrix.length === 0) continue;
+                            
+                            // Dynamically detect header row index (skipping factory banners and titles)
+                            let headerIdx = -1;
+                            for (let i = 0; i < Math.min(12, rawMatrix.length); i++) {
+                                const rowStr = rawMatrix[i].map(c => String(c).toLowerCase()).join(' ');
+                                if (keywords.some(kw => rowStr.includes(kw))) {
+                                    headerIdx = i;
+                                    break;
+                                }
+                            }
+                            if (headerIdx === -1) {
+                                for (let i = 0; i < Math.min(5, rawMatrix.length); i++) {
+                                    if (rawMatrix[i].filter(c => String(c).trim() !== '').length >= 3) {
+                                        headerIdx = i;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (headerIdx === -1) headerIdx = 0;
+                            
+                            const rawHeaders = rawMatrix[headerIdx];
+                            const cleanHeaders = rawHeaders.map((h, colIdx) => {
+                                let str = String(h || '').trim();
+                                if (str.includes('\n')) str = str.split('\n')[0].trim();
+                                return str || `col_${colIdx}`;
+                            });
+                            
+                            for (let r = headerIdx + 1; r < rawMatrix.length; r++) {
+                                const row = rawMatrix[r];
+                                if (!row || !row.some(c => String(c).trim() !== '')) continue;
+                                const obj = { _sheet: sheetName };
+                                cleanHeaders.forEach((header, cIdx) => {
+                                    obj[header] = row[cIdx] !== undefined ? row[cIdx] : '';
+                                    if (rawHeaders[cIdx] && rawHeaders[cIdx] !== header) {
+                                        obj[rawHeaders[cIdx]] = row[cIdx] !== undefined ? row[cIdx] : '';
+                                    }
+                                });
+                                combinedRows.push(obj);
+                            }
+                        }
+                        
+                        if (combinedRows.length === 0) {
+                            throw new Error("No readable tabular data rows found in the uploaded Excel workbook.");
+                        }
+                        onComplete(combinedRows);
                     } catch (err) {
                         console.error("Excel parse error:", err);
                         if (onError) onError(err);
@@ -2197,6 +2314,91 @@ Click '⚡ Auto-Snap' on this row to fetch fresh Sentinel-2 pixels for the new b
                     }
                 });
             }
+        }
+
+        if (el.cropTimeSeriesInput) {
+            el.cropTimeSeriesInput.addEventListener('change', (e) => {
+                if (!e.target.files.length) return;
+                const file = e.target.files[0];
+                parseUploadedSpreadsheet(file, async (rows) => {
+                    try {
+                        const grouped = new Map();
+                        rows.forEach((row) => {
+                            // Prefer a stable plot identifier. Gat alone is not a unique plot key.
+                            const rawId = findVal(row, ['farm_id', 'plot_id', 'plot_no', 'Plot No', 'PLOT_NO', 'Plot'], '');
+                            const gatNo = findVal(row, ['gat_no', 'Gat No', 'GAT_NO', 'Gat'], '');
+                            const date = findVal(row, ['date', 'Observation Date', 'Acquisition Date', 'scene_acquisition_date'], '');
+                            const ndviRaw = findVal(row, ['ndvi', 'NDVI', 'sat_ndvi'], '');
+                            const farmId = String(rawId).trim();
+                            if (!farmId || !date || ndviRaw === '' || !Number.isFinite(Number(ndviRaw))) return;
+                            if (!grouped.has(farmId)) grouped.set(farmId, { farm_id: farmId, gat_no: String(gatNo).trim() || null, observations: [] });
+                            const group = grouped.get(farmId);
+                            const obs = { date: String(date).trim().slice(0, 10), ndvi: Number(ndviRaw) };
+                            const ndre = findVal(row, ['ndre', 'NDRE', 'sat_ndre'], '');
+                            // sentinel_phenology.py calls the same NIR-SWIR index NDWI.
+                            const lswi = findVal(row, ['lswi', 'LSWI', 'sat_lswi', 'ndwi', 'NDWI'], '');
+                            let usability = findVal(row, ['usability_pct', 'clear_sky_coverage_pct', 'valid_pixel_pct'], '');
+                            if (usability === '') {
+                                const validPixels = Number(findVal(row, ['n_px'], ''));
+                                const corePixels = Number(findVal(row, ['core_px'], ''));
+                                if (Number.isFinite(validPixels) && Number.isFinite(corePixels) && corePixels > 0) {
+                                    usability = String((validPixels / corePixels) * 100);
+                                }
+                            }
+                            const vh = findVal(row, ['sar_vh_db', 'VH dB', 'sentinel1_vh_db'], '');
+                            if (ndre !== '' && Number.isFinite(Number(ndre))) obs.ndre = Number(ndre);
+                            if (lswi !== '' && Number.isFinite(Number(lswi))) obs.lswi = Number(lswi);
+                            if (usability !== '' && Number.isFinite(Number(usability))) obs.usability_pct = Number(usability);
+                            if (vh !== '' && Number.isFinite(Number(vh))) group.sar_vh_db = Number(vh);
+                            group.observations.push(obs);
+                        });
+
+                        const plots = Array.from(grouped.values());
+                        if (!plots.length) throw new Error('No usable rows found. Required columns: farm_id, date, ndvi.');
+                        const byId = new Map();
+                        let cloudSavedObservations = 0;
+                        let cloudSavedScreenings = 0;
+                        let cloudConfigured = false;
+                        for (let i = 0; i < plots.length; i += 100) {
+                            const response = await fetch(`${BACKEND_BASE_URL}/api/crop/classify/batch`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ plots: plots.slice(i, i + 100) })
+                            });
+                            const payload = await response.json();
+                            if (!response.ok) throw new Error(payload.detail || `Classifier API returned ${response.status}`);
+                            payload.results.forEach(result => byId.set(String(result.farm_id).trim(), result));
+                            cloudConfigured = cloudConfigured || Boolean(payload.cloud_persistence?.configured);
+                            cloudSavedObservations += Number(payload.cloud_persistence?.saved_observations || 0);
+                            cloudSavedScreenings += Number(payload.cloud_persistence?.saved_screenings || 0);
+                        }
+
+                        let attached = 0;
+                        ACTIVE_SEASON_DATA.forEach((row) => {
+                            const rowId = String(findVal(row, ['Plot No', 'PLOT_NO', 'farm_id', 'Gat No', 'GAT_NO', 'gat_no', 'Plot', 'Gat'], '')).trim();
+                            const classification = byId.get(rowId);
+                            if (!classification) return;
+                            row.crop_type_screening = classification.predicted_crop;
+                            row.crop_type_score_pct = classification.heuristic_confidence_score;
+                            row.crop_type_evidence_pct = classification.evidence_completeness_pct;
+                            row.crop_type_reasoning = classification.reasoning;
+                            row.crop_type_phenology = classification.phenology_summary || null;
+                            attached++;
+                        });
+                        runEngine();
+                        const classified = Array.from(byId.values()).filter(r => r.predicted_crop !== 'INSUFFICIENT_TEMPORAL_DATA').length;
+                        const cloudNote = cloudConfigured
+                            ? `\nSupabase saved/updated ${cloudSavedObservations} observations and ${cloudSavedScreenings} plot screenings.`
+                            : '\nSupabase is not configured on the backend; results are only in this dashboard session.';
+                        alert(`Crop-history screening finished for ${byId.size} plots.\n\n${classified} had enough observations for a screening label; ${byId.size - classified} need more history.\n${attached} results matched plots currently loaded in the dashboard.${cloudNote}\n\nScores are heuristic screening scores—not accuracy or calibrated probabilities. Check the plot detail view for each result.`);
+                    } catch (err) {
+                        console.error('Crop-history classification failed:', err);
+                        alert(`Could not classify crop history: ${err.message}`);
+                    } finally {
+                        e.target.value = '';
+                    }
+                }, (err) => alert(`Could not read crop-history file: ${err.message}`));
+            });
         }
 
         if (el.csvNewSeasonInput) {

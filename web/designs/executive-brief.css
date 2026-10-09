@@ -1,0 +1,11 @@
+/* Design 3: boardroom / management briefing */
+:root { --bg-core:#f7f8fa; --bg-card:#fff; --text-main:#182230; --text-muted:#687585; --accent-cyan:#155eef; --accent-green:#147d55; --accent-amber:#a56508; --border-dim:#e5e9ef; }
+body { background:#f7f8fa; color:var(--text-main); }
+.app-header { background:#172238; border:0; border-radius:10px; }
+.brand-icon { background:#d7e4ff; color:#155eef; }
+.kpi-grid { grid-template-columns:repeat(6,minmax(0,1fr)); }
+.kpi-card,.glass-card { background:#fff; border-color:#e5e9ef; border-radius:10px; box-shadow:0 3px 10px #1e293b0d; }
+.kpi-value,.card-header h3 { color:#172238 !important; }
+.section-label-strip { color:#536174; }
+.toolbar-bar { background:#fff; border-color:#e5e9ef; }
+.form-control { background:#fff !important; color:#182230 !important; border-color:#d4dbe5 !important; }
