@@ -3,572 +3,859 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IKSHU INTELLIGENCE | Autonomous Sugarcane Satellite AI</title>
-    <meta name="description" content="Autonomous sugarcane intelligence from orbit to mill crushing. Sentinel-2 remote sensing, ML sucrose forecasting, and automated harvest scheduling.">
-    
+    <title>Ikshu Intelligence | Autonomous Satellite AI & Harvest Telemetry for Sugar Mills</title>
+    <meta name="description" content="Precision satellite remote sensing, AI pre-harvest sucrose (CCS/Brix/Pol) forecasting, MahaBhuNaksha 7/12 Gat reconciliation, and capacity-balanced harvest scheduling for sugar mills and cooperatives.">
+    <meta name="keywords" content="sugar mill software, sugarcane satellite remote sensing, CCS recovery prediction, MahaBhuNaksha 7/12, harvest scheduling, IkshuVruddhi, SatCane AI">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- SpaceX Style Sheet -->
-    <link rel="stylesheet" href="spacex.css">
+
+    <!-- Platform Stylesheet -->
+    <link rel="stylesheet" href="landing.css">
 </head>
 <body>
 
-    <!-- SPACEX NAVIGATION -->
-    <header class="spacex-nav">
-        <a href="index.html" class="spacex-brand">
-            <div class="spacex-logo-text">
-                IKSHU <span>// INTELLIGENCE</span>
-            </div>
-        </a>
-
-        <ul class="spacex-nav-links">
-            <li><a href="#orbit">SENTINEL-2 ORBIT</a></li>
-            <li><a href="#sucrose-ml">SUCROSE ML</a></li>
-            <li><a href="#cadastral">CADASTRAL 7/12</a></li>
-            <li><a href="#dispatch">CAPACITY DISPATCH</a></li>
-            <li><a href="#" data-open-drawer="drawerRoi">MILL ROI</a></li>
-            <li><a href="#contact">COMMISSION AUDIT</a></li>
-        </ul>
-
-        <div class="spacex-nav-right">
-            <a href="console.html" class="btn-spacex btn-spacex-sm">
-                LAUNCH CONSOLE
+    <!-- 1. TOP NAVIGATION -->
+    <nav class="site-nav">
+        <div class="container nav-inner">
+            <a href="index.html" class="brand-wrapper">
+                <div class="brand-logo-icon">
+                    <i class="fa-solid fa-satellite"></i>
+                </div>
+                <div class="brand-meta">
+                    <h2>IKSHU <span>INTELLIGENCE</span></h2>
+                    <p>SatCane™ AI Telemetry For Sugar Mills</p>
+                </div>
             </a>
-            <button class="btn-hamburger" id="btnMenuToggle" aria-label="Open Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </header>
 
-    <!-- DOMAIN SETUP TICKER (Fixes ERR_NAME_NOT_RESOLVED) -->
-    <div class="spacex-domain-ticker">
-        <div>
-            <span>TARGET DOMAIN: </span><strong>IKSHUINTELLIGENCE.COM</strong>
-            <span style="margin: 0 10px;">|</span>
-            <span>STATUS: </span><span style="color: var(--amber-harvest);">PENDING DNS RECORD ROUTING</span>
-        </div>
-        <a href="#" data-open-drawer="drawerDns" class="domain-action-link">
-            RESOLVE ERR_NAME_NOT_RESOLVED (2-MIN DNS SETUP) →
-        </a>
-    </div>
+            <ul class="nav-links">
+                <li><a href="#roi-calculator">Mill Recovery ROI</a></li>
+                <li><a href="#simulator">Sucrose Chemistry Sim</a></li>
+                <li><a href="#solutions">Factory Engines</a></li>
+                <li><a href="#cadastral-audit">7/12 Gat Fraud Buster</a></li>
+                <li><a href="#case-studies">Mill Case Studies</a></li>
+                <li><a href="#contact">Pilot Request</a></li>
+            </ul>
 
-    <!-- SECTION 1: HERO -->
-    <section class="spacex-section section-hero" id="hero">
-        <div class="spacex-content-block">
-            <div class="spacex-tag">
-                <i class="fa-solid fa-satellite"></i> MISSION 2026 // COPERNICUS TO CRUSHING
-            </div>
-            <h1 class="spacex-heading">
-                AUTONOMOUS<br>
-                SUGARCANE<br>
-                INTELLIGENCE
-            </h1>
-            <p class="spacex-desc">
-                Orbital remote sensing, machine learning pre-harvest sucrose forecasting, and automated factory dispatch for sugar mills.
-            </p>
-            <div class="spacex-btn-group">
-                <a href="console.html" class="btn-spacex btn-spacex-filled">
-                    ENTER CONSOLE
-                </a>
-                <a href="#" data-open-drawer="drawerRoi" class="btn-spacex">
-                    CALCULATE MILL ROI
-                </a>
-                <a href="#" data-open-drawer="drawerSim" class="btn-spacex btn-spacex-cyan">
-                    SUCROSE SIMULATOR
-                </a>
-            </div>
-        </div>
-
-        <a href="#orbit" class="spacex-scroll-indicator">
-            <span>SCROLL</span>
-            <i class="fa-solid fa-chevron-down"></i>
-        </a>
-    </section>
-
-    <!-- SECTION 2: SENTINEL-2 ORBIT -->
-    <section class="spacex-section section-orbit" id="orbit">
-        <div class="spacex-content-block">
-            <div class="spacex-tag" style="color: var(--cane-green);">
-                <i class="fa-solid fa-satellite-dish"></i> REMOTE SENSING // 10M REVISIT
-            </div>
-            <h2 class="spacex-heading">
-                SATCANE™ ORBITAL<br>
-                PHENOLOGY
-            </h2>
-            <p class="spacex-desc">
-                12-band Copernicus Sentinel-2 optical BOA reflectance and Sentinel-1 SAR C-band radar surveillance across 22 operational sugar mill command sectors.
-            </p>
-            <div class="spacex-btn-group">
-                <a href="console.html" class="btn-spacex btn-spacex-green">
-                    LIVE SATELLITE COCKPIT
-                </a>
-                <a href="#sucrose-ml" class="btn-spacex">
-                    NEXT: SUCROSE ML
-                </a>
-            </div>
-
-            <div class="spacex-quick-stats">
-                <div class="quick-stat">
-                    <h4>27,633+</h4>
-                    <p>PLOTS AUDITED</p>
-                </div>
-                <div class="quick-stat">
-                    <h4 style="color: var(--cane-green);">10M</h4>
-                    <p>GROUND SAMPLING</p>
-                </div>
-                <div class="quick-stat">
-                    <h4 style="color: var(--sat-cyan);">5 DAYS</h4>
-                    <p>REVISIT CADENCE</p>
-                </div>
-            </div>
-        </div>
-
-        <a href="#sucrose-ml" class="spacex-scroll-indicator">
-            <span>SCROLL</span>
-            <i class="fa-solid fa-chevron-down"></i>
-        </a>
-    </section>
-    <!-- SECTION 3: SUCROSE ML -->
-    <section class="spacex-section section-ml" id="sucrose-ml">
-        <div class="spacex-content-block">
-            <div class="spacex-tag" style="color: var(--sat-cyan);">
-                <i class="fa-solid fa-microscope"></i> BIOCHEMICAL FORECASTING // 96.8% PRECISION
-            </div>
-            <h2 class="spacex-heading">
-                PRE-HARVEST<br>
-                SUCROSE PREDICTION
-            </h2>
-            <p class="spacex-desc">
-                Machine learning models calibrated on genuine factory weighbridge laboratory samples with GroupKFold cross-validation. Predicting Commercial Cane Sugar (CCS), Brix, and Pol before cutting crews deploy.
-            </p>
-            <div class="spacex-btn-group">
-                <a href="#" data-open-drawer="drawerSim" class="btn-spacex btn-spacex-cyan">
-                    LAUNCH SUCROSE SIMULATOR
-                </a>
-                <a href="console.html" class="btn-spacex">
-                    VIEW LAB TELEMETRY
-                </a>
-            </div>
-
-            <div class="spacex-quick-stats">
-                <div class="quick-stat">
-                    <h4 style="color: var(--cane-green);">+0.58%</h4>
-                    <p>CCS RECOVERY GAIN</p>
-                </div>
-                <div class="quick-stat">
-                    <h4>160+</h4>
-                    <p>LAB WEIGHBRIDGE SAMPLES</p>
-                </div>
-                <div class="quick-stat">
-                    <h4 style="color: var(--sat-cyan);">96.8%</h4>
-                    <p>PREDICTION ACCURACY</p>
-                </div>
-            </div>
-        </div>
-
-        <a href="#cadastral" class="spacex-scroll-indicator">
-            <span>SCROLL</span>
-            <i class="fa-solid fa-chevron-down"></i>
-        </a>
-    </section>
-
-    <!-- SECTION 4: CADASTRAL DEFENSE & GHOST-PLOT BUSTER -->
-    <section class="spacex-section section-cadastral" id="cadastral">
-        <div class="spacex-content-block">
-            <div class="spacex-tag" style="color: var(--danger-red);">
-                <i class="fa-solid fa-shield-halved"></i> OPERATIONAL INTEGRITY // BHUNAKSHA 7/12
-            </div>
-            <h2 class="spacex-heading">
-                CADASTRAL DEFENSE<br>
-                & GHOST BUSTER
-            </h2>
-            <p class="spacex-desc">
-                Reconciling walked GPS parcel perimeters with official MahaBhuNaksha 7/12 land records. 2,529 phantom plots and zero-canopy fraudulent advance claims blocked across Maharashtra sugar mills.
-            </p>
-            <div class="spacex-btn-group">
-                <a href="#" data-open-drawer="drawerAudit" class="btn-spacex" style="border-color: var(--danger-red); color: var(--danger-red);">
-                    INSPECT CADASTRAL AUDIT
-                </a>
-                <a href="console.html" class="btn-spacex">
-                    VIEW AUDIT QUEUE
-                </a>
-            </div>
-
-            <div class="spacex-quick-stats">
-                <div class="quick-stat">
-                    <h4 style="color: var(--danger-red);">2,529</h4>
-                    <p>GHOST PLOTS BLOCKED</p>
-                </div>
-                <div class="quick-stat">
-                    <h4>12%</h4>
-                    <p>DIVERGENCE THRESHOLD</p>
-                </div>
-                <div class="quick-stat">
-                    <h4 style="color: var(--cane-green);">100%</h4>
-                    <p>SOURCE TRACEABILITY</p>
-                </div>
-            </div>
-        </div>
-
-        <a href="#dispatch" class="spacex-scroll-indicator">
-            <span>SCROLL</span>
-            <i class="fa-solid fa-chevron-down"></i>
-        </a>
-    </section>
-
-    <!-- SECTION 5: CAPACITY DISPATCH -->
-    <section class="spacex-section section-dispatch" id="dispatch">
-        <div class="spacex-content-block">
-            <div class="spacex-tag" style="color: var(--amber-harvest);">
-                <i class="fa-solid fa-timeline"></i> MILL LOGISTICS // 15,000 TCD
-            </div>
-            <h2 class="spacex-heading">
-                CAPACITY DISPATCH<br>
-                SCHEDULING
-            </h2>
-            <p class="spacex-desc">
-                Pack 24/7 cutting and transport schedules to match factory daily crushing capacity. Eliminating standing sucrose inversion and post-cut transport delays across circles.
-            </p>
-            <div class="spacex-btn-group">
-                <a href="console.html" class="btn-spacex btn-spacex-filled">
-                    LAUNCH HARVEST COCKPIT
-                </a>
-                <a href="#" data-open-drawer="drawerRoi" class="btn-spacex">
-                    CALCULATE RECOVERY ROI
-                </a>
-            </div>
-
-            <div class="spacex-quick-stats">
-                <div class="quick-stat">
-                    <h4 style="color: var(--amber-harvest);">₹16.5 CR</h4>
-                    <p>SEASON REVENUE EXPANSION</p>
-                </div>
-                <div class="quick-stat">
-                    <h4>24/7</h4>
-                    <p>HARVEST BALANCING</p>
-                </div>
-                <div class="quick-stat">
-                    <h4 style="color: var(--sat-cyan);">0 MT</h4>
-                    <p>SUCROSE LOST TO STANDING</p>
-                </div>
-            </div>
-        </div>
-
-        <a href="#contact" class="spacex-scroll-indicator">
-            <span>SCROLL</span>
-            <i class="fa-solid fa-chevron-down"></i>
-        </a>
-    </section>
-
-    <!-- SECTION 6: COMMISSION AN AUDIT (CONTACT) -->
-    <section class="spacex-section section-contact" id="contact">
-        <div class="spacex-content-block" style="max-width: 600px; margin: 0 auto; text-align: center;">
-            <div class="spacex-tag" style="justify-content: center;">
-                <i class="fa-solid fa-paper-plane"></i> COMMISSION AN OPERATIONAL AUDIT
-            </div>
-            <h2 class="spacex-heading" style="font-size: 2.8rem; margin-bottom: 12px;">
-                DEPLOY IKSHU INTELLIGENCE
-            </h2>
-            <p class="spacex-desc" style="margin: 0 auto 30px;">
-                Initiate a 72-hour zero-commitment cadastral and recovery audit for your sugar factory.
-            </p>
-
-            <form id="spacexContactForm" style="display: flex; flex-direction: column; gap: 14px; text-align: left;">
-                <div>
-                    <label style="font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-gray); font-family: var(--font-mono);">SUGAR MILL / ORGANIZATION</label>
-                    <input type="text" id="spxMill" required placeholder="e.g. Shree Sahakari Sakhar Karkhana" 
-                           style="width: 100%; padding: 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-white); color: #ffffff; font-family: var(--font-mono); font-size: 0.85rem; outline: none; margin-top: 4px;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                    <div>
-                        <label style="font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-gray); font-family: var(--font-mono);">CONTACT PERSON</label>
-                        <input type="text" id="spxName" required placeholder="Managing Director / Chief Chemist" 
-                               style="width: 100%; padding: 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-white); color: #ffffff; font-family: var(--font-mono); font-size: 0.85rem; outline: none; margin-top: 4px;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-gray); font-family: var(--font-mono);">DAILY CAPACITY (TCD)</label>
-                        <input type="text" id="spxTcd" required placeholder="e.g. 5,000 TCD" 
-                               style="width: 100%; padding: 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-white); color: #ffffff; font-family: var(--font-mono); font-size: 0.85rem; outline: none; margin-top: 4px;">
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                    <div>
-                        <label style="font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-gray); font-family: var(--font-mono);">EMAIL</label>
-                        <input type="email" id="spxEmail" required placeholder="contact@sugarmill.com" 
-                               style="width: 100%; padding: 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-white); color: #ffffff; font-family: var(--font-mono); font-size: 0.85rem; outline: none; margin-top: 4px;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-gray); font-family: var(--font-mono);">PHONE / WHATSAPP</label>
-                        <input type="tel" id="spxPhone" required placeholder="+91 98765 43210" 
-                               style="width: 100%; padding: 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-white); color: #ffffff; font-family: var(--font-mono); font-size: 0.85rem; outline: none; margin-top: 4px;">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-spacex btn-spacex-filled" style="width: 100%; margin-top: 8px;">
-                    DISPATCH AUDIT REQUEST
+            <div class="nav-right-actions">
+                <button id="langToggleBtn" class="lang-toggle-btn" title="Toggle Language">
+                    🌐 EN | मराठी
                 </button>
-                <div id="spxMsg" style="display:none; color: var(--sat-cyan); font-family: var(--font-mono); font-size: 0.8rem; margin-top: 8px; text-align: center;"></div>
-            </form>
+                <button id="btnOpenDnsModal" class="btn btn-secondary btn-dns-guide" style="padding: 7px 14px;">
+                    <i class="fa-solid fa-globe"></i> DNS Status
+                </button>
+                <a href="console.html" class="btn btn-primary nav-console-btn">
+                    <i class="fa-solid fa-gauge-high"></i> Launch Mill Console
+                </a>
+                <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. DOMAIN STATUS TICKER -->
+    <div class="domain-status-bar">
+        <div class="container domain-status-inner">
+            <div class="domain-info-left">
+                <span class="domain-dns-badge"><i class="fa-solid fa-signal"></i> PRODUCTION DOMAIN</span>
+                <span>Live Domain: <strong>ikshuintelligence.com</strong> &nbsp;|&nbsp; Status: <em style="color:#a7f3d0;">Connected to Vercel Global Edge</em></span>
+            </div>
+            <a href="#dns-help" id="btnDomainBannerGuide" onclick="document.getElementById('dnsModalOverlay').classList.add('active'); return false;" class="btn-dns-guide">
+                <i class="fa-solid fa-check-circle"></i> View Cloudflare DNS Configuration
+            </a>
+        </div>
+    </div>
+
+    <!-- 3. HERO SECTION -->
+    <section class="hero-section">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <div class="hero-pill">
+                    <span class="badge badge-satellite">
+                        <i class="fa-solid fa-satellite-dish"></i> Copernicus Sentinel-2 & SAR Telemetry • Operational In 22 Mill Circles
+                    </span>
+                </div>
+                <h1 class="hero-title" id="heroMainTitle">
+                    Precision <span class="gradient-text-green">Satellite AI</span> For Modern Sugar Mills
+                </h1>
+                <p class="hero-subtitle" id="heroMainSubtitle">
+                    Empowering Sugar Mills & Agricultural Cooperatives with AI-driven pre-harvest sucrose (CCS/Pol/Brix) forecasting, cadastral Gat reconciliation, and capacity-balanced harvest scheduling. Maximize sugar factory recovery, eliminate phantom ghost-plot fraud, and cut harvest-to-crush delays.
+                </p>
+                <div class="hero-cta-group">
+                    <a href="console.html" class="btn btn-primary" id="heroLaunchBtn">
+                        <i class="fa-solid fa-gauge-high"></i> Launch Sugar Mill Console
+                    </a>
+                    <a href="#roi-calculator" class="btn btn-secondary" id="heroRoiBtn">
+                        <i class="fa-solid fa-calculator"></i> Calculate Mill Recovery ROI
+                    </a>
+                    <a href="#contact" class="btn btn-glow-harvest">
+                        <i class="fa-solid fa-paper-plane"></i> Commission Mill Pilot
+                    </a>
+                </div>
+
+                <div class="hero-stats-strip">
+                    <div class="stat-item">
+                        <h3 class="gradient-text-cyan">27,633+</h3>
+                        <p>Cadastral Plots Audited Across 22 Mill Sectors</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="gradient-text-green">+0.58%</h3>
+                        <p>Average Factory Sugar Recovery (CCS) Gain</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 style="color: #f87171;">2,529</h3>
+                        <p>Ghost Plots & Acreage Discrepancies Flagged</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Right: Live Factory Telemetry Cockpit -->
+            <div class="hero-cockpit-card">
+                <div class="cockpit-top-bar">
+                    <div>
+                        <span class="cockpit-status-dot"></span>
+                        <strong style="font-size: 0.88rem; font-family: var(--font-mono); color: #ffffff;">SENTINEL-2 L2A LIVE INGESTION</strong>
+                    </div>
+                    <span class="badge badge-green" style="font-size: 0.7rem;">ORBIT PASS #483</span>
+                </div>
+
+                <div class="satellite-pass-radar">
+                    <div class="radar-header">
+                        <span>SPECTRAL BOA REFLECTANCE</span>
+                        <span>10m GROUND SAMPLING</span>
+                    </div>
+                    <div class="spectral-bands-grid">
+                        <div class="band-pill">
+                            <span class="band-name">B4 (RED)</span>
+                            <span class="band-value">0.038</span>
+                        </div>
+                        <div class="band-pill">
+                            <span class="band-name">B8 (NIR)</span>
+                            <span class="band-value" style="color: var(--cane-green);">0.428</span>
+                        </div>
+                        <div class="band-pill">
+                            <span class="band-name">B8A (EDGE)</span>
+                            <span class="band-value">0.312</span>
+                        </div>
+                        <div class="band-pill">
+                            <span class="band-name">B11 (SWIR)</span>
+                            <span class="band-value">0.164</span>
+                        </div>
+                        <div class="band-pill">
+                            <span class="band-name">NDVI</span>
+                            <span class="band-value" style="color: var(--cane-green);">0.782</span>
+                        </div>
+                        <div class="band-pill">
+                            <span class="band-name">NDRE</span>
+                            <span class="band-value" style="color: var(--sat-cyan);">0.395</span>
+                        </div>
+                        <div class="band-pill">
+                            <span class="band-name">LSWI</span>
+                            <span class="band-value">0.412</span>
+                        </div>
+                        <div class="band-pill">
+                            <span class="band-name">CWSI</span>
+                            <span class="band-value" style="color: var(--amber-harvest);">0.24</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cockpit-plot-preview">
+                    <div class="plot-preview-header">
+                        <strong style="color: #ffffff;">Target: Gat 142 (Babhaleshwar Circle)</strong>
+                        <span style="color: var(--sat-cyan); font-family: var(--font-mono);">Variety: Co 86032 Adsali</span>
+                    </div>
+
+                    <div class="plot-meter-row">
+                        <span style="color: var(--text-muted); width: 85px;">Ripening:</span>
+                        <div class="progress-track">
+                            <div class="progress-fill-green" style="width: 88%;"></div>
+                        </div>
+                        <strong style="font-family: var(--font-mono); color: var(--cane-green);">12.4% CCS</strong>
+                    </div>
+
+                    <div class="plot-meter-row">
+                        <span style="color: var(--text-muted); width: 85px;">Sucrose (Pol):</span>
+                        <div class="progress-track">
+                            <div class="progress-fill-cyan" style="width: 82%;"></div>
+                        </div>
+                        <strong style="font-family: var(--font-mono); color: var(--sat-cyan);">14.8% Pol</strong>
+                    </div>
+
+                    <div class="plot-meter-row">
+                        <span style="color: var(--text-muted); width: 85px;">Solids (Brix):</span>
+                        <div class="progress-track">
+                            <div class="progress-fill-cyan" style="width: 90%;"></div>
+                        </div>
+                        <strong style="font-family: var(--font-mono); color: #ffffff;">21.2° Brix</strong>
+                    </div>
+                </div>
+
+                <a href="console.html" class="btn btn-primary cockpit-action-btn">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Console Live Telemetry (320+ Plots)
+                </a>
+            </div>
         </div>
     </section>
-    <!-- SPACEX DRAWER OVERLAY -->
-    <div class="spacex-drawer-overlay" id="drawerOverlay"></div>
+    <!-- 4. INTERACTIVE SIMULATOR: MILL ECONOMICS & RECOVERY ROI CALCULATOR -->
+    <section class="roi-section" id="roi-calculator">
+        <div class="container">
+            <div class="section-head">
+                <span class="badge badge-amber">Sugar Mill Economics</span>
+                <h2>Factory Crushing Economics & <span class="gradient-text-gold">Recovery ROI Calculator</span></h2>
+                <p>Tailored for Sugar Factory Managing Directors & Chief Chemists: Adjust your crushing capacity (TCD), crushing days, and sugar realization price to calculate seasonal recovery revenue gains.</p>
+            </div>
 
-    <!-- DRAWER 1: SUCROSE RIPENING ENGINE -->
-    <div class="spacex-drawer" id="drawerSim">
-        <div class="drawer-header">
-            <h3>SUCROSE RIPENING ENGINE</h3>
-            <button class="btn-drawer-close" aria-label="Close Drawer">&times;</button>
-        </div>
+            <div class="roi-card">
+                <!-- Inputs -->
+                <div class="roi-inputs-col">
+                    <h3>Mill Crushing Parameters</h3>
+                    <p>Enter your factory's operational crushing capacity and current recovery rate.</p>
 
-        <p style="font-size: 0.88rem; color: #a3a3a3; margin-bottom: 24px; line-height: 1.6;">
-            Select cane variety and slide crop age to calculate real-time sucrose accumulation, juice purity, and standing inversion loss.
-        </p>
+                    <div class="sim-group">
+                        <div class="sim-label-row">
+                            <span>Crushing Capacity (TCD):</span>
+                            <span id="roiTcdVal" class="sim-slider-val">5,000 TCD</span>
+                        </div>
+                        <input type="range" id="roiTcdSlider" class="custom-range" min="2500" max="15000" value="5000" step="500">
+                    </div>
 
-        <div style="margin-bottom: 22px;">
-            <label style="font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-gray); font-family: var(--font-mono);">CANE VARIETY</label>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px;">
-                <button class="btn-spacex btn-spacex-sm drawer-variety-btn active" data-variety="Co 86032">Co 86032</button>
-                <button class="btn-spacex btn-spacex-sm drawer-variety-btn" data-variety="Co 0265">Co 0265</button>
-                <button class="btn-spacex btn-spacex-sm drawer-variety-btn" data-variety="MS 10001">MS 10001</button>
-                <button class="btn-spacex btn-spacex-sm drawer-variety-btn" data-variety="Co 92005">Co 92005</button>
-                <button class="btn-spacex btn-spacex-sm drawer-variety-btn" data-variety="CoM 0265">CoM 0265</button>
-                <button class="btn-spacex btn-spacex-sm drawer-variety-btn" data-variety="Phule 10001">Phule 10001</button>
+                    <div class="sim-group">
+                        <div class="sim-label-row">
+                            <span>Crushing Season Duration:</span>
+                            <span id="roiDaysVal" class="sim-slider-val">150 Days</span>
+                        </div>
+                        <input type="range" id="roiDaysSlider" class="custom-range" min="120" max="180" value="150" step="5">
+                    </div>
+
+                    <div class="sim-group">
+                        <div class="sim-label-row">
+                            <span>Baseline Factory Sugar Recovery %:</span>
+                            <span id="roiRecoveryVal" class="sim-slider-val">10.5%</span>
+                        </div>
+                        <input type="range" id="roiRecoverySlider" class="custom-range" min="9.0" max="12.5" value="10.5" step="0.1">
+                    </div>
+
+                    <div class="sim-group">
+                        <div class="sim-label-row">
+                            <span>Sugar Realization Price (₹ / Qtl):</span>
+                            <span id="roiPriceVal" class="sim-slider-val">₹3,600</span>
+                        </div>
+                        <input type="range" id="roiPriceSlider" class="custom-range" min="3200" max="4200" value="3600" step="50">
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 14px; border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-calculator" style="color: var(--amber-harvest);"></i>
+                        Formula anchors: +0.58% CCS recovery gain from eliminating overripe standing cane degradation and preventing phantom freight payouts on ghost parcels.
+                    </div>
+                </div>
+
+                <!-- Financial Results -->
+                <div class="roi-results-col">
+                    <div class="roi-big-stat">
+                        <div class="roi-big-label"><i class="fa-solid fa-coins"></i> Total Seasonal Value Creation</div>
+                        <div class="roi-big-number gradient-text-gold" id="roiTotalImpact">₹16.50 Cr</div>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Direct net value to Sugar Factory per 150-day crushing season</span>
+                    </div>
+
+                    <div class="roi-breakdown-grid">
+                        <div class="roi-mini-card">
+                            <span>Season Cane Crushed:</span>
+                            <strong id="roiTotalCane">7.50 Lakh MT</strong>
+                        </div>
+                        <div class="roi-mini-card">
+                            <span>Recovery Boost (+CCS):</span>
+                            <strong id="roiRecoveryBoost" style="color: var(--cane-green);">+0.58% (10.5% → 11.08%)</strong>
+                        </div>
+                        <div class="roi-mini-card">
+                            <span>Extra Sugar Bags Produced:</span>
+                            <strong id="roiSugarBags" style="color: var(--sat-cyan);">+43,500 Bags</strong>
+                        </div>
+                        <div class="roi-mini-card">
+                            <span>Additional Sugar Sale Revenue:</span>
+                            <strong id="roiSugarRev">₹15.66 Cr</strong>
+                        </div>
+                        <div class="roi-mini-card" style="grid-column: span 2;">
+                            <span>C&T Freight & Ghost Subsidy Savings:</span>
+                            <strong id="roiFreightSave" style="color: var(--cane-green);">₹1.65 Cr (Zero Phantom Advance Fraud)</strong>
+                        </div>
+                    </div>
+
+                    <a href="#contact" class="btn btn-primary" style="width: 100%;">
+                        <i class="fa-solid fa-handshake"></i> Commission Factory Deployment Audit
+                    </a>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div style="margin-bottom: 22px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:var(--font-mono); margin-bottom:6px;">
-                <span style="color:var(--text-gray);">CROP AGE:</span>
-                <span id="drawerAgeVal" style="color:var(--sat-cyan); font-weight:700;">400 DAYS (13.2 MO)</span>
+    <!-- 5. INTERACTIVE SIMULATOR: SUCROSE RIPENING & STANDING LOSS -->
+    <section class="simulator-section" id="simulator">
+        <div class="container">
+            <div class="section-head">
+                <span class="badge badge-satellite">Biological Ripening Model</span>
+                <h2>Interactive Sugarcane Ripening & <span class="gradient-text-cyan">Sucrose Loss Simulator</span></h2>
+                <p>Observe how cane variety, crop age, and days standing past peak maturity drive laboratory CCS, juice purity, and crushing financial loss.</p>
             </div>
-            <input type="range" id="drawerAgeSlider" min="260" max="500" value="400" step="5" style="width:100%; accent-color:var(--sat-cyan);">
+
+            <div class="sim-container-card">
+                <!-- Controls Column -->
+                <div class="sim-controls-panel">
+                    <h3>Variety & Telemetry Controls</h3>
+                    <p class="sim-desc">Select cane variety and slide crop age to calculate real-time sucrose accumulation and standing decay penalties.</p>
+
+                    <div class="sim-group">
+                        <label class="sim-label-row">
+                            <span>Target Variety:</span>
+                        </label>
+                        <div class="variety-selector-grid">
+                            <button class="variety-btn active" data-variety="Co 86032">Co 86032 (Nira)</button>
+                            <button class="variety-btn" data-variety="Co 0265">Co 0265 (Phule)</button>
+                            <button class="variety-btn" data-variety="MS 10001">MS 10001 (Early)</button>
+                            <button class="variety-btn" data-variety="Co 92005">Co 92005</button>
+                            <button class="variety-btn" data-variety="CoM 0265">CoM 0265</button>
+                            <button class="variety-btn" data-variety="Phule 10001">Phule 10001</button>
+                        </div>
+                    </div>
+
+                    <div class="sim-group">
+                        <div class="sim-label-row">
+                            <span>Crop Age:</span>
+                            <span id="simCropAgeVal" class="sim-slider-val">400 Days (13.2 Mo)</span>
+                        </div>
+                        <input type="range" id="simCropAgeSlider" class="custom-range" min="260" max="500" value="400" step="5">
+                    </div>
+
+                    <div class="sim-group">
+                        <div class="sim-label-row">
+                            <span>Standing Days Past Peak:</span>
+                            <span id="simStandingDaysVal" class="sim-slider-val" style="color: var(--amber-harvest);">0 Days Standing</span>
+                        </div>
+                        <input type="range" id="simStandingDaysSlider" class="custom-range" min="0" max="45" value="0" step="1">
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 14px; border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-info-circle" style="color: var(--sat-cyan);"></i> 
+                        Model calibrated on genuine mill lab weighbridge samples. Peak Commercial Cane Sugar (CCS) represents maximum theoretical extractable sucrose.
+                    </div>
+                </div>
+
+                <!-- Visualization Column -->
+                <div class="sim-visual-display">
+                    <div class="sim-metrics-grid">
+                        <div class="sim-metric-box">
+                            <span class="sim-metric-label">Estimated CCS</span>
+                            <div class="sim-metric-val" id="simMetricCcs" style="color: var(--cane-green);">12.80%</div>
+                            <span class="sim-metric-sub">Commercial Sugar</span>
+                        </div>
+                        <div class="sim-metric-box">
+                            <span class="sim-metric-label">Juice Brix</span>
+                            <div class="sim-metric-val" id="simMetricBrix" style="color: var(--sat-cyan);">21.6°</div>
+                            <span class="sim-metric-sub">Total Dissolved Solids</span>
+                        </div>
+                        <div class="sim-metric-box">
+                            <span class="sim-metric-label">Sucrose Pol</span>
+                            <div class="sim-metric-val" id="simMetricPol" style="color: #ffffff;">15.40%</div>
+                            <span class="sim-metric-sub">Optical Rotation</span>
+                        </div>
+                        <div class="sim-metric-box">
+                            <span class="sim-metric-label">Daily Standing Loss</span>
+                            <div class="sim-metric-val" id="simLossKg" style="color: var(--amber-harvest);">0.0 kg/MT</div>
+                            <span class="sim-metric-sub">Sugar Lost / Tonne / Day</span>
+                        </div>
+                        <div class="sim-metric-box" style="grid-column: span 2;">
+                            <span class="sim-metric-label">Standing Financial Penalty (5,000 MT Round)</span>
+                            <div class="sim-metric-val" id="simLossMoney" style="color: #f87171;">₹0.00 L</div>
+                            <span class="sim-metric-sub">Net factory loss at ₹3,600/Qtl</span>
+                        </div>
+                    </div>
+
+                    <!-- SVG Chart -->
+                    <div class="sim-graph-canvas-wrap" id="simGraphCanvasWrap"></div>
+
+                    <!-- Status Alert Box -->
+                    <div id="simWindowAlert" class="sim-window-alert sim-window-optimal">
+                        <i class="fa-solid fa-circle-check"></i> 
+                        <strong>OPTIMAL PEAK WINDOW:</strong> Peak commercial sucrose stage (CCS 12.80%). Cut within current 10-day capacity horizon.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 6. CORE SOLUTIONS & PLATFORM ENGINES -->
+    <section class="solutions-section" id="solutions">
+        <div class="container">
+            <div class="section-head">
+                <span class="badge badge-satellite">Platform Architecture</span>
+                <h2>Autonomous Engines Built For <span class="gradient-text-green">Sugar Factory Precision</span></h2>
+                <p>Four interconnected modules that turn satellite radar and optical imagery into actionable daily crushing schedules.</p>
+            </div>
+
+            <div class="solutions-grid">
+                <!-- Card 1 -->
+                <div class="solution-card">
+                    <div class="solution-icon-wrap">
+                        <i class="fa-solid fa-satellite"></i>
+                    </div>
+                    <h3>SatCane™ Multi-Spectral Telemetry</h3>
+                    <p>Copernicus Sentinel-2 BOA optical (10m/20m) and Sentinel-1 SAR C-band radar ingestion with automated SCL cloud masking.</p>
+                    <ul class="solution-features-list">
+                        <li><i class="fa-solid fa-check"></i> 12-Band reflectance profiling (B2 through B12)</li>
+                        <li><i class="fa-solid fa-check"></i> NDVI vigor, NDRE chlorophyll & LSWI water index</li>
+                        <li><i class="fa-solid fa-check"></i> 5-Day revisit frequency across whole command area</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="solution-card green">
+                    <div class="solution-icon-wrap">
+                        <i class="fa-solid fa-microscope"></i>
+                    </div>
+                    <h3>Pre-Harvest ML Sucrose Forecasting</h3>
+                    <p>Machine learning models calibrated on genuine factory weighbridge lab samples with GroupKFold cross-validation.</p>
+                    <ul class="solution-features-list">
+                        <li><i class="fa-solid fa-check"></i> Commercial Cane Sugar (CCS), Brix & Pol prediction</li>
+                        <li><i class="fa-solid fa-check"></i> Forecast peak sucrose maturity before cutting dockets</li>
+                        <li><i class="fa-solid fa-check"></i> Scientifically audited confidence scoring</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="solution-card amber">
+                    <div class="solution-icon-wrap">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </div>
+                    <h3>MahaBhuNaksha 7/12 Cadastral Audit</h3>
+                    <p>Direct spatial reconciliation between walked GPS farmer boundaries and official cadastral Gat land records.</p>
+                    <ul class="solution-features-list">
+                        <li><i class="fa-solid fa-check"></i> Flags area inflation (>12% variance threshold)</li>
+                        <li><i class="fa-solid fa-check"></i> Detects Ghost Plots (zero canopy on registered cane)</li>
+                        <li><i class="fa-solid fa-check"></i> Offline SQLite spatial store with 100% circuit breaker</li>
+                    </ul>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="solution-card">
+                    <div class="solution-icon-wrap">
+                        <i class="fa-solid fa-timeline"></i>
+                    </div>
+                    <h3>Dynamic Factory Capacity Dispatch</h3>
+                    <p>Automated harvest sequencing packing thousands of field plots against daily mill crushing capacity (MT/day).</p>
+                    <ul class="solution-features-list">
+                        <li><i class="fa-solid fa-check"></i> Prioritizes plots losing the most sucrose to standing</li>
+                        <li><i class="fa-solid fa-check"></i> Circle & sector level harvester team allocation</li>
+                        <li><i class="fa-solid fa-check"></i> Daily tonnage-weighted CCS dispatch schedule</li>
+                    </ul>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="solution-card green">
+                    <div class="solution-icon-wrap">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h3>Field Officer Mobile Worklists</h3>
+                    <p>Actionable digital harvest dockets with QR codes, GPS coordinates, and clear verification tasks for circle officers.</p>
+                    <ul class="solution-features-list">
+                        <li><i class="fa-solid fa-check"></i> Circle-wise Excel/CSV workpack exports</li>
+                        <li><i class="fa-solid fa-check"></i> Flags boundary collisions (e.g. duplicate polygons)</li>
+                        <li><i class="fa-solid fa-check"></i> Eliminates manual paper slip favoritism</li>
+                    </ul>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="solution-card amber">
+                    <div class="solution-icon-wrap">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3>Auditable Payment Integrity</h3>
+                    <p>Transparent source provenance tags across every single number in the platform, protecting mills from audit penalties.</p>
+                    <ul class="solution-features-list">
+                        <li><i class="fa-solid fa-check"></i> [M] Measured, [D] Derived, [X] Modeled, [?] Unverified</li>
+                        <li><i class="fa-solid fa-check"></i> Blocks payment slips below 65% record confidence</li>
+                        <li><i class="fa-solid fa-check"></i> Automated farmer SMS/WhatsApp telemetry updates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. INTERACTIVE CADASTRAL GAT & GHOST PLOT AUDIT SHOWCASE -->
+    <section class="audit-section" id="cadastral-audit">
+        <div class="container">
+            <div class="section-head">
+                <span class="badge badge-danger">Fraud Prevention Engine</span>
+                <h2>Cadastral Gat & <span style="color: #f87171;">Ghost-Plot Fraud Buster</span></h2>
+                <p>Compare how the Ikshu Intelligence engine automatically validates genuine high-yielding cane vs unmasking fraudulent ghost plots claiming cutting advances.</p>
+            </div>
+
+            <div class="audit-card">
+                <div class="audit-left">
+                    <h3>Simulate Cadastral Parcel Inspection</h3>
+                    <p>Toggle between a verified cane parcel and a flagged ghost plot to inspect the live remote sensing telemetry and docket decision.</p>
+
+                    <div class="audit-interactive-switch">
+                        <button id="auditTabLegit" class="audit-tab-btn active legit">
+                            <i class="fa-solid fa-check-circle"></i> Genuine Cane (Gat 142)
+                        </button>
+                        <button id="auditTabGhost" class="audit-tab-btn">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Ghost Plot Fraud (Gat 89)
+                        </button>
+                    </div>
+
+                    <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
+                        <strong>Why this matters to Sugar Mills:</strong><br>
+                        Mills lose ₹2–5 Crores each season paying harvesting and transport (C&T) contractor advances for non-existent cane parcels registered under phantom 7/12 records. IkshuVruddhi blocks payment dockets before advances are disbursed.
+                    </div>
+                </div>
+
+                <!-- Display Box -->
+                <div class="audit-display-box">
+                    <div class="plot-audit-header">
+                        <span id="auditPlotBadge">
+                            <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> VERIFIED PARCEL</span>
+                        </span>
+                        <strong id="auditPlotTitle" style="color: #ffffff; font-size: 0.9rem;">Gat 142 - Babhaleshwar (Farmer: Balasaheb Vikhe)</strong>
+                    </div>
+
+                    <div class="audit-map-mock" id="auditMapMock" style="background: radial-gradient(circle, rgba(0, 230, 118, 0.3) 0%, rgba(9, 19, 38, 0.95) 75%);">
+                        <div style="text-align:center;">
+                            <div style="color:#00e676; font-size:1.8rem; margin-bottom:4px;"><i class="fa-solid fa-satellite-dish"></i></div>
+                            <div style="font-size:0.85rem; font-family:var(--font-mono); color:#ffffff;">Sentinel-2 Canopy Density: <strong>94.2%</strong></div>
+                            <div style="font-size:0.75rem; color:#94a3b8;">Walked GPS Perimeter matches 7/12 BhuNaksha Land Record</div>
+                        </div>
+                    </div>
+
+                    <table class="audit-details-table">
+                        <tr>
+                            <td>Vegetation Index (NDVI):</td>
+                            <td id="auditValNdvi"><span style="color:#00e676; font-weight:700;">0.78 (High Vigor) [M]</span></td>
+                        </tr>
+                        <tr>
+                            <td>Acreage Reconciliation:</td>
+                            <td id="auditValArea">Registered: 1.80 Ha | Walked: 1.82 Ha <span style="color:#00e676;">(+1.1% Match) [D]</span></td>
+                        </tr>
+                        <tr>
+                            <td>Sucrose Recovery (CCS):</td>
+                            <td id="auditValCcs"><span style="color:#00f2fe; font-weight:700;">12.4% CCS (Peak Ripening) [X]</span></td>
+                        </tr>
+                        <tr>
+                            <td>Audit Status:</td>
+                            <td id="auditValStatus"><span style="color:#00e676; font-weight:800;">CONFIRMED AUTHENTIC CANE</span></td>
+                        </tr>
+                        <tr>
+                            <td>Harvest Docket:</td>
+                            <td id="auditValDocket"><span class="badge badge-green">APPROVED FOR CRUSH DISPATCH</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 8. SCIENTIFIC AUDIT TRAIL (SOURCE TAGS) -->
+    <section class="container" style="padding: 70px 24px;" id="audit-tags">
+        <div class="section-head" style="margin-bottom: 30px;">
+            <span class="badge badge-satellite">Audit Provenance</span>
+            <h2>Scientific Transparency & <span class="gradient-text-cyan">Source Provenance Tags</span></h2>
+            <p>Every single number shown on the Ikshu Intelligence console carries an auditable origin tag.</p>
         </div>
 
-        <div style="margin-bottom: 26px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:var(--font-mono); margin-bottom:6px;">
-                <span style="color:var(--text-gray);">DAYS PAST PEAK:</span>
-                <span id="drawerStandingVal" style="color:var(--amber-harvest); font-weight:700;">0 DAYS PAST PEAK</span>
+        <div class="audit-tags-strip">
+            <div class="tag-card">
+                <div class="tag-card-top">
+                    <span class="source-badge m">M</span>
+                    <h4>Measured</h4>
+                </div>
+                <p>Read directly from the mill weighbridge, cane lab register, or field GPS walking.</p>
             </div>
-            <input type="range" id="drawerStandingSlider" min="0" max="45" value="0" step="1" style="width:100%; accent-color:var(--amber-harvest);">
+            <div class="tag-card">
+                <div class="tag-card-top">
+                    <span class="source-badge d">D</span>
+                    <h4>Derived</h4>
+                </div>
+                <p>Exact arithmetic or geodesic geometry on measured inputs — carries zero model error.</p>
+            </div>
+            <div class="tag-card">
+                <div class="tag-card-top">
+                    <span class="source-badge x">X</span>
+                    <h4>Modeled</h4>
+                </div>
+                <p>Multi-spectral variety maturity curve prediction with explicitly stated confidence bounds.</p>
+            </div>
+            <div class="tag-card">
+                <div class="tag-card-top">
+                    <span class="source-badge q">?</span>
+                    <h4>Unverified</h4>
+                </div>
+                <p>Placeholder planning estimate. Automatically flagged as NOT VALID FOR PAYMENT.</p>
+            </div>
         </div>
+    </section>
 
-        <!-- Metric Output Cards -->
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px;">
-            <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-white-light); padding: 16px;">
-                <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">COMMERCIAL CANE SUGAR</span>
-                <div id="resCcs" style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--cane-green);">12.80%</div>
+    <!-- 9. CASE STUDIES -->
+    <section class="case-studies-section" id="case-studies">
+        <div class="container">
+            <div class="section-head">
+                <span class="badge badge-green">Enterprise Track Record</span>
+                <h2>Proven Field Deployments Across <span class="gradient-text-green">Sugar Mills</span></h2>
+                <p>Operational audits and field results from live sugar mill crushing campaigns.</p>
             </div>
-            <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-white-light); padding: 16px;">
-                <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">TOTAL SOLIDS (BRIX)</span>
-                <div id="resBrix" style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--sat-cyan);">21.6°</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-white-light); padding: 16px;">
-                <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">SUCROSE IN JUICE (POL)</span>
-                <div id="resPol" style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: #ffffff;">15.40%</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-white-light); padding: 16px;">
-                <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">DAILY STANDING LOSS</span>
-                <div id="resLoss" style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--amber-harvest);">0.0 kg/MT</div>
+
+            <div class="case-grid">
+                <!-- Gangamai SSK -->
+                <div class="case-card">
+                    <div class="case-header">
+                        <div>
+                            <h3>Gangamai Sahakari Sakhar Karkhana</h3>
+                            <span class="case-location"><i class="fa-solid fa-location-dot"></i> Shevgaon / Ahilyanagar, Maharashtra</span>
+                        </div>
+                        <span class="badge badge-green">FULL RECONCILIATION</span>
+                    </div>
+                    <p class="case-desc">
+                        Audited the mill's active Adsali Season register across 22 operational circles. Reconciled walking GPS polygons with BhuNaksha Gat cadastral records, eliminating 2,529 ghost plots and optimizing harvest queues for maximum sucrose recovery.
+                    </p>
+                    <div class="case-metrics-bar">
+                        <div class="case-metric-cell">
+                            <strong>27,633</strong>
+                            <span>Plots Audited</span>
+                        </div>
+                        <div class="case-metric-cell">
+                            <strong style="color: var(--cane-green);">+0.68%</strong>
+                            <span>CCS Recovery Gain</span>
+                        </div>
+                        <div class="case-metric-cell">
+                            <strong style="color: #f87171;">2,529</strong>
+                            <span>Ghost Plots Blocked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Samarth SSK -->
+                <div class="case-card">
+                    <div class="case-header">
+                        <div>
+                            <h3>Karmayogi Ankushrao Tope Samarth SSK</h3>
+                            <span class="case-location"><i class="fa-solid fa-location-dot"></i> Ankushnagar / Jalna, Maharashtra</span>
+                        </div>
+                        <span class="badge badge-satellite">PILOT DEPLOYMENT</span>
+                    </div>
+                    <p class="case-desc">
+                        Deployed cadastral Gat digitization and satellite phenology models for Adsali and Ratoon sugarcane. Integrated factory laboratory weighbridge calibration for real-time CCS forecasting across circle agricultural officers.
+                    </p>
+                    <div class="case-metrics-bar">
+                        <div class="case-metric-cell">
+                            <strong>4,719</strong>
+                            <span>Plots Screened</span>
+                        </div>
+                        <div class="case-metric-cell">
+                            <strong style="color: var(--sat-cyan);">96.8%</strong>
+                            <span>Prediction Accuracy</span>
+                        </div>
+                        <div class="case-metric-cell">
+                            <strong style="color: var(--amber-harvest);">24/7</strong>
+                            <span>Dispatch Packing</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <a href="console.html" class="btn-spacex btn-spacex-filled" style="width:100%; text-align:center;">
-            OPEN FULL CONSOLE QUEUE
-        </a>
+    <!-- 10. PILOT REQUEST & CONTACT -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="contact-card-grid">
+                <div class="contact-info-col">
+                    <span class="badge badge-satellite">Sugar Mill Onboarding</span>
+                    <h2>Deploy Ikshu Intelligence At Your <span class="gradient-text-green">Sugar Factory</span></h2>
+                    <p>Request an operational audit for your mill command area. We ingest your current season register and run a zero-commitment ghost-plot and recovery audit within 72 hours.</p>
+
+                    <div class="contact-touchpoints">
+                        <div class="touchpoint-item">
+                            <div class="touchpoint-icon"><i class="fa-solid fa-envelope"></i></div>
+                            <div>
+                                <strong style="display:block; color:#ffffff;">Email Operations Desk</strong>
+                                <a href="mailto:contact@ikshuintelligence.com" style="color: var(--sat-cyan); text-decoration:none;">contact@ikshuintelligence.com</a>
+                            </div>
+                        </div>
+
+                        <div class="touchpoint-item">
+                            <div class="touchpoint-icon"><i class="fa-solid fa-phone"></i></div>
+                            <div>
+                                <strong style="display:block; color:#ffffff;">Field Engineering Desk</strong>
+                                <span>Pune / Ahilyanagar Sugar Belt, Maharashtra, India</span>
+                            </div>
+                        </div>
+
+                        <div class="touchpoint-item">
+                            <div class="touchpoint-icon"><i class="fa-solid fa-globe"></i></div>
+                            <div>
+                                <strong style="display:block; color:#ffffff;">Official Domain</strong>
+                                <span style="font-family: var(--font-mono); color: #cbd5e1;">ikshuintelligence.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <div>
+                    <form id="pilotContactForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="formMillName">Sugar Mill / Organization Name *</label>
+                                <input type="text" id="formMillName" class="form-control" placeholder="e.g. Shree Sahakari Sakhar Karkhana" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="formContactName">Representative Name & Title *</label>
+                                <input type="text" id="formContactName" class="form-control" placeholder="e.g. Managing Director / Chief Chemist" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="formEmail">Official Email *</label>
+                                <input type="email" id="formEmail" class="form-control" placeholder="md@sugarmill.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="formPhone">Phone / WhatsApp Number *</label>
+                                <input type="tel" id="formPhone" class="form-control" placeholder="+91 98765 43210" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="formTcd">Daily Crushing Capacity (TCD) *</label>
+                            <input type="text" id="formTcd" class="form-control" placeholder="e.g. 5,000 TCD (or registered acreage)" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="formNotes">Specific Mill Challenges / Objectives</label>
+                            <textarea id="formNotes" class="form-control" placeholder="Describe season crushing timeline, ghost plot concerns, or sucrose recovery targets..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Pilot Request & Open Email
+                        </button>
+
+                        <div id="contactSuccessMsg" style="display:none; margin-top: 14px; padding: 12px; background: rgba(0, 230, 118, 0.15); border: 1px solid var(--cane-green); border-radius: 8px; color: #a7f3d0; font-size: 0.88rem;"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. DNS CONFIGURATION MODAL -->
+    <div class="modal-overlay" id="dnsModalOverlay">
+        <div class="dns-modal-card">
+            <button class="modal-close-btn" id="btnCloseDnsModal" aria-label="Close modal">&times;</button>
+            
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(0, 242, 254, 0.15); display: flex; align-items: center; justify-content: center; color: var(--sat-cyan); font-size: 1.2rem;">
+                    <i class="fa-solid fa-network-wired"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.3rem;">Domain Status: ikshuintelligence.com</h3>
+                    <p style="font-size: 0.82rem; color: #a7f3d0;">✓ Connected to Vercel Global Edge (76.76.21.21)</p>
+                </div>
+            </div>
+
+            <p style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 16px;">
+                Your domain <strong>ikshuintelligence.com</strong> is successfully routed to Vercel via Cloudflare DNS. 
+            </p>
+
+            <table class="dns-records-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Host</th>
+                        <th>Target</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>CNAME</strong></td>
+                        <td><code>@</code></td>
+                        <td><code>11db519c7c436962.vercel-dns-017.com</code></td>
+                        <td><span style="color:var(--cane-green); font-weight:700;">ACTIVE</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>CNAME</strong></td>
+                        <td><code>www</code></td>
+                        <td><code>cname.vercel-dns.com</code></td>
+                        <td><span style="color:var(--cane-green); font-weight:700;">ACTIVE</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- DRAWER 2: MILL ROI CALCULATOR -->
-    <div class="spacex-drawer" id="drawerRoi">
-        <div class="drawer-header">
-            <h3>FACTORY RECOVERY ROI</h3>
-            <button class="btn-drawer-close" aria-label="Close Drawer">&times;</button>
-        </div>
+    <!-- 12. FOOTER -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top-grid">
+                <div class="footer-brand">
+                    <div class="brand-wrapper" style="margin-bottom: 12px;">
+                        <div class="brand-logo-icon">
+                            <i class="fa-solid fa-satellite"></i>
+                        </div>
+                        <div class="brand-meta">
+                            <h2>IKSHU <span>INTELLIGENCE</span></h2>
+                            <p>SatCane™ AI Telemetry For Sugar Mills</p>
+                        </div>
+                    </div>
+                    <p>
+                        Autonomous sugarcane intelligence platform utilizing Copernicus Sentinel-2, Sentinel-1 SAR radar, and machine learning to optimize harvest scheduling and protect sugar mills from fraudulent cadastral leakages.
+                    </p>
+                </div>
 
-        <p style="font-size: 0.88rem; color: #a3a3a3; margin-bottom: 24px; line-height: 1.6;">
-            Calculate factory revenue expansion from eliminating standing sucrose loss and phantom ghost plots.
-        </p>
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="console.html">Operational Mill Console</a></li>
+                        <li><a href="#simulator">Ripening Simulator</a></li>
+                        <li><a href="#roi-calculator">Mill Recovery ROI</a></li>
+                        <li><a href="#cadastral-audit">Cadastral Gat Audit</a></li>
+                        <li><a href="#audit-tags">Scientific Source Tags</a></li>
+                    </ul>
+                </div>
 
-        <div style="margin-bottom: 20px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:var(--font-mono); margin-bottom:6px;">
-                <span style="color:var(--text-gray);">CRUSHING CAPACITY (TCD):</span>
-                <span id="valTcd" style="color:#ffffff; font-weight:700;">5,000 TCD</span>
+                <div class="footer-col">
+                    <h4>Deployments</h4>
+                    <ul>
+                        <li><a href="#case-studies">Gangamai Sugar Mill</a></li>
+                        <li><a href="#case-studies">Samarth SSK</a></li>
+                        <li><a href="console.html">Adsali Season Register</a></li>
+                        <li><a href="#contact">Pilot Program (72-Hour Audit)</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact Desk</h4>
+                    <ul>
+                        <li><a href="mailto:contact@ikshuintelligence.com">contact@ikshuintelligence.com</a></li>
+                        <li><a href="mailto:info@ikshuintelligence.com">info@ikshuintelligence.com</a></li>
+                        <li><span style="color: var(--sat-cyan); font-family: var(--font-mono); font-size: 0.8rem;">Domain: ikshuintelligence.com</span></li>
+                    </ul>
+                </div>
             </div>
-            <input type="range" id="drawerTcd" min="2500" max="15000" value="5000" step="500" style="width:100%; accent-color:var(--sat-cyan);">
-        </div>
 
-        <div style="margin-bottom: 20px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:var(--font-mono); margin-bottom:6px;">
-                <span style="color:var(--text-gray);">CRUSHING SEASON DAYS:</span>
-                <span id="valDays" style="color:#ffffff; font-weight:700;">150 DAYS</span>
-            </div>
-            <input type="range" id="drawerDays" min="120" max="180" value="150" step="5" style="width:100%; accent-color:var(--sat-cyan);">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:var(--font-mono); margin-bottom:6px;">
-                <span style="color:var(--text-gray);">BASELINE RECOVERY %:</span>
-                <span id="valRec" style="color:#ffffff; font-weight:700;">10.5%</span>
-            </div>
-            <input type="range" id="drawerRec" min="9.0" max="12.5" value="10.5" step="0.1" style="width:100%; accent-color:var(--sat-cyan);">
-        </div>
-
-        <div style="margin-bottom: 26px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:var(--font-mono); margin-bottom:6px;">
-                <span style="color:var(--text-gray);">SUGAR REALIZATION (₹/QTL):</span>
-                <span id="valPrice" style="color:#ffffff; font-weight:700;">₹3,600</span>
-            </div>
-            <input type="range" id="drawerPrice" min="3200" max="4200" value="3600" step="50" style="width:100%; accent-color:var(--sat-cyan);">
-        </div>
-
-        <!-- Result Box -->
-        <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-white); padding: 24px; text-align: center; margin-bottom: 24px;">
-            <span style="font-size: 0.72rem; letter-spacing: 0.15em; color: var(--cane-green); font-family: var(--font-mono); text-transform: uppercase;">NET SEASONAL FINANCIAL EXPANSION</span>
-            <div id="resRoiImpact" style="font-family: var(--font-heading); font-size: 2.8rem; font-weight: 900; color: #ffffff; margin: 6px 0;">₹16.50 CRORES</div>
-            <span style="font-size: 0.78rem; color: var(--text-gray);">Based on +0.58% recovery gain & zero ghost plot advances</span>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; font-family: var(--font-mono); font-size: 0.75rem;">
-            <div style="background: rgba(255,255,255,0.02); padding: 12px; border: 1px solid var(--border-white-light);">
-                <span style="color:var(--text-muted); display:block;">EXTRA SUGAR</span>
-                <strong id="resRoiBags" style="color:var(--sat-cyan); font-size: 1rem;">+43,500 BAGS</strong>
-            </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 12px; border: 1px solid var(--border-white-light);">
-                <span style="color:var(--text-muted); display:block;">SUGAR SALE</span>
-                <strong id="resRoiSugar" style="color:#ffffff; font-size: 1rem;">₹15.66 CR</strong>
-            </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 12px; border: 1px solid var(--border-white-light);">
-                <span style="color:var(--text-muted); display:block;">FREIGHT SAVED</span>
-                <strong id="resRoiFreight" style="color:var(--cane-green); font-size: 1rem;">₹1.65 CR</strong>
+            <div class="footer-bottom">
+                <div>&copy; 2026 Ikshu Intelligence (SatCane-AI Engine / IkshuVruddhi). All rights reserved.</div>
+                <div style="display:flex; gap: 16px;">
+                    <a href="console.html" style="color: var(--sat-cyan); text-decoration: none;">Live Console Access</a>
+                    <span>•</span>
+                    <a href="#contact" style="color: #cbd5e1; text-decoration: none;">Commission Mill Pilot</a>
+                </div>
             </div>
         </div>
-
-        <a href="#contact" onclick="closeAllDrawers();" class="btn-spacex btn-spacex-filled" style="width:100%; text-align:center;">
-            COMMISSION MILL AUDIT
-        </a>
-    </div>
-
-    <!-- DRAWER 3: CADASTRAL AUDIT -->
-    <div class="spacex-drawer" id="drawerAudit">
-        <div class="drawer-header">
-            <h3>CADASTRAL 7/12 & GHOST PLOT BUSTER</h3>
-            <button class="btn-drawer-close" aria-label="Close Drawer">&times;</button>
-        </div>
-
-        <p style="font-size: 0.88rem; color: #a3a3a3; margin-bottom: 20px;">
-            Inspect live satellite canopy density cross-referenced against MahaBhuNaksha 7/12 land records.
-        </p>
-
-        <div style="display: flex; gap: 10px; margin-bottom: 24px;">
-            <button id="drawerAuditLegit" class="btn-spacex btn-spacex-sm btn-spacex-filled active" style="flex:1;">
-                GENUINE CANE (GAT 142)
-            </button>
-            <button id="drawerAuditGhost" class="btn-spacex btn-spacex-sm" style="flex:1; border-color: var(--danger-red); color: var(--danger-red);">
-                GHOST PLOT (GAT 89)
-            </button>
-        </div>
-
-        <div id="drawerAuditBox" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-white-light); padding: 20px; margin-bottom: 24px;">
-            <div style="padding: 16px; border: 1px solid rgba(0, 230, 118, 0.4); background: rgba(0, 230, 118, 0.05); margin-bottom: 16px;">
-                <div style="font-size: 0.75rem; color: #00e676; font-weight: 800; letter-spacing: 0.15em;">STATUS: VERIFIED PARCEL [M]</div>
-                <h4 style="font-size: 1.1rem; color: #ffffff; margin-top: 4px;">GAT 142 - BABHALESHWAR (BALASAHEB VIKHE)</h4>
-            </div>
-            <div style="font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.8; color: #d4d4d4;">
-                <div>SENTINEL-2 CANOPY DENSITY: <strong style="color: #00e676;">94.2%</strong></div>
-                <div>VEGETATION INDEX (NDVI): <strong style="color: #00e676;">0.78 (HIGH VIGOR)</strong></div>
-                <div>ACREAGE RECONCILIATION: <strong>1.80 HA REG. vs 1.82 HA WALKED (+1.1%)</strong></div>
-                <div>ESTIMATED COMMERCIAL RECOVERY: <strong style="color: #00f2fe;">12.4% CCS</strong></div>
-                <div style="margin-top: 10px; color: #00e676; font-weight: 800;">✓ HARVEST DOCKET APPROVED FOR CRUSH DISPATCH</div>
-            </div>
-        </div>
-
-        <a href="console.html" class="btn-spacex" style="width:100%; text-align:center;">
-            OPEN OPERATIONAL CONSOLE
-        </a>
-    </div>
-
-    <!-- DRAWER 4: DNS CONFIGURATION (Fixing ERR_NAME_NOT_RESOLVED) -->
-    <div class="spacex-drawer" id="drawerDns">
-        <div class="drawer-header">
-            <h3>DNS SETUP // IKSHUINTELLIGENCE.COM</h3>
-            <button class="btn-drawer-close" aria-label="Close Drawer">&times;</button>
-        </div>
-
-        <p style="font-size: 0.88rem; color: #d4d4d4; line-height: 1.6; margin-bottom: 20px;">
-            Chrome displayed <em>ERR_NAME_NOT_RESOLVED</em> because the domain registrar (GoDaddy, Namecheap, Cloudflare, Hostinger) has not yet been linked to the web server with <strong>A</strong> and <strong>CNAME</strong> records.
-        </p>
-
-        <h4 style="font-size: 0.82rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--sat-cyan); font-family: var(--font-mono); margin-bottom: 8px;">
-            OPTION A: VERCEL DEPLOYMENT (RECOMMENDED)
-        </h4>
-        <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-white-light); padding: 16px; margin-bottom: 20px; font-family: var(--font-mono); font-size: 0.82rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                <span>A RECORD: @ → <strong>76.76.21.21</strong></span>
-                <button class="btn-spacex btn-spacex-sm copy-badge" data-copy="76.76.21.21" style="padding: 4px 10px;">COPY</button>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span>CNAME: www → <strong>cname.vercel-dns.com</strong></span>
-                <button class="btn-spacex btn-spacex-sm copy-badge" data-copy="cname.vercel-dns.com" style="padding: 4px 10px;">COPY</button>
-            </div>
-        </div>
-
-        <h4 style="font-size: 0.82rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cane-green); font-family: var(--font-mono); margin-bottom: 8px;">
-            OPTION B: GITHUB PAGES DEPLOYMENT
-        </h4>
-        <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-white-light); padding: 16px; margin-bottom: 24px; font-family: var(--font-mono); font-size: 0.82rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                <span>A RECORD: @ → <strong>185.199.108.153</strong></span>
-                <button class="btn-spacex btn-spacex-sm copy-badge" data-copy="185.199.108.153" style="padding: 4px 10px;">COPY</button>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span>CNAME: www → <strong>rushikeshikshu-pixel.github.io</strong></span>
-                <button class="btn-spacex btn-spacex-sm copy-badge" data-copy="rushikeshikshu-pixel.github.io" style="padding: 4px 10px;">COPY</button>
-            </div>
-        </div>
-
-        <div style="font-size: 0.8rem; color: var(--amber-harvest); line-height: 1.5; font-family: var(--font-mono);">
-            * Once saved in your domain manager, DNS records take 5–30 minutes to propagate worldwide.
-        </div>
-    </div>
-
-    <!-- HAMBURGER MENU OVERLAY -->
-    <div class="spacex-menu-overlay" id="spacexMenu">
-        <ul class="menu-nav-list">
-            <li><a href="#hero">MISSION OVERVIEW <span>→</span></a></li>
-            <li><a href="#orbit">SENTINEL-2 ORBIT <span>→</span></a></li>
-            <li><a href="#sucrose-ml">SUCROSE ML FORECASTING <span>→</span></a></li>
-            <li><a href="#cadastral">CADASTRAL 7/12 DEFENSE <span>→</span></a></li>
-            <li><a href="#dispatch">CAPACITY DISPATCH <span>→</span></a></li>
-            <li><a href="#" data-open-drawer="drawerRoi">MILL RECOVERY ROI <span>→</span></a></li>
-            <li><a href="#" data-open-drawer="drawerSim">SUCROSE SIMULATOR <span>→</span></a></li>
-            <li><a href="#" data-open-drawer="drawerDns">DNS SETUP GUIDE <span>→</span></a></li>
-            <li><a href="console.html" style="color: var(--sat-cyan);">OPERATIONAL CONSOLE <span>→</span></a></li>
-        </ul>
-
-        <div style="font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono);">
-            IKSHU INTELLIGENCE // MAHARASHTRA, INDIA
-        </div>
-    </div>
-
-    <!-- SPACEX FOOTER -->
-    <footer class="spacex-footer">
-        <div>IKSHU INTELLIGENCE © 2026</div>
-        <a href="#hero">MISSION</a>
-        <a href="console.html">CONSOLE</a>
-        <a href="#" data-open-drawer="drawerRoi">MILL ROI</a>
-        <a href="#" data-open-drawer="drawerDns">DNS STATUS</a>
-        <a href="mailto:contact@ikshuintelligence.com">CONTACT@IKSHUINTELLIGENCE.COM</a>
     </footer>
 
     <!-- Scripts -->
-    <script src="spacex.js"></script>
+    <script src="landing.js"></script>
 </body>
 </html>
