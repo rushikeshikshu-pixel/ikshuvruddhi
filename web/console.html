@@ -23,8 +23,191 @@
     <link rel="stylesheet" href="MarkerCluster.Default.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="manager-ui.css">
+    <!-- ENTERPRISE SECURITY & ACCESS CONTROL STYLES -->
+    <style>
+        .auth-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background: radial-gradient(circle at 50% 25%, rgba(16, 185, 129, 0.12), transparent 70%), #040914;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        .auth-overlay.unlocked {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .auth-card {
+            background: rgba(10, 20, 36, 0.97);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 50px rgba(16, 185, 129, 0.18);
+            border-radius: 18px;
+            max-width: 480px;
+            width: 100%;
+            padding: 38px 32px;
+            text-align: center;
+            color: #f1f5f9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            position: relative;
+        }
+        .auth-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #10b981;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            padding: 5px 14px;
+            border-radius: 999px;
+            margin-bottom: 20px;
+        }
+        .auth-brand h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            color: #ffffff;
+            margin: 0;
+        }
+        .auth-tag {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            color: #00f2fe;
+            font-weight: 700;
+            margin-top: 5px;
+            margin-bottom: 14px;
+        }
+        .auth-desc {
+            font-size: 13px;
+            line-height: 1.55;
+            color: #94a3b8;
+            margin-bottom: 24px;
+        }
+        .auth-input-group {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+        .auth-input-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+        .auth-input-group input {
+            width: 100%;
+            padding: 13px 15px;
+            background: rgba(15, 23, 42, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 9px;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .auth-input-group input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
+        }
+        .auth-error-msg {
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .auth-submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            border-radius: 9px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .auth-submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 22px rgba(16, 185, 129, 0.45);
+        }
+        .auth-footer {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+        }
+        .auth-back-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .auth-back-link:hover {
+            color: #10b981;
+        }
+        .auth-patent {
+            color: #64748b;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+    </style>
 </head>
 <body>
+    <!-- RESTRICTED ENTERPRISE TERMINAL AUTH WALL -->
+    <div id="enterpriseAuthOverlay" class="auth-overlay">
+        <div class="auth-card">
+            <div class="auth-badge"><i class="fa-solid fa-shield-halved"></i> 256-BIT ENCRYPTED OPERATIONS TERMINAL</div>
+            <div class="auth-brand">
+                <i class="fa-solid fa-satellite" style="font-size:32px; color:#10b981; margin-bottom:12px; display:inline-block;"></i>
+                <h2>IKSHU INTELLIGENCE</h2>
+                <span class="auth-tag">RESTRICTED ENTERPRISE CONSOLE</span>
+            </div>
+            <p class="auth-desc">
+                Proprietary sugarcane telemetry, remote sensing algorithms, and cadastral plot harvesting registers are strictly confidential to authorized sugar mills and evaluators.
+            </p>
+            <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                <div class="auth-input-group">
+                    <label for="accessKeyInput"><i class="fa-solid fa-key"></i> ENTERPRISE ACCESS KEY / MILL PIN</label>
+                    <input type="password" id="accessKeyInput" placeholder="Enter key (e.g. ikshu2026)" autocomplete="off" required autofocus />
+                </div>
+                <div id="authErrorMsg" class="auth-error-msg" style="display:none;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Invalid Enterprise Key. Access restricted.
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <i class="fa-solid fa-lock-open"></i> UNLOCK OPERATIONAL TERMINAL
+                </button>
+            </form>
+            <div class="auth-footer">
+                <a href="index.html" class="auth-back-link"><i class="fa-solid fa-arrow-left"></i> Return to ikshuintelligence.com</a>
+                <span class="auth-patent">PATENT PENDING &bull; TRADE SECRET</span>
+            </div>
+        </div>
+    </div>
     <div class="app-container">
         
         <!-- Header Navbar -->
@@ -57,6 +240,7 @@
             </div>
 
             <div class="header-actions">
+                <button onclick="lockTerminal()" class="btn btn-xs btn-outline" style="text-decoration:none; font-weight:700; color:#ef4444; border-color:rgba(239,68,68,0.4); display:inline-flex; align-items:center; gap:6px; background:none; cursor:pointer;"><i class="fa-solid fa-lock"></i> Lock Terminal</button>
                 <a href="index.html" class="btn btn-xs btn-outline" style="text-decoration:none; font-weight:700; color:#00f2fe; border-color:rgba(0,242,254,0.3); display:inline-flex; align-items:center; gap:6px;"><i class="fa-solid fa-house"></i> Home</a>
                 <div style="display: flex; gap: 4px; background: rgba(0,0,0,0.4); padding: 3px; border-radius: 6px; border: 1px solid var(--border-dim);">
                     <button class="btn btn-xs btn-outline active" id="btnLangEn" style="font-weight: 700;">🇬🇧 EN</button>
@@ -523,5 +707,42 @@
     <script src="leaflet.markercluster.js"></script>
     <script src="default_plots_data.js"></script>
     <script src="app.js"></script>
+    <!-- Enterprise Terminal Access Script -->
+    <script>
+        const VALID_IKSHU_KEYS = ['ikshu2026', 'ikshu-gangamai', 'sugar2026', 'ikshu-admin', 'rushikesh2026'];
+        function checkExistingAuth() {
+            if (sessionStorage.getItem('ikshu_enterprise_auth') === 'granted') {
+                const overlay = document.getElementById('enterpriseAuthOverlay');
+                if (overlay) overlay.classList.add('unlocked');
+            }
+        }
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('accessKeyInput');
+            const err = document.getElementById('authErrorMsg');
+            const val = (input.value || '').trim().toLowerCase();
+            if (VALID_IKSHU_KEYS.includes(val)) {
+                sessionStorage.setItem('ikshu_enterprise_auth', 'granted');
+                document.getElementById('enterpriseAuthOverlay').classList.add('unlocked');
+                if (err) err.style.display = 'none';
+            } else {
+                if (err) err.style.display = 'flex';
+                input.value = '';
+                input.focus();
+            }
+        }
+        function lockTerminal() {
+            sessionStorage.removeItem('ikshu_enterprise_auth');
+            const overlay = document.getElementById('enterpriseAuthOverlay');
+            if (overlay) overlay.classList.remove('unlocked');
+            const input = document.getElementById('accessKeyInput');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+        document.addEventListener('DOMContentLoaded', checkExistingAuth);
+        checkExistingAuth();
+    </script>
 </body>
 </html>

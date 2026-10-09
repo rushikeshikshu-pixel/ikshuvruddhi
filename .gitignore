@@ -1,11 +1,61 @@
+﻿# Byte-compiled / optimized / DLL files
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*.class
 *.pyd
+
+# Testing and cache
 .pytest_cache/
+.coverage
+htmlcov/
 *.log
 
-scratch/
-
+# Environment variables and sensitive secrets
 .env
 *.env
+.env.*
+secrets/
+*.pem
+*.key
+*.cert
+credentials.json
+token.json
+service_account.json
+
+# Scratch & temporary workspace
+scratch/
+.system_generated/
+tmp/
+temp/
+
+# Proprietary Machine Learning Models & Weights
+models/
+*.pkl
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.onnx
+*.joblib
+*.pb
+*.tflite
+sota_ai_model.pkl
+
+# Raw Sugar Mill Datasets & Field Inspections
+data/
+*.xlsx
+*.xls
+*.csv.gz
+*.parquet
+*.feather
+*.zip
+*.tar.gz
+*.pdf
+
+# Node / JS artifacts
+node_modules/
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
