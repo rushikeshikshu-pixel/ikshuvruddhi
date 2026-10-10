@@ -1,4 +1,4 @@
-﻿"""
+"""
 ml/dynamic_sensor_scheduler.py
 Production Sensor Hierarchy, Inward Parcel Buffering, and Economic Sensor Scheduling Engine
 

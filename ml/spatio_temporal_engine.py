@@ -1,4 +1,4 @@
-﻿"""
+"""
 ml/spatio_temporal_engine.py
 Multi-Dimensional Spatio-Temporal Intelligence Engine for Sugarcane Verification
 Features:

@@ -1,4 +1,4 @@
-﻿"""
+"""
 ml/sentinel_timeseries_harvester.py
 High-Performance Multi-Temporal Sentinel-2 Harvester & In-Memory Sub-Region Extractor
 Features:

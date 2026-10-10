@@ -3,7 +3,10 @@ try:
     load_dotenv()
 except ImportError:
     pass
-from ml.canopy_classifier import compute_spectral_indices, classify_sugarcane_pixel, SCL_VALID_CLASSES
+try:
+    from ml.canopy_classifier import compute_spectral_indices, classify_sugarcane_pixel, SCL_VALID_CLASSES
+except ModuleNotFoundError:
+    from canopy_classifier import compute_spectral_indices, classify_sugarcane_pixel, SCL_VALID_CLASSES
 """
 IkshuVruddhi Production Copernicus CDSE Client (Strict Auditable Remote Sensing)
 1. Official CDSE Process API endpoint: https://sh.dataspace.copernicus.eu/process/v1
@@ -305,6 +308,75 @@ class CopernicusCDSEProcessEngine:
             "cloud_contamination_pct": invalid_pct,
             "grid_dimensions": f"{width}x{height} (10m grid)",
             "cells": cells
+        }
+
+
+    def audit_point_live(self, lat: float, lon: float, date_str: Optional[str] = None, pad: float = 0.002) -> Dict[str, Any]:
+        """Fast multi-spectral parcel audit using 10m Sentinel-2 L2A with SCL cloud-masking."""
+        coords = [
+            [lat - pad, lon - pad],
+            [lat - pad, lon + pad],
+            [lat + pad, lon + pad],
+            [lat + pad, lon - pad]
+        ]
+        res = self.fetch_real_sentinel2_l2a_raster(coords, date_str=date_str)
+        if not res.get("live_satellite"):
+            return res
+            
+        cells = res.get("cells", [])
+        if not cells:
+            return {"live_satellite": True, "status": "NO_VALID_PIXELS", "verdict": "CLOUD_OBSCURED_RETEST"}
+            
+        valid_cells = [c for c in cells if c.get("is_valid_scl")]
+        if not valid_cells:
+            return {"live_satellite": True, "status": "ALL_CLOUD_OBSCURED", "verdict": "CLOUD_OBSCURED_RETEST", "cloud_pct": 100.0}
+            
+        ndvis = [c["ndvi"] for c in valid_cells if c.get("ndvi") is not None]
+        ndres = [c["ndre"] for c in valid_cells if c.get("ndre") is not None]
+        scls = [c.get("scl") for c in cells]
+        
+        mean_ndvi = float(np.mean(ndvis)) if ndvis else 0.0
+        peak_ndvi = float(np.max(ndvis)) if ndvis else 0.0
+        mean_ndre = float(np.mean(ndres)) if ndres else 0.0
+        
+        veg_count = sum(1 for s in scls if s == 4)
+        bare_count = sum(1 for s in scls if s == 5)
+        cloud_count = sum(1 for s in scls if s in [3, 8, 9, 10, 11])
+        total = max(len(cells), 1)
+        
+        veg_pct = round(veg_count / total * 100.0, 1)
+        bare_pct = round(bare_count / total * 100.0, 1)
+        cloud_pct = round(cloud_count / total * 100.0, 1)
+        
+        if (peak_ndvi >= 0.52 or mean_ndvi >= 0.48) and veg_pct >= 35.0:
+            verdict = "CONFIRMED_HEALTHY_CANE"
+            cane_status = "ACTIVE_STANDING_CANE"
+        elif (peak_ndvi >= 0.42 or mean_ndvi >= 0.38) and veg_pct >= 25.0:
+            verdict = "MODERATE_OR_RATOON_CANE"
+            cane_status = "ACTIVE_STANDING_CANE"
+        elif cloud_pct >= 50.0:
+            verdict = "CLOUD_OBSCURED_RETEST"
+            cane_status = "WEATHER_SHADOW"
+        elif mean_ndvi < 0.28 and bare_pct >= 45.0:
+            verdict = "CONFIRMED_GHOST_BARE_SOIL"
+            cane_status = "ZERO_BIOMASS_GHOST"
+        else:
+            verdict = "CONFIRMED_FALLOW_OR_SCRUB"
+            cane_status = "ABANDONED_OR_NON_CROP"
+            
+        return {
+            "live_satellite": True,
+            "status": "AUDITED_SUCCESS",
+            "verdict": verdict,
+            "cane_status": cane_status,
+            "mean_ndvi": round(mean_ndvi, 3),
+            "peak_ndvi": round(peak_ndvi, 3),
+            "mean_ndre": round(mean_ndre, 3),
+            "veg_pct": veg_pct,
+            "bare_soil_pct": bare_pct,
+            "cloud_pct": cloud_pct,
+            "acquisition_date": res.get("acquisition_date"),
+            "product_id": res.get("product_id")
         }
 
 if __name__ == "__main__":

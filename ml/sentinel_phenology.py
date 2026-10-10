@@ -42,6 +42,9 @@ import csv
 import json
 import math
 import sys
+import threading
+from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -211,7 +214,7 @@ def stac_search(bbox, start, end, max_cloud=80, limit=100):
                 url = link.get("href")
                 body = link.get("body", body)
                 break
-        if len(items) >= 400:
+        if len(items) >= 2000:
             break
     items.sort(key=lambda f: f["properties"]["datetime"])
     return items
@@ -225,25 +228,67 @@ GDAL_OPTS = dict(
     GDAL_HTTP_MULTIPLEX="YES",
     GDAL_HTTP_VERSION="2",
     VSI_CACHE="TRUE",
-    VSI_CACHE_SIZE="20000000",
+    # Approx. one 512x512 uint16 COG block; combined with 96 cached handles,
+    # this permits reuse of roughly 16 monthly scenes x 5 bands per worker
+    # without allocating tens of megabytes for every open asset.
+    VSI_CACHE_SIZE="524288",
     CPL_VSIL_CURL_ALLOWED_EXTENSIONS=".tif",
 )
+
+# Each worker owns its own small LRU of open remote COG handles. Plots in the
+# same Sentinel tile revisit the same scene assets; keeping handles warm avoids
+# repeating remote open/metadata requests while bounding file descriptors.
+_THREAD_STATE = threading.local()
+_CACHE_REGISTRY = []
+_CACHE_REGISTRY_LOCK = threading.Lock()
+_COG_CACHE_MAX_HANDLES = 96
+
+
+def _thread_cog_cache():
+    cache = getattr(_THREAD_STATE, "cog_cache", None)
+    if cache is None:
+        cache = OrderedDict()
+        _THREAD_STATE.cog_cache = cache
+        with _CACHE_REGISTRY_LOCK:
+            _CACHE_REGISTRY.append(cache)
+    return cache
+
+
+def _close_cog_caches():
+    with _CACHE_REGISTRY_LOCK:
+        caches = list(_CACHE_REGISTRY)
+        _CACHE_REGISTRY.clear()
+    for cache in caches:
+        for dataset in cache.values():
+            try:
+                dataset.close()
+            except Exception:
+                pass
+        cache.clear()
 
 
 def read_band(href, bbox_wgs84, out_shape=None, resampling=None):
     """Windowed read of a remote COG. Returns (array, src, window)."""
-    with rasterio.open(href) as src:
-        b = transform_bounds("EPSG:4326", src.crs, *bbox_wgs84, densify_pts=21)
-        win = from_bounds(*b, transform=src.transform)
-        win = win.round_offsets().round_lengths()
-        if win.width < 1 or win.height < 1:
-            return None, None, None
-        kw = {}
-        if out_shape is not None:
-            kw["out_shape"] = out_shape
-            kw["resampling"] = resampling or rasterio.enums.Resampling.nearest
-        arr = src.read(1, window=win, boundless=True, fill_value=0, **kw)
-        return arr.astype("float32"), src, win
+    cache = _thread_cog_cache()
+    src = cache.pop(href, None)
+    if src is None or src.closed:
+        src = rasterio.open(href)
+    cache[href] = src
+    while len(cache) > _COG_CACHE_MAX_HANDLES:
+        _, old_src = cache.popitem(last=False)
+        old_src.close()
+
+    b = transform_bounds("EPSG:4326", src.crs, *bbox_wgs84, densify_pts=21)
+    win = from_bounds(*b, transform=src.transform)
+    win = win.round_offsets().round_lengths()
+    if win.width < 1 or win.height < 1:
+        return None, None, None
+    kw = {}
+    if out_shape is not None:
+        kw["out_shape"] = out_shape
+        kw["resampling"] = resampling or rasterio.enums.Resampling.nearest
+    arr = src.read(1, window=win, boundless=True, fill_value=0, **kw)
+    return arr.astype("float32"), src, win
 
 
 def scene_indices(item, pts, bbox, erode_px=1):
@@ -483,103 +528,227 @@ def col(row, *names):
     return ""
 
 
+def _plot_points_from_row(row):
+    pts = parse_polygon(col(row, "Plot Area Lat Long", "plot_area_polygon"))
+    if pts:
+        return pts
+    lat = col(row, "Lat 1", "latitude", "lat")
+    lon = col(row, "Long 1", "longitude", "lon")
+    if not (lat and lon):
+        return None
+    la, lo = float(lat), float(lon)
+    d = math.sqrt(SQM_PER_ACRE) / 2 / 111320.0
+    dl = d / math.cos(math.radians(la))
+    return [(la + d, lo - dl), (la + d, lo + dl), (la - d, lo + dl), (la - d, lo - dl)]
+
+
+def _scene_search_cell(pts, cell_size=0.1):
+    lat = sum(point[0] for point in pts) / len(pts)
+    lon = sum(point[1] for point in pts) / len(pts)
+    return math.floor(lat / cell_size), math.floor(lon / cell_size)
+
+
+def _scene_item_intersects_bbox(item, bbox):
+    geometry = item.get("geometry") or {}
+    coords = geometry.get("coordinates") or []
+    points = []
+
+    def walk(node):
+        if isinstance(node, (list, tuple)) and len(node) >= 2 and \
+                isinstance(node[0], (int, float)) and isinstance(node[1], (int, float)):
+            points.append((float(node[0]), float(node[1])))
+        elif isinstance(node, (list, tuple)):
+            for child in node:
+                walk(child)
+
+    walk(coords)
+    if not points:
+        return True  # STAC already filtered by the cell bbox; geometry may be absent.
+    minx = min(point[0] for point in points)
+    miny = min(point[1] for point in points)
+    maxx = max(point[0] for point in points)
+    maxy = max(point[1] for point in points)
+    return not (maxx < bbox[0] or minx > bbox[2] or maxy < bbox[1] or miny > bbox[3])
+
+
+def _limit_scene_candidates_per_month(items, limit):
+    """Keep the lowest-cloud candidates in each month for crop screening."""
+    limit = int(limit or 0)
+    if limit <= 0:
+        return items
+    by_month = {}
+    for item in items:
+        props = item.get("properties", {})
+        acquired = str(props.get("datetime", ""))
+        if len(acquired) < 7:
+            continue
+        month = acquired[:7]
+        cloud = props.get("eo:cloud_cover", 100.0)
+        try:
+            cloud = float(cloud)
+        except (TypeError, ValueError):
+            cloud = 100.0
+        by_month.setdefault(month, []).append((cloud, acquired, item))
+    chosen = []
+    for month_items in by_month.values():
+        chosen.extend(item for _, _, item in sorted(month_items, key=lambda entry: (entry[0], entry[1]))[:limit])
+    return sorted(chosen, key=lambda item: item.get("properties", {}).get("datetime", ""))
+
+
+def _build_scene_catalog(rows, args, cell_size=0.1):
+    """One STAC request per occupied ~11 km grid cell, instead of per plot."""
+    cells = {}
+    for row in rows:
+        pts = _plot_points_from_row(row)
+        if pts:
+            key = _scene_search_cell(pts, cell_size)
+            cells.setdefault(key, None)
+
+    half = cell_size / 2
+    pad = 0.02  # include parcels straddling cell edges
+    for key in cells:
+        lat_center = (key[0] + 0.5) * cell_size
+        lon_center = (key[1] + 0.5) * cell_size
+        bbox = (lon_center - half - pad, lat_center - half - pad,
+                lon_center + half + pad, lat_center + half + pad)
+        try:
+            cells[key] = stac_search(bbox, args.season_start, args.season_end, args.max_cloud)
+        except Exception as exc:
+            cells[key] = {"error": str(exc)}
+    return cells
+
+
+def _extract_one_plot(task):
+    idx, total, row, args, scene_catalog = task
+    plot_id = col(row, "Plot No", "PLOT_NO", "plot_no", "farm_id", "id") or f"ROW-{idx}"
+    gat = col(row, "Gat No", "GAT_NO", "gat_no") or plot_id
+    farmer = col(row, "Farmer", "farmer_name")
+    pts = parse_polygon(col(row, "Plot Area Lat Long", "plot_area_polygon"))
+
+    if not pts:
+        lat = col(row, "Lat 1", "latitude", "lat")
+        lon = col(row, "Long 1", "longitude", "lon")
+        if not (lat and lon):
+            return idx, {"gat_no": gat, "note": "no boundary and no coordinate - skipped"}, [], 0, None
+        # The centroid-square fallback is only a rough point sample, not a parcel boundary.
+        la, lo = float(lat), float(lon)
+        d = math.sqrt(SQM_PER_ACRE) / 2 / 111320.0
+        dl = d / math.cos(math.radians(la))
+        pts = [(la + d, lo - dl), (la + d, lo + dl), (la - d, lo + dl), (la - d, lo - dl)]
+        boundary_src = "point-square-fallback"
+    else:
+        boundary_src = "walked-boundary"
+
+    acres = polygon_area_acres(pts)
+    bbox = bbox_of(pts)
+    try:
+        cell_key = _scene_search_cell(pts)
+        cell_items = scene_catalog.get(cell_key, [])
+        if isinstance(cell_items, dict) and "error" in cell_items:
+            error = cell_items["error"]
+            return idx, {"gat_no": gat, "note": f"STAC search failed: {error}"}, [], 0, error
+        items = [item for item in cell_items if _scene_item_intersects_bbox(item, bbox)]
+        items = _limit_scene_candidates_per_month(
+            items, getattr(args, "scene_candidates_per_month", 0)
+        )
+    except Exception as exc:
+        return idx, {"gat_no": gat, "note": f"STAC search failed: {exc}"}, [], 0, str(exc)
+
+    obs = []
+    for item in items:
+        rec = scene_indices(item, pts, bbox, erode_px=args.erode_px)
+        if rec:
+            obs.append(rec)
+
+    # A plot near a tile seam can return multiple items for a date. Keep the
+    # one with most usable core pixels, then the lower-cloud scene.
+    by_date = {}
+    for observation in obs:
+        previous = by_date.get(observation["date"])
+        if previous is None or (observation["n_px"], -observation["cloud_pct"]) > \
+                (previous["n_px"], -previous["cloud_pct"]):
+            by_date[observation["date"]] = observation
+    obs = [by_date[d] for d in sorted(by_date)]
+    if not obs:
+        return idx, {"gat_no": gat, "farmer": farmer, "note": "no clear scenes"}, [], len(items), None
+
+    series_rows = [{"farm_id": plot_id, "gat_no": gat, **observation} for observation in obs]
+    dates = [datetime.strptime(observation["date"], "%Y-%m-%d") for observation in obs]
+    cane_type = col(row, "Cane Type", "planting_type", "type")
+    is_ratoon = any(k in cane_type.upper() for k in ("KHOD", "RATOON"))
+    grid, sm = regularise(dates, [observation["ndvi"] for observation in obs], args.step_days)
+    events = detect_events(grid, sm, args.germination_lag, is_ratoon=is_ratoon)
+
+    recorded = col(row, "Plantation Date", "plantation_date", "Planting Date")
+    result = {
+        "farm_id": plot_id,
+        "gat_no": gat,
+        "farmer": farmer,
+        "village": col(row, "Village"),
+        "cane_type": cane_type,
+        "is_ratoon": is_ratoon,
+        "variety": col(row, "Variety Name"),
+        "boundary_source": boundary_src,
+        "net_acres_from_boundary": round(acres, 3),
+        "clear_scenes": len(obs),
+        "median_core_px": int(np.median([observation["core_px"] for observation in obs])),
+        "recorded_planting_date": recorded,
+        **events,
+    }
+    if recorded and events.get("planting_date_est"):
+        try:
+            day, month, year = recorded.split("-")
+            truth = datetime(int(year), int(month), int(day))
+            estimate = datetime.strptime(events["planting_date_est"], "%Y-%m-%d")
+            result["error_days"] = (estimate - truth).days
+        except Exception:
+            pass
+    return idx, result, series_rows, len(items), None
+
+
 def cmd_extract(args):
     rows = load_register(args.input)
+    if getattr(args, "plot_ids_file", None):
+        selected_rows = load_register(args.plot_ids_file)
+        selected_ids = {
+            col(row, "Plot No", "Gat No", "farm_id", "id")
+            for row in selected_rows
+            if col(row, "Plot No", "Gat No", "farm_id", "id")
+        }
+        rows = [row for row in rows if col(row, "Plot No", "Gat No", "farm_id", "id") in selected_ids]
+        print(f"Plot filter: {len(rows)} matching plots from {args.plot_ids_file}")
+    if getattr(args, "max_plots", None):
+        rows = rows[:max(0, int(args.max_plots))]
+        print(f"Pilot limit: processing {len(rows)} plots")
+    workers = max(1, min(int(getattr(args, "workers", 8)), 16))
     print(f"Register: {len(rows)} rows from {args.input}")
     print(f"Window  : {args.season_start} -> {args.season_end}")
     print(f"Source  : Sentinel-2 L2A via AWS Earth Search (anonymous, no key)\n")
+    print(f"Workers : {workers} (bounded parallel scene processing + per-worker COG cache)\n")
 
     results = []
     series_rows = []
+    print("Building shared scene catalog by spatial cell...")
+    scene_catalog = _build_scene_catalog(rows, args)
+    print(f"Catalog : {len(scene_catalog)} cell searches for {len(rows)} plots\n")
+    tasks = [(idx, len(rows), row, args, scene_catalog) for idx, row in enumerate(rows, 1)]
+    # Feed nearby plots to workers consecutively so each worker's remote COG
+    # cache is more likely to serve the next plot without reopening assets.
+    tasks.sort(key=lambda task: _scene_search_cell(_plot_points_from_row(task[2]))
+               if _plot_points_from_row(task[2]) else (float("inf"), float("inf")))
+    completed_results = []
+    try:
+        with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="s2-plot") as pool:
+            for completed, (idx, result, plot_series, scene_count, error) in enumerate(pool.map(_extract_one_plot, tasks), 1):
+                completed_results.append((idx, result))
+                series_rows.extend(plot_series)
+                print(f"[{completed}/{len(rows)}] Gat {result.get('gat_no', '?')}: "
+                      f"{len(plot_series)} clear observations from {scene_count} candidate scenes"
+                      f"{'; ERROR: ' + error if error else ''}")
+    finally:
+        _close_cog_caches()
 
-    for idx, row in enumerate(rows, 1):
-        gat = col(row, "Plot No", "Gat No", "farm_id", "id") or f"ROW-{idx}"
-        farmer = col(row, "Farmer", "farmer_name")
-        pts = parse_polygon(col(row, "Plot Area Lat Long", "plot_area_polygon"))
-
-        if not pts:
-            lat = col(row, "Lat 1", "latitude", "lat")
-            lon = col(row, "Long 1", "longitude", "lon")
-            if not (lat and lon):
-                print(f"[{idx}/{len(rows)}] {gat}: no boundary and no coordinate - skipped")
-                continue
-            # Fall back to a 1-acre square around the point so there is
-            # something to sample. Flagged in the output.
-            la, lo = float(lat), float(lon)
-            d = math.sqrt(SQM_PER_ACRE) / 2 / 111320.0
-            dl = d / math.cos(math.radians(la))
-            pts = [(la + d, lo - dl), (la + d, lo + dl), (la - d, lo + dl), (la - d, lo - dl)]
-            boundary_src = "point-square-fallback"
-        else:
-            boundary_src = "walked-boundary"
-
-        acres = polygon_area_acres(pts)
-        bbox = bbox_of(pts)
-        print(f"[{idx}/{len(rows)}] Gat {gat} ({farmer[:28]}) {acres:.2f} ac, {len(pts)} vertices")
-
-        try:
-            items = stac_search(bbox, args.season_start, args.season_end, args.max_cloud)
-        except Exception as exc:
-            print(f"    STAC search failed: {exc}")
-            continue
-        print(f"    {len(items)} scenes in window", end="", flush=True)
-
-        obs = []
-        for it in items:
-            rec = scene_indices(it, pts, bbox, erode_px=args.erode_px)
-            if rec:
-                obs.append(rec)
-
-        # A plot near a tile seam returns several items for the same date.
-        # Keep the one with the most usable core pixels, then lowest cloud.
-        by_date = {}
-        for o in obs:
-            prev = by_date.get(o["date"])
-            if prev is None or (o["n_px"], -o["cloud_pct"]) > (prev["n_px"], -prev["cloud_pct"]):
-                by_date[o["date"]] = o
-        obs = [by_date[d] for d in sorted(by_date)]
-        print(f" -> {len(obs)} clear dates over the plot core")
-
-        if not obs:
-            results.append({"gat_no": gat, "farmer": farmer, "note": "no clear scenes"})
-            continue
-
-        for o in obs:
-            series_rows.append({"gat_no": gat, **o})
-
-        dates = [datetime.strptime(o["date"], "%Y-%m-%d") for o in obs]
-        cane_type = col(row, "Cane Type", "planting_type", "type")
-        is_ratoon = any(k in cane_type.upper() for k in ("KHOD", "RATOON"))
-        grid, sm = regularise(dates, [o["ndvi"] for o in obs], args.step_days)
-        ev = detect_events(grid, sm, args.germination_lag, is_ratoon=is_ratoon)
-
-        recorded = col(row, "Plantation Date", "plantation_date", "Planting Date")
-        rec = {
-            "gat_no": gat,
-            "farmer": farmer,
-            "village": col(row, "Village"),
-            "cane_type": cane_type,
-            "is_ratoon": is_ratoon,
-            "variety": col(row, "Variety Name"),
-            "boundary_source": boundary_src,
-            "net_acres_from_boundary": round(acres, 3),
-            "clear_scenes": len(obs),
-            "median_core_px": int(np.median([o["core_px"] for o in obs])),
-            "recorded_planting_date": recorded,
-            **ev,
-        }
-
-        if recorded and ev.get("planting_date_est"):
-            try:
-                d, m, y = recorded.split("-")
-                truth = datetime(int(y), int(m), int(d))
-                est = datetime.strptime(ev["planting_date_est"], "%Y-%m-%d")
-                rec["error_days"] = (est - truth).days
-                print(f"    recorded {truth:%d-%b-%Y} | detected {est:%d-%b-%Y} "
-                      f"| error {rec['error_days']:+d} d")
-            except Exception:
-                pass
-        results.append(rec)
+    results = [result for _, result in sorted(completed_results, key=lambda pair: pair[0])]
 
     if results:
         keys = sorted({k for r in results for k in r})
@@ -680,9 +849,17 @@ def main():
     e.add_argument("--input", required=True)
     e.add_argument("--output", required=True)
     e.add_argument("--series-output", default=None, help="Optional per-observation CSV")
+    e.add_argument("--plot-ids-file", default=None,
+                   help="Optional CSV; process only IDs also present in the input register")
+    e.add_argument("--max-plots", type=int, default=None,
+                   help="Optional pilot cap applied after --plot-ids-file filtering")
     e.add_argument("--season-start", required=True, help="YYYY-MM-DD")
     e.add_argument("--season-end", required=True, help="YYYY-MM-DD")
     e.add_argument("--max-cloud", type=float, default=80.0)
+    e.add_argument("--workers", type=int, default=8,
+                   help="Concurrent plot workers (1-16; default 8). Higher values increase network and memory use.")
+    e.add_argument("--scene-candidates-per-month", type=int, default=0,
+                   help="Optional crop-screening speed mode: keep only the lowest-cloud N scenes/month after spatial filtering; 0 keeps all scenes.")
     e.add_argument("--erode-px", type=int, default=1,
                    help="Pixels to erode inward. 1 = 10 m. Do not set 0 on small plots.")
     e.add_argument("--step-days", type=int, default=5)

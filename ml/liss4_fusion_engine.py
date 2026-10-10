@@ -1,4 +1,4 @@
-﻿"""
+"""
 ml/liss4_fusion_engine.py
 ISRO Resourcesat-2A LISS-4 (5.8m VNIR) + Copernicus Sentinel-2 (10m Multi-Spectral)
 Multi-Sensor Canopy Auto-Snapping & Fusion Engine

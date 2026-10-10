@@ -1,4 +1,4 @@
-﻿"""
+"""
 ml/bhoonidhi_client.py
 Official ISRO / NRSC Bhoonidhi OpenSearch & STAC REST API Client & LISS-4 Product Ingestion Engine
 Documentation: https://bhoonidhi-api.nrsc.gov.in/bhoonidhi-api/

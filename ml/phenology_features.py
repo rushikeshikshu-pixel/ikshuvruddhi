@@ -1,4 +1,4 @@
-﻿"""
+"""
 ml/phenology_features.py
 Multi-Temporal Phenological Feature Extraction for Crop Type Discrimination
 Extracts temporal trajectory parameters (Green Season Duration, AUC, Senescence Rate, Moisture Retention)

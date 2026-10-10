@@ -442,10 +442,21 @@ def audit_plot_with_bhunaksha(
     # 1. Check local cadastral DB first (<2ms query)
     local_cached = lookup_local_cadastral_db(district, taluka, village, clean_gat)
     if local_cached:
+        c_coords = []
+        if local_cached.get("geojson") and isinstance(local_cached["geojson"], dict) and "geometry" in local_cached["geojson"]:
+            geom = local_cached["geojson"]["geometry"]
+            if "coordinates" in geom and geom["coordinates"]:
+                c_coords = [[p[1], p[0]] for p in geom["coordinates"][0]]
+        if not c_coords and local_cached.get("cadastral_polygon_str"):
+            try:
+                c_coords = [list(map(float, p.split(","))) for p in local_cached["cadastral_polygon_str"].split("#") if "," in p]
+            except Exception:
+                c_coords = []
+
         cadastral = {
             "gat_no": clean_gat,
             "cadastral_polygon_str": local_cached["cadastral_polygon_str"],
-            "cadastral_coords": [[p[1], p[0]] for p in local_cached["geojson"]["geometry"]["coordinates"][0]],
+            "cadastral_coords": c_coords,
             "geojson": local_cached["geojson"],
             "centroid": local_cached["centroid"],
             "legal_area_ha": local_cached["legal_area_ha"],
@@ -470,7 +481,7 @@ def audit_plot_with_bhunaksha(
         )
 
     # Calculate distance from Cadastral Gat centroid
-    if plot_coords and len(plot_coords) >= 3:
+    if plot_coords and len(plot_coords) >= 1:
         p_lats = [p[0] for p in plot_coords]
         p_lons = [p[1] for p in plot_coords]
         plot_center_lat = sum(p_lats) / len(p_lats)

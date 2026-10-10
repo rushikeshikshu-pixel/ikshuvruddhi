@@ -1,4 +1,4 @@
-﻿"""
+"""
 ml/canopy_classifier.py
 Unified Mathematical Engine for Sugarcane Multi-Spectral Remote Sensing
 Identical implementation across:

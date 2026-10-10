@@ -1,4 +1,4 @@
-﻿"""
+"""
 ml/crop_distinction.py
 Multi-Crop Phenological Discrimination & Heuristic Crop Type Classifier
 Distinguishes Sugarcane (12-18 month perennial grass) from Maize (90-110 day seasonal grain),

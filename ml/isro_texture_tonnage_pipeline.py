@@ -1,4 +1,4 @@
-﻿"""
+"""
 ml/isro_texture_tonnage_pipeline.py
 Production Multi-Sensor Tonnage & Sucrose Engine:
 ISRO LISS-4 (5.8m) / Sentinel-2 (10m) Texture + ISRIC SoilGrids + Dynamic Agrometeorological GDD + XGBoost
