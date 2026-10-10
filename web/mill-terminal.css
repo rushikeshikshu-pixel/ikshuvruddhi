@@ -1,0 +1,863 @@
+/* ==========================================================================
+   IKSHU INTELLIGENCE - ENTERPRISE SUGAR MILL COMMAND SYSTEM
+   Aesthetic: Bio-Emerald & Cosmic Obsidian | High-Density Telemetry
+   ========================================================================== */
+
+:root {
+    --bg-base: #030712;
+    --bg-surface-1: #070e1c;
+    --bg-surface-2: #0d172a;
+    --bg-surface-3: #13223d;
+    --bg-glass: rgba(10, 20, 38, 0.78);
+    --bg-card: rgba(13, 23, 42, 0.85);
+    
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-glass: rgba(16, 185, 129, 0.25);
+    --border-glow: rgba(0, 242, 254, 0.4);
+    
+    --emerald-primary: #10b981;
+    --emerald-glow: #00e676;
+    --emerald-dark: #059669;
+    --emerald-light: #6ee7b7;
+    
+    --cyan-accent: #00f2fe;
+    --cyan-soft: #38bdf8;
+    --purple-accent: #a855f7;
+    --amber-warning: #f59e0b;
+    --coral-danger: #ef4444;
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-bright: #ffffff;
+    
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 22px;
+    --radius-full: 9999px;
+    
+    --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.4);
+    --shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.6);
+    --shadow-emerald: 0 0 30px rgba(16, 185, 129, 0.2);
+    --shadow-cyan: 0 0 30px rgba(0, 242, 254, 0.2);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: hidden;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Atmospheric Glows */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 20%;
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+body::after {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    right: 15%;
+    width: 500px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0, 242, 254, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-surface-1);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--emerald-primary);
+}
+
+/* ==========================================================================
+   TOP NAVIGATION BAR
+   ========================================================================== */
+.mill-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(5, 11, 22, 0.90);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-brand-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(0, 242, 254, 0.18));
+    border: 1px solid var(--border-glass);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--emerald-primary);
+    font-size: 1.25rem;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+}
+
+.nav-brand-title {
+    display: flex;
+    flex-direction: column;
+}
+.nav-brand-title h1 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.nav-brand-title h1 span {
+    color: var(--emerald-primary);
+}
+.nav-brand-title p {
+    font-size: 0.72rem;
+    color: var(--cyan-accent);
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* MILL SELECTOR IN NAVBAR */
+.mill-selector-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-full);
+    padding: 4px 14px 4px 10px;
+}
+.mill-selector-icon {
+    color: var(--amber-warning);
+    font-size: 0.9rem;
+}
+.mill-select-dropdown {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 0.84rem;
+    font-weight: 700;
+    font-family: var(--font-body);
+    outline: none;
+    cursor: pointer;
+}
+.mill-select-dropdown option {
+    background: #091224;
+    color: #ffffff;
+}
+
+/* NAV TABS */
+.nav-tabs-wrapper {
+    display: flex;
+    gap: 4px;
+    background: rgba(15, 23, 42, 0.75);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+}
+.nav-tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s ease;
+}
+.nav-tab-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+.nav-tab-btn.active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.25));
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: var(--emerald-light);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+
+/* NAV ACTIONS (RIGHT) */
+.nav-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.role-badge-pill {
+    background: rgba(0, 242, 254, 0.1);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    color: var(--cyan-accent);
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-lang-toggle {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-lang-toggle:hover {
+    border-color: var(--emerald-primary);
+    color: var(--emerald-primary);
+}
+.btn-header-action {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    color: #ffffff;
+    padding: 7px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    transition: all 0.2s;
+}
+.btn-header-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px rgba(16, 185, 129, 0.45);
+}
+
+/* ==========================================================================
+   TOP TELEMETRY PULSE RIBBON (TCD & CCS)
+   ========================================================================== */
+.telemetry-ribbon {
+    background: rgba(8, 16, 32, 0.75);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 8px 24px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    align-items: center;
+}
+.telemetry-item {
+    display: flex;
+    flex-direction: column;
+}
+.telemetry-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.telemetry-val {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+.telemetry-val.positive {
+    color: var(--emerald-glow);
+}
+.telemetry-val.accent {
+    color: var(--cyan-accent);
+}
+.telemetry-val.warning {
+    color: var(--amber-warning);
+}
+.telemetry-val.danger {
+    color: var(--coral-danger);
+}
+.telemetry-sub {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   MAIN WORKSPACE CONTAINER
+   ========================================================================== */
+.mill-workspace {
+    padding: 16px 24px 32px;
+    position: relative;
+    z-index: 1;
+}
+
+.view-container {
+    display: none;
+}
+.view-container.active {
+    display: block;
+    animation: fadeIn 0.25s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   VIEW 1: CADASTRAL GIS MAP & COCKPIT SPLIT
+   ========================================================================== */
+.map-workspace-grid {
+    display: grid;
+    grid-template-columns: 390px 1fr;
+    gap: 16px;
+    height: calc(100vh - 165px);
+    min-height: 580px;
+}
+
+/* LEFT CONTROLS & PLOT QUEUE CARD */
+.queue-panel {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevated);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.queue-panel-head {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.queue-panel-head h2 {
+    font-family: var(--font-heading);
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.queue-filter-strip {
+    padding: 10px 14px;
+    background: rgba(12, 22, 40, 0.6);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.queue-search-input {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: #ffffff;
+    font-size: 0.8rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.queue-search-input:focus {
+    border-color: var(--emerald-primary);
+}
+
+.filter-pills-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+.filter-pill {
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 700;
+    border: 1px solid var(--border-subtle);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+}
+.filter-pill:hover {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.filter-pill.active {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: var(--emerald-primary);
+    color: var(--emerald-light);
+}
+
+/* SCROLLABLE PLOT LIST */
+.plot-list-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.plot-card-item {
+    background: rgba(15, 25, 45, 0.7);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.plot-card-item:hover {
+    border-color: var(--emerald-primary);
+    background: rgba(16, 185, 129, 0.08);
+    transform: translateY(-1px);
+}
+.plot-card-item.selected {
+    border-color: var(--cyan-accent);
+    background: rgba(0, 242, 254, 0.12);
+    box-shadow: 0 0 16px rgba(0, 242, 254, 0.2);
+}
+
+.plot-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.plot-farmer-name {
+    font-weight: 700;
+    font-size: 0.84rem;
+    color: #ffffff;
+}
+.plot-status-tag {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+}
+.plot-status-tag.cut-now {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+.plot-status-tag.window-15d {
+    background: rgba(245, 158, 11, 0.18);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+.plot-status-tag.vegetative {
+    background: rgba(56, 189, 248, 0.18);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+.plot-status-tag.ghost-flag {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+.plot-card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+}
+.plot-card-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: rgba(5, 10, 20, 0.5);
+    border-radius: var(--radius-sm);
+    padding: 4px 6px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+}
+.plot-metric-col span:first-child {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.64rem;
+}
+.plot-metric-col span:last-child {
+    font-weight: 700;
+}
+
+/* RIGHT MAP PANEL */
+.map-canvas-card {
+    background: var(--bg-surface-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevated);
+    position: relative;
+    overflow: hidden;
+}
+
+#leafletMapInstance {
+    width: 100%;
+    height: 100%;
+    background: #040810;
+}
+
+/* MAP OVERLAYS & LEGEND */
+.map-floating-bar {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 500;
+    display: flex;
+    gap: 8px;
+    background: rgba(5, 11, 24, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glass);
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+}
+.map-layer-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.map-layer-btn.active {
+    background: var(--emerald-primary);
+    color: #ffffff;
+}
+
+.map-legend-box {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    z-index: 500;
+    background: rgba(5, 11, 24, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: 0.72rem;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+}
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+.legend-dot.green { background: #10b981; box-shadow: 0 0 8px #10b981; }
+.legend-dot.yellow { background: #f59e0b; }
+.legend-dot.blue { background: #00f2fe; }
+.legend-dot.red { background: #ef4444; }
+
+/* ==========================================================================
+   PLOT COCKPIT SLIDE-OVER DRAWER
+   ========================================================================== */
+.cockpit-drawer {
+    position: fixed;
+    top: 0;
+    right: -530px;
+    width: 500px;
+    height: 100vh;
+    background: rgba(8, 16, 32, 0.97);
+    backdrop-filter: blur(24px);
+    border-left: 1px solid var(--border-glass);
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    overflow-y: auto;
+}
+.cockpit-drawer.open {
+    right: 0;
+}
+
+.cockpit-drawer-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 20px;
+}
+.cockpit-close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: #ffffff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cockpit-stat-box {
+    background: rgba(14, 25, 45, 0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 14px;
+}
+.cockpit-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.cockpit-actions-bar {
+    margin-top: auto;
+    padding-top: 18px;
+    display: flex;
+    gap: 10px;
+}
+
+/* ==========================================================================
+   VIEW 2: HARVEST QUEUE & CUTTING SLIP TABLE
+   ========================================================================== */
+.table-panel-card {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevated);
+    overflow: hidden;
+    padding: 20px;
+}
+.mill-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    font-size: 0.82rem;
+}
+.mill-data-table th {
+    background: rgba(15, 25, 45, 0.8);
+    color: var(--text-muted);
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.mill-data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
+}
+.mill-data-table tr:hover td {
+    background: rgba(16, 185, 129, 0.05);
+}
+
+/* ==========================================================================
+   VIEW 3: MAHABHUNAKSHA FRAUD BUSTER
+   ========================================================================== */
+.fraud-header-alert {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(185, 28, 28, 0.08));
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ==========================================================================
+   VIEW 4: LAB CALIBRATION POLARIMETER
+   ========================================================================== */
+.lab-split-grid {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 20px;
+}
+.lab-entry-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+}
+
+/* ==========================================================================
+   VIEW 5: MILL ROI & CRUSHING SIMULATOR
+   ========================================================================== */
+.roi-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+.roi-control-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+}
+.roi-results-box {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(0, 242, 254, 0.08));
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* ==========================================================================
+   PRINTABLE CUTTING SLIP DOCKET MODAL
+   ========================================================================== */
+.docket-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(12px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.docket-modal-backdrop.open {
+    display: flex;
+}
+.docket-paper-card {
+    background: #ffffff;
+    color: #111827;
+    width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: var(--radius-md);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9);
+    padding: 36px 32px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    position: relative;
+}
+
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
+    .docket-paper-card, .docket-paper-card * {
+        visibility: visible !important;
+    }
+    .docket-paper-card {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .map-workspace-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    .map-canvas-card {
+        height: 500px;
+    }
+    .telemetry-ribbon {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .roi-card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 768px) {
+    .mill-navbar {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    .telemetry-ribbon {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .nav-tabs-wrapper {
+        overflow-x: auto;
+        width: 100%;
+    }
+    .cockpit-drawer {
+        width: 100%;
+        right: -100%;
+    }
+}
