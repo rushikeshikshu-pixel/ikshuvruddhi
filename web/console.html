@@ -420,8 +420,10 @@
                             <th>Village</th>
                             <th>Variety</th>
                             <th>Area</th>
-                            <th>CCS (%)</th>
-                            <th>Brix</th>
+                            <th>Current CCS</th>
+                            <th style="color:#00e676;">5-Day &Delta; CCS</th>
+                            <th>Current Brix</th>
+                            <th style="color:#00f2fe;">5-Day &Delta; Brix</th>
                             <th>Est. Tonnage</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -652,6 +654,30 @@
             <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Commercial Cane Sugar (CCS)</div>
             <div style="font-size:2rem; font-weight:900; color:var(--emerald-glow); font-family:var(--font-mono);" id="cockpitValCcs">12.80%</div>
             <div style="font-size:0.75rem; color:#a7f3d0;"><i class="fa-solid fa-circle-check"></i> Peak Sucrose Window (Optimal 7 Days)</div>
+        </div>
+
+        <!-- 5-Day Dynamic Delta Accumulation HUD -->
+        <div class="cockpit-stat-box" style="background:rgba(15,23,42,0.95); border:1px solid rgba(0,242,254,0.3); margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:0.7rem; color:var(--cyan-accent); font-weight:800; letter-spacing:0.05em;">
+                    <i class="fa-solid fa-bolt"></i> 5-DAY DYNAMIC ACCUMULATION VELOCITY
+                </span>
+                <span class="badge" id="cockpitDeltaVelocityBadge" style="background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#34d399; font-size:10px; font-weight:800;">▲ +0.5% CCS</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; text-align:center;">
+                <div style="background:rgba(0,0,0,0.5); padding:6px 4px; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size:0.65rem; color:#94a3b8; margin-bottom:2px;">5D &Delta; BRIX</div>
+                    <strong style="font-size:0.88rem; color:#00f2fe;" id="cockpitDeltaBrix">+0.6&deg;Bx</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.5); padding:6px 4px; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size:0.65rem; color:#94a3b8; margin-bottom:2px;">5D &Delta; POL</div>
+                    <strong style="font-size:0.88rem; color:#a7f3d0;" id="cockpitDeltaPol">+0.4%</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.5); padding:6px 4px; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size:0.65rem; color:#94a3b8; margin-bottom:2px;">5D &Delta; PURITY</div>
+                    <strong style="font-size:0.88rem; color:#ffffff;" id="cockpitDeltaPurity">+0.6%</strong>
+                </div>
+            </div>
         </div>
 
         <div class="cockpit-stat-grid">
