@@ -3,7 +3,7 @@ services:
     name: ikshuvruddhi
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn backend_main:app --host 0.0.0.0 --port 
+    startCommand: uvicorn backend_main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     plan: free
     autoDeploy: true
@@ -13,4 +13,8 @@ services:
       - key: CDSE_CLIENT_ID
         sync: false
       - key: CDSE_CLIENT_SECRET
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false

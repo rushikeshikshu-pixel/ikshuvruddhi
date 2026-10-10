@@ -27,6 +27,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'ml'))
 
 from ml.copernicus_client import CopernicusCDSEProcessEngine
 from ml.satellite_engine import polygonize_cane_mask
+from ml.gat_parcel_analyzer import get_gat_parcel_dossier
+from ml.anti_cloud_engine import AntiCloudFusionEngine
+from ml.cane_development_engine import CaneDevelopmentEngine
 from ml.bhunaksha_engine import (
     get_bhunaksha_portal_url,
     generate_cadastral_gat_boundary,
@@ -37,6 +40,7 @@ from ml.bhunaksha_engine import (
     import_village_cadastral_geojson,
     get_cadastral_store_summary
 )
+from supabase_client import supabase
 
 app = FastAPI(title="IkshuVruddhi Real Satellite & BhuNaksha Ingestion API", version="2.5.0")
 
@@ -120,6 +124,47 @@ class VillageGeoJSONImportRequest(BaseModel):
     source_label: Optional[str] = "TALUKA_LAND_RECORDS_OFFICE_SHP"
 
 
+class CaneDevelopmentAuditRequest(BaseModel):
+    variety: Optional[str] = "CO-265"
+    cane_type: Optional[str] = "Suru"
+    mean_ndvi: float = 0.65
+    mean_ndre: float = 0.44
+    mean_ccs: float = 11.5
+    occupancy_pct: float = 90.0
+    claimed_acres: float = 2.5
+    is_ghost: Optional[bool] = False
+
+
+class AntiCloudAuditRequest(BaseModel):
+    ndvi_timeline: Dict[str, Optional[float]]
+    mean_ndvi: Optional[float] = 0.65
+    radar_vh_db: Optional[float] = -14.5
+    radar_vv_db: Optional[float] = -9.2
+
+
+class CloudRowsRequest(BaseModel):
+    rows: List[Dict[str, Any]]
+
+
+class CropObservation(BaseModel):
+    date: str
+    ndvi: float
+    ndre: Optional[float] = None
+    lswi: Optional[float] = None
+    usability_pct: Optional[float] = 100.0
+
+
+class CropPlotSeries(BaseModel):
+    farm_id: str
+    gat_no: Optional[str] = None
+    observations: List[CropObservation]
+    sar_vh_db: Optional[float] = None
+
+
+class CropBatchRequest(BaseModel):
+    plots: List[CropPlotSeries]
+
+
 @app.get("/api/health")
 def health_check():
     has_credentials = bool(os.getenv("CDSE_CLIENT_ID") and os.getenv("CDSE_CLIENT_SECRET"))
@@ -131,10 +176,137 @@ def health_check():
         "sota_model_loaded": _SOTA_MODEL is not None,
         "sota_cv_accuracy_pct": round(_SOTA_CV_ACCURACY, 2) if _SOTA_CV_ACCURACY else None,
         "bhunaksha_integration_active": True,
+        "supabase_configured": supabase.configured,
+        "cloud_persistence": "SUPABASE" if supabase.configured else "LOCAL_ONLY",
         "cadastral_store_status": cadastral_stats.get("status"),
         "cadastral_cached_parcels": cadastral_stats.get("total_cached_gat_parcels"),
         "state_code": "27 (Maharashtra)"
     }
+
+
+@app.post("/api/crop/classify/batch")
+def classify_crop_batch(req: CropBatchRequest):
+    """Screen plot crop type from caller-provided multi-date satellite indices.
+
+    Scores are heuristic screening scores, not calibrated probabilities or
+    validation accuracy. At least five usable observations spanning 120 days
+    are required before the classifier returns a crop label.
+    """
+    if not req.plots or len(req.plots) > 200:
+        raise HTTPException(status_code=422, detail="Provide between 1 and 200 plot time series per request")
+
+    total_observations = sum(len(plot.observations) for plot in req.plots)
+    if total_observations > 10000:
+        raise HTTPException(status_code=413, detail="Batch exceeds 10,000 observations; split it into smaller requests")
+
+    from ml.crop_distinction import classify_crop_from_phenology
+    from ml.phenology_features import extract_phenological_trajectory_features
+
+    results = []
+    observation_rows = []
+    for plot in req.plots:
+        dates, ndvi, ndre, lswi, usability = [], [], [], [], []
+        for obs in plot.observations:
+            try:
+                # Parse strictly here so malformed dates are reported to the client,
+                # rather than silently disappearing inside feature extraction.
+                from datetime import date as _date
+                _date.fromisoformat(obs.date[:10])
+            except (TypeError, ValueError):
+                raise HTTPException(status_code=422, detail=f"Invalid ISO date for plot {plot.farm_id}: {obs.date}")
+            for label, value in (("NDVI", obs.ndvi), ("NDRE", obs.ndre), ("LSWI", obs.lswi)):
+                if value is not None and (not np.isfinite(value) or value < -1.0 or value > 1.0):
+                    raise HTTPException(status_code=422, detail=f"{label} must be between -1 and 1 for plot {plot.farm_id}")
+            if obs.usability_pct is not None and (not np.isfinite(obs.usability_pct) or not 0 <= obs.usability_pct <= 100):
+                raise HTTPException(status_code=422, detail=f"usability_pct must be between 0 and 100 for plot {plot.farm_id}")
+            dates.append(obs.date[:10])
+            ndvi.append(obs.ndvi)
+            ndre.append(obs.ndre)
+            lswi.append(obs.lswi)
+            usability.append(obs.usability_pct if obs.usability_pct is not None else 100.0)
+            observation_rows.append({
+                "plot_id": str(plot.farm_id).strip(),
+                "gat_no": plot.gat_no,
+                "observation_date": obs.date[:10],
+                "ndvi": obs.ndvi,
+                "ndre": obs.ndre,
+                "lswi": obs.lswi,
+                "usability_pct": obs.usability_pct if obs.usability_pct is not None else 100.0,
+                "sar_vh_db": plot.sar_vh_db,
+            })
+
+        features = extract_phenological_trajectory_features(
+            dates, ndvi, ndre, lswi, usability
+        )
+        classification = classify_crop_from_phenology(features, sar_vh_db=plot.sar_vh_db)
+        results.append({"farm_id": plot.farm_id, **classification})
+
+    cloud_persistence = {"configured": supabase.configured, "saved_observations": 0, "saved_screenings": 0}
+    if supabase.configured:
+        try:
+            screening_rows = [{
+                "plot_id": str(result["farm_id"]).strip(),
+                "gat_no": next((p.gat_no for p in req.plots if str(p.farm_id).strip() == str(result["farm_id"]).strip()), None),
+                "predicted_crop": result["predicted_crop"],
+                "heuristic_score_pct": result.get("heuristic_confidence_score"),
+                "evidence_completeness_pct": result.get("evidence_completeness_pct"),
+                "reasoning": result.get("reasoning"),
+                "phenology_summary": result.get("phenology_summary"),
+                "model_version": "phenology-heuristic-v1",
+            } for result in results]
+            saved_observations = supabase.upsert_crop_observations(observation_rows)
+            saved_screenings = supabase.upsert_crop_screenings(screening_rows)
+            cloud_persistence = {
+                "configured": True,
+                "saved_observations": len(saved_observations),
+                "saved_screenings": len(saved_screenings),
+            }
+        except Exception as exc:
+            raise HTTPException(status_code=502, detail=f"Crop screening completed, but Supabase persistence failed: {exc}")
+
+    return {
+        "results": results,
+        "classified_count": sum(r["predicted_crop"] != "INSUFFICIENT_TEMPORAL_DATA" for r in results),
+        "insufficient_data_count": sum(r["predicted_crop"] == "INSUFFICIENT_TEMPORAL_DATA" for r in results),
+        "score_note": "Heuristic screening scores—not calibrated probabilities, measured accuracy, or a substitute for field verification.",
+        "requirements": "At least 5 usable observations spanning at least 120 days per plot.",
+        "cloud_persistence": cloud_persistence,
+    }
+
+
+@app.get("/api/cloud/status")
+def cloud_status():
+    return {"configured": supabase.configured, "provider": "supabase", "tables": ["plot_predictions", "lab_samples", "crop_observations", "crop_screenings"]}
+
+
+@app.post("/api/cloud/predictions")
+def cloud_upsert_predictions(req: CloudRowsRequest):
+    if not supabase.configured:
+        raise HTTPException(status_code=503, detail="Supabase is not configured on the backend")
+    try:
+        return {"saved": len(supabase.upsert_predictions(req.rows))}
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Supabase write failed: {exc}")
+
+
+@app.get("/api/cloud/predictions")
+def cloud_list_predictions(limit: int = Query(1000, ge=1, le=10000), gat_no: Optional[str] = None):
+    if not supabase.configured:
+        raise HTTPException(status_code=503, detail="Supabase is not configured on the backend")
+    try:
+        return {"rows": supabase.list_predictions(limit=limit, gat_no=gat_no)}
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Supabase read failed: {exc}")
+
+
+@app.post("/api/cloud/lab-samples")
+def cloud_upsert_lab_samples(req: CloudRowsRequest):
+    if not supabase.configured:
+        raise HTTPException(status_code=503, detail="Supabase is not configured on the backend")
+    try:
+        return {"saved": len(supabase.upsert_lab_samples(req.rows))}
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Supabase write failed: {exc}")
 
 
 # ── BhuNaksha Cadastral Endpoints ─────────────────────────────────────────────
@@ -204,6 +376,28 @@ def import_village_geojson(req: VillageGeoJSONImportRequest):
         village=req.village or "Shevgaon",
         source_label=req.source_label or "TALUKA_LAND_RECORDS_SHP"
     )
+@app.get("/api/cadastral/gat_dossier")
+def get_gat_dossier_endpoint(
+    district: str = Query("Ahilyanagar", description="District Name"),
+    taluka: str = Query("Shevgaon", description="Taluka Name"),
+    village: str = Query("ERANDGAON BHA.(THOMBARE VASTI )", description="Village Name"),
+    gat_no: str = Query(..., description="Gat / Survey Number (गट क्र.)")
+):
+    """
+    Returns full Gat Parcel Dossier:
+      - Official legal parcel acreage from Maha Bhu Naksha
+      - Exact boundary polygon coordinates & GeoJSON feature
+      - Co-tenancy & multi-farmer stacking audit (occupancy ratio & collision flags)
+      - Integrated satellite reflectance (NDVI, NDRE) & predicted sugar recovery (CCS, Brix)
+      - Direct official links to 7/12 and BhuNaksha portal
+    """
+    return get_gat_parcel_dossier(
+        district=district,
+        taluka=taluka,
+        village=village,
+        gat_no=gat_no
+    )
+
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -326,6 +520,170 @@ def process_plot_satellite_raster(req: PolygonRequest):
         "cells":                   cells
     }
 
+
+
+# -------------------------------------------------------------
+# Enterprise Copernicus Live Satellite Audit & Fraud Detection
+# -------------------------------------------------------------
+import pandas as pd
+
+_AUDIT_CSV = os.path.join(os.path.dirname(__file__), "data", "plots_27633_real_satellite_harvest_final.csv")
+_AUDIT_DF = None
+
+def _get_audit_df():
+    global _AUDIT_DF
+    if _AUDIT_DF is None:
+        if os.path.exists(_AUDIT_CSV):
+            _AUDIT_DF = pd.read_csv(_AUDIT_CSV)
+            _AUDIT_DF["Plot_No"] = pd.to_numeric(_AUDIT_DF["Plot_No"], errors="coerce")
+    return _AUDIT_DF
+
+@app.get("/api/satellite/audit_summary")
+def get_satellite_audit_summary():
+    """Returns factory-wide live Sentinel-2 satellite audit statistics."""
+    df = _get_audit_df()
+    if df is None:
+        return {"status": "ERROR", "message": "Audit dataset not initialized."}
+    
+    verdicts = df["Real_Satellite_Verdict"].value_counts().to_dict()
+    total_paper = float(df["Paper_Claimed_MT"].sum())
+    total_sat = float(df["Live_Satellite_Audited_MT"].sum())
+    tonnage_blocked = float(df[df["Real_Satellite_Verdict"] == "CONFIRMED_GHOST_BARE_SOIL"]["Paper_Claimed_MT"].sum())
+    
+    return {
+        "status": "SUCCESS",
+        "total_plots": len(df),
+        "verdicts": verdicts,
+        "paper_claimed_total_cane_mt": round(total_paper, 1),
+        "live_satellite_audited_cane_mt": round(total_sat, 1),
+        "total_discrepancy_mt": round(total_sat - total_paper, 1),
+        "ghost_bare_soil_plots": int(verdicts.get("CONFIRMED_GHOST_BARE_SOIL", 0)),
+        "ghost_tonnage_blocked_mt": round(tonnage_blocked, 1),
+        "rescued_standing_cane_plots": int(verdicts.get("CONFIRMED_HEALTHY_CANE", 0)),
+        "cloud_obscured_plots": int(verdicts.get("CLOUD_OBSCURED_RETEST", 0)),
+        "tile_acquisition_date": "2026-09-28",
+        "sensor": "Sentinel-2 MSI Level-2A BOA Reflectance"
+    }
+
+@app.get("/api/satellite/plot_audit/{plot_no}")
+def get_plot_satellite_audit(plot_no: int):
+    """Returns real satellite multi-spectral telemetry and fraud audit for a specific plot."""
+    df = _get_audit_df()
+    if df is None:
+        raise HTTPException(status_code=500, detail="Audit dataset not loaded.")
+    
+    sub = df[df["Plot_No"] == plot_no]
+    if sub.empty:
+        raise HTTPException(status_code=404, detail=f"Plot ID {plot_no} not found in satellite audit.")
+        
+    rec = sub.iloc[0].to_dict()
+    clean_rec = {
+        k: int(v) if isinstance(v, (np.integer, int)) else (
+           float(v) if isinstance(v, (np.floating, float)) else ("" if pd.isna(v) else v)
+        )
+        for k, v in rec.items()
+    }
+    return {"status": "SUCCESS", "plot": clean_rec}
+
+@app.get("/api/satellite/ghost_plots")
+def list_ghost_plots(
+    verdict: Optional[str] = Query(None),
+    gat: Optional[str] = Query(None),
+    limit: int = Query(100, ge=1, le=1000),
+    offset: int = Query(0, ge=0)
+):
+    """List plots filtered by satellite audit verdict (e.g. CONFIRMED_GHOST_BARE_SOIL, CONFIRMED_FALLOW_OR_SCRUB)."""
+    df = _get_audit_df()
+    if df is None:
+        raise HTTPException(status_code=500, detail="Audit dataset not loaded.")
+        
+    filtered = df
+    if verdict:
+        filtered = filtered[filtered["Real_Satellite_Verdict"] == verdict]
+    if gat:
+        filtered = filtered[filtered["Gat_Sector"].astype(str).str.contains(gat, case=False, na=False)]
+        
+    total_matches = len(filtered)
+    paginated = filtered.iloc[offset:offset+limit]
+    
+    records = []
+    for _, row in paginated.iterrows():
+        rec = row.to_dict()
+        records.append({
+            k: int(v) if isinstance(v, (np.integer, int)) else (
+               float(v) if isinstance(v, (np.floating, float)) else ("" if pd.isna(v) else v)
+            )
+            for k, v in rec.items()
+        })
+        
+    return {
+        "status": "SUCCESS",
+        "total_matches": total_matches,
+        "limit": limit,
+        "offset": offset,
+        "plots": records
+    }
+
+
+
+
+@app.post("/api/satellite/anti_cloud_audit")
+def anti_cloud_audit_endpoint(req: AntiCloudAuditRequest):
+    """
+    Executes the 5-Layer Anti-Cloud and Radar-Optical Fusion Pipeline:
+      Layer 1: Sentinel-2 Level-2A SCL cloud/shadow pixel filtering
+      Layer 2: 120-Day 5-epoch ClearSky multi-temporal compositing
+      Layer 3: Sentinel-1 C-Band SAR radar all-weather canopy penetration
+      Layer 4: Savitzky-Golay polynomial phenological curve reconstruction
+      Layer 5: Atmospheric NDRE and LSWI cellular water cross-validation
+    """
+    try:
+        report = AntiCloudFusionEngine.execute_5layer_anti_cloud_audit(
+            raw_ndvi_timeline=req.ndvi_timeline,
+            mean_ndvi=req.mean_ndvi or 0.65,
+            radar_vh_db=req.radar_vh_db,
+            radar_vv_db=req.radar_vv_db
+        )
+        return report
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Anti-cloud audit failed: {exc}")
+
+
+
+
+@app.post("/api/cdp/evaluate_parcel")
+def evaluate_cdp_endpoint(req: CaneDevelopmentAuditRequest):
+    """
+    Evaluates a parcel for the Cane Development Program (CDP):
+      - Calculates Agronomic CDP Health Score (1-100)
+      - Automated Drip Irrigation Subsidy Clearance
+      - Varietal Diversification Advisory (incentives to rebalance from CO-265)
+      - Mechanized Ratoon (Khodwa) Stubble Shaving & Trash Mulching Dispatch
+      - Urea & Nitrogen Top-Dressing based on Sentinel-2 Red-Edge Chlorophyll
+    """
+    try:
+        report = CaneDevelopmentEngine.evaluate_cdp_profile(
+            variety=req.variety or "CO-265",
+            cane_type=req.cane_type or "Suru",
+            mean_ndvi=req.mean_ndvi,
+            mean_ndre=req.mean_ndre,
+            mean_ccs=req.mean_ccs,
+            occupancy_pct=req.occupancy_pct,
+            claimed_acres=req.claimed_acres,
+            is_ghost=req.is_ghost or False
+        )
+        return {"status": "SUCCESS", "cdp_dossier": report}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"CDP evaluation failed: {exc}")
+
+
+
+# Static file serving for web dashboard and assets
+from fastapi.staticfiles import StaticFiles
+
+_web_dir = os.path.join(os.path.dirname(__file__), "web")
+if os.path.isdir(_web_dir):
+    app.mount("/", StaticFiles(directory=_web_dir, html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
