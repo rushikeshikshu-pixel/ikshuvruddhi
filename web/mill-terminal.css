@@ -1100,3 +1100,275 @@ body::after {
     opacity: 1;
     pointer-events: auto;
 }
+
+
+/* ==============================================================================
+   5-DAY SATELLITE PASS DELTA FEED & MOBILE CANE HEALTH SLIP STYLES
+   ============================================================================== */
+
+.satellite-orbit-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    margin-bottom: 8px;
+}
+.orbit-badge-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--cyan-accent);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+.orbit-pass-dropdown {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 700;
+    outline: none;
+    cursor: pointer;
+}
+.orbit-pass-dropdown option {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+.pass-delta-ribbon {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+    overflow-x: auto;
+}
+.delta-chip {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+    user-select: none;
+}
+.delta-chip.green {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #34d399;
+}
+.delta-chip.green:hover { background: rgba(16, 185, 129, 0.3); }
+.delta-chip.amber {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+}
+.delta-chip.amber:hover { background: rgba(245, 158, 11, 0.3); }
+.delta-chip.blue {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #38bdf8;
+}
+.delta-chip.blue:hover { background: rgba(56, 189, 248, 0.3); }
+
+/* Mobile Digital Cane Health Slip Card */
+.mobile-slip-card {
+    max-width: 540px !important;
+    background: #070e1c !important;
+    border: 1px solid rgba(16, 185, 129, 0.45) !important;
+    padding: 24px !important;
+}
+.slip-header-badge {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(0, 242, 254, 0.15);
+    border: 1px solid #00f2fe;
+    color: #00f2fe;
+}
+.slip-status-pill {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid #10b981;
+    color: #34d399;
+}
+.slip-banner-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 12px 0;
+}
+.slip-banner-strip h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+.slip-banner-strip p {
+    margin: 2px 0 0;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+.slip-grower-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.slip-grower-field {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    padding: 8px 10px;
+}
+.slip-grower-field label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 2px;
+    display: block;
+}
+.slip-grower-val {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #f1f5f9;
+}
+
+/* 5-Day Maturation Trajectory Section */
+.slip-trajectory-section {
+    background: rgba(10, 20, 36, 0.9);
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+.slip-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #cbd5e1;
+    margin-bottom: 10px;
+}
+.trajectory-timeline-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+.trajectory-node-box {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 6px 4px;
+    text-align: center;
+    font-size: 10px;
+}
+.trajectory-node-box.current {
+    border-color: #00e676;
+    background: rgba(0, 230, 118, 0.12);
+}
+.trajectory-node-date {
+    color: #94a3b8;
+    font-size: 9px;
+    margin-bottom: 2px;
+}
+.trajectory-node-ccs {
+    font-weight: 800;
+    font-size: 12px;
+    color: #ffffff;
+}
+.trajectory-node-ccs.peak {
+    color: #00e676;
+}
+.trajectory-node-sub {
+    font-size: 8px;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+/* Dispatch details */
+.slip-dispatch-card {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+}
+.dispatch-row {
+    display: flex;
+    gap: 12px;
+}
+.dispatch-col {
+    flex: 1;
+}
+.dispatch-lbl {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    display: block;
+    margin-bottom: 2px;
+}
+.dispatch-val {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+.dispatch-val.green {
+    color: #34d399;
+}
+
+/* WhatsApp action buttons */
+.slip-actions-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.whatsapp-btn {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+.whatsapp-btn.farmer {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+.whatsapp-btn.farmer:hover {
+    box-shadow: 0 6px 22px rgba(37, 211, 102, 0.5);
+    transform: translateY(-1px);
+}
+.whatsapp-btn.gang {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid #38bdf8;
+    color: #38bdf8;
+}
+.whatsapp-btn.gang:hover {
+    background: rgba(56, 189, 248, 0.15);
+}

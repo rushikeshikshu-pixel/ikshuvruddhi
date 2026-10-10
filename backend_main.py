@@ -1,4 +1,4 @@
-try:
+﻿try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
@@ -677,6 +677,27 @@ def evaluate_cdp_endpoint(req: CaneDevelopmentAuditRequest):
         raise HTTPException(status_code=500, detail=f"CDP evaluation failed: {exc}")
 
 
+
+from ml.harvest_api_helper import calculate_cutting_queue, get_plot_digital_health_slip
+
+@app.get("/api/harvest/cutting_queue")
+def harvest_cutting_queue_endpoint(
+    circle: str = Query("ALL", description="Mill circle name, or ALL"),
+    min_ccs: float = Query(11.2, description="Minimum CCS% threshold"),
+    target_mt: float = Query(4500.0, description="Daily crushing capacity in MT"),
+    delta_only: bool = Query(False, description="True for only plots that matured this pass"),
+    pass_date: str = Query("2026-10-10", description="Satellite pass date")
+):
+    """Direct Weighbridge ERP REST API (Zero-File Mode). Streams 5-day delta cutting queue."""
+    return calculate_cutting_queue(circle=circle, min_ccs=min_ccs, target_mt=target_mt, delta_only=delta_only, pass_date=pass_date)
+
+@app.get("/api/harvest/plot/{gat_no}")
+def plot_digital_health_slip_endpoint(gat_no: str):
+    """Returns Mobile Digital Cane Health Slip data & WhatsApp slip for field inspectors."""
+    res = get_plot_digital_health_slip(gat_no)
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Gat / Plot '{gat_no}' not found in mill register.")
+    return res
 
 # Static file serving for web dashboard and assets
 from fastapi.staticfiles import StaticFiles

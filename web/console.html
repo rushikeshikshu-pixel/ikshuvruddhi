@@ -294,6 +294,10 @@
             <i class="fa-solid fa-sliders"></i> ⚙️ Factory Crushing Target
         </button>
 
+        <button class="action-btn purple" onclick="openErpApiModal()" style="border-color:#a855f7; color:#d8b4fe;">
+            <i class="fa-solid fa-code"></i> ⚡ Direct ERP API (Zero File Mode)
+        </button>
+
         <button class="action-btn amber" onclick="openAddLabModal()">
             <i class="fa-solid fa-flask"></i> 🔬 Log Polarimeter Test
         </button>
@@ -317,9 +321,32 @@
                         <span id="lblQueuePlotCount" style="font-size:0.75rem; color:var(--cyan-accent); font-weight:700;">Loading...</span>
                     </div>
 
-                    <!-- Filter Strip -->
+                                        <!-- Filter Strip: 5-Day Satellite Delta Intelligence -->
                     <div class="queue-filter-strip">
-                        <input type="text" id="inputQueueSearch" class="queue-search-input" placeholder="Search Farmer, Gat No., or Village..." />
+                        <!-- 5-Day Satellite Orbit Pass Selector -->
+                        <div class="satellite-orbit-control">
+                            <div class="orbit-badge-label">
+                                <i class="fa-solid fa-satellite"></i> 5-DAY REVISIT PASS:
+                            </div>
+                            <select id="selSatellitePass" class="orbit-pass-dropdown" onchange="handleSatellitePassChange(this)">
+                                <option value="2026-10-10" selected>Pass 19: 10-Oct-2026 (Latest S2A Revisit)</option>
+                                <option value="2026-10-05">Pass 18: 05-Oct-2026</option>
+                                <option value="2026-09-30">Pass 17: 30-Sep-2026</option>
+                                <option value="2026-09-25">Pass 16: 25-Sep-2026</option>
+                                <option value="2026-09-20">Pass 15: 20-Sep-2026</option>
+                            </select>
+                        </div>
+
+                        <!-- 5-Day Delta Intelligence Banner -->
+                        <div class="pass-delta-ribbon" id="passDeltaRibbon">
+                            <span class="delta-chip green" onclick="filterByDelta('NEW_TO_PEAK')"><i class="fa-solid fa-rocket"></i> +42 Newly Matured</span>
+                            <span class="delta-chip amber" onclick="filterByDelta('INVERSION_ALERT')"><i class="fa-solid fa-triangle-exclamation"></i> 18 Inversion Risk</span>
+                            <span class="delta-chip blue" onclick="filterByDelta('WINDOW_15D')"><i class="fa-solid fa-clock"></i> 76 Next 15D</span>
+                        </div>
+
+                        <div style="position:relative;">
+                            <input type="text" id="inputQueueSearch" class="queue-search-input" placeholder="🔍 Quick Search: Type Gat No. (e.g. 103) or Farmer Name..." />
+                        </div>
                         
                         <div style="display:flex; gap:6px;">
                             <select id="selQueueCircle" style="flex:1; padding:6px 10px; background:rgba(15,23,42,0.9); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); color:#ffffff; font-size:0.76rem; outline:none;">
@@ -329,12 +356,18 @@
 
                         <!-- Status Filter Pills -->
                         <div class="filter-pills-row">
-                            <button class="filter-pill active" data-filter="ALL">All (सर्व)</button>
-                            <button class="filter-pill" data-filter="CUT_NOW">Cut Now (तोडणी योग्य)</button>
-                            <button class="filter-pill" data-filter="WINDOW_15D">15 Days (१५ दिवसांत)</button>
-                            <button class="filter-pill" data-filter="VEGETATIVE">Adsali (अडसाली)</button>
-                            <button class="filter-pill" data-filter="GHOST_FLAG" style="color:#f87171;">Ghost Alert (बोगस संशयित)</button>
+                            <button class="filter-pill active" data-filter="ALL">All (320)</button>
+                            <button class="filter-pill delta-pill-peak" data-filter="NEW_TO_PEAK" style="border-color:#10b981; color:#34d399;">
+                                <i class="fa-solid fa-bolt"></i> New to Peak (42)
+                            </button>
+                            <button class="filter-pill delta-pill-inversion" data-filter="INVERSION_ALERT" style="border-color:#f59e0b; color:#fbbf24;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Inversion Risk (18)
+                            </button>
+                            <button class="filter-pill" data-filter="CUT_NOW">Cut Now (188)</button>
+                            <button class="filter-pill" data-filter="WINDOW_15D">15 Days (76)</button>
+                            <button class="filter-pill" data-filter="GHOST_FLAG" style="color:#f87171;">Ghost (32)</button>
                         </div>
+                    </div>
                     </div>
 
                     <!-- Scrollable List of Plots -->
@@ -1046,6 +1079,148 @@
                     <i class="fa-solid fa-check-double"></i> Calibrate Satellite Model with Lab Data
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- 8. MOBILE DIGITAL CANE HEALTH SLIP MODAL (मोबाईल डिजिटल ऊस आरोग्य पत्रिका) -->
+    <div id="mobileHealthSlipModal" class="modal-dialog-overlay">
+        <div class="terminal-modal-card mobile-slip-card">
+            <!-- Modal Header -->
+            <div class="modal-head-row">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="slip-header-badge"><i class="fa-solid fa-mobile-screen-button"></i> 5-DAY FIELD PASSPORT</div>
+                    <span class="slip-status-pill" id="slipHeaderBadge">तोडणी योग्य - PEAK CCS</span>
+                </div>
+                <button type="button" class="modal-close-x" onclick="closeMobileHealthSlip()">&times;</button>
+            </div>
+
+            <!-- Factory Crest Banner -->
+            <div class="slip-banner-strip">
+                <div style="flex:1;">
+                    <h3 id="slipMillName">गंगामई सहकारी साखर कारखाना लि.</h3>
+                    <p id="slipMillSub">शेवगाव, अहिल्यानगर • साखर आयुक्तालय कोड: MILL-GM-414</p>
+                </div>
+                <div class="slip-docket-qr">
+                    <i class="fa-solid fa-qrcode" style="font-size:32px; color:#10b981;"></i>
+                    <span id="slipDocketCode" style="font-size:9px; font-family:monospace; display:block; color:#94a3b8; margin-top:2px;">DOK-2026-103</span>
+                </div>
+            </div>
+
+            <!-- Farmer & Cadastral Profile -->
+            <div class="slip-grower-grid">
+                <div class="slip-grower-field">
+                    <label><i class="fa-solid fa-user"></i> शेतकरी नाव / Grower</label>
+                    <div class="slip-grower-val" id="slipFarmerName">यादव महेश शंकर (YADAV MAHESH SHANKAR)</div>
+                </div>
+                <div class="slip-grower-field">
+                    <label><i class="fa-solid fa-seedling"></i> गट क्र. / Gat &amp; Village</label>
+                    <div class="slip-grower-val" id="slipGatVillage">गट १०३ • साईनाथनगर (नेवासा फाटा सर्कल)</div>
+                </div>
+                <div class="slip-grower-field">
+                    <label><i class="fa-solid fa-leaf"></i> वाण व प्रकार / Variety</label>
+                    <div class="slip-grower-val" id="slipVarietyType">CoM 0265 (अडसाली - ४४७ दिवस)</div>
+                </div>
+                <div class="slip-grower-field">
+                    <label><i class="fa-solid fa-vector-square"></i> क्षेत्र व अंदाजे वजन / Area &amp; Tonnage</label>
+                    <div class="slip-grower-val" id="slipAreaTons">०.७७ एकर (उपग्रह: ०.७३ Ac) • ३५ मे. टन</div>
+                </div>
+            </div>
+
+            <!-- 5-Day Satellite Maturation Trajectory (५-दिवसीय उपग्रह प्रगती) -->
+            <div class="slip-trajectory-section">
+                <div class="slip-section-head">
+                    <span><i class="fa-solid fa-satellite"></i> ५-दिवसीय उपग्रह परिपक्वता शृंखला (Sentinel-2 L2A BOA)</span>
+                    <strong style="color:#00e676; font-size:11px;" id="slipTrajectoryTrend">+०.४% CCS (सर्वोत्तम उतारा)</strong>
+                </div>
+                
+                <div class="trajectory-timeline-row" id="slipTrajectoryRow">
+                    <!-- 5 Satellite Orbit Nodes rendered dynamically -->
+                </div>
+            </div>
+
+            <!-- Cutting Authorization Details -->
+            <div class="slip-dispatch-card">
+                <div class="dispatch-row">
+                    <div class="dispatch-col">
+                        <span class="dispatch-lbl"><i class="fa-solid fa-calendar-check"></i> शिफारस तोडणी कालावधी</span>
+                        <strong class="dispatch-val green" id="slipCutWindow">१२ ऑक्टोबर ते १८ ऑक्टोबर २०२६</strong>
+                    </div>
+                    <div class="dispatch-col">
+                        <span class="dispatch-lbl"><i class="fa-solid fa-hourglass-half"></i> कमाल वाहतूक वेळ</span>
+                        <strong class="dispatch-val" id="slipTransitHours">१८ तास (तोडणी ते गाळप)</strong>
+                    </div>
+                </div>
+                <div class="dispatch-row" style="margin-top:8px;">
+                    <div class="dispatch-col" style="flex:2;">
+                        <span class="dispatch-lbl"><i class="fa-solid fa-tractor"></i> नेमलेली तोडणी टोळी व मुकादम</span>
+                        <strong class="dispatch-val" id="slipGangName">संतोष काळे मुकादम (ट्रॅक्टर - ९८२२१ ४५१२०)</strong>
+                    </div>
+                    <div class="dispatch-col" style="flex:1;">
+                        <span class="dispatch-lbl"><i class="fa-solid fa-route"></i> अंतर</span>
+                        <strong class="dispatch-val" id="slipDistance">२२.५ किमी</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Toolbar (WhatsApp & Print) -->
+            <div class="slip-actions-toolbar">
+                <button type="button" class="whatsapp-btn farmer" id="btnSlipWhatsAppFarmer" onclick="shareSlipWhatsAppFarmer()">
+                    <i class="fa-brands fa-whatsapp"></i> शेतकऱ्याला WhatsApp स्लिप पाठवा
+                </button>
+                <button type="button" class="whatsapp-btn gang" id="btnSlipWhatsAppGang" onclick="shareSlipWhatsAppGang()">
+                    <i class="fa-solid fa-tractor"></i> मुकादमाला लोकेशन व कोटा पाठवा
+                </button>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-top:8px;">
+                <button type="button" class="action-btn" onclick="printMobileSlip()" style="flex:1; justify-content:center; font-size:12px;">
+                    <i class="fa-solid fa-print"></i> प्रिंट काढा (Print)
+                </button>
+                <button type="button" class="action-btn" onclick="copySlipErpCode()" style="flex:1; justify-content:center; font-size:12px;">
+                    <i class="fa-solid fa-copy"></i> ERP कोड कॉपी
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. DIRECT ERP WEIGHBRIDGE REST API MODAL (ZERO-FILE MODE) -->
+    <div id="modalErpApi" class="modal-dialog-overlay">
+        <div class="terminal-modal-card wide">
+            <div class="modal-head-row">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="slip-header-badge" style="background:rgba(168,85,247,0.15); border-color:#a855f7; color:#d8b4fe;">
+                        <i class="fa-solid fa-bolt"></i> ERP INTEGRATION
+                    </div>
+                    <h3 style="margin:0; font-size:1.05rem; color:#ffffff;">Zero-File Mode: Automated Weighbridge REST API</h3>
+                </div>
+                <button type="button" class="modal-close-x" onclick="closeErpApiModal()">&times;</button>
+            </div>
+
+            <p style="font-size:0.8rem; color:#94a3b8; margin:8px 0 16px;">
+                Replace manual 30,000-plot Excel files with live 5-day delta streams. Factory ERPs (SISCOL, CanePro, SAP) query this endpoint directly to balance daily crushing capacity.
+            </p>
+
+            <div class="terminal-input-group" style="margin-bottom:12px;">
+                <label><i class="fa-solid fa-terminal"></i> Live HTTP GET Endpoint (Weighbridge Queue)</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="erpApiUrlInput" readonly value="https://ikshuvruddhi.onrender.com/api/harvest/cutting_queue?min_ccs=11.2&target_mt=4500" style="font-family:monospace; font-size:0.8rem; background:rgba(15,23,42,0.95); border:1px solid #334155; color:#38bdf8;" />
+                    <button class="action-btn primary" onclick="copyErpApiUrl()"><i class="fa-solid fa-copy"></i> Copy</button>
+                    <button class="action-btn cyan" onclick="fetchLiveErpJson()"><i class="fa-solid fa-play"></i> Test API</button>
+                </div>
+            </div>
+
+            <div class="terminal-input-group">
+                <label><i class="fa-solid fa-code"></i> Live Response Payload Preview (JSON Format for Weighbridge Database)</label>
+                <pre id="erpApiJsonPreview" style="background:#020617; border:1px solid #1e293b; border-radius:8px; padding:12px; font-family:monospace; font-size:0.75rem; color:#a7f3d0; max-height:220px; overflow-y:auto; margin:0;">Loading queue from /api/harvest/cutting_queue...</pre>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+                <span style="font-size:0.75rem; color:#64748b;"><i class="fa-solid fa-shield-halved"></i> 256-bit SSL • Sub-50ms Response Latency</span>
+                <div style="display:flex; gap:8px;">
+                    <button type="button" class="action-btn" onclick="downloadErpRosterJson()"><i class="fa-solid fa-download"></i> Download Today's Roster (JSON)</button>
+                    <button type="button" class="action-btn" onclick="closeErpApiModal()">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
