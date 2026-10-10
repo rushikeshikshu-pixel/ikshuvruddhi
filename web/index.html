@@ -1,1079 +1,809 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ikshu Intelligence | Autonomous Satellite AI & Harvest Telemetry for Sugar Mills</title>
+    <title>Ikshu Intelligence | Autonomous Sugarcane Telemetry & Satellite AI for Sugar Mills</title>
     <meta name="description" content="Precision satellite remote sensing, AI pre-harvest sucrose (CCS/Brix/Pol) forecasting, MahaBhuNaksha 7/12 Gat reconciliation, and capacity-balanced harvest scheduling for sugar mills and cooperatives.">
     <meta name="keywords" content="sugar mill software, sugarcane satellite remote sensing, CCS recovery prediction, MahaBhuNaksha 7/12, harvest scheduling, IkshuVruddhi, SatCane AI">
 
-    <!-- Fonts -->
+    <!-- Fonts: Outfit (Aerospace Headings), Plus Jakarta Sans (Body), JetBrains Mono (Telemetry) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome 6.5.1 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Platform Stylesheet -->
-    <link rel="stylesheet" href="landing.css">
+    <!-- Aerospace / Defense-Grade Stylesheet -->
+    <link rel="stylesheet" href="spacex-engine.css">
 </head>
 <body>
 
-    <!-- 1. TOP NAVIGATION -->
-    <nav class="site-nav">
-        <div class="container nav-inner">
-            <a href="index.html" class="brand-wrapper">
-                <div class="brand-logo-icon">
-                    <i class="fa-solid fa-satellite"></i>
-                </div>
-                <div class="brand-meta">
-                    <h2>IKSHU <span>INTELLIGENCE</span></h2>
-                    <p>SatCane™ AI Telemetry For Sugar Mills</p>
-                </div>
-            </a>
+    <!-- 0. 60 FPS ORBITAL & RADAR BACKGROUND CANVAS -->
+    <canvas id="spaceCanvas"></canvas>
 
-            <ul class="nav-links">
-                <li><a href="#roi-calculator">Mill Recovery ROI</a></li>
-                <li><a href="#simulator">Sucrose Chemistry Sim</a></li>
-                <li><a href="#solutions">Factory Engines</a></li>
-                <li><a href="#cadastral-audit">7/12 Gat Fraud Buster</a></li>
-                <li><a href="#mill-portal">Enterprise Accounts</a></li>
-                <li><a href="#case-studies">Mill Case Studies</a></li>
-                <li><a href="#contact">Pilot Request</a></li>
-            </ul>
-
-            <div class="nav-right-actions">
-                <button id="langToggleBtn" class="lang-toggle-btn" title="Toggle Language">
-                    🌐 EN | मराठी
-                </button>
-                <div id="navMillAuthContainer" style="display:inline-flex; align-items:center;">
-                    <button id="btnOpenMillAuthModal" class="btn btn-secondary mill-portal-btn" style="padding: 7px 14px;">
-                        <i class="fa-solid fa-building-wheat"></i> Mill Portal Sign In
-                    </button>
-                </div>
-                <a href="console.html" class="btn btn-primary nav-console-btn">
-                    <i class="fa-solid fa-gauge-high"></i> Launch Mill Console
-                </a>
-                <button class="mobile-menu-toggle" aria-label="Toggle menu">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- 2. DOMAIN STATUS TICKER -->
-    <div class="domain-status-bar">
-        <div class="container domain-status-inner">
-            <div class="domain-info-left">
-                <span class="domain-dns-badge"><i class="fa-solid fa-signal"></i> PRODUCTION DOMAIN</span>
-                <span>Live Domain: <strong>ikshuintelligence.com</strong> &nbsp;|&nbsp; Status: <em style="color:#a7f3d0;">Connected to Vercel Global Edge</em></span>
-            </div>
-            <a href="#dns-help" id="btnDomainBannerGuide" onclick="document.getElementById('dnsModalOverlay').classList.add('active'); return false;" class="btn-dns-guide">
-                <i class="fa-solid fa-check-circle"></i> View Cloudflare DNS Configuration
-            </a>
-        </div>
-    </div>
-
-    <!-- 3. HERO SECTION -->
-    <section class="hero-section">
-        <div class="container hero-grid">
-            <div class="hero-content">
-                <div class="hero-pill">
-                    <span class="badge badge-satellite">
-                        <i class="fa-solid fa-satellite-dish"></i> Copernicus Sentinel-2 & SAR Telemetry • Operational In 22 Mill Circles
-                    </span>
-                </div>
-                <h1 class="hero-title" id="heroMainTitle">
-                    Precision <span class="gradient-text-green">Satellite AI</span> For Modern Sugar Mills
-                </h1>
-                <p class="hero-subtitle" id="heroMainSubtitle">
-                    Empowering Sugar Mills & Agricultural Cooperatives with AI-driven pre-harvest sucrose (CCS/Pol/Brix) forecasting, cadastral Gat reconciliation, and capacity-balanced harvest scheduling. Maximize sugar factory recovery, eliminate phantom ghost-plot fraud, and cut harvest-to-crush delays.
-                </p>
-                <div class="hero-cta-group">
-                    <a href="console.html" class="btn btn-primary" id="heroLaunchBtn">
-                        <i class="fa-solid fa-gauge-high"></i> Launch Sugar Mill Console
-                    </a>
-                    <a href="#roi-calculator" class="btn btn-secondary" id="heroRoiBtn">
-                        <i class="fa-solid fa-calculator"></i> Calculate Mill Recovery ROI
-                    </a>
-                    <a href="#contact" class="btn btn-glow-harvest">
-                        <i class="fa-solid fa-paper-plane"></i> Commission Mill Pilot
-                    </a>
-                </div>
-
-                <div class="hero-stats-strip">
-                    <div class="stat-item">
-                        <h3 class="gradient-text-cyan">27,633+</h3>
-                        <p>Cadastral Plots Audited Across 22 Mill Sectors</p>
-                    </div>
-                    <div class="stat-item">
-                        <h3 class="gradient-text-green">+0.58%</h3>
-                        <p>Average Factory Sugar Recovery (CCS) Gain</p>
-                    </div>
-                    <div class="stat-item">
-                        <h3 style="color: #f87171;">2,529</h3>
-                        <p>Ghost Plots & Acreage Discrepancies Flagged</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hero Right: Live Factory Telemetry Cockpit -->
-            <div class="hero-cockpit-card">
-                <div class="cockpit-top-bar">
-                    <div>
-                        <span class="cockpit-status-dot"></span>
-                        <strong style="font-size: 0.88rem; font-family: var(--font-mono); color: #ffffff;">SENTINEL-2 L2A LIVE INGESTION</strong>
-                    </div>
-                    <span class="badge badge-green" style="font-size: 0.7rem;">ORBIT PASS #483</span>
-                </div>
-
-                <div class="satellite-pass-radar">
-                    <div class="radar-header">
-                        <span>SPECTRAL BOA REFLECTANCE</span>
-                        <span>10m GROUND SAMPLING</span>
-                    </div>
-                    <div class="spectral-bands-grid">
-                        <div class="band-pill">
-                            <span class="band-name">B4 (RED)</span>
-                            <span class="band-value">0.038</span>
-                        </div>
-                        <div class="band-pill">
-                            <span class="band-name">B8 (NIR)</span>
-                            <span class="band-value" style="color: var(--cane-green);">0.428</span>
-                        </div>
-                        <div class="band-pill">
-                            <span class="band-name">B8A (EDGE)</span>
-                            <span class="band-value">0.312</span>
-                        </div>
-                        <div class="band-pill">
-                            <span class="band-name">B11 (SWIR)</span>
-                            <span class="band-value">0.164</span>
-                        </div>
-                        <div class="band-pill">
-                            <span class="band-name">NDVI</span>
-                            <span class="band-value" style="color: var(--cane-green);">0.782</span>
-                        </div>
-                        <div class="band-pill">
-                            <span class="band-name">NDRE</span>
-                            <span class="band-value" style="color: var(--sat-cyan);">0.395</span>
-                        </div>
-                        <div class="band-pill">
-                            <span class="band-name">LSWI</span>
-                            <span class="band-value">0.412</span>
-                        </div>
-                        <div class="band-pill">
-                            <span class="band-name">CWSI</span>
-                            <span class="band-value" style="color: var(--amber-harvest);">0.24</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cockpit-plot-preview">
-                    <div class="plot-preview-header">
-                        <strong style="color: #ffffff;">Target: Gat 142 (Babhaleshwar Circle)</strong>
-                        <span style="color: var(--sat-cyan); font-family: var(--font-mono);">Variety: Co 86032 Adsali</span>
-                    </div>
-
-                    <div class="plot-meter-row">
-                        <span style="color: var(--text-muted); width: 85px;">Ripening:</span>
-                        <div class="progress-track">
-                            <div class="progress-fill-green" style="width: 88%;"></div>
-                        </div>
-                        <strong style="font-family: var(--font-mono); color: var(--cane-green);">12.4% CCS</strong>
-                    </div>
-
-                    <div class="plot-meter-row">
-                        <span style="color: var(--text-muted); width: 85px;">Sucrose (Pol):</span>
-                        <div class="progress-track">
-                            <div class="progress-fill-cyan" style="width: 82%;"></div>
-                        </div>
-                        <strong style="font-family: var(--font-mono); color: var(--sat-cyan);">14.8% Pol</strong>
-                    </div>
-
-                    <div class="plot-meter-row">
-                        <span style="color: var(--text-muted); width: 85px;">Solids (Brix):</span>
-                        <div class="progress-track">
-                            <div class="progress-fill-cyan" style="width: 90%;"></div>
-                        </div>
-                        <strong style="font-family: var(--font-mono); color: #ffffff;">21.2° Brix</strong>
-                    </div>
-                </div>
-
-                <a href="console.html" class="btn btn-primary cockpit-action-btn">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Console Live Telemetry (320+ Plots)
-                </a>
-            </div>
-        </div>
-    </section>
-    <!-- 4. INTERACTIVE SIMULATOR: MILL ECONOMICS & RECOVERY ROI CALCULATOR -->
-    <section class="roi-section" id="roi-calculator">
-        <div class="container">
-            <div class="section-head">
-                <span class="badge badge-amber">Sugar Mill Economics</span>
-                <h2>Factory Crushing Economics & <span class="gradient-text-gold">Recovery ROI Calculator</span></h2>
-                <p>Tailored for Sugar Factory Managing Directors & Chief Chemists: Adjust your crushing capacity (TCD), crushing days, and sugar realization price to calculate seasonal recovery revenue gains.</p>
-            </div>
-
-            <div class="roi-card">
-                <!-- Inputs -->
-                <div class="roi-inputs-col">
-                    <h3>Mill Crushing Parameters</h3>
-                    <p>Enter your factory's operational crushing capacity and current recovery rate.</p>
-
-                    <div class="sim-group">
-                        <div class="sim-label-row">
-                            <span>Crushing Capacity (TCD):</span>
-                            <span id="roiTcdVal" class="sim-slider-val">5,000 TCD</span>
-                        </div>
-                        <input type="range" id="roiTcdSlider" class="custom-range" min="2500" max="15000" value="5000" step="500">
-                    </div>
-
-                    <div class="sim-group">
-                        <div class="sim-label-row">
-                            <span>Crushing Season Duration:</span>
-                            <span id="roiDaysVal" class="sim-slider-val">150 Days</span>
-                        </div>
-                        <input type="range" id="roiDaysSlider" class="custom-range" min="120" max="180" value="150" step="5">
-                    </div>
-
-                    <div class="sim-group">
-                        <div class="sim-label-row">
-                            <span>Baseline Factory Sugar Recovery %:</span>
-                            <span id="roiRecoveryVal" class="sim-slider-val">10.5%</span>
-                        </div>
-                        <input type="range" id="roiRecoverySlider" class="custom-range" min="9.0" max="12.5" value="10.5" step="0.1">
-                    </div>
-
-                    <div class="sim-group">
-                        <div class="sim-label-row">
-                            <span>Sugar Realization Price (₹ / Qtl):</span>
-                            <span id="roiPriceVal" class="sim-slider-val">₹3,600</span>
-                        </div>
-                        <input type="range" id="roiPriceSlider" class="custom-range" min="3200" max="4200" value="3600" step="50">
-                    </div>
-
-                    <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 14px; border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-muted);">
-                        <i class="fa-solid fa-calculator" style="color: var(--amber-harvest);"></i>
-                        Formula anchors: +0.58% CCS recovery gain from eliminating overripe standing cane degradation and preventing phantom freight payouts on ghost parcels.
-                    </div>
-                </div>
-
-                <!-- Financial Results -->
-                <div class="roi-results-col">
-                    <div class="roi-big-stat">
-                        <div class="roi-big-label"><i class="fa-solid fa-coins"></i> Total Seasonal Value Creation</div>
-                        <div class="roi-big-number gradient-text-gold" id="roiTotalImpact">₹16.50 Cr</div>
-                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Direct net value to Sugar Factory per 150-day crushing season</span>
-                    </div>
-
-                    <div class="roi-breakdown-grid">
-                        <div class="roi-mini-card">
-                            <span>Season Cane Crushed:</span>
-                            <strong id="roiTotalCane">7.50 Lakh MT</strong>
-                        </div>
-                        <div class="roi-mini-card">
-                            <span>Recovery Boost (+CCS):</span>
-                            <strong id="roiRecoveryBoost" style="color: var(--cane-green);">+0.58% (10.5% → 11.08%)</strong>
-                        </div>
-                        <div class="roi-mini-card">
-                            <span>Extra Sugar Bags Produced:</span>
-                            <strong id="roiSugarBags" style="color: var(--sat-cyan);">+43,500 Bags</strong>
-                        </div>
-                        <div class="roi-mini-card">
-                            <span>Additional Sugar Sale Revenue:</span>
-                            <strong id="roiSugarRev">₹15.66 Cr</strong>
-                        </div>
-                        <div class="roi-mini-card" style="grid-column: span 2;">
-                            <span>C&T Freight & Ghost Subsidy Savings:</span>
-                            <strong id="roiFreightSave" style="color: var(--cane-green);">₹1.65 Cr (Zero Phantom Advance Fraud)</strong>
-                        </div>
-                    </div>
-
-                    <a href="#contact" class="btn btn-primary" style="width: 100%;">
-                        <i class="fa-solid fa-handshake"></i> Commission Factory Deployment Audit
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. INTERACTIVE SIMULATOR: SUCROSE RIPENING & STANDING LOSS -->
-    <section class="simulator-section" id="simulator">
-        <div class="container">
-            <div class="section-head">
-                <span class="badge badge-satellite">Biological Ripening Model</span>
-                <h2>Interactive Sugarcane Ripening & <span class="gradient-text-cyan">Sucrose Loss Simulator</span></h2>
-                <p>Observe how cane variety, crop age, and days standing past peak maturity drive laboratory CCS, juice purity, and crushing financial loss.</p>
-            </div>
-
-            <div class="sim-container-card">
-                <!-- Controls Column -->
-                <div class="sim-controls-panel">
-                    <h3>Variety & Telemetry Controls</h3>
-                    <p class="sim-desc">Select cane variety and slide crop age to calculate real-time sucrose accumulation and standing decay penalties.</p>
-
-                    <div class="sim-group">
-                        <label class="sim-label-row">
-                            <span>Target Variety:</span>
-                        </label>
-                        <div class="variety-selector-grid">
-                            <button class="variety-btn active" data-variety="Co 86032">Co 86032 (Nira)</button>
-                            <button class="variety-btn" data-variety="Co 0265">Co 0265 (Phule)</button>
-                            <button class="variety-btn" data-variety="MS 10001">MS 10001 (Early)</button>
-                            <button class="variety-btn" data-variety="Co 92005">Co 92005</button>
-                            <button class="variety-btn" data-variety="CoM 0265">CoM 0265</button>
-                            <button class="variety-btn" data-variety="Phule 10001">Phule 10001</button>
-                        </div>
-                    </div>
-
-                    <div class="sim-group">
-                        <div class="sim-label-row">
-                            <span>Crop Age:</span>
-                            <span id="simCropAgeVal" class="sim-slider-val">400 Days (13.2 Mo)</span>
-                        </div>
-                        <input type="range" id="simCropAgeSlider" class="custom-range" min="260" max="500" value="400" step="5">
-                    </div>
-
-                    <div class="sim-group">
-                        <div class="sim-label-row">
-                            <span>Standing Days Past Peak:</span>
-                            <span id="simStandingDaysVal" class="sim-slider-val" style="color: var(--amber-harvest);">0 Days Standing</span>
-                        </div>
-                        <input type="range" id="simStandingDaysSlider" class="custom-range" min="0" max="45" value="0" step="1">
-                    </div>
-
-                    <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 14px; border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-muted);">
-                        <i class="fa-solid fa-info-circle" style="color: var(--sat-cyan);"></i> 
-                        Model calibrated on genuine mill lab weighbridge samples. Peak Commercial Cane Sugar (CCS) represents maximum theoretical extractable sucrose.
-                    </div>
-                </div>
-
-                <!-- Visualization Column -->
-                <div class="sim-visual-display">
-                    <div class="sim-metrics-grid">
-                        <div class="sim-metric-box">
-                            <span class="sim-metric-label">Estimated CCS</span>
-                            <div class="sim-metric-val" id="simMetricCcs" style="color: var(--cane-green);">12.80%</div>
-                            <span class="sim-metric-sub">Commercial Sugar</span>
-                        </div>
-                        <div class="sim-metric-box">
-                            <span class="sim-metric-label">Juice Brix</span>
-                            <div class="sim-metric-val" id="simMetricBrix" style="color: var(--sat-cyan);">21.6°</div>
-                            <span class="sim-metric-sub">Total Dissolved Solids</span>
-                        </div>
-                        <div class="sim-metric-box">
-                            <span class="sim-metric-label">Sucrose Pol</span>
-                            <div class="sim-metric-val" id="simMetricPol" style="color: #ffffff;">15.40%</div>
-                            <span class="sim-metric-sub">Optical Rotation</span>
-                        </div>
-                        <div class="sim-metric-box">
-                            <span class="sim-metric-label">Daily Standing Loss</span>
-                            <div class="sim-metric-val" id="simLossKg" style="color: var(--amber-harvest);">0.0 kg/MT</div>
-                            <span class="sim-metric-sub">Sugar Lost / Tonne / Day</span>
-                        </div>
-                        <div class="sim-metric-box" style="grid-column: span 2;">
-                            <span class="sim-metric-label">Standing Financial Penalty (5,000 MT Round)</span>
-                            <div class="sim-metric-val" id="simLossMoney" style="color: #f87171;">₹0.00 L</div>
-                            <span class="sim-metric-sub">Net factory loss at ₹3,600/Qtl</span>
-                        </div>
-                    </div>
-
-                    <!-- SVG Chart -->
-                    <div class="sim-graph-canvas-wrap" id="simGraphCanvasWrap"></div>
-
-                    <!-- Status Alert Box -->
-                    <div id="simWindowAlert" class="sim-window-alert sim-window-optimal">
-                        <i class="fa-solid fa-circle-check"></i> 
-                        <strong>OPTIMAL PEAK WINDOW:</strong> Peak commercial sucrose stage (CCS 12.80%). Cut within current 10-day capacity horizon.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- 6. CORE SOLUTIONS & PLATFORM ENGINES -->
-    <section class="solutions-section" id="solutions">
-        <div class="container">
-            <div class="section-head">
-                <span class="badge badge-satellite">Platform Architecture</span>
-                <h2>Autonomous Engines Built For <span class="gradient-text-green">Sugar Factory Precision</span></h2>
-                <p>Four interconnected modules that turn satellite radar and optical imagery into actionable daily crushing schedules.</p>
-            </div>
-
-            <div class="solutions-grid">
-                <!-- Card 1 -->
-                <div class="solution-card">
-                    <div class="solution-icon-wrap">
+    <!-- 1. TOP NAVIGATION (AEROSPACE FLOATING HUD) -->
+    <header>
+        <nav class="spacex-navbar">
+            <div class="container nav-layout">
+                <a href="index.html" class="brand-anchor">
+                    <div class="brand-satellite-icon">
                         <i class="fa-solid fa-satellite"></i>
                     </div>
-                    <h3>SatCane™ Multi-Spectral Telemetry</h3>
-                    <p>Copernicus Sentinel-2 BOA optical (10m/20m) and Sentinel-1 SAR C-band radar ingestion with automated SCL cloud masking.</p>
-                    <ul class="solution-features-list">
-                        <li><i class="fa-solid fa-check"></i> 12-Band reflectance profiling (B2 through B12)</li>
-                        <li><i class="fa-solid fa-check"></i> NDVI vigor, NDRE chlorophyll & LSWI water index</li>
-                        <li><i class="fa-solid fa-check"></i> 5-Day revisit frequency across whole command area</li>
-                    </ul>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="solution-card green">
-                    <div class="solution-icon-wrap">
-                        <i class="fa-solid fa-microscope"></i>
+                    <div class="brand-text-block">
+                        <h1>IKSHU <span>INTELLIGENCE</span></h1>
+                        <p>SatCane&trade; AI Telemetry For Sugar Mills</p>
                     </div>
-                    <h3>Pre-Harvest ML Sucrose Forecasting</h3>
-                    <p>Machine learning models calibrated on genuine factory weighbridge lab samples with GroupKFold cross-validation.</p>
-                    <ul class="solution-features-list">
-                        <li><i class="fa-solid fa-check"></i> Commercial Cane Sugar (CCS), Brix & Pol prediction</li>
-                        <li><i class="fa-solid fa-check"></i> Forecast peak sucrose maturity before cutting dockets</li>
-                        <li><i class="fa-solid fa-check"></i> Scientifically audited confidence scoring</li>
-                    </ul>
-                </div>
+                </a>
 
-                <!-- Card 3 -->
-                <div class="solution-card amber">
-                    <div class="solution-icon-wrap">
-                        <i class="fa-solid fa-map-location-dot"></i>
-                    </div>
-                    <h3>MahaBhuNaksha 7/12 Cadastral Audit</h3>
-                    <p>Direct spatial reconciliation between walked GPS farmer boundaries and official cadastral Gat land records.</p>
-                    <ul class="solution-features-list">
-                        <li><i class="fa-solid fa-check"></i> Flags area inflation (>12% variance threshold)</li>
-                        <li><i class="fa-solid fa-check"></i> Detects Ghost Plots (zero canopy on registered cane)</li>
-                        <li><i class="fa-solid fa-check"></i> Offline SQLite spatial store with 100% circuit breaker</li>
-                    </ul>
-                </div>
+                <ul class="nav-links-list">
+                    <li><a href="#roi-calculator">Crushing ROI</a></li>
+                    <li><a href="#simulator">Ripening Lab</a></li>
+                    <li><a href="#cadastral-audit">7/12 Fraud Buster</a></li>
+                    <li><a href="#solutions">Factory Engines</a></li>
+                    <li><a href="#case-studies">Mill Case Studies</a></li>
+                    <li><a href="#contact">Pilot Request</a></li>
+                </ul>
 
-                <!-- Card 4 -->
-                <div class="solution-card">
-                    <div class="solution-icon-wrap">
-                        <i class="fa-solid fa-timeline"></i>
-                    </div>
-                    <h3>Dynamic Factory Capacity Dispatch</h3>
-                    <p>Automated harvest sequencing packing thousands of field plots against daily mill crushing capacity (MT/day).</p>
-                    <ul class="solution-features-list">
-                        <li><i class="fa-solid fa-check"></i> Prioritizes plots losing the most sucrose to standing</li>
-                        <li><i class="fa-solid fa-check"></i> Circle & sector level harvester team allocation</li>
-                        <li><i class="fa-solid fa-check"></i> Daily tonnage-weighted CCS dispatch schedule</li>
-                    </ul>
-                </div>
-
-                <!-- Card 5 -->
-                <div class="solution-card green">
-                    <div class="solution-icon-wrap">
-                        <i class="fa-solid fa-clipboard-check"></i>
-                    </div>
-                    <h3>Field Officer Mobile Worklists</h3>
-                    <p>Actionable digital harvest dockets with QR codes, GPS coordinates, and clear verification tasks for circle officers.</p>
-                    <ul class="solution-features-list">
-                        <li><i class="fa-solid fa-check"></i> Circle-wise Excel/CSV workpack exports</li>
-                        <li><i class="fa-solid fa-check"></i> Flags boundary collisions (e.g. duplicate polygons)</li>
-                        <li><i class="fa-solid fa-check"></i> Eliminates manual paper slip favoritism</li>
-                    </ul>
-                </div>
-
-                <!-- Card 6 -->
-                <div class="solution-card amber">
-                    <div class="solution-icon-wrap">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
-                    <h3>Auditable Payment Integrity</h3>
-                    <p>Transparent source provenance tags across every single number in the platform, protecting mills from audit penalties.</p>
-                    <ul class="solution-features-list">
-                        <li><i class="fa-solid fa-check"></i> [M] Measured, [D] Derived, [X] Modeled, [?] Unverified</li>
-                        <li><i class="fa-solid fa-check"></i> Blocks payment slips below 65% record confidence</li>
-                        <li><i class="fa-solid fa-check"></i> Automated farmer SMS/WhatsApp telemetry updates</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 7. INTERACTIVE CADASTRAL GAT & GHOST PLOT AUDIT SHOWCASE -->
-    <section class="audit-section" id="cadastral-audit">
-        <div class="container">
-            <div class="section-head">
-                <span class="badge badge-danger">Fraud Prevention Engine</span>
-                <h2>Cadastral Gat & <span style="color: #f87171;">Ghost-Plot Fraud Buster</span></h2>
-                <p>Compare how the Ikshu Intelligence engine automatically validates genuine high-yielding cane vs unmasking fraudulent ghost plots claiming cutting advances.</p>
-            </div>
-
-            <div class="audit-card">
-                <div class="audit-left">
-                    <h3>Simulate Cadastral Parcel Inspection</h3>
-                    <p>Toggle between a verified cane parcel and a flagged ghost plot to inspect the live remote sensing telemetry and docket decision.</p>
-
-                    <div class="audit-interactive-switch">
-                        <button id="auditTabLegit" class="audit-tab-btn active legit">
-                            <i class="fa-solid fa-check-circle"></i> Genuine Cane (Gat 142)
-                        </button>
-                        <button id="auditTabGhost" class="audit-tab-btn">
-                            <i class="fa-solid fa-triangle-exclamation"></i> Ghost Plot Fraud (Gat 89)
+                <div class="nav-cta-cluster">
+                    <button id="langToggleBtn" class="btn-lang-toggle" title="Toggle Language">
+                        <i class="fa-solid fa-globe"></i> EN | मराठी
+                    </button>
+                    <div id="navMillAuthContainer" style="display:inline-flex; align-items:center;">
+                        <button id="btnOpenMillAuthModal" class="btn-telemetry-portal">
+                            <i class="fa-solid fa-building-wheat"></i> Mill Portal VIP
                         </button>
                     </div>
-
-                    <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
-                        <strong>Why this matters to Sugar Mills:</strong><br>
-                        Mills lose ₹2–5 Crores each season paying harvesting and transport (C&T) contractor advances for non-existent cane parcels registered under phantom 7/12 records. IkshuVruddhi blocks payment dockets before advances are disbursed.
-                    </div>
-                </div>
-
-                <!-- Display Box -->
-                <div class="audit-display-box">
-                    <div class="plot-audit-header">
-                        <span id="auditPlotBadge">
-                            <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> VERIFIED PARCEL</span>
-                        </span>
-                        <strong id="auditPlotTitle" style="color: #ffffff; font-size: 0.9rem;">Gat 142 - Babhaleshwar (Farmer: Balasaheb Vikhe)</strong>
-                    </div>
-
-                    <div class="audit-map-mock" id="auditMapMock" style="background: radial-gradient(circle, rgba(0, 230, 118, 0.3) 0%, rgba(9, 19, 38, 0.95) 75%);">
-                        <div style="text-align:center;">
-                            <div style="color:#00e676; font-size:1.8rem; margin-bottom:4px;"><i class="fa-solid fa-satellite-dish"></i></div>
-                            <div style="font-size:0.85rem; font-family:var(--font-mono); color:#ffffff;">Sentinel-2 Canopy Density: <strong>94.2%</strong></div>
-                            <div style="font-size:0.75rem; color:#94a3b8;">Walked GPS Perimeter matches 7/12 BhuNaksha Land Record</div>
-                        </div>
-                    </div>
-
-                    <table class="audit-details-table">
-                        <tr>
-                            <td>Vegetation Index (NDVI):</td>
-                            <td id="auditValNdvi"><span style="color:#00e676; font-weight:700;">0.78 (High Vigor) [M]</span></td>
-                        </tr>
-                        <tr>
-                            <td>Acreage Reconciliation:</td>
-                            <td id="auditValArea">Registered: 1.80 Ha | Walked: 1.82 Ha <span style="color:#00e676;">(+1.1% Match) [D]</span></td>
-                        </tr>
-                        <tr>
-                            <td>Sucrose Recovery (CCS):</td>
-                            <td id="auditValCcs"><span style="color:#00f2fe; font-weight:700;">12.4% CCS (Peak Ripening) [X]</span></td>
-                        </tr>
-                        <tr>
-                            <td>Audit Status:</td>
-                            <td id="auditValStatus"><span style="color:#00e676; font-weight:800;">CONFIRMED AUTHENTIC CANE</span></td>
-                        </tr>
-                        <tr>
-                            <td>Harvest Docket:</td>
-                            <td id="auditValDocket"><span class="badge badge-green">APPROVED FOR CRUSH DISPATCH</span></td>
-                        </tr>
-                    </table>
+                    <a href="console.html" class="btn-launch-terminal">
+                        <i class="fa-solid fa-gauge-high"></i> Launch Mill Console
+                    </a>
+                    <button class="mobile-menu-btn" aria-label="Toggle Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
                 </div>
             </div>
-        </div>
-    </section>
-    <!-- 8. SCIENTIFIC AUDIT TRAIL (SOURCE TAGS) -->
-    <section class="container" style="padding: 70px 24px;" id="audit-tags">
-        <div class="section-head" style="margin-bottom: 30px;">
-            <span class="badge badge-satellite">Audit Provenance</span>
-            <h2>Scientific Transparency & <span class="gradient-text-cyan">Source Provenance Tags</span></h2>
-            <p>Every single number shown on the Ikshu Intelligence console carries an auditable origin tag.</p>
-        </div>
+        </nav>
+    </header>
 
-        <div class="audit-tags-strip">
-            <div class="tag-card">
-                <div class="tag-card-top">
-                    <span class="source-badge m">M</span>
-                    <h4>Measured</h4>
-                </div>
-                <p>Read directly from the mill weighbridge, cane lab register, or field GPS walking.</p>
+    <!-- 2. ORBITAL STATUS TICKER -->
+    <div class="telemetry-ticker-bar">
+        <div class="container ticker-inner">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span class="ticker-badge"><i class="fa-solid fa-satellite-dish"></i> ORBITAL TELEMETRY</span>
+                <span>Copernicus Sentinel-2B &bull; Overpass: <strong>19.52&deg; N, 75.02&deg; E</strong></span>
             </div>
-            <div class="tag-card">
-                <div class="tag-card-top">
-                    <span class="source-badge d">D</span>
-                    <h4>Derived</h4>
-                </div>
-                <p>Exact arithmetic or geodesic geometry on measured inputs — carries zero model error.</p>
+            <div class="ticker-telemetry-text">
+                <span>Cloud Cover: <strong>2.1%</strong> (SAR Penetrated)</span>
+                <span>Active Mill Calibration: <strong>320 Plots Loaded</strong></span>
+                <span>Sugar Recovery Horizon: <em>+0.35% to +0.85%</em></span>
             </div>
-            <div class="tag-card">
-                <div class="tag-card-top">
-                    <span class="source-badge x">X</span>
-                    <h4>Modeled</h4>
-                </div>
-                <p>Multi-spectral variety maturity curve prediction with explicitly stated confidence bounds.</p>
-            </div>
-            <div class="tag-card">
-                <div class="tag-card-top">
-                    <span class="source-badge q">?</span>
-                    <h4>Unverified</h4>
-                </div>
-                <p>Placeholder planning estimate. Automatically flagged as NOT VALID FOR PAYMENT.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 9. CASE STUDIES -->
-    <section class="case-studies-section" id="case-studies">
-        <div class="container">
-            <div class="section-head">
-                <span class="badge badge-green">Enterprise Track Record</span>
-                <h2>Proven Field Deployments Across <span class="gradient-text-green">Sugar Mills</span></h2>
-                <p>Operational audits and field results from live sugar mill crushing campaigns.</p>
-            </div>
-
-            <div class="case-grid">
-                <!-- Gangamai SSK -->
-                <div class="case-card">
-                    <div class="case-header">
-                        <div>
-                            <h3>Gangamai Sahakari Sakhar Karkhana</h3>
-                            <span class="case-location"><i class="fa-solid fa-location-dot"></i> Shevgaon / Ahilyanagar, Maharashtra</span>
-                        </div>
-                        <span class="badge badge-green">FULL RECONCILIATION</span>
-                    </div>
-                    <p class="case-desc">
-                        Audited the mill's active Adsali Season register across 22 operational circles. Reconciled walking GPS polygons with BhuNaksha Gat cadastral records, eliminating 2,529 ghost plots and optimizing harvest queues for maximum sucrose recovery.
-                    </p>
-                    <div class="case-metrics-bar">
-                        <div class="case-metric-cell">
-                            <strong>27,633</strong>
-                            <span>Plots Audited</span>
-                        </div>
-                        <div class="case-metric-cell">
-                            <strong style="color: var(--cane-green);">+0.68%</strong>
-                            <span>CCS Recovery Gain</span>
-                        </div>
-                        <div class="case-metric-cell">
-                            <strong style="color: #f87171;">2,529</strong>
-                            <span>Ghost Plots Blocked</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Samarth SSK -->
-                <div class="case-card">
-                    <div class="case-header">
-                        <div>
-                            <h3>Karmayogi Ankushrao Tope Samarth SSK</h3>
-                            <span class="case-location"><i class="fa-solid fa-location-dot"></i> Ankushnagar / Jalna, Maharashtra</span>
-                        </div>
-                        <span class="badge badge-satellite">PILOT DEPLOYMENT</span>
-                    </div>
-                    <p class="case-desc">
-                        Deployed cadastral Gat digitization and satellite phenology models for Adsali and Ratoon sugarcane. Integrated factory laboratory weighbridge calibration for real-time CCS forecasting across circle agricultural officers.
-                    </p>
-                    <div class="case-metrics-bar">
-                        <div class="case-metric-cell">
-                            <strong>4,719</strong>
-                            <span>Plots Screened</span>
-                        </div>
-                        <div class="case-metric-cell">
-                            <strong style="color: var(--sat-cyan);">96.8%</strong>
-                            <span>Prediction Accuracy</span>
-                        </div>
-                        <div class="case-metric-cell">
-                            <strong style="color: var(--amber-harvest);">24/7</strong>
-                            <span>Dispatch Packing</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 10. PILOT REQUEST & CONTACT -->
-    <section class="contact-section" id="contact">
-        <div class="container">
-            <div class="contact-card-grid">
-                <div class="contact-info-col">
-                    <span class="badge badge-satellite">Sugar Mill Onboarding</span>
-                    <h2>Deploy Ikshu Intelligence At Your <span class="gradient-text-green">Sugar Factory</span></h2>
-                    <p>Request an operational audit for your mill command area. We ingest your current season register and run a zero-commitment ghost-plot and recovery audit within 72 hours.</p>
-
-                    <div class="contact-touchpoints">
-                        <div class="touchpoint-item">
-                            <div class="touchpoint-icon"><i class="fa-solid fa-envelope"></i></div>
-                            <div>
-                                <strong style="display:block; color:#ffffff;">Email Operations Desk</strong>
-                                <a href="mailto:contact@ikshuintelligence.com" style="color: var(--sat-cyan); text-decoration:none;">contact@ikshuintelligence.com</a>
-                            </div>
-                        </div>
-
-                        <div class="touchpoint-item">
-                            <div class="touchpoint-icon"><i class="fa-solid fa-phone"></i></div>
-                            <div>
-                                <strong style="display:block; color:#ffffff;">Field Engineering Desk</strong>
-                                <span>Pune / Ahilyanagar Sugar Belt, Maharashtra, India</span>
-                            </div>
-                        </div>
-
-                        <div class="touchpoint-item">
-                            <div class="touchpoint-icon"><i class="fa-solid fa-globe"></i></div>
-                            <div>
-                                <strong style="display:block; color:#ffffff;">Official Domain</strong>
-                                <span style="font-family: var(--font-mono); color: #cbd5e1;">ikshuintelligence.com</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Form -->
-                <div>
-                    <form id="pilotContactForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="formMillName">Sugar Mill / Organization Name *</label>
-                                <input type="text" id="formMillName" class="form-control" placeholder="e.g. Shree Sahakari Sakhar Karkhana" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="formContactName">Representative Name & Title *</label>
-                                <input type="text" id="formContactName" class="form-control" placeholder="e.g. Managing Director / Chief Chemist" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="formEmail">Official Email *</label>
-                                <input type="email" id="formEmail" class="form-control" placeholder="md@sugarmill.com" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="formPhone">Phone / WhatsApp Number *</label>
-                                <input type="tel" id="formPhone" class="form-control" placeholder="+91 98765 43210" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="formTcd">Daily Crushing Capacity (TCD) *</label>
-                            <input type="text" id="formTcd" class="form-control" placeholder="e.g. 5,000 TCD (or registered acreage)" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="formNotes">Specific Mill Challenges / Objectives</label>
-                            <textarea id="formNotes" class="form-control" placeholder="Describe season crushing timeline, ghost plot concerns, or sucrose recovery targets..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">
-                            <i class="fa-solid fa-paper-plane"></i> Submit Pilot Request & Open Email
-                        </button>
-
-                        <div id="contactSuccessMsg" style="display:none; margin-top: 14px; padding: 12px; background: rgba(0, 230, 118, 0.15); border: 1px solid var(--cane-green); border-radius: 8px; color: #a7f3d0; font-size: 0.88rem;"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 11. DNS CONFIGURATION MODAL -->
-    <div class="modal-overlay" id="dnsModalOverlay">
-        <div class="dns-modal-card">
-            <button class="modal-close-btn" id="btnCloseDnsModal" aria-label="Close modal">&times;</button>
-            
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(0, 242, 254, 0.15); display: flex; align-items: center; justify-content: center; color: var(--sat-cyan); font-size: 1.2rem;">
-                    <i class="fa-solid fa-network-wired"></i>
-                </div>
-                <div>
-                    <h3 style="font-size: 1.3rem;">Domain Status: ikshuintelligence.com</h3>
-                    <p style="font-size: 0.82rem; color: #a7f3d0;">✓ Connected to Vercel Global Edge (76.76.21.21)</p>
-                </div>
-            </div>
-
-            <p style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 16px;">
-                Your domain <strong>ikshuintelligence.com</strong> is successfully routed to Vercel via Cloudflare DNS. 
-            </p>
-
-            <table class="dns-records-table">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Host</th>
-                        <th>Target</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>CNAME</strong></td>
-                        <td><code>@</code></td>
-                        <td><code>11db519c7c436962.vercel-dns-017.com</code></td>
-                        <td><span style="color:var(--cane-green); font-weight:700;">ACTIVE</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>CNAME</strong></td>
-                        <td><code>www</code></td>
-                        <td><code>cname.vercel-dns.com</code></td>
-                        <td><span style="color:var(--cane-green); font-weight:700;">ACTIVE</span></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
-    <!-- 12. FOOTER -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-top-grid">
-                <div class="footer-brand">
-                    <div class="brand-wrapper" style="margin-bottom: 12px;">
-                        <div class="brand-logo-icon">
-                            <i class="fa-solid fa-satellite"></i>
+    <!-- 3. HERO SECTION (AEROSPACE MISSION CONTROL) -->
+    <main>
+        <section class="hero-viewport">
+            <div class="container hero-grid-split">
+                
+                <!-- Left: Commanding Typography & KPIs -->
+                <div class="hero-copy-column">
+                    <div class="hero-telemetry-badge">
+                        <span class="telemetry-beacon-dot"></span>
+                        <span>SATELLITE MULTI-SPECTRAL REMOTE SENSING &bull; 10M GSD</span>
+                    </div>
+
+                    <h1 class="hero-display-headline" id="heroMainTitle">
+                        Autonomous Sugarcane Intelligence
+                        <span class="gradient-cyan">From Orbit To</span>
+                        <span class="gradient-emerald">Mill Crushing</span>
+                    </h1>
+
+                    <p class="hero-narrative-copy" id="heroMainSubtitle">
+                        Empowering Sugar Mills & Agricultural Cooperatives with AI-driven pre-harvest sucrose forecasting, cadastral Gat reconciliation, and capacity-balanced harvest scheduling. Maximize sugar recovery (CCS), eliminate ghost-plot fraud, and cut harvest-to-crush delays.
+                    </p>
+
+                    <div class="hero-cta-ribbon">
+                        <a href="console.html" class="btn-hero-primary" id="heroLaunchBtn">
+                            <i class="fa-solid fa-gauge-high"></i> Launch Mill Console (320 Plots)
+                        </a>
+                        <a href="#roi-calculator" class="btn-hero-secondary" id="heroRoiBtn">
+                            <i class="fa-solid fa-calculator"></i> Calculate Mill Recovery ROI
+                        </a>
+                    </div>
+
+                    <div class="hero-stats-band">
+                        <div class="hero-stat-block">
+                            <span class="stat-digit-display green">+0.42%</span>
+                            <span class="stat-caption-meta" id="statCcsLabel">AVERAGE CCS RECOVERY BOOST</span>
                         </div>
-                        <div class="brand-meta">
-                            <h2>IKSHU <span>INTELLIGENCE</span></h2>
-                            <p>SatCane™ AI Telemetry For Sugar Mills</p>
+                        <div class="hero-stat-block">
+                            <span class="stat-digit-display cyan">&#8377;7.65 Cr</span>
+                            <span class="stat-caption-meta" id="statImpactLabel">ANNUAL BOTTOM-LINE PROFIT</span>
+                        </div>
+                        <div class="hero-stat-block">
+                            <span class="stat-digit-display coral">100%</span>
+                            <span class="stat-caption-meta" id="statFraudLabel">GHOST GAT THEFT ELIMINATION</span>
                         </div>
                     </div>
-                    <p>
-                        Autonomous sugarcane intelligence platform utilizing Copernicus Sentinel-2, Sentinel-1 SAR radar, and machine learning to optimize harvest scheduling and protect sugar mills from fraudulent cadastral leakages.
+                </div>
+
+                <!-- Right: Interactive Mission Control Telemetry HUD -->
+                <div class="hero-hud-column">
+                    <div class="mission-hud-card hud-bracket">
+                        
+                        <!-- Top HUD Bar -->
+                        <div class="hud-top-strip">
+                            <div class="hud-title-tag">
+                                <i class="fa-solid fa-crosshairs"></i>
+                                <span>DOWNLINK: SENTINEL-2 MSI (LEVEL-2A)</span>
+                            </div>
+                            <div class="hud-tab-selector">
+                                <button class="hud-tab-btn active" data-mode="rgb">TRUE COLOR</button>
+                                <button class="hud-tab-btn" data-mode="ndvi">NDVI VIGOR</button>
+                                <button class="hud-tab-btn" data-mode="ndwi">NDWI WATER</button>
+                                <button class="hud-tab-btn" data-mode="ccs">SUCROSE CCS</button>
+                            </div>
+                        </div>
+
+                        <!-- Main HUD Radar Viewport -->
+                        <div class="hud-main-body">
+                            <div class="radar-scanner-box" id="heroRadarBox">
+                                <div class="radar-cadastral-grid"></div>
+                                <div class="radar-sweep-beam"></div>
+                                
+                                <!-- Sugarcane Farm Cluster Markers -->
+                                <div class="radar-plot-node node-1" title="Gat 142 Babhaleshwar (CCS 12.8%)"></div>
+                                <div class="radar-plot-node node-2" title="Gat 204 Samarth Belt (CCS 12.1%)"></div>
+                                <div class="radar-plot-node node-3" title="Gat 51 Kolhapur Sector (CCS 13.4%)"></div>
+                                <div class="radar-plot-node node-ghost" title="Gat 89 Fallow Plot (BLOCKED)"></div>
+
+                                <div class="radar-overlay-badge" id="heroRadarBadge">
+                                    SENTINEL-2 MSI: NATURAL CANOPY REFLECTANCE
+                                </div>
+                            </div>
+
+                            <!-- 4 Spectral Band Telemetry Cells -->
+                            <div class="spectral-bands-strip">
+                                <div class="band-metric-cell">
+                                    <span class="band-name-label">BAND 2 (BLUE)</span>
+                                    <span class="band-value-val" id="hudBand1">0.490 &micro;m</span>
+                                </div>
+                                <div class="band-metric-cell">
+                                    <span class="band-name-label">BAND 3 (GREEN)</span>
+                                    <span class="band-value-val" id="hudBand2">0.560 &micro;m</span>
+                                </div>
+                                <div class="band-metric-cell">
+                                    <span class="band-name-label">BAND 4 (RED)</span>
+                                    <span class="band-value-val" id="hudBand3">0.665 &micro;m</span>
+                                </div>
+                                <div class="band-metric-cell">
+                                    <span class="band-name-label">RESOLUTION</span>
+                                    <span class="band-value-val" id="hudBand4">10m GSD</span>
+                                </div>
+                            </div>
+
+                            <!-- Telemetry Bottom Row -->
+                            <div class="hud-bottom-telemetry-row">
+                                <div>
+                                    <i class="fa-solid fa-satellite"></i>
+                                    <span>Next Pass: <strong>04h 18m</strong> &bull; Coverage: <strong>Ahilyanagar &amp; Jalna</strong></span>
+                                </div>
+                                <a href="console.html">
+                                    <span>Full Telemetry Console</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. SUCROSE RIPENING & LOSS SIMULATOR -->
+        <section class="simulator-section" id="simulator">
+            <div class="container">
+                <div class="section-head-center">
+                    <div class="section-eyebrow-badge">
+                        <i class="fa-solid fa-flask-vial"></i> LAB POLARIMETER &amp; SATELLITE PHENOLOGY
+                    </div>
+                    <h2 class="section-headline">Sugarcane Maturation &amp; Sucrose Inversion Simulator</h2>
+                    <p class="section-subcopy">
+                        Simulate biological sucrose synthesis and post-maturity invert sugar degradation. Avoid crushing immature cane or leaving ripe cane standing past peak commercial sucrose.
                     </p>
                 </div>
 
-                <div class="footer-col">
-                    <h4>Platform</h4>
-                    <ul>
-                        <li><a href="console.html">Operational Mill Console</a></li>
-                        <li><a href="#simulator">Ripening Simulator</a></li>
-                        <li><a href="#roi-calculator">Mill Recovery ROI</a></li>
-                        <li><a href="#cadastral-audit">Cadastral Gat Audit</a></li>
-                        <li><a href="#audit-tags">Scientific Source Tags</a></li>
-                    </ul>
+                <div class="sim-control-wrapper hud-bracket">
+                    <!-- Variety Selection -->
+                    <div class="variety-selector-row">
+                        <button class="variety-btn active" data-variety="Co 86032">Co 86032 (Nira)</button>
+                        <button class="variety-btn" data-variety="Co 0265">Co 0265 (Phule 0265)</button>
+                        <button class="variety-btn" data-variety="Co 0118">Co 0118 (High Sugar Early)</button>
+                        <button class="variety-btn" data-variety="MS 10001">MS 10001 (Early Heavy)</button>
+                    </div>
+
+                    <!-- Sliders Grid -->
+                    <div class="sim-sliders-grid">
+                        <div class="sim-slider-block">
+                            <div class="sim-slider-head">
+                                <span><i class="fa-solid fa-calendar-days"></i> Crop Age (Planting to Cut)</span>
+                                <span class="sim-slider-val" id="simCropAgeVal">400 Days (13.2 Mo)</span>
+                            </div>
+                            <input type="range" class="sim-range-input" id="simCropAgeSlider" min="260" max="500" value="400" step="5">
+                        </div>
+
+                        <div class="sim-slider-block">
+                            <div class="sim-slider-head">
+                                <span><i class="fa-solid fa-hourglass-half"></i> Post-Maturity Standing Delay</span>
+                                <span class="sim-slider-val" id="simStandingDaysVal">0 Days Standing Delay</span>
+                            </div>
+                            <input type="range" class="sim-range-input" id="simStandingDaysSlider" min="0" max="30" value="0" step="1">
+                        </div>
+                    </div>
+
+                    <!-- SVG Ripening Curve Chart Container -->
+                    <div class="sim-svg-graph-container" id="simGraphCanvasWrap">
+                        <!-- Rendered dynamically by landing.js -->
+                    </div>
+
+                    <!-- 4 Live Chemistry Metrics -->
+                    <div class="sim-metrics-grid">
+                        <div class="sim-metric-card">
+                            <div class="sim-metric-title">Commercial Cane Sugar (CCS)</div>
+                            <div class="sim-metric-value highlight-cyan" id="simMetricCcs">12.80%</div>
+                        </div>
+                        <div class="sim-metric-card">
+                            <div class="sim-metric-title">Hand Refractometer Brix</div>
+                            <div class="sim-metric-value highlight-green" id="simMetricBrix">21.6&deg;Bx</div>
+                        </div>
+                        <div class="sim-metric-card">
+                            <div class="sim-metric-title">Polarimeter Sucrose (Pol)</div>
+                            <div class="sim-metric-value highlight-amber" id="simMetricPol">17.15%</div>
+                        </div>
+                        <div class="sim-metric-card">
+                            <div class="sim-metric-title">Daily Financial Loss</div>
+                            <div class="sim-metric-value highlight-red" id="simLossMoney">&#8377;0.00 Lakhs</div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Diagnostic Status Alert -->
+                    <div class="sim-window-alert sim-window-optimal" id="simWindowAlert">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <div><strong>OPTIMAL HARVEST RECOVERY WINDOW:</strong> Peak commercial sucrose state (CCS 12.80%). Schedule into current 7-day crushing batch.</div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. CADASTRAL 7/12 GAT FRAUD BUSTER -->
+        <section class="audit-section" id="cadastral-audit">
+            <div class="container">
+                <div class="audit-grid-layout">
+                    
+                    <!-- Left: Interactive Forensic Comparator -->
+                    <div class="audit-interactive-card hud-bracket">
+                        <div class="audit-tabs-row">
+                            <button class="audit-tab-btn active legit" id="auditTabLegit">
+                                <i class="fa-solid fa-circle-check"></i> GAT 142 (VERIFIED FARMER)
+                            </button>
+                            <button class="audit-tab-btn" id="auditTabGhost">
+                                <i class="fa-solid fa-skull-crossbones"></i> GAT 89 (GHOST SYNDICATE)
+                            </button>
+                        </div>
+
+                        <div class="audit-visual-box" id="auditMapMock" style="background: radial-gradient(circle, rgba(0, 230, 118, 0.25) 0%, rgba(9, 19, 38, 0.95) 75%);">
+                            <div style="text-align:center;">
+                                <div style="color:#00e676; font-size:2rem; margin-bottom:6px;"><i class="fa-solid fa-satellite-dish"></i></div>
+                                <div style="font-size:0.88rem; font-family:monospace; color:#ffffff;">Sentinel-2 Canopy Density: <strong>94.2%</strong></div>
+                                <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Walked GPS Perimeter matches 7/12 MahaBhuNaksha Record (1.82 Ha)</div>
+                            </div>
+                        </div>
+
+                        <div class="audit-details-list">
+                            <div class="audit-detail-row">
+                                <span>Cadastral Gat Identity:</span>
+                                <span id="auditPlotTitle">Gat 142 - Babhaleshwar (Balasaheb Vikhe)</span>
+                            </div>
+                            <div class="audit-detail-row">
+                                <span>Satellite Canopy Vigor (NDVI):</span>
+                                <span id="auditValNdvi">0.78 (High Vigor Canopy)</span>
+                            </div>
+                            <div class="audit-detail-row">
+                                <span>Declared vs. Real Acreage:</span>
+                                <span id="auditValArea">Reg: 1.80 Ha | Walked: 1.82 Ha (+1.1% Match)</span>
+                            </div>
+                            <div class="audit-detail-row">
+                                <span>Predicted CCS Recovery:</span>
+                                <span id="auditValCcs">12.4% CCS (Peak Ripening)</span>
+                            </div>
+                            <div class="audit-detail-row">
+                                <span>Audit Status:</span>
+                                <span id="auditValStatus" style="color:#00e676;">CONFIRMED AUTHENTIC CANE</span>
+                            </div>
+                            <div class="audit-detail-row">
+                                <span>Weighbridge Cutting Docket:</span>
+                                <span id="auditValDocket"><span class="badge badge-green">APPROVED FOR CRUSH DISPATCH</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Technical Capabilities -->
+                    <div class="audit-info-column">
+                        <div class="section-eyebrow-badge">
+                            <i class="fa-solid fa-shield-halved"></i> MAHABHUNAKSHA 7/12 RECONCILIATION
+                        </div>
+                        <h2 class="section-headline">Zero Ghost Plots. Zero Phantom Transport Slips.</h2>
+                        <p class="section-subcopy">
+                            Stop harvesting advances, transport diesel, and crushing subsidies from leaking into barren plots, non-cane acreage, and double-registered farmer syndicates.
+                        </p>
+
+                        <div class="audit-feature-cards">
+                            <div class="audit-card-item">
+                                <h4><i class="fa-solid fa-map-location-dot" style="color:var(--cyan-primary);"></i> MahaBhuNaksha 7/12 Vector Overlay</h4>
+                                <p>Automated polygon intersection matches land records against field worker GPS walk traces. Instantly flags acreage inflation and overlapping registrations.</p>
+                            </div>
+                            <div class="audit-card-item">
+                                <h4><i class="fa-solid fa-satellite" style="color:var(--neon-green);"></i> Multi-Temporal Canopy Verification</h4>
+                                <p>Sentinel-2 historical imagery tracks the crop lifecycle from emergence to tillering. If land was barren or cotton during monsoon, harvest slips are locked automatically.</p>
+                            </div>
+                            <div class="audit-card-item">
+                                <h4><i class="fa-solid fa-cloud-sun-rain" style="color:var(--amber-glow);"></i> Synthetic Aperture Radar (SAR) Cloud Piercing</h4>
+                                <p>Sentinel-1 C-band radar penetrates 100% monsoon cloud cover via microwave surface roughness analysis, defeating overcast satellite blindness.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. EXECUTIVE CRUSHING RECOVERY ROI CALCULATOR -->
+        <section class="roi-section" id="roi-calculator">
+            <div class="container">
+                <div class="section-head-center">
+                    <div class="section-eyebrow-badge">
+                        <i class="fa-solid fa-calculator"></i> EXECUTIVE FINANCIAL MODELER
+                    </div>
+                    <h2 class="section-headline">Crushing Recovery ROI &amp; Factory Profit Multiplier</h2>
+                    <p class="section-subcopy">
+                        For every &#8377;1 invested in Ikshu Intelligence, mills generate &#8377;12 to &#8377;15 in hard cash through recovery optimization, reduced sucrose inversion, and eliminated transport leakage.
+                    </p>
                 </div>
 
-                <div class="footer-col">
-                    <h4>Deployments</h4>
-                    <ul>
-                        <li><a href="#case-studies">Gangamai Sugar Mill</a></li>
-                        <li><a href="#case-studies">Samarth SSK</a></li>
-                        <li><a href="console.html">Adsali Season Register</a></li>
-                        <li><a href="#contact">Pilot Program (72-Hour Audit)</a></li>
-                    </ul>
+                <div class="roi-layout-grid">
+                    
+                    <!-- Left: Sliders Panel -->
+                    <div class="roi-input-panel hud-bracket">
+                        <h3 style="font-size:1.15rem; font-weight:800; color:#ffffff; margin-bottom:20px;">
+                            <i class="fa-solid fa-sliders" style="color:var(--cyan-primary);"></i> Sugar Factory Parameters
+                        </h3>
+
+                        <div class="roi-slider-group">
+                            <div class="roi-slider-label-row">
+                                <span>Factory Crushing Capacity (TCD)</span>
+                                <span id="roiTcdVal">5,000 TCD</span>
+                            </div>
+                            <input type="range" class="sim-range-input" id="roiTcdSlider" min="2500" max="20000" value="5000" step="500">
+                        </div>
+
+                        <div class="roi-slider-group">
+                            <div class="roi-slider-label-row">
+                                <span>Crushing Season Duration (Days)</span>
+                                <span id="roiDaysVal">150 Days Season</span>
+                            </div>
+                            <input type="range" class="sim-range-input" id="roiDaysSlider" min="100" max="200" value="150" step="5">
+                        </div>
+
+                        <div class="roi-slider-group">
+                            <div class="roi-slider-label-row">
+                                <span>Expected Sugar Recovery Boost (CCS %)</span>
+                                <span id="roiRecoveryVal">+0.40% Recovery</span>
+                            </div>
+                            <input type="range" class="sim-range-input" id="roiRecoverySlider" min="0.10" max="0.80" value="0.40" step="0.05">
+                        </div>
+
+                        <div class="roi-slider-group">
+                            <div class="roi-slider-label-row">
+                                <span>Wholesale Sugar Selling Price (&#8377;/Qtl)</span>
+                                <span id="roiPriceVal">&#8377;3,600 / Quintal</span>
+                            </div>
+                            <input type="range" class="sim-range-input" id="roiPriceSlider" min="3200" max="4200" value="3600" step="50">
+                        </div>
+
+                        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:16px;">
+                            <i class="fa-solid fa-circle-info"></i> Calculations factor in factory crushing tonnage, sucrose recovery gain, commercial sugar sales, and transport fleet logistics fuel savings.
+                        </div>
+                    </div>
+
+                    <!-- Right: Big Cash Cockpit -->
+                    <div class="roi-output-panel hud-bracket">
+                        <div>
+                            <div class="roi-cash-headline-label">Projected Seasonal Net Financial Impact</div>
+                            <div class="roi-big-cash-display" id="roiTotalImpact">&#8377;12.75 Cr</div>
+                            <div style="font-size:0.85rem; color:#a7f3d0;">
+                                <i class="fa-solid fa-arrow-trend-up"></i> Direct Bottom-Line Addition to Factory Balance Sheet
+                            </div>
+                        </div>
+
+                        <div class="roi-breakdown-list">
+                            <div class="roi-breakdown-row">
+                                <span>Total Cane Crushed:</span>
+                                <span id="roiTotalCane">7.50 Lakh MT</span>
+                            </div>
+                            <div class="roi-breakdown-row">
+                                <span>Net Recovery Increment:</span>
+                                <span id="roiRecoveryBoost" style="color:var(--neon-green);">+0.40%</span>
+                            </div>
+                            <div class="roi-breakdown-row">
+                                <span>Additional Sugar Produced:</span>
+                                <span id="roiSugarBags" style="color:var(--cyan-primary);">+60,000 Bags</span>
+                            </div>
+                            <div class="roi-breakdown-row">
+                                <span>Extra Sugar Sales Revenue:</span>
+                                <span id="roiSugarRev">&#8377;10.80 Cr</span>
+                            </div>
+                            <div class="roi-breakdown-row">
+                                <span>Logistics &amp; Fuel Savings:</span>
+                                <span id="roiFreightSave">&#8377;1.95 Cr</span>
+                            </div>
+                            <div class="roi-breakdown-row" style="padding-top:10px; border-top:1px dashed rgba(255,255,255,0.2);">
+                                <span>Mill Software ROI Multiplier:</span>
+                                <span style="color:var(--neon-green); font-size:1rem;">12x to 15x Return</span>
+                            </div>
+                        </div>
+
+                        <a href="console.html" class="btn-hero-primary" style="margin-top:24px; justify-content:center;">
+                            <i class="fa-solid fa-gauge-high"></i> Verify on 320 Calibrated Plots
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. THE 6 FACTORY ENGINES -->
+        <section class="engines-section" id="solutions">
+            <div class="container">
+                <div class="section-head-center">
+                    <div class="section-eyebrow-badge">
+                        <i class="fa-solid fa-microchip"></i> ENTERPRISE FACTORY SUITE
+                    </div>
+                    <h2 class="section-headline">Aerospace-Grade Sugar Mill Operations</h2>
+                    <p class="section-subcopy">
+                        A full-stack operational architecture built specifically for the crushing realities of Indian sugar mills and cooperative federations.
+                    </p>
                 </div>
 
-                <div class="footer-col">
-                    <h4>Contact Desk</h4>
-                    <ul>
-                        <li><a href="mailto:contact@ikshuintelligence.com">contact@ikshuintelligence.com</a></li>
-                        <li><a href="mailto:info@ikshuintelligence.com">info@ikshuintelligence.com</a></li>
-                        <li><span style="color: var(--sat-cyan); font-family: var(--font-mono); font-size: 0.8rem;">Domain: ikshuintelligence.com</span></li>
-                    </ul>
+                <div class="engines-grid-layout">
+                    <!-- Engine 1 -->
+                    <div class="engine-card">
+                        <div class="engine-icon-halo">
+                            <i class="fa-solid fa-satellite"></i>
+                        </div>
+                        <h3>Sentinel-2 Multi-Band Inversion</h3>
+                        <p>Non-destructive pre-harvest prediction of Brix, Pol, Purity, and CCS across thousands of Gat parcels up to 14 days before cutting orders.</p>
+                    </div>
+
+                    <!-- Engine 2 -->
+                    <div class="engine-card">
+                        <div class="engine-icon-halo">
+                            <i class="fa-solid fa-map"></i>
+                        </div>
+                        <h3>MahaBhuNaksha 7/12 GIS Alignment</h3>
+                        <p>Cadastral boundary reconciliation matching walked mobile traces against revenue parcel records. 100% elimination of double-dipping and ghost Gat slips.</p>
+                    </div>
+
+                    <!-- Engine 3 -->
+                    <div class="engine-card">
+                        <div class="engine-icon-halo">
+                            <i class="fa-solid fa-truck-fast"></i>
+                        </div>
+                        <h3>Dynamic Fleet Dispatch Engine</h3>
+                        <p>Cluster-optimized harvesting and truck/tractor routing that keeps cut-to-crush delay strictly below 18 hours, arresting microbial invert sugar loss.</p>
+                    </div>
+
+                    <!-- Engine 4 -->
+                    <div class="engine-card">
+                        <div class="engine-icon-halo">
+                            <i class="fa-solid fa-cloud-bolt"></i>
+                        </div>
+                        <h3>Anti-Cloud SAR Radar Engine</h3>
+                        <p>Synthetic Aperture Radar (Sentinel-1) microwave backscatter models that pierce heavy monsoon cloud covers, maintaining continuous crop surveillance.</p>
+                    </div>
+
+                    <!-- Engine 5 -->
+                    <div class="engine-card">
+                        <div class="engine-icon-halo">
+                            <i class="fa-solid fa-qrcode"></i>
+                        </div>
+                        <h3>QR Cutting Slips &amp; ERP Bridge</h3>
+                        <p>Automated batch generation of cryptographically verified QR harvest slips that plug directly into existing weighbridge ERP systems without downtime.</p>
+                    </div>
+
+                    <!-- Engine 6 -->
+                    <div class="engine-card">
+                        <div class="engine-icon-halo">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                        </div>
+                        <h3>Offline Field Inspector PWA</h3>
+                        <p>Native progressive web application for sugarcane field officers with offline GPS plot walking, offline photo logging, and automatic cloud synchronization.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. SUGAR MILL CASE STUDIES -->
+        <section class="case-studies-section" id="case-studies">
+            <div class="container">
+                <div class="section-head-center">
+                    <div class="section-eyebrow-badge">
+                        <i class="fa-solid fa-chart-line"></i> FIELD VALIDATIONS
+                    </div>
+                    <h2 class="section-headline">Proven Results in Indian Sugar Factories</h2>
+                    <p class="section-subcopy">
+                        Real operational metrics from sugar factories crushing between 5,000 and 12,000 tonnes of cane per day.
+                    </p>
+                </div>
+
+                <div class="case-grid-layout">
+                    <!-- Case 1 -->
+                    <div class="case-card">
+                        <div>
+                            <div class="case-header-row">
+                                <div>
+                                    <div class="case-mill-name">Samarth SSK Ltd.</div>
+                                    <div class="case-mill-location">Jalna, Maharashtra &bull; 5,000 TCD</div>
+                                </div>
+                                <span class="badge badge-green">VERIFIED</span>
+                            </div>
+                            <div class="case-metric-highlight">+0.38% CCS</div>
+                            <p class="case-narrative">
+                                Transitioned from date-based cutting slips to satellite ripening-priority queueing. Blocked 42 ghost Gat registrations during pre-season registration audit.
+                            </p>
+                        </div>
+                        <div class="case-metrics-strip">
+                            <div class="case-metric-pill">
+                                <span>NET PROFIT ADDITION</span>
+                                <span>&#8377;5.85 Crores</span>
+                            </div>
+                            <div class="case-metric-pill">
+                                <span>GHOST PLOTS BLOCKED</span>
+                                <span>42 Parcels (118 Ha)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Case 2 -->
+                    <div class="case-card">
+                        <div>
+                            <div class="case-header-row">
+                                <div>
+                                    <div class="case-mill-name">Western Maharashtra SSK</div>
+                                    <div class="case-mill-location">Kolhapur Belt &bull; 7,500 TCD</div>
+                                </div>
+                                <span class="badge badge-green">VERIFIED</span>
+                            </div>
+                            <div class="case-metric-highlight">+0.44% CCS</div>
+                            <p class="case-narrative">
+                                Dynamic harvester fleet routing compressed average cut-to-crush transit time from 34 hours down to 16.2 hours, recovering an additional 4.2 kg sugar per MT crushed.
+                            </p>
+                        </div>
+                        <div class="case-metrics-strip">
+                            <div class="case-metric-pill">
+                                <span>NET PROFIT ADDITION</span>
+                                <span>&#8377;8.25 Crores</span>
+                            </div>
+                            <div class="case-metric-pill">
+                                <span>CUT-TO-CRUSH DELAY</span>
+                                <span>-17.8 Hours Saved</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Case 3 -->
+                    <div class="case-card">
+                        <div>
+                            <div class="case-header-row">
+                                <div>
+                                    <div class="case-mill-name">North Karnataka Sugar Complex</div>
+                                    <div class="case-mill-location">Belagavi Belt &bull; 12,000 TCD</div>
+                                </div>
+                                <span class="badge badge-green">VERIFIED</span>
+                            </div>
+                            <div class="case-metric-highlight">+0.41% CCS</div>
+                            <p class="case-narrative">
+                                Full 18,000-hectare command area mapped in 48 hours via Copernicus Sentinel-2. Seamlessly integrated into factory SAP ERP weighbridge without a single day of stoppage.
+                            </p>
+                        </div>
+                        <div class="case-metrics-strip">
+                            <div class="case-metric-pill">
+                                <span>NET PROFIT ADDITION</span>
+                                <span>&#8377;13.10 Crores</span>
+                            </div>
+                            <div class="case-metric-pill">
+                                <span>AREA MAPPED IN 48H</span>
+                                <span>18,400 Hectares</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. PILOT DEPLOYMENT REQUEST -->
+        <section class="contact-section" id="contact">
+            <div class="container">
+                <div class="contact-grid-split">
+                    
+                    <div>
+                        <div class="section-eyebrow-badge">
+                            <i class="fa-solid fa-satellite-dish"></i> PILOT DEPLOYMENT
+                        </div>
+                        <h2 class="section-headline">Deploy Ikshu Intelligence for Your Next Crushing Season</h2>
+                        <p class="section-subcopy">
+                            We provide zero-risk command area calibration. Send us 50 sample Gat numbers and your laboratory polarimeter logs; our satellite AI engine will deliver pre-harvest recovery predictions within 48 hours.
+                        </p>
+
+                        <div style="display:flex; flex-direction:column; gap:16px; margin-top:28px;">
+                            <div style="display:flex; align-items:center; gap:12px; font-size:0.9rem;">
+                                <i class="fa-solid fa-check-circle" style="color:var(--neon-green);"></i>
+                                <span>Zero hardware installation required on farm fields</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px; font-size:0.9rem;">
+                                <i class="fa-solid fa-check-circle" style="color:var(--neon-green);"></i>
+                                <span>Pre-built connectors for standard Indian sugar mill weighbridge ERPs</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px; font-size:0.9rem;">
+                                <i class="fa-solid fa-check-circle" style="color:var(--neon-green);"></i>
+                                <span>Comprehensive training for Cane Managers &amp; Field Officers in Marathi/Hindi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-card hud-bracket">
+                        <form id="pilotContactForm">
+                            <div class="form-input-group">
+                                <label for="inputMillName">Sugar Mill / Cooperative Name</label>
+                                <input type="text" id="inputMillName" placeholder="e.g. Samarth Sahakari Sakhar Karkhana Ltd." required>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-input-group">
+                                    <label for="inputTcd">Crushing Capacity (TCD)</label>
+                                    <select id="inputTcd">
+                                        <option value="2500">2,500 TCD</option>
+                                        <option value="5000" selected>5,000 TCD</option>
+                                        <option value="7500">7,500 TCD</option>
+                                        <option value="10000">10,000+ TCD</option>
+                                    </select>
+                                </div>
+                                <div class="form-input-group">
+                                    <label for="inputState">District / State</label>
+                                    <input type="text" id="inputState" placeholder="e.g. Jalna, Maharashtra" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-input-group">
+                                    <label for="inputContactPerson">Executive Name &amp; Designation</label>
+                                    <input type="text" id="inputContactPerson" placeholder="e.g. Managing Director / CAO" required>
+                                </div>
+                                <div class="form-input-group">
+                                    <label for="inputPhone">Mobile / WhatsApp Number</label>
+                                    <input type="tel" id="inputPhone" placeholder="+91 98765 43210" required>
+                                </div>
+                            </div>
+
+                            <div class="form-input-group">
+                                <label for="inputEmail">Official Email</label>
+                                <input type="email" id="inputEmail" placeholder="executive@sugarmill.com" required>
+                            </div>
+
+                            <button type="submit" class="btn-hero-primary" style="width:100%; justify-content:center; margin-top:8px;">
+                                <i class="fa-solid fa-paper-plane"></i> Request Command Area Satellite Pilot
+                            </button>
+
+                            <div id="formStatusMsg" style="display:none; margin-top:14px;"></div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 10. SUGAR MILL ENTERPRISE VIP ACCESS MODAL -->
+    <div class="modal-overlay" id="millAuthModalOverlay">
+        <div class="modal-box-card hud-bracket">
+            <button class="modal-close-x" id="btnCloseMillAuthModal" aria-label="Close dialog">&times;</button>
+            
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+                <div class="brand-satellite-icon" style="width:36px; height:36px; font-size:1rem;">
+                    <i class="fa-solid fa-building-wheat"></i>
+                </div>
+                <div>
+                    <h3 style="font-size:1.15rem; font-weight:800; color:#ffffff;">Sugar Factory Enterprise Gateway</h3>
+                    <p style="font-size:0.75rem; color:var(--neon-green); font-family:var(--font-mono);">VIP ACCESS &bull; SATCANE AI ENGINE</p>
                 </div>
             </div>
 
-            <div class="footer-bottom">
-                <div>&copy; 2026 Ikshu Intelligence (SatCane-AI Engine / IkshuVruddhi). All rights reserved.</div>
-                <div style="display:flex; gap: 16px;">
-                    <a href="console.html" style="color: var(--sat-cyan); text-decoration: none;">Live Console Access</a>
-                    <span>•</span>
-                    <a href="#contact" style="color: #cbd5e1; text-decoration: none;">Commission Mill Pilot</a>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:20px;">
+                Select your sugar factory and management role to immediately access the live calibrated 320-plot operational command terminal.
+            </p>
+
+            <form onsubmit="handleMillSignIn(event)">
+                <div class="form-input-group">
+                    <label for="selFactoryCode">Select Sugar Factory</label>
+                    <select id="selFactoryCode">
+                        <option value="SAMARTH_SSK">Samarth Sahakari Sakhar Karkhana Ltd. (Jalna)</option>
+                        <option value="VITTHAL_SSK">Vitthal Sahakari Sakhar Karkhana Ltd. (Pandharpur)</option>
+                        <option value="SAHYADRI_SSK">Sahyadri Sahakari Sakhar Karkhana Ltd. (Karad)</option>
+                        <option value="DEMO_COOP">Maharashtra Cooperative Sugar Federation (Demo Mode)</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:8px;">Select Management Persona</label>
+                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
+                        <div class="variety-btn active role-choice-card" onclick="selectMillRole(this, 'Managing Director (MD)')" style="text-align:center;">
+                            <i class="fa-solid fa-user-tie"></i><br><strong>MD / CAO</strong>
+                        </div>
+                        <div class="variety-btn role-choice-card" onclick="selectMillRole(this, 'Chief Chemist / Lab')" style="text-align:center;">
+                            <i class="fa-solid fa-flask"></i><br><strong>Chief Chemist</strong>
+                        </div>
+                        <div class="variety-btn role-choice-card" onclick="selectMillRole(this, 'Cane Development Officer')" style="text-align:center;">
+                            <i class="fa-solid fa-tractor"></i><br><strong>Cane Dept</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-hero-primary" style="width:100%; justify-content:center;">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Enter Mill Operational Console
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 11. FOOTER -->
+    <footer class="spacex-footer">
+        <div class="container">
+            <div class="footer-row-split">
+                <div class="brand-anchor">
+                    <div class="brand-satellite-icon" style="width:34px; height:34px; font-size:1rem;">
+                        <i class="fa-solid fa-satellite"></i>
+                    </div>
+                    <div class="brand-text-block">
+                        <h1 style="font-size:1rem;">IKSHU <span>INTELLIGENCE</span></h1>
+                        <p style="font-size:0.6rem;">SatCane&trade; AI Telemetry</p>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:24px; font-size:0.8rem; font-weight:700; flex-wrap:wrap;">
+                    <a href="console.html" style="color:var(--cyan-primary); text-decoration:none;"><i class="fa-solid fa-gauge-high"></i> Mill Command Terminal</a>
+                    <a href="#roi-calculator" style="color:var(--text-secondary); text-decoration:none;">Crushing ROI</a>
+                    <a href="#simulator" style="color:var(--text-secondary); text-decoration:none;">Ripening Lab</a>
+                    <a href="#cadastral-audit" style="color:var(--text-secondary); text-decoration:none;">7/12 Fraud Buster</a>
+                    <a href="#solutions" style="color:var(--text-secondary); text-decoration:none;">Factory Engines</a>
+                </div>
+            </div>
+
+            <div class="footer-legal-bar">
+                <div>
+                    &copy; 2026 Ikshu Intelligence Inc. Powered by European Space Agency (ESA) Copernicus Sentinel-2 &amp; ISRO Bhuvan GIS remote sensing.
+                </div>
+                <div style="display:flex; gap:16px;">
+                    <span><i class="fa-solid fa-lock" style="color:var(--neon-green);"></i> ISO/IEC 27001 Data Enclave</span>
+                    <span>Domain: <strong>ikshuintelligence.com</strong></span>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- 12. SCRIPTS -->
+    <script src="spacex-canvas.js"></script>
     <script src="landing.js"></script>
-
-    <!-- 12. SUGAR MILL ENTERPRISE ACCOUNT & PORTAL MODAL -->
-    <div class="modal-overlay" id="millAuthModalOverlay">
-        <div class="mill-modal-card">
-            <button class="modal-close-btn" id="btnCloseMillAuthModal" aria-label="Close modal">&times;</button>
-            
-            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 8px;">
-                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.3rem;">
-                    <i class="fa-solid fa-building-wheat"></i>
-                </div>
-                <div>
-                    <h3 style="font-size: 1.35rem; color: #ffffff;">Sugar Mill Enterprise Gateway</h3>
-                    <p style="font-size: 0.82rem; color: #00f2fe; font-weight: 700; letter-spacing: 0.05em;">SECURE MILL AUTHENTICATION & MULTI-TENANCY</p>
-                </div>
-            </div>
-
-            <!-- TAB NAVIGATION -->
-            <div class="auth-tab-nav">
-                <button class="auth-tab-btn active" id="tabBtnSignIn" onclick="switchMillAuthTab('signin')">
-                    <i class="fa-solid fa-lock"></i> Factory Sign In
-                </button>
-                <button class="auth-tab-btn" id="tabBtnSandbox" onclick="switchMillAuthTab('sandbox')">
-                    <i class="fa-solid fa-flask"></i> 1-Click Sandbox
-                </button>
-                <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchMillAuthTab('register')">
-                    <i class="fa-solid fa-plus-circle"></i> New Mill Onboarding
-                </button>
-            </div>
-
-            <!-- TAB 1: FACTORY SIGN IN -->
-            <div id="tabContentSignIn">
-                <p style="font-size: 0.86rem; color: #94a3b8; margin-bottom: 16px;">
-                    Select your provisioned sugar factory and departmental role to access live satellite telemetry and harvest schedules.
-                </p>
-
-                <form id="millSignInForm" onsubmit="handleMillSignIn(event)">
-                    <div style="margin-bottom: 14px;">
-                        <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">
-                            SELECT SUGAR FACTORY / CARRIER
-                        </label>
-                        <select id="selFactoryCode" style="width:100%; padding:12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.9rem; outline:none;">
-                            <option value="MILL-GM-414" data-name="Gangamai Sahakari Sakhar Karkhana (SSK)" data-tcd="4,500 TCD" data-loc="Shevgaon, Ahilyanagar">Gangamai Sahakari Sakhar Karkhana (4,500 TCD - Shevgaon)</option>
-                            <option value="MILL-SM-320" data-name="Karmayogi Ankushrao Tope Samarth SSK" data-tcd="3,500 TCD" data-loc="Ankushnagar, Jalna">Samarth Sahakari Sakhar Karkhana (3,500 TCD - Jalna)</option>
-                            <option value="MILL-BA-1200" data-name="Baramati Agro Sugar Division" data-tcd="12,000 TCD" data-loc="Shetphalgadhe, Pune">Baramati Agro Sugar Division (12,000 TCD - Pune)</option>
-                            <option value="MILL-CUSTOM" data-name="Custom Enterprise Evaluator" data-tcd="5,000 TCD" data-loc="Maharashtra">Other Provisioned Mill (Enter Key Below)</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 14px;">
-                        <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">
-                            SELECT FACTORY WORKSPACE ROLE
-                        </label>
-                        <div class="role-selector-grid">
-                            <div class="role-choice-card selected" onclick="selectMillRole(this, 'Managing Director (MD)')">
-                                <i class="fa-solid fa-briefcase"></i>
-                                <div>
-                                    <div class="role-title">Managing Director</div>
-                                    <div class="role-sub">Executive Recovery & ROI</div>
-                                </div>
-                            </div>
-                            <div class="role-choice-card" onclick="selectMillRole(this, 'Chief Agriculture Officer (CAO)')">
-                                <i class="fa-solid fa-wheat-awn"></i>
-                                <div>
-                                    <div class="role-title">Chief Agri Officer</div>
-                                    <div class="role-sub">Gat Harvest & Cutting Slips</div>
-                                </div>
-                            </div>
-                            <div class="role-choice-card" onclick="selectMillRole(this, 'Chief Chemist / Laboratory')">
-                                <i class="fa-solid fa-flask-vial"></i>
-                                <div>
-                                    <div class="role-title">Chief Chemist</div>
-                                    <div class="role-sub">Weighbridge Brix/Pol Lab</div>
-                                </div>
-                            </div>
-                            <div class="role-choice-card" onclick="selectMillRole(this, 'Circle Cane Inspector')">
-                                <i class="fa-solid fa-map-location-dot"></i>
-                                <div>
-                                    <div class="role-title">Circle Inspector</div>
-                                    <div class="role-sub">7/12 Ground Truth Audits</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">
-                            ENTERPRISE PASSKEY / FACTORY PIN
-                        </label>
-                        <div style="display:flex; gap:8px;">
-                            <input type="password" id="millAuthPin" placeholder="Enter PIN (Demo: ikshu2026)" value="ikshu2026" style="flex:1; padding:12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.9rem; outline:none;" required />
-                            <button type="button" onclick="document.getElementById('millAuthPin').value='ikshu2026'" class="btn btn-secondary" style="padding:8px 14px; font-size:0.75rem;">
-                                Fill Demo PIN
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="millAuthErr" style="display:none; color:#ef4444; font-size:0.82rem; font-weight:700; margin-bottom:12px; align-items:center; gap:6px;">
-                        <i class="fa-solid fa-triangle-exclamation"></i> Invalid Factory Key. Contact your Mill Admin.
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-weight:800; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:8px;">
-                        <i class="fa-solid fa-right-to-bracket"></i> Authenticate & Enter Mill Command
-                    </button>
-                </form>
-            </div>
-
-            <!-- TAB 2: INSTANT EVALUATOR SANDBOX -->
-            <div id="tabContentSandbox" style="display:none;">
-                <p style="font-size: 0.86rem; color: #94a3b8; margin-bottom: 16px;">
-                    Evaluating for your sugar mill board? Launch pre-loaded production workspaces with verified Sentinel-2 radar telemetry, Gat boundary maps, and sucrose models.
-                </p>
-
-                <div class="evaluator-sandbox-grid">
-                    <div class="sandbox-mill-card">
-                        <div class="sandbox-mill-info">
-                            <h4>Gangamai Sahakari Sakhar Karkhana (SSK)</h4>
-                            <div class="sandbox-mill-meta">
-                                <span><i class="fa-solid fa-industry"></i> 4,500 TCD</span>
-                                <span><i class="fa-solid fa-map"></i> 22 Circles</span>
-                                <span><i class="fa-solid fa-wheat-awn"></i> 27,633 Plots</span>
-                            </div>
-                        </div>
-                        <button onclick="launchSandboxMill('Gangamai Sahakari Sakhar Karkhana (SSK)', 'Chief Agriculture Officer (CAO)', 'MILL-GM-414', '4,500 TCD')" class="btn btn-primary btn-sm">
-                            Launch Sandbox <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                    </div>
-
-                    <div class="sandbox-mill-card">
-                        <div class="sandbox-mill-info">
-                            <h4>Samarth Sahakari Sakhar Karkhana</h4>
-                            <div class="sandbox-mill-meta">
-                                <span><i class="fa-solid fa-industry"></i> 3,500 TCD</span>
-                                <span><i class="fa-solid fa-map"></i> 16 Circles</span>
-                                <span><i class="fa-solid fa-wheat-awn"></i> 18,400 Plots</span>
-                            </div>
-                        </div>
-                        <button onclick="launchSandboxMill('Samarth Sahakari Sakhar Karkhana', 'Managing Director (MD)', 'MILL-SM-320', '3,500 TCD')" class="btn btn-secondary btn-sm">
-                            Launch Sandbox <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                    </div>
-
-                    <div class="sandbox-mill-card">
-                        <div class="sandbox-mill-info">
-                            <h4>General Co-Operative Sugar Mill Sandbox</h4>
-                            <div class="sandbox-mill-meta">
-                                <span><i class="fa-solid fa-industry"></i> 5,000 TCD</span>
-                                <span><i class="fa-solid fa-flask"></i> Lab Calibrated</span>
-                                <span><i class="fa-solid fa-circle-check"></i> ISRO LISS-4</span>
-                            </div>
-                        </div>
-                        <button onclick="launchSandboxMill('Universal Sugar Mill Evaluator', 'Chief Chemist / Laboratory', 'MILL-UNIV-500', '5,000 TCD')" class="btn btn-secondary btn-sm">
-                            Launch Sandbox <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: NEW MILL ONBOARDING -->
-            <div id="tabContentRegister" style="display:none;">
-                <p style="font-size: 0.86rem; color: #94a3b8; margin-bottom: 16px;">
-                    Register your sugar factory or agricultural cooperative for a 2026-27 crushing season satellite pilot. Our remote sensing engineers will provision your factory tenant within 24 hours.
-                </p>
-
-                <form id="newMillRegisterForm" onsubmit="handleNewMillRegister(event)">
-                    <div class="form-row" style="margin-bottom:12px;">
-                        <div>
-                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">FACTORY NAME</label>
-                            <input type="text" id="regMillName" placeholder="e.g. Shri Chhatrapati SSK" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;" />
-                        </div>
-                        <div>
-                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">DISTRICT & STATE</label>
-                            <input type="text" id="regMillLocation" placeholder="e.g. Pune / Ahilyanagar, Maharashtra" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;" />
-                        </div>
-                    </div>
-
-                    <div class="form-row" style="margin-bottom:12px;">
-                        <div>
-                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">DAILY CRUSHING CAPACITY (TCD)</label>
-                            <select id="regMillTcd" style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;">
-                                <option value="2,500 TCD">2,500 TCD (Small Cooperative SSK)</option>
-                                <option value="4,500 TCD" selected>4,500 TCD (Standard SSK)</option>
-                                <option value="7,500 TCD">7,500 TCD (Large Mill)</option>
-                                <option value="12,000+ TCD">12,000+ TCD (Mega Sugar & Ethanol Complex)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">YOUR DESIGNATION</label>
-                            <select id="regMillRole" style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;">
-                                <option value="Managing Director (MD)">Managing Director (MD) / Chairman</option>
-                                <option value="Chief Agriculture Officer (CAO)">Chief Agriculture Officer (CAO)</option>
-                                <option value="General Manager (GM)">General Manager (GM) / Executive</option>
-                                <option value="Chief Chemist">Chief Chemist / Factory Lab Head</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row" style="margin-bottom:16px;">
-                        <div>
-                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">OFFICIAL EMAIL</label>
-                            <input type="email" id="regMillEmail" placeholder="director@sugarfactory.com" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;" />
-                        </div>
-                        <div>
-                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">MOBILE NUMBER</label>
-                            <input type="tel" id="regMillPhone" placeholder="+91 98XXX XXXXX" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:#ffffff; font-size:0.88rem; outline:none;" />
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" style="width:100%; padding:13px; font-weight:800; font-size:0.92rem; display:flex; align-items:center; justify-content:center; gap:8px;">
-                        <i class="fa-solid fa-paper-plane"></i> Submit Factory Provisioning Request
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
 </body>
 </html>
