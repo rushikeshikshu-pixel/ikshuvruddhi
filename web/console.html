@@ -102,14 +102,14 @@
             color: #cbd5e1;
             margin-bottom: 8px;
         }
-        .auth-input-group input {
+        .auth-input-group input, .auth-input-group select {
             width: 100%;
-            padding: 13px 15px;
+            padding: 12px 14px;
             background: rgba(15, 23, 42, 0.92);
             border: 1px solid rgba(255, 255, 255, 0.18);
             border-radius: 9px;
             color: #ffffff;
-            font-size: 15px;
+            font-size: 14px;
             outline: none;
             box-sizing: border-box;
         }
@@ -128,6 +128,11 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transition: all 0.2s;
+        }
+        .auth-submit-btn:hover {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+            transform: translateY(-1px);
         }
         .auth-footer {
             margin-top: 24px;
@@ -182,7 +187,7 @@
             </div>
             <div class="nav-brand-title">
                 <h1>IKSHU <span>INTELLIGENCE</span></h1>
-                <p>Sugar Mill Command & Telemetry</p>
+                <p>Sugar Mill Command &amp; Telemetry</p>
             </div>
 
             <!-- Active Mill Dropdown -->
@@ -192,15 +197,15 @@
                     <option value="MILL-GM-414" data-name="Gangamai Sahakari Sakhar Karkhana (SSK)" data-tcd="4,500 TCD" data-loc="Shevgaon, Ahilyanagar" selected>Gangamai SSK (4,500 TCD - Shevgaon)</option>
                     <option value="MILL-SM-320" data-name="Karmayogi Ankushrao Tope Samarth SSK" data-tcd="3,500 TCD" data-loc="Ankushnagar, Jalna">Samarth SSK (3,500 TCD - Jalna)</option>
                     <option value="MILL-BA-1200" data-name="Baramati Agro Sugar Division" data-tcd="12,000 TCD" data-loc="Shetphalgadhe, Pune">Baramati Agro (12,000 TCD - Pune)</option>
-                    <option value="MILL-DEMO" data-name="Universal Sugar Mill Sandbox" data-tcd="5,000 TCD" data-loc="Maharashtra">Universal Mill Sandbox (5,000 TCD)</option>
+                    <option value="MILL-VT-750" data-name="Vitthal Sahakari Sakhar Karkhana Ltd." data-tcd="7,500 TCD" data-loc="Pandharpur, Solapur">Vitthal SSK (7,500 TCD - Pandharpur)</option>
                 </select>
             </div>
         </div>
 
         <!-- Center Workspace View Tabs -->
-        <nav class="nav-tabs-wrapper">
+        <nav class="nav-workspace-tabs">
             <button class="nav-tab-btn active" data-view="map">
-                <i class="fa-solid fa-map-location-dot"></i> <span>Cadastral GIS Map</span>
+                <i class="fa-solid fa-map-location-dot"></i> <span>GIS Command Map</span>
             </button>
             <button class="nav-tab-btn" data-view="queue">
                 <i class="fa-solid fa-table-list"></i> <span>Harvest Dispatcher</span>
@@ -222,7 +227,7 @@
                 <i class="fa-solid fa-user-shield"></i> Chief Agriculture Officer (CAO)
             </span>
             <button id="btnLangToggle" class="btn-lang-toggle" title="Toggle Language">
-                🇮🇳 मराठी
+                <i class="fa-solid fa-globe"></i> EN | मराठी
             </button>
             <button onclick="lockTerminal()" class="btn-lang-toggle" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Lock Terminal">
                 <i class="fa-solid fa-lock"></i> Lock
@@ -252,27 +257,56 @@
         </div>
         <div class="telemetry-item">
             <span class="telemetry-label"><i class="fa-solid fa-bolt"></i> Peak Cutting Queue</span>
-            <div class="telemetry-val" style="color:#34d399;" id="telemetryCutNowCount">74 Plots</div>
-            <span class="telemetry-sub">Pol &gt; 13.5% Ready Now</span>
+            <div class="telemetry-val" style="color:#34d399;" id="telemetryCutNowCount">188 Plots</div>
+            <span class="telemetry-sub">CCS &gt; 11.2% Ready Now</span>
         </div>
         <div class="telemetry-item">
             <span class="telemetry-label"><i class="fa-solid fa-shield-xmark"></i> Ghost Advance Blocked</span>
-            <div class="telemetry-val warning" id="telemetryGhostBlocked">₹1.82 Cr</div>
+            <div class="telemetry-val warning" id="telemetryGhostBlocked">&#8377;1.82 Cr</div>
             <span class="telemetry-sub">32 Fallow Plots Stopped</span>
         </div>
         <div class="telemetry-item">
             <span class="telemetry-label"><i class="fa-solid fa-sack-dollar"></i> Net Revenue Uplift</span>
-            <div class="telemetry-val positive" id="telemetryNetGain">+₹14.82 Cr</div>
+            <div class="telemetry-val positive" id="telemetryNetGain">+&#8377;14.82 Cr</div>
             <span class="telemetry-sub">Pure Bottom-Line Margin</span>
         </div>
     </div>
 
-    <!-- 4. MAIN WORKSPACE CONTENT -->
+    <!-- 4. MILL DASHBOARD ACTIONS RIBBON (IMPORTANT OPERATIONS TOOLBAR) -->
+    <div class="mill-actions-ribbon">
+        <div class="actions-ribbon-title">
+            <i class="fa-solid fa-wrench"></i> MILL ACTIONS:
+        </div>
+        
+        <button class="action-btn primary" onclick="openAddPlotModal()">
+            <i class="fa-solid fa-plus-circle"></i> + Register Farmer / Add Plot
+        </button>
+
+        <button class="action-btn cyan" onclick="openBulkUploadModal()">
+            <i class="fa-solid fa-file-arrow-up"></i> 📥 Bulk Upload Harvest Register
+        </button>
+
+        <button class="action-btn" onclick="openAddGangModal()">
+            <i class="fa-solid fa-tractor"></i> 🚜 Add C&amp;T Harvesting Gang
+        </button>
+
+        <button class="action-btn" onclick="openMillSettingsModal()">
+            <i class="fa-solid fa-sliders"></i> ⚙️ Factory Crushing Target
+        </button>
+
+        <button class="action-btn amber" onclick="openAddLabModal()">
+            <i class="fa-solid fa-flask"></i> 🔬 Log Polarimeter Test
+        </button>
+
+        <button class="action-btn" onclick="exportDailyCuttingProgram()" style="margin-left:auto; border-color:var(--emerald-primary); color:#a7f3d0;">
+            <i class="fa-solid fa-download"></i> 📥 Export Daily Cutting Program (CSV)
+        </button>
+    </div>
+
+    <!-- 5. MAIN WORKSPACE CONTENT -->
     <main class="mill-workspace">
 
-        <!-- ====================================================================
-             VIEW 1: CADASTRAL GIS SATELLITE MAP & QUEUE COCKPIT
-             ==================================================================== -->
+        <!-- VIEW 1: CADASTRAL GIS SATELLITE MAP & QUEUE COCKPIT -->
         <div id="view-map" class="view-container active">
             <div class="map-workspace-grid">
                 
@@ -289,7 +323,7 @@
                         
                         <div style="display:flex; gap:6px;">
                             <select id="selQueueCircle" style="flex:1; padding:6px 10px; background:rgba(15,23,42,0.9); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); color:#ffffff; font-size:0.76rem; outline:none;">
-                                <option value="ALL">All Circles (सर्व गट विभाग)</option>
+                                <option value="ALL">All Circles (सर्व मंडळे)</option>
                             </select>
                         </div>
 
@@ -297,9 +331,9 @@
                         <div class="filter-pills-row">
                             <button class="filter-pill active" data-filter="ALL">All (सर्व)</button>
                             <button class="filter-pill" data-filter="CUT_NOW">Cut Now (तोडणी योग्य)</button>
-                            <button class="filter-pill" data-filter="WINDOW_15D">15 Days (पंधरा दिवस)</button>
-                            <button class="filter-pill" data-filter="VEGETATIVE">Adsali (आडसाली)</button>
-                            <button class="filter-pill" data-filter="GHOST_FLAG" style="color:#f87171;">Ghost Alert (बनावट)</button>
+                            <button class="filter-pill" data-filter="WINDOW_15D">15 Days (१५ दिवसांत)</button>
+                            <button class="filter-pill" data-filter="VEGETATIVE">Adsali (अडसाली)</button>
+                            <button class="filter-pill" data-filter="GHOST_FLAG" style="color:#f87171;">Ghost Alert (बोगस संशयित)</button>
                         </div>
                     </div>
 
@@ -331,217 +365,237 @@
             </div>
         </div>
 
-        <!-- ====================================================================
-             VIEW 2: FULL HARVEST DISPATCHER TABLE
-             ==================================================================== -->
+        <!-- VIEW 2: FULL HARVEST DISPATCHER TABLE -->
         <div id="view-queue" class="view-container">
             <div class="table-panel-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <h2 style="font-family:var(--font-heading); font-size:1.2rem; color:#fff;"><i class="fa-solid fa-truck-ramp-box" style="color:var(--emerald-primary);"></i> Sugar Factory Daily Cutting Dispatcher</h2>
-                        <p style="font-size:0.82rem; color:var(--text-secondary);">Sequenced strictly by sucrose maturity (Pol/CCS) to feed factory crushing without cut-to-crush staling loss.</p>
+                        <h2 style="font-size:1.15rem; font-weight:800; color:#ffffff;"><i class="fa-solid fa-calendar-check" style="color:var(--emerald-primary);"></i> Crushing Schedule &amp; Transit Queue</h2>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Capacity-balanced sequence keeping cut-to-crush transit strictly below 18 hours.</p>
                     </div>
-                    <button onclick="switchView('map')" class="btn-header-action" style="font-size:0.8rem;">
-                        <i class="fa-solid fa-map"></i> View on GIS Map
+                    <button onclick="exportDailyCuttingProgram()" class="action-btn primary">
+                        <i class="fa-solid fa-download"></i> Export Roster to Weighbridge ERP
                     </button>
                 </div>
 
                 <table class="mill-data-table">
                     <thead>
                         <tr>
-                            <th>Plot ID</th>
-                            <th>Farmer Name (शेतकरी)</th>
-                            <th>Gat No / Village</th>
-                            <th>Circle</th>
+                            <th>Docket ID</th>
+                            <th>Gat No</th>
+                            <th>Farmer Name</th>
+                            <th>Village</th>
                             <th>Variety</th>
-                            <th>Pol %</th>
-                            <th>CCS % (उतारा)</th>
-                            <th>Detected Area</th>
+                            <th>Area</th>
+                            <th>CCS (%)</th>
+                            <th>Brix</th>
                             <th>Est. Tonnage</th>
-                            <th>Cut Window</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody id="tbodyQueueTable">
-                        <!-- Populated by JS -->
+                    <tbody id="tableQueueBody">
+                        <!-- Populated dynamically -->
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- ====================================================================
-             VIEW 3: MAHABHUNAKSHA FRAUD BUSTER
-             ==================================================================== -->
+        <!-- VIEW 3: MAHABHUNAKSHA FRAUD BUSTER -->
         <div id="view-fraud" class="view-container">
-            <div class="fraud-header-alert">
-                <div>
-                    <h3 style="color:#ef4444; font-size:1.15rem; font-family:var(--font-heading);"><i class="fa-solid fa-triangle-exclamation"></i> MahaBhuNaksha 7/12 Ghost Plot & Acreage Audit</h3>
-                    <p style="color:#cbd5e1; font-size:0.85rem; margin-top:4px;">
-                        Satellite radar cross-referenced against farmer registered registers. Plots flagged below have zero or negligible cane canopy, saving factory advances.
-                    </p>
-                </div>
-                <div style="text-align:right;">
-                    <span style="font-size:0.75rem; color:#f87171; text-transform:uppercase; font-weight:700;">Advances Saved to Date</span>
-                    <div style="font-family:var(--font-mono); font-size:1.4rem; font-weight:800; color:#ffffff;">₹1.82 Crores</div>
-                </div>
-            </div>
-
             <div class="table-panel-card">
+                <div class="fraud-header-alert">
+                    <div>
+                        <h3 style="color:#ffffff; font-size:1.1rem; font-weight:800;"><i class="fa-solid fa-shield-halved" style="color:#ef4444;"></i> MahaBhuNaksha 7/12 Land Parcel Audit Engine</h3>
+                        <p style="color:#fca5a5; font-size:0.8rem; margin-top:3px;">
+                            Identified 32 fallow parcels or acreage inflation attempts. Over &#8377;1.82 Crores in fraudulent harvesting advances blocked.
+                        </p>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-size:1.4rem; font-weight:900; color:#ef4444; font-family:var(--font-mono);">&#8377;1.82 Cr</span>
+                        <div style="font-size:0.7rem; color:#fca5a5;">Total Factory Loss Prevented</div>
+                    </div>
+                </div>
+
                 <table class="mill-data-table">
                     <thead>
                         <tr>
-                            <th>Plot ID</th>
-                            <th>Farmer Name</th>
                             <th>Gat Number</th>
-                            <th>Circle</th>
-                            <th>Claimed Area</th>
-                            <th>Satellite Radar Detected</th>
-                            <th>Discrepancy Status</th>
-                            <th>Action</th>
+                            <th>Registered Grower</th>
+                            <th>Village &amp; Circle</th>
+                            <th>Registered 7/12 Area</th>
+                            <th>Sentinel-2 Real Cane Area</th>
+                            <th>Canopy Vigor (NDVI)</th>
+                            <th>Audit Verdict</th>
+                            <th>Factory Action</th>
                         </tr>
                     </thead>
-                    <tbody id="tbodyFraudBuster">
-                        <!-- Populated by JS -->
+                    <tbody id="tableFraudBody">
+                        <!-- Populated dynamically -->
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- ====================================================================
-             VIEW 4: LAB CALIBRATION POLARIMETER
-             ==================================================================== -->
+        <!-- VIEW 4: LAB CALIBRATION POLARIMETER -->
         <div id="view-lab" class="view-container">
             <div class="lab-split-grid">
                 
                 <div class="lab-entry-box">
-                    <h2 style="font-family:var(--font-heading); font-size:1.2rem; color:#fff; margin-bottom:6px;"><i class="fa-solid fa-flask-vial" style="color:var(--emerald-primary);"></i> Chief Chemist Calibration Station</h2>
-                    <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:20px;">
-                        Enter physical weighbridge cane juice readings to calibrate the satellite sucrose neural net in real time.
+                    <h3 style="font-size:1.15rem; font-weight:800; color:#ffffff; margin-bottom:14px;">
+                        <i class="fa-solid fa-flask-vial" style="color:var(--cyan-accent);"></i> Chief Chemist Daily Polarimeter Entry
+                    </h3>
+                    <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:18px;">
+                        Enter bench polarimeter readings to calibrate the satellite multi-spectral prediction model for your mill's specific micro-climate.
                     </p>
 
-                    <form id="labCalibrationForm">
-                        <div style="margin-bottom:14px;">
-                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">PLOT / GAT NUMBER</label>
-                            <input type="text" id="labInputGat" value="Gat 118 (Sainathnagar)" style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); color:#ffffff; font-size:0.86rem; outline:none;" />
-                        </div>
-                        <div style="margin-bottom:14px;">
-                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">REFRACTOMETER BRIX (° Bx)</label>
-                            <input type="number" step="0.1" id="labInputBrix" value="20.4" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); color:#ffffff; font-size:0.86rem; outline:none;" />
-                        </div>
-                        <div style="margin-bottom:18px;">
-                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#cbd5e1; margin-bottom:6px;">SUCROSE POLARIMETER POL (%)</label>
-                            <input type="number" step="0.01" id="labInputPol" value="16.20" required style="width:100%; padding:10px 12px; background:rgba(15,23,42,0.9); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); color:#ffffff; font-size:0.86rem; outline:none;" />
-                        </div>
-
-                        <button type="submit" class="btn-header-action" style="width:100%; padding:12px; font-size:0.9rem; justify-content:center;">
-                            <i class="fa-solid fa-arrows-rotate"></i> Calibrate Satellite Model
-                        </button>
-                    </form>
-
-                    <div id="labSuccessNotice" style="display:none; margin-top:14px; background:rgba(16,185,129,0.15); border:1px solid #10b981; border-radius:var(--radius-sm); padding:10px; color:#34d399; font-size:0.8rem; text-align:center;">
-                        <i class="fa-solid fa-circle-check"></i> Lab sample logged & satellite weights recalibrated!
+                    <div class="terminal-input-group">
+                        <label>Primary Juice Brix (&deg;Bx)</label>
+                        <input type="number" id="labInputBrix" value="21.6" step="0.1" />
                     </div>
+
+                    <div class="terminal-input-group">
+                        <label>Polarimeter Reading (Pol %)</label>
+                        <input type="number" id="labInputPol" value="17.8" step="0.1" />
+                    </div>
+
+                    <div style="background:rgba(14,25,45,0.7); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); padding:16px; margin:18px 0;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <span style="color:var(--text-muted);">Juice Purity:</span>
+                            <strong style="color:var(--emerald-primary);" id="labCalcPurity">82.4%</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--text-muted);">Calculated CCS:</span>
+                            <strong style="color:var(--cyan-accent); font-size:1.1rem;" id="labCalcCcs">12.80%</strong>
+                        </div>
+                    </div>
+
+                    <button class="action-btn primary" onclick="openAddLabModal()" style="width:100%; justify-content:center; padding:12px;">
+                        <i class="fa-solid fa-check-circle"></i> Commit Lab Reading to Model
+                    </button>
                 </div>
 
-                <div class="table-panel-card" style="padding:24px;">
-                    <h3 style="font-family:var(--font-heading); font-size:1.1rem; color:#fff; margin-bottom:14px;">Calibration Telemetry Comparison</h3>
-                    
-                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-bottom:24px;">
-                        <div class="cockpit-stat-box">
-                            <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">LAB MEASURED CCS</span>
-                            <div style="font-family:var(--font-mono); font-size:1.4rem; font-weight:800; color:#34d399;" id="labResultCcs">11.42%</div>
-                        </div>
-                        <div class="cockpit-stat-box">
-                            <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">SATELLITE PREDICTED CCS</span>
-                            <div style="font-family:var(--font-mono); font-size:1.4rem; font-weight:800; color:#38bdf8;" id="labResultSatCcs">11.54%</div>
-                        </div>
-                        <div class="cockpit-stat-box">
-                            <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">VARIANCE & R² FIT</span>
-                            <div style="font-family:var(--font-mono); font-size:1.1rem; font-weight:800; color:#a855f7;" id="labResultVariance">+0.12% (98.8% R²)</div>
-                        </div>
-                    </div>
-
-                    <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
-                        <strong>Scientific Formula:</strong> Factory Commercial Cane Sugar (CCS) is calculated via the Winter-Carp-Geerligs formula: <code>CCS % = 1.022 × Pol - 0.28 × (Brix - Pol)</code>. The satellite spectral model achieves 98%+ alignment with physical polarimeters across Ahilyanagar and Jalna districts.
+                <div class="table-panel-card">
+                    <h3 style="font-size:1.15rem; font-weight:800; color:#ffffff; margin-bottom:10px;">
+                        <i class="fa-solid fa-chart-area" style="color:var(--emerald-primary);"></i> Satellite vs. Laboratory Cross-Validation
+                    </h3>
+                    <p style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:16px;">
+                        Mean Absolute Error (MAE) across all 320 calibrated plots: <strong>&plusmn;0.22% CCS</strong>. Laboratory polarimeter bench sync guarantees audit-proof figures for the Board of Directors.
                     </p>
+
+                    <table class="mill-data-table">
+                        <thead>
+                            <tr>
+                                <th>Sample Date</th>
+                                <th>Gat Number</th>
+                                <th>Variety</th>
+                                <th>Lab Polarimeter CCS</th>
+                                <th>Sentinel Satellite CCS</th>
+                                <th>Deviation</th>
+                                <th>Model Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Today (10-Oct)</td>
+                                <td>Gat 142</td>
+                                <td>Co 86032</td>
+                                <td>12.80%</td>
+                                <td>12.85%</td>
+                                <td style="color:#10b981;">+0.05%</td>
+                                <td><span class="badge badge-optimal">CALIBRATED</span></td>
+                            </tr>
+                            <tr>
+                                <td>Today (10-Oct)</td>
+                                <td>Gat 148</td>
+                                <td>CoM 0265</td>
+                                <td>11.90%</td>
+                                <td>12.02%</td>
+                                <td style="color:#10b981;">+0.12%</td>
+                                <td><span class="badge badge-optimal">CALIBRATED</span></td>
+                            </tr>
+                            <tr>
+                                <td>Yesterday</td>
+                                <td>Gat 204</td>
+                                <td>Co 0118</td>
+                                <td>13.40%</td>
+                                <td>13.28%</td>
+                                <td style="color:#10b981;">-0.12%</td>
+                                <td><span class="badge badge-optimal">CALIBRATED</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
         </div>
 
-        <!-- ====================================================================
-             VIEW 5: MILL ROI & CRUSHING ECONOMICS SIMULATOR
-             ==================================================================== -->
+        <!-- VIEW 5: FACTORY ROI & CRUSHING SIMULATOR -->
         <div id="view-roi" class="view-container">
             <div class="roi-card-grid">
                 
                 <div class="roi-control-box">
-                    <h2 style="font-family:var(--font-heading); font-size:1.2rem; color:#fff; margin-bottom:6px;"><i class="fa-solid fa-sliders" style="color:var(--emerald-primary);"></i> Factory Crushing Parameters</h2>
-                    <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:20px;">
-                        Adjust parameters to calculate season financial gains from satellite harvest timing.
-                    </p>
+                    <h3 style="font-size:1.2rem; font-weight:800; color:#ffffff; margin-bottom:18px;">
+                        <i class="fa-solid fa-sliders" style="color:var(--cyan-accent);"></i> Factory Parameters
+                    </h3>
 
-                    <div style="margin-bottom:18px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:700; margin-bottom:6px;">
-                            <span>DAILY CRUSHING CAPACITY (TCD)</span>
-                            <span style="color:var(--emerald-glow); font-family:var(--font-mono);" id="valRoiTcd">4,500 TCD</span>
-                        </div>
-                        <input type="range" id="sliderRoiTcd" min="2500" max="15000" step="500" value="4500" style="width:100%; accent-color:var(--emerald-primary);" />
+                    <div class="terminal-input-group">
+                        <label>Crushing Capacity (TCD)</label>
+                        <input type="number" id="roiInputTcd" value="4500" step="500" />
                     </div>
 
-                    <div style="margin-bottom:18px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:700; margin-bottom:6px;">
-                            <span>SEASON CRUSHING DURATION</span>
-                            <span style="color:var(--cyan-accent); font-family:var(--font-mono);" id="valRoiDays">160 Days</span>
-                        </div>
-                        <input type="range" id="sliderRoiDays" min="120" max="180" step="5" value="160" style="width:100%; accent-color:var(--cyan-accent);" />
+                    <div class="terminal-input-group">
+                        <label>Crushing Season Duration (Days)</label>
+                        <input type="number" id="roiInputSeasonDays" value="150" step="5" />
                     </div>
 
-                    <div style="margin-bottom:24px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:700; margin-bottom:6px;">
-                            <span>SATELLITE RECOVERY GAIN (CCS %)</span>
-                            <span style="color:var(--emerald-glow); font-family:var(--font-mono);" id="valRoiGain">+0.60% Recovery</span>
-                        </div>
-                        <input type="range" id="sliderRoiGain" min="0.20" max="1.00" step="0.05" value="0.60" style="width:100%; accent-color:var(--emerald-primary);" />
+                    <div class="terminal-input-group">
+                        <label>Projected Recovery Boost (CCS %)</label>
+                        <input type="number" id="roiInputRecoveryBoost" value="0.45" step="0.05" />
                     </div>
 
-                    <div style="background:rgba(5,10,20,0.5); border-radius:var(--radius-md); padding:14px; font-size:0.82rem; color:var(--text-secondary);">
-                        <i class="fa-solid fa-circle-info" style="color:var(--cyan-accent);"></i> Fixed cane price benchmark: <strong>₹3,250/MT (FRP)</strong>. Sugar MSP market price: <strong>₹38/kg</strong>.
+                    <div class="terminal-input-group">
+                        <label>Wholesale Sugar Price (&#8377; / Quintal)</label>
+                        <input type="number" id="roiInputSugarPrice" value="3600" step="50" />
                     </div>
+
+                    <button class="action-btn primary" onclick="openMillSettingsModal()" style="margin-top:10px; width:100%; justify-content:center;">
+                        <i class="fa-solid fa-gear"></i> Set As Mill Default Parameters
+                    </button>
                 </div>
 
                 <div class="roi-results-box">
                     <div>
-                        <span style="font-size:0.75rem; color:var(--cyan-accent); font-weight:800; letter-spacing:0.08em; text-transform:uppercase;">FINANCIAL RETURN SUMMARY</span>
-                        <h3 style="font-family:var(--font-heading); font-size:1.8rem; color:#fff; margin:6px 0 16px;">
-                            <span id="roiTotalBenefitCr" style="color:var(--emerald-glow);">₹18.82 Crores</span>
-                            <span style="font-size:0.9rem; color:var(--text-secondary); font-family:var(--font-body); font-weight:600;">Net Season Gain</span>
-                        </h3>
-
-                        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-                            <div style="display:flex; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--border-subtle);">
-                                <span style="color:var(--text-secondary);">Total Cane Crushed</span>
-                                <span style="font-family:var(--font-mono); font-weight:700; color:#fff;" id="roiTotalCaneCrushed">7,20,000 MT</span>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--border-subtle);">
-                                <span style="color:var(--text-secondary);">Additional Sugar Produced</span>
-                                <span style="font-family:var(--font-mono); font-weight:700; color:#34d399;" id="roiExtraSugarTons">4,320 MT (43,200 Quintals)</span>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--border-subtle);">
-                                <span style="color:var(--text-secondary);">Extra Sugar Revenue (@ ₹38/kg)</span>
-                                <span style="font-family:var(--font-mono); font-weight:700; color:var(--emerald-glow);" id="roiExtraRevenueCr">₹16.42 Crores</span>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--border-subtle);">
-                                <span style="color:var(--text-secondary);">Ghost Advances Blocked</span>
-                                <span style="font-family:var(--font-mono); font-weight:700; color:#f59e0b;">₹2.40 Crores</span>
-                            </div>
+                        <div style="font-size:0.75rem; color:var(--emerald-glow); font-weight:800; text-transform:uppercase;">Estimated Seasonal Value Addition</div>
+                        <div style="font-size:3.2rem; font-weight:900; color:var(--emerald-glow); font-family:var(--font-mono); line-height:1.1; text-shadow:0 0 30px rgba(0,230,118,0.4);" id="roiBigNumberCr">
+                            &#8377;14.82 Cr
                         </div>
+                        <p style="font-size:0.85rem; color:#a7f3d0; margin-top:4px;">
+                            Pure incremental cash margin generated by eliminating inversion and harvesting at peak sucrose.
+                        </p>
                     </div>
 
-                    <div style="background:rgba(16,185,129,0.18); border:1px solid var(--emerald-primary); border-radius:var(--radius-md); padding:16px; text-align:center;">
-                        <span style="font-size:0.75rem; color:#fff; font-weight:800; text-transform:uppercase;">ESTIMATED ROI MULTIPLE</span>
-                        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; color:#00e676;" id="roiProfitMultiple">94x Return</div>
-                        <span style="font-size:0.72rem; color:var(--text-secondary);">Against ₹20 Lakhs Annual Enterprise License</span>
+                    <div style="display:flex; flex-direction:column; gap:10px; border-top:1px solid rgba(255,255,255,0.1); padding-top:18px; font-size:0.86rem;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--text-secondary);">Total Cane Crushed:</span>
+                            <strong id="roiTotalCaneCrushed">6.75 Lakh MT</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--text-secondary);">Additional Sugar Bags Produced:</span>
+                            <strong style="color:var(--cyan-accent);" id="roiExtraBagsProduced">+60,750 Bags</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--text-secondary);">Additional Sugar Revenue:</span>
+                            <strong id="roiSugarRevCrores">&#8377;10.94 Cr</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--text-secondary);">Harvesting &amp; Diesel Saved:</span>
+                            <strong id="roiDieselSavedCrores">&#8377;1.69 Cr</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding-top:8px; border-top:1px dashed rgba(255,255,255,0.2);">
+                            <span style="color:var(--text-secondary);">Software ROI Multiplier:</span>
+                            <strong style="color:var(--emerald-glow); font-size:1rem;">12x to 15x Return</strong>
+                        </div>
                     </div>
                 </div>
 
@@ -550,193 +604,454 @@
 
     </main>
 
-    <!-- 5. PLOT COCKPIT SLIDE-OVER DRAWER -->
-    <div id="cockpitDrawer" class="cockpit-drawer">
-        <div class="cockpit-drawer-head">
+    <!-- 6. SLIDEOVER PLOT COCKPIT DRAWER -->
+    <div id="plotCockpitDrawer" class="cockpit-drawer">
+        <div class="cockpit-header">
             <div>
-                <span style="font-size:0.72rem; color:var(--cyan-accent); font-weight:800; letter-spacing:0.06em;">CROP TELEMETRY DOSSIER</span>
-                <h3 id="cockpitFarmerName" style="font-family:var(--font-heading); font-size:1.3rem; color:#fff; margin-top:2px;">--</h3>
-                <p id="cockpitPlotMeta" style="font-size:0.82rem; color:var(--text-secondary);">--</p>
+                <span class="badge badge-optimal" id="cockpitGatBadge">Gat 142</span>
+                <h3 id="cockpitFarmerName" style="color:#ffffff; font-size:1.15rem; font-weight:800; margin-top:6px;">Farmer Name</h3>
+                <p id="cockpitVillageCircle" style="font-size:0.75rem; color:var(--text-muted);">Village &bull; Circle</p>
             </div>
-            <button id="btnCloseCockpit" class="cockpit-close-btn">&times;</button>
+            <button class="cockpit-close-btn" id="btnCloseCockpit">&times;</button>
         </div>
 
-        <div id="cockpitAlertBox" style="margin-bottom:14px;"></div>
-
-        <!-- Sucrose Metrics Grid -->
         <div class="cockpit-stat-box">
-            <span style="font-size:0.72rem; color:var(--emerald-glow); font-weight:800; text-transform:uppercase;"><i class="fa-solid fa-dna"></i> Satellite Sucrose Synthesis</span>
-            <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:8px;">
-                <div>
-                    <span style="font-size:0.7rem; color:var(--text-muted);">Commercial Sugar (CCS %)</span>
-                    <div id="cockpitCcsVal" style="font-family:var(--font-mono); font-size:1.3rem; font-weight:800; color:var(--emerald-glow);">--</div>
-                </div>
-                <div>
-                    <span style="font-size:0.7rem; color:var(--text-muted);">Biological Pol (%)</span>
-                    <div id="cockpitPolVal" style="font-family:var(--font-mono); font-size:1.3rem; font-weight:800; color:#38bdf8;">--</div>
-                </div>
-                <div>
-                    <span style="font-size:0.7rem; color:var(--text-muted);">Refractometer Brix</span>
-                    <div id="cockpitBrixVal" style="font-family:var(--font-mono); font-size:1.1rem; font-weight:700; color:#fff;">--</div>
-                </div>
-                <div>
-                    <span style="font-size:0.7rem; color:var(--text-muted);">Juice Purity Ratio</span>
-                    <div id="cockpitPurityVal" style="font-family:var(--font-mono); font-size:1.1rem; font-weight:700; color:#a855f7;">--</div>
-                </div>
-            </div>
+            <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Commercial Cane Sugar (CCS)</div>
+            <div style="font-size:2rem; font-weight:900; color:var(--emerald-glow); font-family:var(--font-mono);" id="cockpitValCcs">12.80%</div>
+            <div style="font-size:0.75rem; color:#a7f3d0;"><i class="fa-solid fa-circle-check"></i> Peak Sucrose Window (Optimal 7 Days)</div>
         </div>
 
-        <!-- Cadastral Area & Tonnage Box -->
         <div class="cockpit-stat-grid">
             <div class="cockpit-stat-box">
-                <span style="font-size:0.7rem; color:var(--text-muted);">DETECTED CANE AREA</span>
-                <div id="cockpitDetectedAcres" style="font-family:var(--font-mono); font-size:1.1rem; font-weight:800; color:#fff; margin-top:4px;">--</div>
-                <span style="font-size:0.68rem; color:var(--text-muted);">Claimed: <span id="cockpitClaimedAcres">--</span></span>
+                <div style="font-size:0.68rem; color:var(--text-muted); font-weight:700;">JUICE BRIX</div>
+                <div style="font-size:1.2rem; font-weight:800; color:#ffffff;" id="cockpitValBrix">21.6&deg;Bx</div>
             </div>
             <div class="cockpit-stat-box">
-                <span style="font-size:0.7rem; color:var(--text-muted);">VARIETY & TYPE</span>
-                <div id="cockpitVariety" style="font-size:0.95rem; font-weight:800; color:var(--cyan-accent); margin-top:4px;">--</div>
-                <span style="font-size:0.68rem; color:var(--text-muted);" id="cockpitTons">--</span>
+                <div style="font-size:0.68rem; color:var(--text-muted); font-weight:700;">POLARIMETER POL</div>
+                <div style="font-size:1.2rem; font-weight:800; color:#ffffff;" id="cockpitValPol">17.8%</div>
+            </div>
+            <div class="cockpit-stat-box">
+                <div style="font-size:0.68rem; color:var(--text-muted); font-weight:700;">JUICE PURITY</div>
+                <div style="font-size:1.2rem; font-weight:800; color:#ffffff;" id="cockpitValPurity">82.4%</div>
+            </div>
+            <div class="cockpit-stat-box">
+                <div style="font-size:0.68rem; color:var(--text-muted); font-weight:700;">SENTINEL NDVI</div>
+                <div style="font-size:1.2rem; font-weight:800; color:var(--cyan-accent);" id="cockpitValNdvi">0.78</div>
             </div>
         </div>
 
-        <!-- Staling Window Box -->
         <div class="cockpit-stat-box">
-            <span style="font-size:0.72rem; color:var(--amber-warning); font-weight:800; text-transform:uppercase;"><i class="fa-solid fa-clock"></i> Cut-to-Crush Transit Window</span>
-            <div id="cockpitTransitTarget" style="font-size:0.92rem; font-weight:700; color:#fff; margin-top:4px;">&lt; 24 Hours (Prevents Post-Harvest Staling Inversion)</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.8rem;">
+                <span style="color:var(--text-muted);">Declared Acreage:</span>
+                <strong id="cockpitValAcres">2.0 Ac</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.8rem;">
+                <span style="color:var(--text-muted);">Est. Cane Tonnage:</span>
+                <strong id="cockpitValTons">85 MT</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.8rem;">
+                <span style="color:var(--text-muted);">Cane Variety &amp; Type:</span>
+                <strong id="cockpitValVariety">Co 86032 (Adsali)</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.8rem;">
+                <span style="color:var(--text-muted);">Plantation Date:</span>
+                <strong id="cockpitValPlantDate">2025-07-15</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                <span style="color:var(--text-muted);">Cutting Docket ID:</span>
+                <strong style="color:var(--cyan-accent);" id="cockpitValDocketId">DOK-2026-1001</strong>
+            </div>
         </div>
 
-        <!-- Bottom Actions -->
         <div class="cockpit-actions-bar">
-            <button id="btnIssueCuttingSlip" class="btn-header-action" style="flex:1; padding:12px; justify-content:center; font-size:0.9rem;">
-                <i class="fa-solid fa-print"></i> Generate Official Cutting Slip
+            <button class="action-btn primary" id="btnIssueCuttingSlip" style="flex:1; justify-content:center; padding:12px;">
+                <i class="fa-solid fa-print"></i> Issue Official Cutting Docket
             </button>
         </div>
     </div>
 
-    <!-- 6. PRINTABLE CUTTING SLIP DOCKET MODAL -->
-    <div id="docketModal" class="docket-modal-backdrop">
+    <!-- 7. OFFICIAL PRINTABLE CUTTING SLIP DOCKET MODAL -->
+    <div id="cuttingDocketModalOverlay" class="docket-modal-backdrop">
         <div class="docket-paper-card">
-            
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #000; padding-bottom:12px; margin-bottom:16px;">
-                <div>
-                    <h2 style="font-size:1.3rem; margin:0; font-weight:800; text-transform:uppercase;" id="docketMillHeader">Gangamai Sahakari Sakhar Karkhana (SSK)</h2>
-                    <h4 style="margin:4px 0 0; font-size:0.92rem; color:#374151;">Cane Cutting Slip & Quality Docket (तोडणी पावती २०२६-२७)</h4>
-                    <span style="font-size:0.75rem; color:#6b7280;">Satellite Remote Sensing & Pre-Harvest Telemetry</span>
-                </div>
-                <div style="text-align:right;">
-                    <div style="font-family:monospace; font-size:1rem; font-weight:700;" id="docketIdCode">DOK-2026-1042</div>
-                    <span style="font-size:0.75rem; color:#6b7280;" id="docketIssueDate">10 Oct 2026</span>
+            <div class="no-print" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <span style="font-size:0.8rem; font-weight:800; color:#059669;"><i class="fa-solid fa-circle-check"></i> OFFICIAL WEIGHBRIDGE CRUSHING SLIP</span>
+                <div style="display:flex; gap:10px;">
+                    <button class="action-btn primary" id="btnPrintDocket" style="padding:6px 14px;"><i class="fa-solid fa-print"></i> Print Docket</button>
+                    <button class="modal-close-btn" id="btnCloseDocketModal" style="color:#111827; background:#e5e7eb;">&times;</button>
                 </div>
             </div>
 
-            <table style="width:100%; border-collapse:collapse; margin-bottom:16px; font-size:13px;" border="1">
-                <tr>
-                    <td style="padding:6px; background:#f3f4f6; width:25%;"><b>Farmer Name (शेतकरी):</b></td>
-                    <td style="padding:6px; width:25%; font-weight:bold;" id="docketFarmerName">--</td>
-                    <td style="padding:6px; background:#f3f4f6; width:25%;"><b>Gat No / Village (गट क्र.):</b></td>
-                    <td style="padding:6px; width:25%;" id="docketGatNumber">--</td>
-                </tr>
-                <tr>
-                    <td style="padding:6px; background:#f3f4f6;"><b>Circle (विभाग):</b></td>
-                    <td style="padding:6px;" id="docketCircleName">--</td>
-                    <td style="padding:6px; background:#f3f4f6;"><b>Variety & Type:</b></td>
-                    <td style="padding:6px; font-weight:bold;" id="docketVarietyName">--</td>
-                </tr>
-                <tr>
-                    <td style="padding:6px; background:#f3f4f6;"><b>Biological Pol (%):</b></td>
-                    <td style="padding:6px; color:#1d4ed8; font-weight:bold;" id="docketStalkPol">--</td>
-                    <td style="padding:6px; background:#f3f4f6;"><b>Stalk Brix (° Bx):</b></td>
-                    <td style="padding:6px;" id="docketStalkBrix">--</td>
-                </tr>
-                <tr>
-                    <td style="padding:6px; background:#f3f4f6;"><b>Expected Factory CCS %:</b></td>
-                    <td style="padding:6px; color:#15803d; font-weight:bold;" id="docketFactoryCcs">--</td>
-                    <td style="padding:6px; background:#f3f4f6;"><b>Est. Cane Tonnage:</b></td>
-                    <td style="padding:6px; font-weight:bold;" id="docketEstYield">--</td>
-                </tr>
-                <tr>
-                    <td style="padding:6px; background:#f3f4f6;"><b>Cutting Window:</b></td>
-                    <td style="padding:6px; font-weight:bold; color:#15803d;" id="docketHarvestWindow">--</td>
-                    <td style="padding:6px; background:#f3f4f6;"><b>Cut-to-Crush Rule:</b></td>
-                    <td style="padding:6px; color:#b45309; font-weight:bold;" id="docketTransitRule">--</td>
-                </tr>
-            </table>
+            <div style="border:2px solid #111827; padding:20px;">
+                <div style="text-align:center; border-bottom:2px solid #111827; padding-bottom:12px; margin-bottom:14px;">
+                    <h2 style="font-size:1.3rem; font-weight:900; margin:0;" id="docketMillHeaderName">GANGAMAI SAHAKARI SAKHAR KARKHANA LTD.</h2>
+                    <p style="font-size:0.75rem; margin:2px 0 0;" id="docketMillHeaderSub">Factory Code: MILL-GM-414 &bull; Crushing Capacity: 4,500 TCD</p>
+                    <h3 style="font-size:1rem; font-weight:800; margin-top:8px; text-decoration:underline;">OFFICIAL SATELLITE-VERIFIED CANE HARVEST DOCKET</h3>
+                </div>
 
-            <div style="display:flex; justify-content:space-between; margin-top:36px; padding-top:12px; font-size:12px; text-align:center;">
-                <div>
-                    ___________________________<br/>
-                    <b>Chief Agriculture Officer (CAO)</b>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:14px;">
+                    <div>Slip No: <strong id="docketSlipNo">DOK-2026-1001</strong></div>
+                    <div>Date: <strong id="docketPrintDate">10-Oct-2026</strong></div>
                 </div>
-                <div>
-                    ___________________________<br/>
-                    <b>Chief Chemist / Laboratory</b>
+
+                <table style="width:100%; border-collapse:collapse; font-size:0.82rem; margin-bottom:14px;">
+                    <tr>
+                        <td style="border:1px solid #111827; padding:6px; font-weight:700;">Grower Name:</td>
+                        <td style="border:1px solid #111827; padding:6px;" id="docketFarmerName" colspan="3">YADAV MAHESH SHANKAR</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #111827; padding:6px; font-weight:700;">Cadastral Gat:</td>
+                        <td style="border:1px solid #111827; padding:6px;" id="docketGatNo">Gat 113</td>
+                        <td style="border:1px solid #111827; padding:6px; font-weight:700;">Village / Circle:</td>
+                        <td style="border:1px solid #111827; padding:6px;" id="docketVillageCircle">SAINATHNAGAR / Shevgaon</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #111827; padding:6px; font-weight:700;">Registered Area:</td>
+                        <td style="border:1px solid #111827; padding:6px;" id="docketAcreage">2.00 Acres</td>
+                        <td style="border:1px solid #111827; padding:6px; font-weight:700;">Est. Cane Tonnage:</td>
+                        <td style="border:1px solid #111827; padding:6px;" id="docketEstTonnage">85 MT</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #111827; padding:6px; font-weight:700;">Variety &amp; Type:</td>
+                        <td style="border:1px solid #111827; padding:6px;" id="docketVariety">Co 86032 &bull; Adsali</td>
+                        <td style="border:1px solid #111827; padding:6px; font-weight:700;">Max Transit Delay:</td>
+                        <td style="border:1px solid #111827; padding:6px; color:#b91c1c; font-weight:800;" id="docketMaxHours">16 Hours Max</td>
+                    </tr>
+                </table>
+
+                <div style="background:#f3f4f6; border:1px solid #d1d5db; padding:10px; margin-bottom:14px; font-size:0.8rem;">
+                    <div style="font-weight:700; margin-bottom:4px;">SATELLITE SPECTRAL MATURATION AUDIT:</div>
+                    <div>Predicted CCS: <strong id="docketValCcs">12.80%</strong> &bull; Brix: <strong id="docketValBrix">21.6&deg;Bx</strong> &bull; Pol: <strong id="docketValPol">17.8%</strong> &bull; MahaBhuNaksha 7/12: <strong style="color:#059669;">CONFIRMED AUTHENTIC</strong></div>
                 </div>
-                <div>
-                    ___________________________<br/>
-                    <b>Managing Director (MD)</b>
+
+                <div style="border:1px solid #111827; padding:8px; margin-bottom:18px; font-size:0.8rem;">
+                    Assigned Harvesting Gang &amp; Transporter: <strong id="docketAssignedGang">Santosh Kale Mukadam (Tractor Trolley) &bull; Ph: 98221 45120</strong>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:30px; font-size:0.75rem; text-align:center;">
+                    <div style="border-top:1px solid #111827; width:140px; padding-top:4px;">Field Inspector</div>
+                    <div style="border-top:1px solid #111827; width:140px; padding-top:4px;">C&amp;T Officer</div>
+                    <div style="border-top:1px solid #111827; width:140px; padding-top:4px;">Chief Chemist</div>
+                    <div style="border-top:1px solid #111827; width:140px; padding-top:4px;">Weighbridge Incharge</div>
                 </div>
             </div>
-
-            <div style="margin-top:24px; padding-top:16px; border-top:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center;" class="no-print">
-                <button id="btnCloseDocketModal" style="padding:8px 16px; background:#e5e7eb; color:#374151; border:none; border-radius:6px; cursor:pointer; font-weight:700;">Close</button>
-                <button onclick="printOfficialDocket()" class="btn-header-action" style="padding:8px 20px;">
-                    <i class="fa-solid fa-print"></i> Print Cutting Slip Docket
-                </button>
-            </div>
-
         </div>
     </div>
 
-    <!-- External Leaflet & Fast Dataset -->
+    <!-- ====================================================================
+         8. THE 5 INTERACTIVE ACTION MODALS FOR SUGAR MILLS
+         ==================================================================== -->
+
+    <!-- MODAL 1: REGISTER FARMER / ADD SINGLE PLOT -->
+    <div id="modalAddPlot" class="modal-dialog-overlay">
+        <div class="terminal-modal-card">
+            <div class="modal-head-row">
+                <div class="modal-head-title">
+                    <h3><i class="fa-solid fa-plus-circle" style="color:var(--emerald-primary);"></i> Register New Farmer Parcel</h3>
+                    <p>Enter sugarcane parcel data to trigger autonomous Sentinel-2 remote sensing calibration.</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeAddPlotModal()">&times;</button>
+            </div>
+
+            <form id="formAddSinglePlot">
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Farmer Name (English)</label>
+                        <input type="text" id="addFarmerEn" placeholder="e.g. SURESH TUKARAM SHINDE" required />
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Farmer Name (मराठी)</label>
+                        <input type="text" id="addFarmerMr" placeholder="उदा. सुरेश तुकाराम शिंदे" />
+                    </div>
+                </div>
+
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Gat / Survey Number (गट क्र.)</label>
+                        <input type="number" id="addGatNo" placeholder="e.g. 142" required />
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Village (गाव)</label>
+                        <input type="text" id="addVillage" placeholder="e.g. SAINATHNAGAR" required />
+                    </div>
+                </div>
+
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Mill Operational Circle (सर्कल)</label>
+                        <select id="addCircle">
+                            <option value="Shevgaon Central">Shevgaon Central</option>
+                            <option value="Bodhegaon Sector">Bodhegaon Sector</option>
+                            <option value="Newasa Phata Circle">Newasa Phata Circle</option>
+                            <option value="Erandgaon Circle">Erandgaon Circle</option>
+                        </select>
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Sugarcane Variety (वाण)</label>
+                        <select id="addVariety">
+                            <option value="Co 86032" selected>Co 86032 (Nira)</option>
+                            <option value="CoM 0265">CoM 0265 (Phule 0265)</option>
+                            <option value="Co 0118">Co 0118 (High Sugar Early)</option>
+                            <option value="MS 10001">MS 10001 (Early Heavy)</option>
+                            <option value="Co 92005">Co 92005</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Cane Crop Type (हंगाम)</label>
+                        <select id="addCaneType">
+                            <option value="Adsali" selected>Adsali (अडसाली - 16 to 18 Mo)</option>
+                            <option value="Pre-seasonal">Pre-seasonal (पूर्व हंगामी - 14 to 15 Mo)</option>
+                            <option value="Suru">Suru (सुरू - 12 Mo)</option>
+                            <option value="Ratoon">Ratoon (खोडवा - 10 to 12 Mo)</option>
+                        </select>
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Plantation Date (लागवड तारीख)</label>
+                        <input type="date" id="addPlantDate" value="2025-07-15" required />
+                    </div>
+                </div>
+
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Registered Area (Acres)</label>
+                        <input type="number" id="addAcres" value="2.5" step="0.1" required />
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Coordinates (Lat, Lon)</label>
+                        <div style="display:flex; gap:6px;">
+                            <input type="number" id="addLat" value="19.5714" step="0.0001" placeholder="Lat" />
+                            <input type="number" id="addLon" value="74.9474" step="0.0001" placeholder="Lon" />
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background:rgba(0,230,118,0.08); border:1px solid rgba(0,230,118,0.25); border-radius:var(--radius-sm); padding:12px; margin-bottom:18px; font-size:0.75rem; color:#a7f3d0;">
+                    <i class="fa-solid fa-satellite"></i> <strong>Autonomous Ingestion:</strong> The SatCane&trade; engine will immediately calculate Sentinel-2 NDVI, predicted Brix/Pol/CCS, and assign this parcel into the optimal cutting window.
+                </div>
+
+                <button type="submit" class="action-btn primary" style="width:100%; justify-content:center; padding:12px;">
+                    <i class="fa-solid fa-check"></i> Register Parcel &amp; Run Satellite Calibration
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: BULK UPLOAD HARVEST REGISTER (CSV / EXCEL) -->
+    <div id="modalBulkUpload" class="modal-dialog-overlay">
+        <div class="terminal-modal-card wide">
+            <div class="modal-head-row">
+                <div class="modal-head-title">
+                    <h3><i class="fa-solid fa-file-arrow-up" style="color:var(--cyan-accent);"></i> Bulk Ingest Harvest Register</h3>
+                    <p>Import factory CSV or Excel registers containing farmer names, Gat numbers, varieties, and coordinates.</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeBulkUploadModal()">&times;</button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                <span style="font-size:0.8rem; color:var(--text-secondary);">Supported Formats: .csv, .xlsx, .xls</span>
+                <button type="button" class="action-btn" onclick="downloadStandardRegisterTemplate()" style="font-size:0.75rem; padding:5px 12px;">
+                    <i class="fa-solid fa-file-csv"></i> Download Standard Mill Template (.csv)
+                </button>
+            </div>
+
+            <input type="file" id="inputBulkFile" accept=".csv,.xlsx,.xls" style="display:none;" />
+            <div id="bulkUploadDropzone" class="upload-dropzone">
+                <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
+                <h4 style="font-size:1.05rem; font-weight:800; color:#ffffff; margin-bottom:4px;">Drag &amp; Drop Harvest Register Here</h4>
+                <p style="font-size:0.78rem; color:var(--text-muted);">or click to browse from your computer</p>
+            </div>
+
+            <!-- Ingestion Preview Area -->
+            <div id="bulkPreviewContainer" style="display:none; margin-top:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <strong style="color:var(--emerald-glow); font-size:0.88rem;" id="bulkPreviewCount">Detected 48 Valid Parcels</strong>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">First 5 rows preview below</span>
+                </div>
+                
+                <table class="mill-data-table" style="margin-bottom:18px;">
+                    <thead>
+                        <tr>
+                            <th>Gat</th>
+                            <th>Grower</th>
+                            <th>Village</th>
+                            <th>Variety</th>
+                            <th>Area</th>
+                            <th>Pred. CCS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bulkPreviewTableBody">
+                    </tbody>
+                </table>
+
+                <button type="button" class="action-btn primary" onclick="handleConfirmBulkImport()" style="width:100%; justify-content:center; padding:12px;">
+                    <i class="fa-solid fa-bolt"></i> Confirm &amp; Ingest All Parcels to Live Queue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ADD C&T HARVESTING GANG -->
+    <div id="modalAddGang" class="modal-dialog-overlay">
+        <div class="terminal-modal-card">
+            <div class="modal-head-row">
+                <div class="modal-head-title">
+                    <h3><i class="fa-solid fa-tractor" style="color:var(--emerald-primary);"></i> Harvesting Gang &amp; Transporter Fleet</h3>
+                    <p>Manage cutting contractors, mukadams, vehicle types, and daily crushing tonnages.</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeAddGangModal()">&times;</button>
+            </div>
+
+            <form id="formAddHarvestGang" style="margin-bottom:24px;">
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Mukadam / Contractor Name (मुकादम नाव)</label>
+                        <input type="text" id="gangName" placeholder="e.g. Ramesh Shinde Mukadam" required />
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Contact Phone Number</label>
+                        <input type="tel" id="gangPhone" placeholder="e.g. 98221 45120" required />
+                    </div>
+                </div>
+
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Transport Fleet Type</label>
+                        <select id="gangType">
+                            <option value="Tractor Trolley (12 MT)" selected>Tractor Trolley (12 MT)</option>
+                            <option value="10-Tonne Truck (18 MT)">10-Tonne Truck (18 MT)</option>
+                            <option value="Bullock Cart (2.5 MT)">Bullock Cart (बैलगाडी - 2.5 MT)</option>
+                        </select>
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Vehicle Plate / Identification</label>
+                        <input type="text" id="gangRegNo" placeholder="e.g. MH-16-BX-9940" required />
+                    </div>
+                </div>
+
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Daily Cutting Quota (MT/Day)</label>
+                        <input type="number" id="gangQuota" value="45" step="5" required />
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Assigned Mill Circle</label>
+                        <select id="gangCircle">
+                            <option value="Shevgaon Central">Shevgaon Central</option>
+                            <option value="Bodhegaon Sector">Bodhegaon Sector</option>
+                            <option value="Newasa Phata Circle">Newasa Phata Circle</option>
+                            <option value="Erandgaon Circle">Erandgaon Circle</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="action-btn primary" style="width:100%; justify-content:center; padding:10px;">
+                    <i class="fa-solid fa-plus"></i> Register C&amp;T Gang
+                </button>
+            </form>
+
+            <h4 style="font-size:0.85rem; font-weight:800; color:#ffffff; margin-bottom:10px;">
+                <i class="fa-solid fa-list"></i> Active Registered Gangs
+            </h4>
+            <div id="gangsListContainer">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: MILL OPERATIONAL PARAMETERS & TARGETS -->
+    <div id="modalMillSettings" class="modal-dialog-overlay">
+        <div class="terminal-modal-card">
+            <div class="modal-head-row">
+                <div class="modal-head-title">
+                    <h3><i class="fa-solid fa-sliders" style="color:var(--cyan-accent);"></i> Factory Crushing Parameters</h3>
+                    <p>Configure mill crushing targets, baseline recovery, and transit thresholds.</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeMillSettingsModal()">&times;</button>
+            </div>
+
+            <form id="formMillParameters">
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Daily Crushing Capacity (TCD)</label>
+                        <input type="number" id="settingInputTcd" value="4500" step="100" required />
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Crushing Season Duration (Days)</label>
+                        <input type="number" id="settingInputDays" value="150" step="5" required />
+                    </div>
+                </div>
+
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Baseline Factory Recovery (CCS %)</label>
+                        <input type="number" id="settingInputBaseRec" value="10.45" step="0.05" required />
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Wholesale Sugar Price (&#8377; / Quintal)</label>
+                        <input type="number" id="settingInputPrice" value="3600" step="50" required />
+                    </div>
+                </div>
+
+                <div class="terminal-input-group">
+                    <label>Max Transit Delay Cut-to-Crush (Hours)</label>
+                    <input type="number" id="settingInputMaxHours" value="18" step="1" required />
+                    <span style="font-size:0.72rem; color:var(--text-muted);">Beyond 18 hours, microbial invertase destroys 0.15% recovery daily.</span>
+                </div>
+
+                <button type="submit" class="action-btn primary" style="width:100%; justify-content:center; padding:12px; margin-top:10px;">
+                    <i class="fa-solid fa-floppy-disk"></i> Save &amp; Recalculate Factory Telemetry
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 5: LOG POLARIMETER LAB TEST MODAL -->
+    <div id="modalAddLab" class="modal-dialog-overlay">
+        <div class="terminal-modal-card">
+            <div class="modal-head-row">
+                <div class="modal-head-title">
+                    <h3><i class="fa-solid fa-flask-vial" style="color:var(--amber-warning);"></i> Commit Polarimeter Laboratory Test</h3>
+                    <p>Input bench polarimeter sucrose readings to calibrate satellite remote sensing algorithms.</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeAddLabModal()">&times;</button>
+            </div>
+
+            <form id="formLogLabTestModal">
+                <div class="terminal-input-group">
+                    <label>Select Sampled Parcel (गट व शेतकरी)</label>
+                    <select id="labModalSelPlot" required>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+
+                <div class="terminal-form-grid">
+                    <div class="terminal-input-group">
+                        <label>Primary Juice Brix (&deg;Bx)</label>
+                        <input type="number" id="labModalBrix" value="21.6" step="0.1" required />
+                    </div>
+                    <div class="terminal-input-group">
+                        <label>Polarimeter Reading (Pol %)</label>
+                        <input type="number" id="labModalPol" value="17.8" step="0.1" required />
+                    </div>
+                </div>
+
+                <div class="terminal-input-group">
+                    <label>Lab Sampling Date</label>
+                    <input type="date" id="labModalDate" value="2026-10-10" required />
+                </div>
+
+                <button type="submit" class="action-btn primary" style="width:100%; justify-content:center; padding:12px; margin-top:8px;">
+                    <i class="fa-solid fa-check-double"></i> Calibrate Satellite Model with Lab Data
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="mill_calibrated_plots.js"></script>
     <script src="mill-terminal.js"></script>
-
-    <!-- Terminal Auth Gate Script -->
-    <script>
-        const VALID_KEYS = ['ikshu2026', 'sugar2026', 'ikshu-gangamai', 'ikshu-admin', 'rushikesh2026'];
-        function checkAuth() {
-            if (sessionStorage.getItem('ikshu_enterprise_auth') === 'granted') {
-                const overlay = document.getElementById('enterpriseAuthOverlay');
-                if (overlay) overlay.classList.add('unlocked');
-            }
-        }
-        function handleAuthSubmit(e) {
-            e.preventDefault();
-            const input = document.getElementById('accessKeyInput');
-            const err = document.getElementById('authErrorMsg');
-            const val = (input.value || '').trim().toLowerCase();
-            if (VALID_KEYS.includes(val)) {
-                sessionStorage.setItem('ikshu_enterprise_auth', 'granted');
-                document.getElementById('enterpriseAuthOverlay').classList.add('unlocked');
-                if (err) err.style.display = 'none';
-            } else {
-                if (err) err.style.display = 'block';
-                input.value = '';
-                input.focus();
-            }
-        }
-        function unlockWithSandbox(name, role, tcd) {
-            sessionStorage.setItem('ikshu_enterprise_auth', 'granted');
-            sessionStorage.setItem('ikshu_mill_profile', JSON.stringify({
-                millName: name,
-                shortName: name.includes('Gangamai') ? 'Gangamai SSK' : 'Samarth SSK',
-                role: role,
-                tcd: tcd
-            }));
-            const overlay = document.getElementById('enterpriseAuthOverlay');
-            if (overlay) overlay.classList.add('unlocked');
-            if (window.MillApp && typeof initMillProfile === 'function') initMillProfile();
-        }
-        function lockTerminal() {
-            sessionStorage.removeItem('ikshu_enterprise_auth');
-            sessionStorage.removeItem('ikshu_mill_profile');
-            const overlay = document.getElementById('enterpriseAuthOverlay');
-            if (overlay) overlay.classList.remove('unlocked');
-        }
-        document.addEventListener('DOMContentLoaded', checkAuth);
-        checkAuth();
-    </script>
 </body>
 </html>
