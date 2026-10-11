@@ -26,6 +26,11 @@ window.MillApp = {
     searchQuery: '',
     queueListLimit: 120,
     queueTableLimit: 200,
+    soundEnabled: true,
+    theme: 'dark',
+    audioCtx: null,
+    darkTileLayer: null,
+    lightTileLayer: null,
     activeView: 'map',
     map: null,
     markersGroup: null,
@@ -38,6 +43,7 @@ window.MillApp = {
 
 document.addEventListener('DOMContentLoaded', () => {
     initMillProfile();
+    initThemeAndAudio();
     initDataset();
     initNavbarAndTabs();
     initLeafletMap();
@@ -56,6 +62,254 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ==========================================================================
    1. PROFILE & AUTHENTICATION SYNC
    ========================================================================== */
+
+/* ==========================================================================
+   THEME (DARK / LIGHT MODE) & FUN AUDIO / CELEBRATION ENGINE
+   ========================================================================== */
+function initThemeAndAudio() {
+    const savedTheme = localStorage.getItem('ikshu_theme') || 'dark';
+    setTheme(savedTheme, false);
+
+    const savedAudio = localStorage.getItem('ikshu_sound_fx');
+    window.MillApp.soundEnabled = savedAudio !== null ? (savedAudio === 'true') : true;
+    updateAudioButtonUI();
+}
+
+window.toggleTheme = function() {
+    const isLight = document.body.classList.contains('light-mode');
+    const newTheme = isLight ? 'dark' : 'light';
+    setTheme(newTheme, true);
+    playMillSound('click');
+};
+
+function setTheme(theme, announce = true) {
+    const btn = document.getElementById('btnThemeToggle');
+    const icon = document.getElementById('iconThemeToggle');
+    const lbl = document.getElementById('lblThemeToggle');
+
+    if (theme === 'light') {
+        document.body.classList.add('light-mode');
+        document.documentElement.setAttribute('data-theme', 'light');
+        if (icon) icon.className = 'fa-solid fa-sun';
+        if (lbl) lbl.textContent = 'Light';
+        if (btn) btn.classList.add('active-light');
+        localStorage.setItem('ikshu_theme', 'light');
+        if (window.MillApp && window.MillApp.lightTileLayer && window.MillApp.map) {
+            if (window.MillApp.darkTileLayer && window.MillApp.map.hasLayer(window.MillApp.darkTileLayer)) {
+                window.MillApp.map.removeLayer(window.MillApp.darkTileLayer);
+            }
+            window.MillApp.lightTileLayer.addTo(window.MillApp.map);
+        }
+        if (announce) showToast('?? Switched to Sunlit Cane Light Mode');
+    } else {
+        document.body.classList.remove('light-mode');
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (icon) icon.className = 'fa-solid fa-moon';
+        if (lbl) lbl.textContent = 'Dark';
+        if (btn) btn.classList.remove('active-light');
+        localStorage.setItem('ikshu_theme', 'dark');
+        if (window.MillApp && window.MillApp.darkTileLayer && window.MillApp.map) {
+            if (window.MillApp.lightTileLayer && window.MillApp.map.hasLayer(window.MillApp.lightTileLayer)) {
+                window.MillApp.map.removeLayer(window.MillApp.lightTileLayer);
+            }
+            window.MillApp.darkTileLayer.addTo(window.MillApp.map);
+        }
+        if (announce) showToast('?? Switched to Cosmic Emerald Dark Mode');
+    }
+}
+
+window.toggleAudio = function() {
+    window.MillApp.soundEnabled = !window.MillApp.soundEnabled;
+    localStorage.setItem('ikshu_sound_fx', window.MillApp.soundEnabled);
+    updateAudioButtonUI();
+    if (window.MillApp.soundEnabled) {
+        playMillSound('ping');
+        showToast('?? High-Tech Sound FX Enabled!');
+    } else {
+        showToast('?? Sound FX Muted');
+    }
+};
+
+function updateAudioButtonUI() {
+    const icon = document.getElementById('iconAudioToggle');
+    const lbl = document.getElementById('lblAudioToggle');
+    const btn = document.getElementById('btnAudioToggle');
+    if (window.MillApp.soundEnabled) {
+        if (icon) icon.className = 'fa-solid fa-volume-high';
+        if (lbl) lbl.textContent = 'FX: On';
+        if (btn) {
+            btn.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+            btn.style.color = '#34d399';
+        }
+    } else {
+        if (icon) icon.className = 'fa-solid fa-volume-xmark';
+        if (lbl) lbl.textContent = 'FX: Muted';
+        if (btn) {
+            btn.style.borderColor = 'rgba(148, 163, 184, 0.25)';
+            btn.style.color = '#94a3b8';
+        }
+    }
+}
+
+window.playMillSound = function(type) {
+    if (!window.MillApp || !window.MillApp.soundEnabled) return;
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        if (!window.MillApp.audioCtx) window.MillApp.audioCtx = new AudioCtx();
+        const ctx = window.MillApp.audioCtx;
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const t = ctx.currentTime;
+        if (type === 'click') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.setValueAtTime(750, t);
+            osc.frequency.exponentialRampToValueAtTime(950, t + 0.04);
+            gain.gain.setValueAtTime(0.06, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+            osc.start(t);
+            osc.stop(t + 0.04);
+        } else if (type === 'ping' || type === 'select') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, t);
+            osc.frequency.exponentialRampToValueAtTime(1320, t + 0.12);
+            gain.gain.setValueAtTime(0.08, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+            osc.start(t);
+            osc.stop(t + 0.13);
+        } else if (type === 'radar') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(440, t);
+            osc.frequency.exponentialRampToValueAtTime(880, t + 0.25);
+            gain.gain.setValueAtTime(0.09, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+            osc.start(t);
+            osc.stop(t + 0.28);
+        } else if (type === 'success' || type === 'triumph') {
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, t + i * 0.06);
+                gain.gain.setValueAtTime(0.08, t + i * 0.06);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.06 + 0.22);
+                osc.start(t + i * 0.06);
+                osc.stop(t + i * 0.06 + 0.22);
+            });
+        }
+    } catch (e) {}
+};
+
+window.fireSugarConfetti = function() {
+    playMillSound('triumph');
+    const canvas = document.createElement('canvas');
+    canvas.id = 'sugarConfettiCanvas';
+    canvas.style.position = 'fixed';
+    canvas.style.inset = '0';
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '9999999';
+    document.body.appendChild(canvas);
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const ctx = canvas.getContext('2d');
+
+    const particles = [];
+    const colors = ['#00e676', '#10b981', '#00f2fe', '#ffd700', '#f59e0b', '#ffffff', '#a855f7'];
+
+    for (let i = 0; i < 90; i++) {
+        particles.push({
+            x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+            y: canvas.height * 0.35 + (Math.random() - 0.5) * 80,
+            vx: (Math.random() - 0.5) * 16,
+            vy: (Math.random() - 1.2) * 12 - 4,
+            size: Math.random() * 8 + 4,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * 360,
+            rotSpeed: (Math.random() - 0.5) * 12,
+            opacity: 1,
+            gravity: 0.35
+        });
+    }
+
+    let start = null;
+    function animate(ts) {
+        if (!start) start = ts;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let alive = false;
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += p.gravity;
+            p.rotation += p.rotSpeed;
+            p.opacity -= 0.012;
+
+            if (p.opacity > 0 && p.y < canvas.height) {
+                alive = true;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.globalAlpha = Math.max(0, p.opacity);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                ctx.restore();
+            }
+        });
+
+        if (alive) {
+            requestAnimationFrame(animate);
+        } else {
+            if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+        }
+    }
+    requestAnimationFrame(animate);
+    showToast('?? Sugar Recovery Burst! Factory Sucrose Maxima Active!');
+};
+
+window.triggerRadarSweep = function() {
+    playMillSound('radar');
+    showToast('?? Scanning Cane Belt: Multi-Spectral Sucrose Pulse Active...');
+    
+    if (window.MillApp && window.MillApp.map) {
+        const center = window.MillApp.map.getCenter();
+        const pulseCircle = L.circle(center, {
+            radius: 500,
+            color: '#00f2fe',
+            fillColor: '#00f2fe',
+            fillOpacity: 0.25,
+            weight: 2
+        }).addTo(window.MillApp.map);
+
+        let rad = 500;
+        const interval = setInterval(() => {
+            rad += 1200;
+            pulseCircle.setRadius(rad);
+            const op = Math.max(0, 0.35 - (rad / 35000));
+            pulseCircle.setStyle({ fillOpacity: op, opacity: op * 2 });
+            if (rad > 32000) {
+                clearInterval(interval);
+                window.MillApp.map.removeLayer(pulseCircle);
+            }
+        }, 35);
+    }
+};
+
 function initMillProfile() {
     const raw = sessionStorage.getItem('ikshu_mill_profile');
     if (raw) {
@@ -289,6 +543,7 @@ function initNavbarAndTabs() {
 }
 
 function switchView(viewKey) {
+    playMillSound('click');
     window.MillApp.activeView = viewKey;
     document.querySelectorAll('.view-container').forEach(c => c.classList.remove('active'));
     const target = document.getElementById('view-' + viewKey);
@@ -320,9 +575,16 @@ function initLeafletMap() {
 
     L.control.zoom({ position: 'bottomright' }).addTo(window.MillApp.map);
 
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    window.MillApp.darkTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 18
-    }).addTo(window.MillApp.map);
+    });
+    window.MillApp.lightTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd'
+    });
+
+    const isLightNow = document.body.classList.contains('light-mode');
+    (isLightNow ? window.MillApp.lightTileLayer : window.MillApp.darkTileLayer).addTo(window.MillApp.map);
 
     window.MillApp.markersGroup = L.featureGroup().addTo(window.MillApp.map);
     renderMapMarkers();
@@ -570,6 +832,7 @@ window.loadMoreQueueCards = function() {
 };
 
 window.selectPlot = function(plotId) {
+    playMillSound('select');
     const plot = window.MillApp.plots.find(p => p.id === plotId);
     if (!plot) return;
 
@@ -1156,6 +1419,7 @@ window.downloadStandardRegisterTemplate = function() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    window.fireSugarConfetti();
     showToast('Downloaded Sugar Mill Harvest Register Template (.csv)');
 };
 
@@ -1355,6 +1619,7 @@ window.lockTerminal = function() {
    ============================================================================== */
 
 window.filterByDelta = function(deltaType) {
+    playMillSound('click');
     window.MillApp.filterStatus = deltaType;
     document.querySelectorAll('.filter-pill').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-filter') === deltaType);

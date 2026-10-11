@@ -229,6 +229,12 @@
             <span class="role-badge-pill" id="lblNavbarRole">
                 <i class="fa-solid fa-user-shield"></i> Chief Agriculture Officer (CAO)
             </span>
+            <button id="btnThemeToggle" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                <i class="fa-solid fa-moon" id="iconThemeToggle"></i> <span id="lblThemeToggle">Dark</span>
+            </button>
+            <button id="btnAudioToggle" class="btn-audio-toggle" onclick="toggleAudio()" title="Toggle Audio FX">
+                <i class="fa-solid fa-volume-high" id="iconAudioToggle"></i> <span id="lblAudioToggle">FX: On</span>
+            </button>
             <button id="btnLangToggle" class="btn-lang-toggle" title="Toggle Language">
                 <i class="fa-solid fa-globe"></i> EN | मराठी
             </button>
@@ -387,6 +393,8 @@
                     <div class="map-floating-bar">
                         <button class="map-layer-btn active" id="btnLayerSat">Sentinel-2 True Color</button>
                         <button class="map-layer-btn" id="btnLayerRadar">SAR Sentinel-1 Radar</button>
+                        <button class="map-layer-btn" id="btnRadarSweep" onclick="triggerRadarSweep()" style="background:rgba(0,242,254,0.15); border-color:#00f2fe; color:#00f2fe;" title="Scan Cane Belt for Peak Sucrose Parcels"><i class="fa-solid fa-satellite-dish"></i> ?? Radar Sweep</button>
+                        <button class="map-layer-btn" id="btnSugarRush" onclick="window.fireSugarConfetti()" style="background:rgba(16,185,129,0.15); border-color:#10b981; color:#34d399;" title="Celebrate Sucrose Accumulation!"><i class="fa-solid fa-wand-magic-sparkles"></i> ?? Sugar Rush</button>
                     </div>
 
                     <!-- Legend Box -->

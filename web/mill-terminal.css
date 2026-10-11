@@ -1424,3 +1424,348 @@ body::after {
     margin-bottom: 14px;
     backdrop-filter: blur(10px);
 }
+
+
+/* ==========================================================================
+   FUN CONTROLS & THEME SWITCHER
+   ========================================================================== */
+.btn-theme-toggle,
+.btn-audio-toggle {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+}
+
+.btn-theme-toggle:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+}
+
+.btn-audio-toggle:hover {
+    border-color: var(--cyan-accent);
+    color: var(--cyan-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 242, 254, 0.25);
+}
+
+.btn-theme-toggle.active-light {
+    border-color: #f59e0b;
+    color: #b45309;
+    background: rgba(245, 158, 11, 0.15);
+}
+
+/* Radar Sweep Pulse & Confetti Keyframes */
+@keyframes sugarBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+.btn-sugar-rush-active {
+    animation: sugarBounce 0.4s ease;
+}
+
+/* ==========================================================================
+   SUNLIT CANE LIGHT MODE (FULL THEME PALETTE)
+   ========================================================================== */
+body.light-mode {
+    --bg-base: #f1f5f9;
+    --bg-surface-1: #ffffff;
+    --bg-surface-2: #f8fafc;
+    --bg-surface-3: #e2e8f0;
+    --bg-glass: rgba(255, 255, 255, 0.94);
+    --bg-card: #ffffff;
+    
+    --border-subtle: rgba(15, 23, 42, 0.10);
+    --border-glass: rgba(16, 185, 129, 0.35);
+    --border-glow: rgba(2, 132, 199, 0.4);
+    
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --text-bright: #020617;
+    
+    --shadow-subtle: 0 4px 18px rgba(15, 23, 42, 0.06);
+    --shadow-elevated: 0 12px 32px rgba(15, 23, 42, 0.1);
+    --shadow-emerald: 0 0 25px rgba(16, 185, 129, 0.15);
+    --shadow-cyan: 0 0 25px rgba(2, 132, 199, 0.15);
+    
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+}
+
+body.light-mode .mill-navbar {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+body.light-mode .mill-selector-box {
+    background: #f1f5f9;
+    border-color: rgba(15, 23, 42, 0.12);
+}
+body.light-mode .mill-select-dropdown {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+body.light-mode .mill-select-dropdown option {
+    background: #ffffff;
+    color: #0f172a;
+}
+
+body.light-mode .nav-tab-btn {
+    color: #475569;
+}
+body.light-mode .nav-tab-btn:hover {
+    color: #059669;
+    background: rgba(16, 185, 129, 0.08);
+}
+body.light-mode .nav-tab-btn.active {
+    color: #059669;
+    border-bottom-color: #059669;
+    background: rgba(16, 185, 129, 0.1);
+}
+
+body.light-mode .btn-lang-toggle,
+body.light-mode .btn-theme-toggle,
+body.light-mode .btn-audio-toggle {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.15);
+    color: #334155;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+body.light-mode .telemetry-ribbon {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+body.light-mode .telemetry-item {
+    border-right-color: rgba(15, 23, 42, 0.08);
+}
+body.light-mode .telemetry-label {
+    color: #64748b;
+}
+body.light-mode .telemetry-val {
+    color: #0f172a;
+}
+body.light-mode .telemetry-val.positive {
+    color: #059669;
+}
+body.light-mode .telemetry-val.accent {
+    color: #0284c7;
+}
+
+body.light-mode .queue-panel,
+body.light-mode .table-panel-card,
+body.light-mode .map-canvas-card,
+body.light-mode .lab-entry-box,
+body.light-mode .roi-control-box,
+body.light-mode .roi-results-box,
+body.light-mode .cockpit-stat-box {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+body.light-mode .queue-panel-head {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    background: #f8fafc;
+}
+body.light-mode .queue-panel-head h2 {
+    color: #0f172a;
+}
+
+body.light-mode .queue-search-input {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    color: #0f172a;
+}
+body.light-mode .queue-search-input::placeholder {
+    color: #94a3b8;
+}
+
+body.light-mode #selQueueCircle,
+body.light-mode .orbit-pass-dropdown {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-color: rgba(15, 23, 42, 0.15) !important;
+}
+
+body.light-mode .filter-pill {
+    background: #f1f5f9;
+    border-color: rgba(15, 23, 42, 0.12);
+    color: #475569;
+}
+body.light-mode .filter-pill.active {
+    background: #059669;
+    color: #ffffff;
+    border-color: #059669;
+}
+
+body.light-mode .plot-card-item {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.08);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+body.light-mode .plot-card-item:hover {
+    background: #f8fafc;
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+    transform: translateY(-2px);
+}
+body.light-mode .plot-card-item.active {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: #059669;
+    box-shadow: 0 0 0 1px #059669, 0 8px 24px rgba(16, 185, 129, 0.15);
+}
+body.light-mode .plot-gat-pill {
+    background: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+}
+body.light-mode .plot-farmer-name {
+    color: #0f172a;
+}
+body.light-mode .plot-meta-sub {
+    color: #64748b;
+}
+body.light-mode .metric-chip {
+    background: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+body.light-mode .metric-chip span {
+    color: #64748b;
+}
+body.light-mode .metric-chip strong {
+    color: #0f172a;
+}
+
+body.light-mode .cockpit-drawer {
+    background: #ffffff;
+    border-left: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: -12px 0 40px rgba(15, 23, 42, 0.15);
+}
+body.light-mode .cockpit-drawer-head {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    background: #f8fafc;
+}
+body.light-mode .cockpit-drawer-head h3 {
+    color: #0f172a;
+}
+
+body.light-mode .mill-data-table th {
+    background: #f8fafc;
+    color: #475569;
+    border-bottom: 2px solid rgba(15, 23, 42, 0.1);
+}
+body.light-mode .mill-data-table td {
+    color: #1e293b;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+body.light-mode .mill-data-table tr:hover td {
+    background: rgba(16, 185, 129, 0.04);
+}
+
+body.light-mode .map-floating-bar,
+body.light-mode .map-legend-box {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.1);
+    color: #0f172a;
+}
+body.light-mode .legend-item {
+    color: #334155;
+}
+body.light-mode .map-layer-btn {
+    background: #f1f5f9;
+    border-color: rgba(15, 23, 42, 0.12);
+    color: #475569;
+}
+body.light-mode .map-layer-btn.active {
+    background: #059669;
+    color: #ffffff;
+    border-color: #059669;
+}
+
+body.light-mode .terminal-modal-card {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.15);
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.2);
+    color: #0f172a;
+}
+body.light-mode .modal-head-row {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+body.light-mode .modal-head-title h3 {
+    color: #0f172a;
+}
+body.light-mode .terminal-input-group label {
+    color: #475569;
+}
+body.light-mode .terminal-input-group input,
+body.light-mode .terminal-input-group select,
+body.light-mode .terminal-input-group textarea {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.15);
+    color: #0f172a;
+}
+body.light-mode .upload-dropzone {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.2);
+    color: #475569;
+}
+
+body.light-mode .mobile-slip-card {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.15);
+    box-shadow: 0 25px 70px rgba(15, 23, 42, 0.15);
+    color: #0f172a;
+}
+body.light-mode .slip-banner-strip {
+    background: #f8fafc;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+body.light-mode .slip-grower-field {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.08);
+}
+body.light-mode .slip-grower-field label {
+    color: #64748b;
+}
+body.light-mode .slip-grower-val {
+    color: #0f172a;
+}
+body.light-mode .trajectory-node-box {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.1);
+}
+body.light-mode .trajectory-node-box.current {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: #059669;
+}
+body.light-mode .slip-dispatch-card {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.1);
+}
+body.light-mode .dispatch-lbl {
+    color: #64748b;
+}
+body.light-mode .dispatch-val {
+    color: #0f172a;
+}
+body.light-mode .backend-queue-banner {
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.12));
+    border-color: rgba(16, 185, 129, 0.4);
+}
