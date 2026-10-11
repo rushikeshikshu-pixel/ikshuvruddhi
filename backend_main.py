@@ -166,6 +166,35 @@ class CropBatchRequest(BaseModel):
     plots: List[CropPlotSeries]
 
 
+def ensure_cloud_db_calibrated():
+    db_path = os.path.join(os.path.dirname(__file__), "data", "cloud_sync.db")
+    needs_init = False
+    if not os.path.exists(db_path):
+        needs_init = True
+    else:
+        try:
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+            cur.execute("SELECT count(*) FROM mill_master_plots")
+            cnt = cur.fetchone()[0]
+            if cnt < 28000:
+                needs_init = True
+            conn.close()
+        except Exception:
+            needs_init = True
+            
+    if needs_init:
+        try:
+            from scripts.recalibrate_harvest_queue import recalibrate
+            recalibrate()
+        except Exception as e:
+            print(f"[IkshuVruddhi] Warning: Cloud db auto-calibration deferred: {e}")
+
+@app.on_event("startup")
+def app_startup():
+    ensure_cloud_db_calibrated()
+
+
 @app.get("/api/health")
 def health_check():
     has_credentials = bool(os.getenv("CDSE_CLIENT_ID") and os.getenv("CDSE_CLIENT_SECRET"))
@@ -770,19 +799,19 @@ def cloud_plots_endpoint(
     where_clauses = []
     params = []
     
-    if circle and circle != "ALL":
+    if isinstance(circle, str) and circle != "ALL":
         where_clauses.append("circle = ? COLLATE NOCASE")
         params.append(circle)
         
-    if status and status != "ALL":
+    if isinstance(status, str) and status != "ALL":
         where_clauses.append("status = ?")
         params.append(status)
         
-    if min_ccs is not None:
+    if isinstance(min_ccs, (int, float)):
         where_clauses.append("ccs >= ?")
         params.append(min_ccs)
         
-    if search:
+    if isinstance(search, str) and search.strip():
         s = f"%{search.strip()}%"
         where_clauses.append("(farmer_en LIKE ? OR gat_no LIKE ? OR CAST(gat_number AS TEXT) LIKE ? OR village LIKE ? OR docket_id LIKE ?)")
         params.extend([s, s, s, s, s])

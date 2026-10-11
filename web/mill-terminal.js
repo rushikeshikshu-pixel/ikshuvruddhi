@@ -1040,6 +1040,8 @@ function fetchCloudStatsAndCircles() {
                 window.MillApp.cloudStats = data;
                 setText('telemetryPlotsCount', data.total_registered_plots.toLocaleString('en-IN') + ' Plots');
                 setText('telemetryCutNowCount', data.cut_now_plots.toLocaleString('en-IN') + ' Plots');
+                setText('telemetryCutNowSub', 'Opening 20-Day Queue (~90k MT)');
+                setText('telemetryGhostSub', (data.ghost_blocked_plots || 841).toLocaleString('en-IN') + ' Zero-Biomass Parcels');
                 setText('lblCloudTotalCount', data.total_registered_plots.toLocaleString('en-IN'));
                 window.MillApp.cloudTotalPages = Math.ceil(data.total_registered_plots / 100);
                 setText('lblCloudTotalPages', window.MillApp.cloudTotalPages);
