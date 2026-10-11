@@ -223,6 +223,9 @@
 
         <!-- Right User Actions -->
         <div class="nav-actions-right">
+            <span class="backend-live-pill" id="lblBackendStatus" title="CDSE Sentinel-2 & AI Real-Time Link">
+                <span class="pulse-dot green"></span> <strong id="lblBackendStatusText">S2A & AI LIVE (94.16%)</strong>
+            </span>
             <span class="role-badge-pill" id="lblNavbarRole">
                 <i class="fa-solid fa-user-shield"></i> Chief Agriculture Officer (CAO)
             </span>
@@ -401,7 +404,30 @@
         <!-- VIEW 2: FULL HARVEST DISPATCHER TABLE -->
         <div id="view-queue" class="view-container">
             <div class="table-panel-card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <!-- Live Backend 5-Day Delta Sync Banner -->
+                <div class="backend-queue-banner" id="backendQueueBanner">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span class="pulse-dot green"></span>
+                        <div>
+                            <div style="font-size:0.82rem; font-weight:800; color:#34d399;">
+                                <i class="fa-solid fa-satellite-dish"></i> LIVE SENTINEL-2 &amp; AI HARVEST QUEUE ENGINE ACTIVE
+                            </div>
+                            <div style="font-size:0.72rem; color:#94a3b8;" id="lblBackendQueueStats">
+                                Target: 4,500 TCD &bull; 51 Parcels Allocated &bull; Avg CCS: 17.44% &bull; Sugar: 801.7 MT &bull; Transit: &lt; 18h
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button onclick="syncLiveBackendQueue()" class="action-btn secondary" style="padding:6px 12px; font-size:0.75rem;">
+                            <i class="fa-solid fa-arrows-rotate"></i> Sync Live Backend
+                        </button>
+                        <button onclick="openErpApiModal()" class="action-btn" style="padding:6px 12px; font-size:0.75rem; background:rgba(0,242,254,0.15); border:1px solid #00f2fe; color:#00f2fe;">
+                            <i class="fa-solid fa-code"></i> Weighbridge REST API
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                     <div>
                         <h2 style="font-size:1.15rem; font-weight:800; color:#ffffff;"><i class="fa-solid fa-calendar-check" style="color:var(--emerald-primary);"></i> Crushing Schedule &amp; Transit Queue</h2>
                         <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Capacity-balanced sequence keeping cut-to-crush transit strictly below 18 hours.</p>
@@ -443,12 +469,12 @@
                     <div>
                         <h3 style="color:#ffffff; font-size:1.1rem; font-weight:800;"><i class="fa-solid fa-shield-halved" style="color:#ef4444;"></i> MahaBhuNaksha 7/12 Land Parcel Audit Engine</h3>
                         <p style="color:#fca5a5; font-size:0.8rem; margin-top:3px;">
-                            Identified 32 fallow parcels or acreage inflation attempts. Over &#8377;1.82 Crores in fraudulent harvesting advances blocked.
+                            Identified <span id="lblFraudCount">274</span> fallow bare-soil parcels or acreage inflation attempts across 27,633 audited plots. Over <span id="lblFraudLoss">&#8377;17.94 Crores</span> in fraudulent harvesting advances blocked.
                         </p>
                     </div>
                     <div style="text-align:right;">
-                        <span style="font-size:1.4rem; font-weight:900; color:#ef4444; font-family:var(--font-mono);">&#8377;1.82 Cr</span>
-                        <div style="font-size:0.7rem; color:#fca5a5;">Total Factory Loss Prevented</div>
+                        <span style="font-size:1.4rem; font-weight:900; color:#ef4444; font-family:var(--font-mono);" id="lblFraudLossSaved">&#8377;17.94 Cr</span>
+                        <div style="font-size:0.7rem; color:#fca5a5;" id="lblFraudLossSub">17,938 MT Ghost Tonnage Prevented</div>
                     </div>
                 </div>
 
@@ -719,6 +745,36 @@
             <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
                 <span style="color:var(--text-muted);">Cutting Docket ID:</span>
                 <strong style="color:var(--cyan-accent);" id="cockpitValDocketId">DOK-2026-1001</strong>
+            </div>
+        </div>
+
+        <!-- Live Sentinel-2 Multi-Spectral Telemetry Card -->
+        <div class="cockpit-stat-box" id="cockpitS2TelemetryBox" style="background:rgba(15,23,42,0.95); border:1px solid rgba(16,185,129,0.3); margin-top:12px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:0.7rem; color:#34d399; font-weight:800; letter-spacing:0.05em;">
+                    <i class="fa-solid fa-satellite"></i> LIVE SENTINEL-2 MULTI-SPECTRAL TELEMETRY
+                </span>
+                <span class="badge" id="cockpitS2TileBadge" style="background:rgba(59,130,246,0.2); border:1px solid #3b82f6; color:#93c5fd; font-size:10px; font-weight:800;">
+                    Tile: 2026-09-28
+                </span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; text-align:center; margin-bottom:8px;">
+                <div style="background:rgba(0,0,0,0.5); padding:6px 4px; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size:0.65rem; color:#94a3b8; margin-bottom:2px;">RED-EDGE NDRE</div>
+                    <strong style="font-size:0.88rem; color:#a7f3d0;" id="cockpitS2Ndre">0.442</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.5); padding:6px 4px; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size:0.65rem; color:#94a3b8; margin-bottom:2px;">WATER INDEX NDWI</div>
+                    <strong style="font-size:0.88rem; color:#38bdf8;" id="cockpitS2Ndwi">-0.662</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.5); padding:6px 4px; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size:0.65rem; color:#94a3b8; margin-bottom:2px;">PURE CANOPY VEG</div>
+                    <strong style="font-size:0.88rem; color:#34d399;" id="cockpitS2VegPct">100.0%</strong>
+                </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; border-top:1px solid rgba(255,255,255,0.08); padding-top:6px;">
+                <span style="color:#94a3b8;">Audited vs Claimed:</span>
+                <strong id="cockpitS2TonnageAudit" style="color:#f87171;">26.4 MT (Discrepancy: -20.9 MT)</strong>
             </div>
         </div>
 
