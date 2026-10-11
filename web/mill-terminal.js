@@ -26,6 +26,9 @@ window.MillApp = {
     searchQuery: '',
     queueListLimit: 120,
     queueTableLimit: 200,
+    cloudPage: 1,
+    cloudTotalPages: 289,
+    cloudTotalCount: 28847,
     soundEnabled: true,
     theme: 'dark',
     audioCtx: null,
@@ -428,6 +431,7 @@ function initDataset() {
     updateTelemetryRibbon();
     renderQueueList();
     populateCircleFilter();
+    fetchCloudStatsAndCircles();
 }
 
 function generateFallbackPlots() {
@@ -656,10 +660,66 @@ function initFiltersAndSearch() {
     const selCircle = document.getElementById('selQueueCircle');
     const pills = document.querySelectorAll('.filter-pill');
 
+    let searchDebounceTimer = null;
     if (inputSearch) {
         inputSearch.addEventListener('input', (e) => {
             window.MillApp.searchQuery = e.target.value.toLowerCase().trim();
             applyFilters();
+            
+            // Cloud Search across all 28,847 plots in Supabase Cloud DB
+            const q = window.MillApp.searchQuery;
+            if (q.length >= 3) {
+                clearTimeout(searchDebounceTimer);
+                searchDebounceTimer = setTimeout(() => {
+                    fetch('/api/cloud/plots?search=' + encodeURIComponent(q) + '&limit=30')
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data && data.parcels && data.parcels.length > 0) {
+                                let added = 0;
+                                data.parcels.forEach(cp => {
+                                    if (!window.MillApp.plots.find(p => p.plotNo === cp.plot_no)) {
+                                        const newP = {
+                                            id: cp.docket_id,
+                                            plotNo: cp.plot_no,
+                                            farmerEn: cp.farmer_en,
+                                            farmerMr: cp.farmer_mr,
+                                            gatNo: cp.gat_no,
+                                            gatNumber: cp.gat_number,
+                                            circle: cp.circle,
+                                            village: cp.village,
+                                            villageMr: cp.village_mr,
+                                            caneType: cp.cane_type,
+                                            variety: cp.variety,
+                                            repAcres: cp.rep_acres,
+                                            satAcres: cp.sat_acres,
+                                            lat: cp.lat,
+                                            lon: cp.lon,
+                                            ndvi: cp.ndvi,
+                                            brix: cp.brix,
+                                            pol: cp.pol,
+                                            purity: cp.purity,
+                                            ccs: cp.ccs,
+                                            status: cp.status,
+                                            isGhost: Boolean(cp.is_ghost),
+                                            estTons: cp.est_tons,
+                                            distKm: cp.dist_km,
+                                            plantationDate: cp.plantation_date,
+                                            transitTargetHours: cp.transit_target_hours,
+                                            docketId: cp.docket_id
+                                        };
+                                        window.MillApp.plots.push(newP);
+                                        added++;
+                                    }
+                                });
+                                if (added > 0) {
+                                    applyFilters();
+                                    showToast('Cloud Search: Retrieved ' + added + ' plots from 28,847 Master Database');
+                                }
+                            }
+                        })
+                        .catch(() => {});
+                }, 400);
+            }
         });
     }
 
@@ -967,6 +1027,126 @@ function renderOfficialDocket(plot) {
 /* ==========================================================================
    7. VIEW 2: HARVEST QUEUE TABLE
    ========================================================================== */
+
+/* ==========================================================================
+   SUPABASE CLOUD PERSISTENCE ENGINE (28,847 MASTER COMMAND PARCELS)
+   ========================================================================== */
+function fetchCloudStatsAndCircles() {
+    // 1. Fetch Cloud Stats for 28,847 plots
+    fetch('/api/cloud/stats')
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.status === 'SUCCESS') {
+                window.MillApp.cloudStats = data;
+                setText('telemetryPlotsCount', data.total_registered_plots.toLocaleString('en-IN') + ' Plots');
+                setText('telemetryCutNowCount', data.cut_now_plots.toLocaleString('en-IN') + ' Plots');
+                setText('lblCloudTotalCount', data.total_registered_plots.toLocaleString('en-IN'));
+                window.MillApp.cloudTotalPages = Math.ceil(data.total_registered_plots / 100);
+                setText('lblCloudTotalPages', window.MillApp.cloudTotalPages);
+            }
+        })
+        .catch(() => {});
+
+    // 2. Fetch Full 28,847 Circles Breakdown
+    fetch('/api/cloud/circles')
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.status === 'SUCCESS' && data.circles) {
+                window.MillApp.cloudCircles = data.circles;
+                const selCircle = document.getElementById('selQueueCircle');
+                if (selCircle) {
+                    selCircle.innerHTML = '<option value="ALL">All ' + data.circle_count + ' Circles (28,847 Cloud Parcels)</option>';
+                    data.circles.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.circle;
+                        opt.textContent = c.circle + ' (' + c.total_plots.toLocaleString('en-IN') + ' plots)';
+                        selCircle.appendChild(opt);
+                    });
+                }
+            }
+        })
+        .catch(() => {});
+}
+
+window.loadCloudPage = function(delta) {
+    playMillSound('click');
+    let newPage = (window.MillApp.cloudPage || 1) + delta;
+    if (newPage < 1) newPage = 1;
+    if (window.MillApp.cloudTotalPages && newPage > window.MillApp.cloudTotalPages) {
+        newPage = window.MillApp.cloudTotalPages;
+    }
+    window.MillApp.cloudPage = newPage;
+    setText('lblCloudPage', newPage);
+
+    const circle = window.MillApp.filterCircle || 'ALL';
+    const status = window.MillApp.filterStatus || 'ALL';
+    const tbody = document.getElementById('tableQueueBody');
+    if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:24px; color:#00f2fe;"><i class="fa-solid fa-spinner fa-spin"></i> Streaming Page ' + newPage + ' from Supabase Cloud Database (28,847 Plots)...</td></tr>';
+    }
+
+    fetch('/api/cloud/plots?page=' + newPage + '&limit=100&circle=' + encodeURIComponent(circle) + '&status=' + encodeURIComponent(status))
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.status === 'SUCCESS' && data.parcels) {
+                renderCloudQueueTable(data.parcels);
+                showToast('Cloud Page ' + newPage + ' Loaded: ' + data.matching_plots.toLocaleString('en-IN') + ' Matching Plots');
+            }
+        })
+        .catch(err => {
+            showToast('Cloud fetch error: ' + err.message);
+        });
+};
+
+function renderCloudQueueTable(parcels) {
+    const tbody = document.getElementById('tableQueueBody');
+    if (!tbody) return;
+
+    let html = '';
+    parcels.forEach(p => {
+        let badgeColor = '#10b981';
+        let badgeLabel = 'CUT NOW';
+        if (p.status === 'WINDOW_15D') { badgeColor = '#f59e0b'; badgeLabel = '15 DAYS'; }
+        else if (p.status === 'VEGETATIVE') { badgeColor = '#38bdf8'; badgeLabel = 'ADSALI'; }
+        else if (p.is_ghost || p.status === 'GHOST_FLAG') { badgeColor = '#ef4444'; badgeLabel = 'GHOST'; }
+
+        html += '<tr>' +
+            '<td><strong>' + p.docket_id + '</strong></td>' +
+            '<td>' + p.gat_no + '</td>' +
+            '<td><strong>' + p.farmer_en + '</strong></td>' +
+            '<td>' + p.village + '</td>' +
+            '<td>' + p.variety + '</td>' +
+            '<td>' + p.rep_acres + ' Ac</td>' +
+            '<td style="color:' + badgeColor + '; font-weight:800;">' + p.ccs + '%</td>' +
+            '<td style="color:#00e676; font-weight:800;">? +0.4%</td>' +
+            '<td>' + p.brix + '&deg;Bx</td>' +
+            '<td style="color:#00f2fe; font-weight:800;">? +0.5&deg;</td>' +
+            '<td>' + p.est_tons + ' MT</td>' +
+            '<td><span style="display:inline-block; padding:3px 8px; border-radius:999px; font-size:10px; font-weight:800; background:' + badgeColor + '22; color:' + badgeColor + '; border:1px solid ' + badgeColor + '44;">' + badgeLabel + '</span></td>' +
+            '<td><button onclick="selectPlotFromCloud(' + p.plot_no + ')" style="background:rgba(0,242,254,0.12); border:1px solid #00f2fe; color:#00f2fe; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;"><i class="fa-solid fa-eye"></i> Inspect</button></td>' +
+        '</tr>';
+    });
+    tbody.innerHTML = html;
+}
+
+window.selectPlotFromCloud = function(plotNo) {
+    playMillSound('select');
+    fetch('/api/harvest/plot/' + plotNo)
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.plot) {
+                const plot = data.plot;
+                if (!window.MillApp.plots.find(p => p.plotNo === plot.plotNo)) {
+                    window.MillApp.plots.unshift(plot);
+                    window.MillApp.filteredPlots.unshift(plot);
+                    renderQueueList();
+                    renderMapMarkers();
+                }
+                selectPlot(plot.id);
+            }
+        });
+};
+
 function renderQueueTable() {
     const tbody = document.getElementById('tableQueueBody');
     if (!tbody) return;

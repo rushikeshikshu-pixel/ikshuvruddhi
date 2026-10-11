@@ -260,9 +260,9 @@
             <span class="telemetry-sub">+0.79% vs Baseline (10.45%)</span>
         </div>
         <div class="telemetry-item">
-            <span class="telemetry-label"><i class="fa-solid fa-map-pin"></i> Plots Ingested</span>
-            <div class="telemetry-val accent" id="telemetryPlotsCount">2,581 Plots</div>
-            <span class="telemetry-sub">Across 22 Mill Circles</span>
+            <span class="telemetry-label"><i class="fa-solid fa-cloud"></i> Plots in Cloud DB</span>
+            <div class="telemetry-val accent" id="telemetryPlotsCount">28,847 Plots</div>
+            <span class="telemetry-sub" id="telemetryPlotsSub">Supabase Cloud &bull; 21 Circles</span>
         </div>
         <div class="telemetry-item">
             <span class="telemetry-label"><i class="fa-solid fa-bolt"></i> Peak Cutting Queue</span>
@@ -435,14 +435,21 @@
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
                     <div>
                         <h2 style="font-size:1.15rem; font-weight:800; color:#ffffff;"><i class="fa-solid fa-calendar-check" style="color:var(--emerald-primary);"></i> Crushing Schedule &amp; Transit Queue</h2>
                         <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Capacity-balanced sequence keeping cut-to-crush transit strictly below 18 hours.</p>
                     </div>
-                    <button onclick="exportDailyCuttingProgram()" class="action-btn primary">
-                        <i class="fa-solid fa-download"></i> Export Roster to Weighbridge ERP
-                    </button>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div id="cloudTablePagination" style="display:flex; align-items:center; gap:8px; font-size:12px; background:rgba(15,23,42,0.85); border:1px solid rgba(0,242,254,0.3); border-radius:6px; padding:4px 10px;">
+                            <span style="color:#00f2fe; font-weight:700;"><i class="fa-solid fa-cloud"></i> Cloud DB: Page <strong id="lblCloudPage">1</strong> / <strong id="lblCloudTotalPages">289</strong> (<strong id="lblCloudTotalCount">28,847</strong> Plots)</span>
+                            <button onclick="loadCloudPage(-1)" class="action-btn secondary" style="padding:4px 8px; font-size:11px;" title="Previous 100 Plots"><i class="fa-solid fa-chevron-left"></i> Prev</button>
+                            <button onclick="loadCloudPage(1)" class="action-btn secondary" style="padding:4px 8px; font-size:11px;" title="Next 100 Plots">Next <i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                        <button onclick="exportDailyCuttingProgram()" class="action-btn primary">
+                            <i class="fa-solid fa-download"></i> Export Roster to Weighbridge ERP
+                        </button>
+                    </div>
                 </div>
 
                 <table class="mill-data-table">

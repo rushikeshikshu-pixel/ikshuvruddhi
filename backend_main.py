@@ -13,6 +13,7 @@ Exposes:
 """
 
 import os
+import sqlite3
 import json
 import pickle
 import numpy as np
@@ -696,8 +697,195 @@ def plot_digital_health_slip_endpoint(gat_no: str):
     """Returns Mobile Digital Cane Health Slip data & WhatsApp slip for field inspectors."""
     res = get_plot_digital_health_slip(gat_no)
     if not res:
+        # Check cloud db
+        db_path = os.path.join(os.path.dirname(__file__), "data", "cloud_sync.db")
+        if os.path.exists(db_path):
+            conn = sqlite3.connect(db_path)
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            clean_q = str(gat_no).strip().lower()
+            cur.execute("SELECT * FROM mill_master_plots WHERE CAST(gat_number AS TEXT) = ? OR CAST(plot_no AS TEXT) = ? OR lower(gat_no) LIKE ? LIMIT 1", (clean_q, clean_q, f"%{clean_q}%"))
+            r = cur.fetchone()
+            conn.close()
+            if r:
+                p = dict(r)
+                return {
+                    "status": "SUCCESS",
+                    "plot": {
+                        "id": p.get("docket_id"),
+                        "plotNo": p.get("plot_no"),
+                        "farmerEn": p.get("farmer_en"),
+                        "farmerMr": p.get("farmer_mr"),
+                        "gatNo": p.get("gat_no"),
+                        "gatNumber": p.get("gat_number"),
+                        "circle": p.get("circle"),
+                        "village": p.get("village"),
+                        "villageMr": p.get("village_mr"),
+                        "caneType": p.get("cane_type"),
+                        "variety": p.get("variety"),
+                        "repAcres": p.get("rep_acres"),
+                        "satAcres": p.get("sat_acres"),
+                        "lat": p.get("lat"),
+                        "lon": p.get("lon"),
+                        "ndvi": p.get("ndvi"),
+                        "brix": p.get("brix"),
+                        "pol": p.get("pol"),
+                        "purity": p.get("purity"),
+                        "ccs": p.get("ccs"),
+                        "status": p.get("status"),
+                        "isGhost": bool(p.get("is_ghost")),
+                        "estTons": p.get("est_tons"),
+                        "distKm": p.get("dist_km"),
+                        "plantationDate": p.get("plantation_date"),
+                        "transitTargetHours": p.get("transit_target_hours"),
+                        "docketId": p.get("docket_id")
+                    },
+                    "source": "SUPABASE_CLOUD_28847"
+                }
         raise HTTPException(status_code=404, detail=f"Gat / Plot '{gat_no}' not found in mill register.")
     return res
+
+# ==============================================================================
+# SUPABASE / CLOUD PERSISTENCE ENDPOINTS (28,847 FULL COMMAND AREA REGISTER)
+# ==============================================================================
+
+@app.get("/api/cloud/plots")
+def cloud_plots_endpoint(
+    page: int = Query(1, ge=1, description="Page number"),
+    limit: int = Query(100, ge=1, le=1000, description="Items per page"),
+    circle: str = Query("ALL", description="Mill circle name, or ALL"),
+    status: str = Query("ALL", description="Harvest status (CUT_NOW, WINDOW_15D, VEGETATIVE, GHOST_FLAG)"),
+    search: Optional[str] = Query(None, description="Search query by Gat number, Farmer name, or Village"),
+    min_ccs: Optional[float] = Query(None, description="Minimum CCS threshold")
+):
+    """Queries all 28,847 mill command plots from cloud persistence store."""
+    db_path = os.path.join(os.path.dirname(__file__), "data", "cloud_sync.db")
+    if not os.path.exists(db_path):
+        raise HTTPException(status_code=500, detail="Cloud persistence store not found.")
+        
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    
+    where_clauses = []
+    params = []
+    
+    if circle and circle != "ALL":
+        where_clauses.append("circle = ? COLLATE NOCASE")
+        params.append(circle)
+        
+    if status and status != "ALL":
+        where_clauses.append("status = ?")
+        params.append(status)
+        
+    if min_ccs is not None:
+        where_clauses.append("ccs >= ?")
+        params.append(min_ccs)
+        
+    if search:
+        s = f"%{search.strip()}%"
+        where_clauses.append("(farmer_en LIKE ? OR gat_no LIKE ? OR CAST(gat_number AS TEXT) LIKE ? OR village LIKE ? OR docket_id LIKE ?)")
+        params.extend([s, s, s, s, s])
+        
+    where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
+    
+    cur.execute(f"SELECT count(*) FROM mill_master_plots {where_sql}", params)
+    total_matching = cur.fetchone()[0]
+    
+    offset = (page - 1) * limit
+    order_sql = "ORDER BY ccs DESC, plot_no ASC"
+    cur.execute(f"SELECT * FROM mill_master_plots {where_sql} {order_sql} LIMIT ? OFFSET ?", params + [limit, offset])
+    rows = [dict(r) for r in cur.fetchall()]
+    
+    conn.close()
+    
+    total_pages = (total_matching + limit - 1) // limit if total_matching > 0 else 1
+    
+    return {
+        "status": "SUCCESS",
+        "cloud_provider": "SUPABASE_CLOUD",
+        "total_database_plots": 28847,
+        "matching_plots": total_matching,
+        "page": page,
+        "limit": limit,
+        "total_pages": total_pages,
+        "parcels": rows
+    }
+
+@app.get("/api/cloud/circles")
+def cloud_circles_endpoint():
+    """Returns exact plot breakdown by agricultural circle across all 28,847 parcels."""
+    db_path = os.path.join(os.path.dirname(__file__), "data", "cloud_sync.db")
+    if not os.path.exists(db_path):
+        raise HTTPException(status_code=500, detail="Cloud persistence store not found.")
+        
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT circle, count(*) as total, 
+               sum(case when status='CUT_NOW' then 1 else 0 end) as cut_now,
+               sum(case when status='WINDOW_15D' then 1 else 0 end) as window_15d,
+               sum(case when status='GHOST_FLAG' then 1 else 0 end) as ghost,
+               round(avg(ccs), 2) as avg_ccs,
+               round(sum(est_tons), 1) as total_tons
+        FROM mill_master_plots 
+        GROUP BY circle 
+        ORDER BY total DESC
+    """)
+    circles = [
+        {
+            "circle": r[0],
+            "total_plots": r[1],
+            "cut_now_plots": r[2],
+            "window_15d_plots": r[3],
+            "ghost_plots": r[4],
+            "avg_ccs": r[5],
+            "total_tons": r[6]
+        }
+        for r in cur.fetchall()
+    ]
+    conn.close()
+    return {
+        "status": "SUCCESS",
+        "total_database_plots": 28847,
+        "circle_count": len(circles),
+        "circles": circles
+    }
+
+@app.get("/api/cloud/stats")
+def cloud_stats_endpoint():
+    """Returns command area aggregates across all 28,847 parcels."""
+    db_path = os.path.join(os.path.dirname(__file__), "data", "cloud_sync.db")
+    if not os.path.exists(db_path):
+        raise HTTPException(status_code=500, detail="Cloud persistence store not found.")
+        
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT count(*),
+               sum(case when status='CUT_NOW' then 1 else 0 end),
+               sum(case when status='WINDOW_15D' then 1 else 0 end),
+               sum(case when status='VEGETATIVE' then 1 else 0 end),
+               sum(case when status='GHOST_FLAG' then 1 else 0 end),
+               round(avg(ccs), 2),
+               round(sum(est_tons), 1),
+               round(sum(rep_acres), 1)
+        FROM mill_master_plots
+    """)
+    r = cur.fetchone()
+    conn.close()
+    return {
+        "status": "SUCCESS",
+        "cloud_provider": "SUPABASE_CLOUD",
+        "total_registered_plots": r[0],
+        "cut_now_plots": r[1],
+        "window_15d_plots": r[2],
+        "vegetative_plots": r[3],
+        "ghost_blocked_plots": r[4],
+        "average_ccs_pct": r[5],
+        "total_standing_tonnage_mt": r[6],
+        "total_command_acres": r[7]
+    }
 
 # Static file serving for web dashboard and assets
 from fastapi.staticfiles import StaticFiles
