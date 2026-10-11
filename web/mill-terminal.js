@@ -24,6 +24,8 @@ window.MillApp = {
     filterStatus: 'ALL',
     filterCircle: 'ALL',
     searchQuery: '',
+    queueListLimit: 120,
+    queueTableLimit: 200,
     activeView: 'map',
     map: null,
     markersGroup: null,
@@ -215,21 +217,61 @@ function updateTelemetryRibbon() {
     const plots = window.MillApp.plots;
     const cutNow = plots.filter(p => p.status === 'CUT_NOW').length;
     const window15 = plots.filter(p => p.status === 'WINDOW_15D').length;
-    const ghosts = plots.filter(p => p.isGhost).length;
+    const ghosts = plots.filter(p => p.isGhost || p.status === 'GHOST_FLAG').length;
     
     setText('telemetryCrushRate', window.MillApp.tcd);
     setText('telemetryCcsRecovery', window.MillApp.currentRecovery.toFixed(2) + '%');
-    setText('telemetryPlotsCount', plots.length + ' Plots');
-    setText('telemetryCutNowCount', cutNow + ' Plots');
-    setText('telemetryGhostBlocked', '₹' + window.MillApp.fraudSavedCrores.toFixed(2) + ' Cr');
+    setText('telemetryPlotsCount', plots.length.toLocaleString('en-IN') + ' Plots');
+    setText('telemetryCutNowCount', cutNow.toLocaleString('en-IN') + ' Plots');
+    setText('telemetryGhostBlocked', '\u20b9' + window.MillApp.fraudSavedCrores.toFixed(2) + ' Cr');
     
     const seasonTons = window.MillApp.tcdNumber * window.MillApp.seasonDays;
     const boostPct = (window.MillApp.currentRecovery - window.MillApp.baseRecovery) / 100;
     const extraSugarQtl = (seasonTons * boostPct) * 10;
     const extraRevCr = ((extraSugarQtl * window.MillApp.sugarPrice) / 10000000).toFixed(2);
     
-    setText('telemetryNetGain', '+₹' + extraRevCr + ' Cr');
-    setText('lblQueuePlotCount', plots.length + ' Plots Ingested');
+    setText('telemetryNetGain', '+\u20b9' + extraRevCr + ' Cr');
+    const filteredCount = window.MillApp.filteredPlots ? window.MillApp.filteredPlots.length : plots.length;
+    setText('lblQueuePlotCount', filteredCount.toLocaleString('en-IN') + ' Plots Ingested');
+
+    updateDynamicFilterPillCounts();
+}
+
+function updateDynamicFilterPillCounts() {
+    const plots = window.MillApp.plots;
+    if (!plots || plots.length === 0) return;
+
+    const total = plots.length;
+    const cutNow = plots.filter(p => p.status === 'CUT_NOW').length;
+    const window15 = plots.filter(p => p.status === 'WINDOW_15D').length;
+    const ghosts = plots.filter(p => p.isGhost || p.status === 'GHOST_FLAG').length;
+    const newlyMatured = plots.filter(p => !p.isGhost && p.ccs >= 11.2 && (p.ccs - 0.5) < 11.2).length;
+    const inversionRisk = plots.filter(p => !p.isGhost && (p.purity < 80 || (p.plantationDate && p.plantationDate.includes('2024')))).length;
+
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+        const filterType = btn.getAttribute('data-filter');
+        if (filterType === 'ALL') {
+            btn.innerHTML = 'All (' + total.toLocaleString('en-IN') + ')';
+        } else if (filterType === 'NEW_TO_PEAK') {
+            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> New to Peak (' + newlyMatured + ')';
+        } else if (filterType === 'INVERSION_ALERT') {
+            btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Inversion Risk (' + inversionRisk + ')';
+        } else if (filterType === 'CUT_NOW') {
+            btn.innerHTML = 'Cut Now (' + cutNow.toLocaleString('en-IN') + ')';
+        } else if (filterType === 'WINDOW_15D') {
+            btn.innerHTML = '15 Days (' + window15.toLocaleString('en-IN') + ')';
+        } else if (filterType === 'GHOST_FLAG') {
+            btn.innerHTML = 'Ghost (' + ghosts + ')';
+        }
+    });
+
+    const ribbon = document.getElementById('passDeltaRibbon');
+    if (ribbon) {
+        ribbon.innerHTML = 
+            '<span class="delta-chip green" onclick="filterByDelta(\x27NEW_TO_PEAK\x27)"><i class="fa-solid fa-rocket"></i> +' + newlyMatured + ' Newly Matured</span>' +
+            '<span class="delta-chip amber" onclick="filterByDelta(\x27INVERSION_ALERT\x27)"><i class="fa-solid fa-triangle-exclamation"></i> ' + inversionRisk + ' Inversion Risk</span>' +
+            '<span class="delta-chip blue" onclick="filterByDelta(\x27WINDOW_15D\x27)"><i class="fa-solid fa-clock"></i> ' + window15 + ' Next 15D</span>';
+    }
 }
 
 /* ==========================================================================
@@ -272,8 +314,9 @@ function initLeafletMap() {
 
     window.MillApp.map = L.map('leafletMapInstance', {
         zoomControl: false,
-        attributionControl: false
-    }).setView([19.5714, 74.9474], 13);
+        attributionControl: false,
+        preferCanvas: true
+    }).setView([19.4121, 75.3999], 10);
 
     L.control.zoom({ position: 'bottomright' }).addTo(window.MillApp.map);
 
@@ -281,7 +324,7 @@ function initLeafletMap() {
         maxZoom: 18
     }).addTo(window.MillApp.map);
 
-    window.MillApp.markersGroup = L.layerGroup().addTo(window.MillApp.map);
+    window.MillApp.markersGroup = L.featureGroup().addTo(window.MillApp.map);
     renderMapMarkers();
 
     const btnSat = document.getElementById('btnLayerSat');
@@ -313,17 +356,18 @@ function renderMapMarkers() {
         else if (plot.isGhost || plot.status === 'GHOST_FLAG') color = '#ef4444'; // Red
 
         const marker = L.circleMarker([plot.lat, plot.lon], {
-            radius: plot.status === 'CUT_NOW' ? 7 : 5,
+            radius: plot.status === 'CUT_NOW' ? 6 : 5,
             fillColor: color,
             color: '#ffffff',
-            weight: 1.5,
+            weight: 1.2,
             opacity: 0.9,
             fillOpacity: 0.85
         });
 
         const tooltipContent = '<div style="font-family:\'Plus Jakarta Sans\',sans-serif; font-size:12px; padding:3px 6px;">' +
             '<strong>' + plot.gatNo + '</strong> &bull; ' + plot.farmerEn + '<br/>' +
-            'CCS: <span style="color:' + color + '; font-weight:800;">' + plot.ccs + '%</span> | Variety: ' + plot.variety +
+            'CCS: <span style="color:' + color + '; font-weight:800;">' + plot.ccs + '%</span> | Variety: ' + plot.variety + '<br/>' +
+            '<span style="font-size:10px; color:#cbd5e1;">' + plot.village + ' (' + plot.circle + ')</span>' +
             '</div>';
 
         marker.bindTooltip(tooltipContent, { direction: 'top', offset: [0, -5] });
@@ -334,6 +378,12 @@ function renderMapMarkers() {
 
         window.MillApp.markersGroup.addLayer(marker);
     });
+
+    if (window.MillApp.filterCircle !== 'ALL' && window.MillApp.markersGroup.getLayers().length > 0) {
+        try {
+            window.MillApp.map.fitBounds(window.MillApp.markersGroup.getBounds(), { padding: [30, 30], maxZoom: 14 });
+        } catch (e) {}
+    }
 }
 
 /* ==========================================================================
@@ -372,16 +422,20 @@ function populateCircleFilter() {
     const selCircle = document.getElementById('selQueueCircle');
     if (!selCircle) return;
 
-    const circles = [...new Set(window.MillApp.plots.map(p => p.circle))].filter(Boolean);
-    selCircle.innerHTML = '<option value="ALL">All Circles (सर्व मंडळे)</option>';
+    const circleMap = {};
+    window.MillApp.plots.forEach(p => {
+        if (p.circle) circleMap[p.circle] = (circleMap[p.circle] || 0) + 1;
+    });
+
+    const circles = Object.keys(circleMap).sort();
+    selCircle.innerHTML = '<option value="ALL">All ' + circles.length + ' Circles (' + window.MillApp.plots.length.toLocaleString('en-IN') + ' Parcels)</option>';
     circles.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c;
-        opt.textContent = c;
+        opt.textContent = c + ' (' + circleMap[c] + ' plots)';
         selCircle.appendChild(opt);
     });
 }
-
 
 // Dynamic 5-Day Satellite Delta Engine
 function getPlot5DayDelta(plot) {
@@ -448,7 +502,9 @@ function applyFilters() {
     }
 
     window.MillApp.filteredPlots = list;
-    setText('lblQueuePlotCount', list.length + ' Plots Ingested');
+    window.MillApp.queueListLimit = 120;
+    window.MillApp.queueTableLimit = 200;
+    setText('lblQueuePlotCount', list.length.toLocaleString('en-IN') + ' Plots Ingested');
     renderQueueList();
     renderMapMarkers();
     if (window.MillApp.activeView === 'queue') renderQueueTable();
@@ -464,8 +520,11 @@ function renderQueueList() {
         return;
     }
 
+    const limit = window.MillApp.queueListLimit || 120;
+    const visiblePlots = plots.slice(0, limit);
+
     let html = '';
-    plots.slice(0, 80).forEach(p => {
+    visiblePlots.forEach(p => {
         const isSelected = window.MillApp.selectedPlot && window.MillApp.selectedPlot.id === p.id;
         let badgeClass = 'badge-optimal';
         let badgeText = 'CUT NOW';
@@ -473,7 +532,7 @@ function renderQueueList() {
         else if (p.status === 'VEGETATIVE') { badgeClass = 'badge-subtle'; badgeText = 'ADSALI'; }
         else if (p.isGhost) { badgeClass = 'badge-danger'; badgeText = 'GHOST'; }
 
-        html += '<div class="plot-card-item ' + (isSelected ? 'active' : '') + '" onclick="selectPlot(\'' + p.id + '\')">' +
+        html += '<div class="plot-card-item ' + (isSelected ? 'active' : '') + '" onclick="selectPlot(\x27' + p.id + '\x27)">' +
             '<div class="plot-card-head">' +
                 '<div class="plot-gat-pill"><i class="fa-solid fa-seedling"></i> ' + p.gatNo + '</div>' +
                 '<span class="badge ' + badgeClass + '">' + badgeText + '</span>' +
@@ -482,8 +541,8 @@ function renderQueueList() {
             '<div class="plot-meta-sub">' + p.village + ' &bull; ' + p.circle + ' &bull; ' + p.variety + '</div>' +
             (function() {
                 const delta = getPlot5DayDelta(p);
-                const ccsDeltaSub = '<span class="delta-sub ' + (delta.deltaCcs >= 0 ? 'pos' : 'neg') + '">' + (delta.deltaCcs >= 0 ? '▲ +' : '▼ ') + delta.deltaCcs + '%</span>';
-                const brixDeltaSub = '<span class="delta-sub ' + (delta.deltaBrix >= 0 ? 'pos' : 'neg') + '">' + (delta.deltaBrix >= 0 ? '▲ +' : '▼ ') + delta.deltaBrix + '&deg;</span>';
+                const ccsDeltaSub = '<span class="delta-sub ' + (delta.deltaCcs >= 0 ? 'pos' : 'neg') + '">' + (delta.deltaCcs >= 0 ? '? +' : '? ') + delta.deltaCcs + '%</span>';
+                const brixDeltaSub = '<span class="delta-sub ' + (delta.deltaBrix >= 0 ? 'pos' : 'neg') + '">' + (delta.deltaBrix >= 0 ? '? +' : '? ') + delta.deltaBrix + '&deg;</span>';
                 return '<div class="plot-metrics-strip">' +
                     '<div class="metric-chip"><span>CCS</span><strong style="color:' + (p.ccs >= 11.2 ? '#00e676' : '#f59e0b') + ';">' + p.ccs + '%</strong>' + ccsDeltaSub + '</div>' +
                     '<div class="metric-chip"><span>BRIX</span><strong>' + p.brix + '&deg;Bx</strong>' + brixDeltaSub + '</div>' +
@@ -494,12 +553,21 @@ function renderQueueList() {
         '</div>';
     });
 
-    if (plots.length > 80) {
-        html += '<div style="text-align:center; padding:12px; font-size:11px; color:#94a3b8;">Showing top 80 of ' + plots.length + ' parcels. Use filter or search for specific Gats.</div>';
+    if (plots.length > limit) {
+        html += '<div style="text-align:center; padding:14px 10px;">' +
+            '<button onclick="window.loadMoreQueueCards()" style="background:rgba(0,242,254,0.08); border:1px solid rgba(0,242,254,0.35); color:#00f2fe; padding:8px 16px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s ease;">' +
+            '<i class="fa-solid fa-angles-down"></i> Load More Parcels (' + limit + ' of ' + plots.length.toLocaleString('en-IN') + ' shown)' +
+            '</button>' +
+        '</div>';
     }
 
     container.innerHTML = html;
 }
+
+window.loadMoreQueueCards = function() {
+    window.MillApp.queueListLimit = (window.MillApp.queueListLimit || 120) + 120;
+    renderQueueList();
+};
 
 window.selectPlot = function(plotId) {
     const plot = window.MillApp.plots.find(p => p.id === plotId);
@@ -641,9 +709,11 @@ function renderQueueTable() {
     if (!tbody) return;
 
     const plots = window.MillApp.filteredPlots;
+    const limit = window.MillApp.queueTableLimit || 200;
+    const visiblePlots = plots.slice(0, limit);
     let html = '';
 
-    plots.slice(0, 100).forEach(p => {
+    visiblePlots.forEach(p => {
         let badgeColor = '#10b981';
         let badgeLabel = 'CUT NOW';
         if (p.status === 'WINDOW_15D') { badgeColor = '#f59e0b'; badgeLabel = '15 DAYS'; }
@@ -651,8 +721,8 @@ function renderQueueTable() {
         else if (p.isGhost) { badgeColor = '#ef4444'; badgeLabel = 'GHOST'; }
 
         const delta = getPlot5DayDelta(p);
-        const ccsDeltaHtml = '<span style="color:' + (delta.deltaCcs >= 0 ? '#00e676' : '#ef4444') + '; font-weight:800; font-family:monospace;">' + (delta.deltaCcs >= 0 ? '▲ +' : '▼ ') + delta.deltaCcs + '%</span>';
-        const brixDeltaHtml = '<span style="color:' + (delta.deltaBrix >= 0 ? '#00f2fe' : '#ef4444') + '; font-weight:800; font-family:monospace;">' + (delta.deltaBrix >= 0 ? '▲ +' : '▼ ') + delta.deltaBrix + '&deg;Bx</span>';
+        const ccsDeltaHtml = '<span style="color:' + (delta.deltaCcs >= 0 ? '#00e676' : '#ef4444') + '; font-weight:800; font-family:monospace;">' + (delta.deltaCcs >= 0 ? '? +' : '? ') + delta.deltaCcs + '%</span>';
+        const brixDeltaHtml = '<span style="color:' + (delta.deltaBrix >= 0 ? '#00f2fe' : '#ef4444') + '; font-weight:800; font-family:monospace;">' + (delta.deltaBrix >= 0 ? '? +' : '? ') + delta.deltaBrix + '&deg;Bx</span>';
 
         html += '<tr>' +
             '<td><strong>' + p.docketId + '</strong></td>' +
@@ -667,19 +737,27 @@ function renderQueueTable() {
             '<td>' + brixDeltaHtml + '</td>' +
             '<td>' + p.estTons + ' MT</td>' +
             '<td><span style="display:inline-block; padding:3px 8px; border-radius:999px; font-size:10px; font-weight:800; background:' + badgeColor + '22; color:' + badgeColor + '; border:1px solid ' + badgeColor + '44;">' + badgeLabel + '</span></td>' +
-            '<td><button onclick="selectPlot(\'' + p.id + '\')" style="background:rgba(0,242,254,0.12); border:1px solid #00f2fe; color:#00f2fe; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;"><i class="fa-solid fa-eye"></i> Inspect</button></td>' +
+            '<td><button onclick="selectPlot(\x27' + p.id + '\x27)" style="background:rgba(0,242,254,0.12); border:1px solid #00f2fe; color:#00f2fe; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;"><i class="fa-solid fa-eye"></i> Inspect</button></td>' +
         '</tr>';
     });
+
+    if (plots.length > limit) {
+        html += '<tr>' +
+            '<td colspan="13" style="text-align:center; padding:16px; background:rgba(15,23,42,0.6);">' +
+            '<button onclick="window.loadMoreQueueTableRows()" style="background:rgba(0,242,254,0.1); border:1px solid rgba(0,242,254,0.4); color:#00f2fe; padding:9px 24px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">' +
+            '<i class="fa-solid fa-angles-down"></i> Load More Rows (' + limit + ' of ' + plots.length.toLocaleString('en-IN') + ' shown)' +
+            '</button>' +
+            '</td>' +
+        '</tr>';
+    }
 
     tbody.innerHTML = html;
 }
 
-/* ==========================================================================
-   8. VIEW 3: MAHABHUNAKSHA FRAUD BUSTER TABLE
-   ========================================================================== */
-function initFraudBuster() {
-    // Handled in renderFraudTable
-}
+window.loadMoreQueueTableRows = function() {
+    window.MillApp.queueTableLimit = (window.MillApp.queueTableLimit || 200) + 200;
+    renderQueueTable();
+};
 
 function renderFraudTable() {
     const tbody = document.getElementById('tableFraudBody');
