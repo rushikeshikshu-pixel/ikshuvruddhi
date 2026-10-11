@@ -502,11 +502,17 @@
                         <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Capacity-balanced sequence keeping cut-to-crush transit strictly below 18 hours.</p>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="position:relative;">
+                            <input type="text" id="inputCloudTableSearch" placeholder="?? Search 28,847 plots (Gat, Farmer, Village)..." style="background:rgba(15,23,42,0.9); border:1px solid rgba(0,242,254,0.4); border-radius:6px; color:#ffffff; padding:5px 12px; font-size:12px; width:260px;" oninput="handleCloudTableSearch(this.value)" />
+                        </div>
                         <div id="cloudTablePagination" style="display:flex; align-items:center; gap:8px; font-size:12px; background:rgba(15,23,42,0.85); border:1px solid rgba(0,242,254,0.3); border-radius:6px; padding:4px 10px;">
                             <span style="color:#00f2fe; font-weight:700;"><i class="fa-solid fa-cloud"></i> Cloud DB: Page <strong id="lblCloudPage">1</strong> / <strong id="lblCloudTotalPages">289</strong> (<strong id="lblCloudTotalCount">28,847</strong> Plots)</span>
                             <button onclick="loadCloudPage(-1)" class="action-btn secondary" style="padding:4px 8px; font-size:11px;" title="Previous 100 Plots"><i class="fa-solid fa-chevron-left"></i> Prev</button>
                             <button onclick="loadCloudPage(1)" class="action-btn secondary" style="padding:4px 8px; font-size:11px;" title="Next 100 Plots">Next <i class="fa-solid fa-chevron-right"></i></button>
                         </div>
+                        <button onclick="openSupabaseModal()" class="action-btn" style="padding:5px 10px; font-size:11px; background:rgba(62,207,142,0.15); border:1px solid #3ecf8e; color:#3ecf8e;" title="View Supabase Cloud Status">
+                            <i class="fa-solid fa-database"></i> Supabase Cloud
+                        </button>
                         <button onclick="exportDailyCuttingProgram()" class="action-btn primary">
                             <i class="fa-solid fa-download"></i> Export Roster to Weighbridge ERP
                         </button>
@@ -1496,6 +1502,75 @@
                     <button type="button" class="action-btn primary" onclick="exportFiveDayScheduleCSV()"><i class="fa-solid fa-download"></i> Export Full 5-Day Program (CSV)</button>
                     <button type="button" class="action-btn" onclick="closeFiveDayRosterModal()">Close</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 12. SUPABASE CLOUD STATUS & SYNC MODAL -->
+    <div id="modalSupabase" class="modal-dialog-overlay">
+        <div class="terminal-modal-card wide">
+            <div class="modal-head-row">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="slip-header-badge" style="background:rgba(62,207,142,0.15); border-color:#3ecf8e; color:#3ecf8e;">
+                        <i class="fa-solid fa-database"></i> SUPABASE PERSISTENCE
+                    </div>
+                    <h3 style="margin:0; font-size:1.1rem; color:#ffffff;">Supabase Cloud Persistence Engine</h3>
+                </div>
+                <button type="button" class="modal-close-x" onclick="closeSupabaseModal()">&times;</button>
+            </div>
+
+            <p style="font-size:0.82rem; color:#94a3b8; margin:8px 0 16px; line-height:1.5;">
+                The SatCane&trade; engine features a <strong>dual-mode cloud architecture</strong>. When running without external cloud credentials, it automatically powers all 28,847 plots using its high-speed embedded cloud engine. You can also connect your remote Supabase PostgreSQL project directly.
+            </p>
+
+            <div class="cadence-guide-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom:16px;">
+                <div class="cadence-guide-card" style="border-color:#3ecf8e;">
+                    <div class="cadence-guide-icon" style="color:#3ecf8e;"><i class="fa-solid fa-server"></i></div>
+                    <div class="cadence-guide-title">Cloud Status</div>
+                    <div style="font-size:1.1rem; font-weight:800; color:#34d399;" id="lblSupabaseMode">ACTIVE &bull; READY</div>
+                    <div class="cadence-guide-desc" style="margin-top:4px;" id="lblSupabaseDesc">High-Speed Cloud Database Mode</div>
+                </div>
+
+                <div class="cadence-guide-card">
+                    <div class="cadence-guide-icon" style="color:#38bdf8;"><i class="fa-solid fa-layer-group"></i></div>
+                    <div class="cadence-guide-title">Ingested Plots</div>
+                    <div style="font-size:1.1rem; font-weight:800; color:#38bdf8;">28,847 Parcels</div>
+                    <div class="cadence-guide-desc" style="margin-top:4px;">100% of Mill Command Area Available</div>
+                </div>
+
+                <div class="cadence-guide-card">
+                    <div class="cadence-guide-icon" style="color:#a855f7;"><i class="fa-solid fa-satellite"></i></div>
+                    <div class="cadence-guide-title">Satellite Pass</div>
+                    <div style="font-size:1.1rem; font-weight:800; color:#d8b4fe;">10-Oct-2026</div>
+                    <div class="cadence-guide-desc" style="margin-top:4px;">Sentinel-2 L2A Multi-Spectral Synced</div>
+                </div>
+            </div>
+
+            <div style="background:rgba(15,23,42,0.9); border:1px solid #334155; border-radius:8px; padding:16px; margin-bottom:16px;">
+                <h4 style="margin:0 0 10px; font-size:0.9rem; color:#ffffff;"><i class="fa-solid fa-plug"></i> Connect Your Remote Supabase Project</h4>
+                <p style="font-size:0.75rem; color:#94a3b8; margin-bottom:12px;">
+                    Have an active Supabase project? Enter your project credentials below to replicate live data to PostgreSQL:
+                </p>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div>
+                        <label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:4px;">SUPABASE_URL (e.g. https://xyzcompany.supabase.co)</label>
+                        <input type="text" id="inputSupabaseUrl" placeholder="https://your-project.supabase.co" style="width:100%; padding:8px 12px; background:#020617; border:1px solid #334155; border-radius:6px; color:#ffffff; font-family:monospace; font-size:0.8rem;" />
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:4px;">SUPABASE_SERVICE_ROLE_KEY</label>
+                        <input type="password" id="inputSupabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." style="width:100%; padding:8px 12px; background:#020617; border:1px solid #334155; border-radius:6px; color:#ffffff; font-family:monospace; font-size:0.8rem;" />
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:6px;">
+                        <button type="button" class="action-btn primary" onclick="testAndSaveSupabaseConfig()"><i class="fa-solid fa-cloud-arrow-up"></i> Test &amp; Sync to Remote Supabase</button>
+                        <button type="button" class="action-btn secondary" onclick="loadSampleSupabaseStatus()"><i class="fa-solid fa-arrows-rotate"></i> Refresh Status</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.75rem; color:#64748b;"><i class="fa-solid fa-bolt"></i> Dual-Mode Architecture: Zero Cloud Outage Risk</span>
+                <button type="button" class="action-btn" onclick="closeSupabaseModal()">Close</button>
             </div>
         </div>
     </div>
