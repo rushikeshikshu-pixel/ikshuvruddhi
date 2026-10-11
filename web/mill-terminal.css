@@ -1769,3 +1769,112 @@ body.light-mode .backend-queue-banner {
     background: linear-gradient(90deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.12));
     border-color: rgba(16, 185, 129, 0.4);
 }
+
+
+/* ==========================================================================
+   5-DAY SATELLITE CADENCE & DAILY CRUSHING DISPATCHER
+   ========================================================================== */
+.fiveday-sprint-container {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(8px);
+}
+.fiveday-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.fiveday-sprint-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+}
+.fiveday-sprint-card {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+.fiveday-sprint-card:hover, .fiveday-sprint-card.active {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: #10b981;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+.fiveday-card-day {
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: #38bdf8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.fiveday-card-metric {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #34d399;
+    margin: 4px 0 2px;
+}
+.fiveday-card-sub {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+.cadence-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+}
+.cadence-guide-card {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+}
+.cadence-guide-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+.cadence-guide-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+.cadence-guide-desc {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.45;
+}
+body.light-mode .fiveday-sprint-container {
+    background: #ffffff;
+    border-color: rgba(14, 165, 233, 0.3);
+}
+body.light-mode .fiveday-sprint-card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+body.light-mode .fiveday-sprint-card:hover, body.light-mode .fiveday-sprint-card.active {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: #059669;
+}
+body.light-mode .cadence-guide-card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+body.light-mode .cadence-guide-title {
+    color: #0f172a;
+}
+body.light-mode .cadence-guide-desc {
+    color: #475569;
+}

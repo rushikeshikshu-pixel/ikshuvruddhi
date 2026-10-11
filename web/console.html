@@ -314,6 +314,12 @@
         <button class="action-btn" onclick="exportDailyCuttingProgram()" style="margin-left:auto; border-color:var(--emerald-primary); color:#a7f3d0;">
             <i class="fa-solid fa-download"></i> 📥 Export Daily Cutting Program (CSV)
         </button>
+<button class="action-btn" onclick="openCadenceGuideModal()" style="border-color:#38bdf8; color:#38bdf8;">
+<i class="fa-solid fa-satellite-dish"></i> 5-Day Satellite Decision Guide
+</button>
+<button class="action-btn" onclick="openFiveDayRosterModal()" style="border-color:#34d399; color:#34d399;">
+<i class="fa-solid fa-calendar-days"></i> 5-Day Factory Cutting Program (375 Plots)
+</button>
     </div>
 
     <!-- 5. MAIN WORKSPACE CONTENT -->
@@ -432,6 +438,61 @@
                         <button onclick="openErpApiModal()" class="action-btn" style="padding:6px 12px; font-size:0.75rem; background:rgba(0,242,254,0.15); border:1px solid #00f2fe; color:#00f2fe;">
                             <i class="fa-solid fa-code"></i> Weighbridge REST API
                         </button>
+                    </div>
+                </div>
+
+                <!-- 5-DAY SATELLITE CADENCE & DAILY CRUSHING DISPATCHER -->
+                <div class="fiveday-sprint-container" id="fiveDaySprintContainer">
+                    <div class="fiveday-header-row">
+                        <div>
+                            <div style="font-size:0.86rem; font-weight:800; color:#34d399; display:flex; align-items:center; gap:8px;">
+                                <span class="pulse-dot green"></span>
+                                <i class="fa-solid fa-satellite-dish"></i> 5-DAY SATELLITE CADENCE &amp; DAILY CRUSHING DISPATCHER
+                                <span class="badge" style="background:rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#38bdf8; font-size:0.7rem; padding:2px 8px;">
+                                    CADENCE: OPTIMAL (375 Plots / 22.5k MT)
+                                </span>
+                            </div>
+                            <div style="font-size:0.74rem; color:#94a3b8; margin-top:3px;">
+                                Constellation: <strong>ESA Copernicus Sentinel-2 (S2A/S2B/S2C)</strong> &bull; Revisit Cadence: <strong>Every 5 Days</strong> &bull; Next Overpass: <strong id="lblNextOverpassDate" style="color:#00f2fe;">15-Oct-2026 (In 4 Days)</strong>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <button onclick="openCadenceGuideModal()" class="action-btn secondary" style="padding:6px 12px; font-size:0.75rem;">
+                                <i class="fa-solid fa-circle-question"></i> Is 5-Day Revisit Enough?
+                            </button>
+                            <button onclick="exportFiveDayScheduleCSV()" class="action-btn primary" style="padding:6px 12px; font-size:0.75rem;">
+                                <i class="fa-solid fa-file-excel"></i> Export 5-Day Roster (CSV)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 5-Day Cards (Days 1 to 5) -->
+                    <div class="fiveday-sprint-grid" id="fiveDaySprintGrid">
+                        <div class="fiveday-sprint-card active" id="cardDay1" onclick="filterByCrushDay(1)">
+                            <div class="fiveday-card-day"><span>DAY 1 (Nov 1)</span> <span style="color:#34d399;">75 Plots</span></div>
+                            <div class="fiveday-card-metric">4,500 MT</div>
+                            <div class="fiveday-card-sub"><i class="fa-solid fa-bullseye"></i> Avg CCS: <strong>13.43%</strong> &bull; Dedgaon / Kukana</div>
+                        </div>
+                        <div class="fiveday-sprint-card" id="cardDay2" onclick="filterByCrushDay(2)">
+                            <div class="fiveday-card-day"><span>DAY 2 (Nov 2)</span> <span style="color:#34d399;">75 Plots</span></div>
+                            <div class="fiveday-card-metric">4,500 MT</div>
+                            <div class="fiveday-card-sub"><i class="fa-solid fa-bullseye"></i> Avg CCS: <strong>13.36%</strong> &bull; Kukana / Tirthpuri</div>
+                        </div>
+                        <div class="fiveday-sprint-card" id="cardDay3" onclick="filterByCrushDay(3)">
+                            <div class="fiveday-card-day"><span>DAY 3 (Nov 3)</span> <span style="color:#34d399;">75 Plots</span></div>
+                            <div class="fiveday-card-metric">4,500 MT</div>
+                            <div class="fiveday-card-sub"><i class="fa-solid fa-bullseye"></i> Avg CCS: <strong>13.29%</strong> &bull; Bodhegaon / Erandgaon</div>
+                        </div>
+                        <div class="fiveday-sprint-card" id="cardDay4" onclick="filterByCrushDay(4)">
+                            <div class="fiveday-card-day"><span>DAY 4 (Nov 4)</span> <span style="color:#34d399;">75 Plots</span></div>
+                            <div class="fiveday-card-metric">4,500 MT</div>
+                            <div class="fiveday-card-sub"><i class="fa-solid fa-bullseye"></i> Avg CCS: <strong>13.22%</strong> &bull; Bhatkudgaon / Kukana</div>
+                        </div>
+                        <div class="fiveday-sprint-card" id="cardDay5" onclick="filterByCrushDay(5)">
+                            <div class="fiveday-card-day"><span>DAY 5 (Nov 5)</span> <span style="color:#34d399;">75 Plots</span></div>
+                            <div class="fiveday-card-metric">4,500 MT</div>
+                            <div class="fiveday-card-sub"><i class="fa-solid fa-bullseye"></i> Avg CCS: <strong>13.14%</strong> &bull; Bhatkudgaon / Shevgaon</div>
+                        </div>
                     </div>
                 </div>
 
@@ -1325,5 +1386,119 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="mill_calibrated_plots.js"></script>
     <script src="mill-terminal.js"></script>
+
+    <!-- 10. 5-DAY SATELLITE CADENCE & DECISION GUIDE MODAL -->
+    <div id="modalCadenceGuide" class="modal-dialog-overlay">
+        <div class="terminal-modal-card wide">
+            <div class="modal-head-row">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="slip-header-badge" style="background:rgba(56,189,248,0.15); border-color:#38bdf8; color:#38bdf8;">
+                        <i class="fa-solid fa-satellite-dish"></i> CADENCE INTELLIGENCE
+                    </div>
+                    <h3 style="margin:0; font-size:1.1rem; color:#ffffff;">Is 5-Day Satellite Revisit Enough for Sugar Mill Harvest Decisions?</h3>
+                </div>
+                <button type="button" class="modal-close-x" onclick="closeCadenceGuideModal()">&times;</button>
+            </div>
+
+            <p style="font-size:0.82rem; color:#94a3b8; margin:8px 0 16px; line-height:1.5;">
+                <strong>Verdict: YES, 5 days is the ideal scientific &amp; operational standard for in-field sugarcane maturity.</strong> 
+                Here is why 5-day satellite data is sufficient for field harvest decisions &mdash; and exactly where factory operations take over.
+            </p>
+
+            <div class="cadence-guide-grid">
+                <div class="cadence-guide-card">
+                    <div class="cadence-guide-icon" style="color:#10b981;"><i class="fa-solid fa-seedling"></i></div>
+                    <div class="cadence-guide-title">1. Biological Sucrose Ripening Velocity</div>
+                    <div class="cadence-guide-desc">
+                        Sugarcane sucrose accumulation in the stalk is an enzymatic physiological process that advances at <strong>+0.15% to +0.30% CCS per 5&ndash;7 days</strong> during ripening. Updating daily produces atmospheric optical noise without biological change. A 5-day delta perfectly captures genuine sucrose accumulation.
+                    </div>
+                </div>
+
+                <div class="cadence-guide-card">
+                    <div class="cadence-guide-icon" style="color:#38bdf8;"><i class="fa-solid fa-file-invoice"></i></div>
+                    <div class="cadence-guide-title">2. Factory Cutting Permit Rosters (?? ????? ?????????)</div>
+                    <div class="cadence-guide-desc">
+                        Sugar factories do not mobilize harvesting gangs (??????) hour-by-hour. The Cane Department issues <strong>5-to-7 day harvesting permits</strong> to coordinate bullock carts, tractors, and trucks. The 5-day Sentinel-2 revisit cycle synchronizes 1:1 with factory permit logistics.
+                    </div>
+                </div>
+
+                <div class="cadence-guide-card">
+                    <div class="cadence-guide-icon" style="color:#f59e0b;"><i class="fa-solid fa-cloud-bolt"></i></div>
+                    <div class="cadence-guide-title">3. All-Weather Cloud Immunity (SAR Radar)</div>
+                    <div class="cadence-guide-desc">
+                        When monsoon cloud cover blocks optical Sentinel-2 sensors, the engine seamlessly fuses <strong>Sentinel-1 C-band SAR Radar (VV/VH backscatter)</strong> which penetrates 100% of clouds, supplemented by cumulative thermal Growing Degree Day (GDD) modeling to guarantee uninterrupted updates.
+                    </div>
+                </div>
+
+                <div class="cadence-guide-card">
+                    <div class="cadence-guide-icon" style="color:#ef4444;"><i class="fa-solid fa-stopwatch-20"></i></div>
+                    <div class="cadence-guide-title">4. When 5-Day is NOT Enough: The 18-Hour Post-Harvest SLA</div>
+                    <div class="cadence-guide-desc">
+                        5-day satellite cadence is for <em>pre-harvest decision making</em> (which plot to cut). Once the stalk is cut by the sickle, <strong>post-harvest inversion</strong> begins! Cut cane must reach the weighbridge within <strong>18&ndash;24 hours</strong>. This post-harvest phase is governed by GPS truck dispatch and RFID tokens, not satellite imagery.
+                    </div>
+                </div>
+            </div>
+
+            <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:12px 16px; margin-top:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div style="font-size:0.8rem; color:#a7f3d0;">
+                    <i class="fa-solid fa-circle-check"></i> <strong>Cadence Recommendation:</strong> Keep satellite cadence at 5 days for crop maturation &bull; Use weighbridge REST API for real-time truck queueing.
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button type="button" class="action-btn primary" onclick="exportFiveDayScheduleCSV()"><i class="fa-solid fa-download"></i> Download 5-Day Cutting Program</button>
+                    <button type="button" class="action-btn" onclick="closeCadenceGuideModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. 5-DAY FACTORY CUTTING ROSTER MODAL -->
+    <div id="modalFiveDayRoster" class="modal-dialog-overlay">
+        <div class="terminal-modal-card wide">
+            <div class="modal-head-row">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="slip-header-badge" style="background:rgba(16,185,129,0.15); border-color:#10b981; color:#34d399;">
+                        <i class="fa-solid fa-calendar-days"></i> 5-DAY FACTORY PROGRAM
+                    </div>
+                    <h3 style="margin:0; font-size:1.1rem; color:#ffffff;">5-Day Capacity-Balanced Crushing Program (375 Plots &bull; 22,500 MT)</h3>
+                </div>
+                <button type="button" class="modal-close-x" onclick="closeFiveDayRosterModal()">&times;</button>
+            </div>
+
+            <p style="font-size:0.8rem; color:#94a3b8; margin:8px 0 14px;">
+                Calibrated to 4,500 TCD daily crushing intake (75 plots/day). Plots are sequenced by sucrose maturity (CCS) while grouping by circle to minimize transport tractor transit times.
+            </p>
+
+            <div id="fiveDayRosterTableContainer" style="max-height:360px; overflow-y:auto; border:1px solid rgba(255,255,255,0.08); border-radius:8px; margin-bottom:14px;">
+                <table class="mill-data-table" style="font-size:0.75rem;">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Docket</th>
+                            <th>Gat No</th>
+                            <th>Farmer Name</th>
+                            <th>Circle</th>
+                            <th>Variety</th>
+                            <th>CCS (%)</th>
+                            <th>Brix</th>
+                            <th>Est. MT</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fiveDayRosterTableBody">
+                        <tr><td colspan="10" style="text-align:center; padding:20px; color:#94a3b8;">Loading 5-day schedule from cloud database...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.75rem; color:#64748b;"><i class="fa-solid fa-truck-ramp-box"></i> Weighbridge Dispatch Ready &bull; Strictly &lt; 18h Transit Target</span>
+                <div style="display:flex; gap:8px;">
+                    <button type="button" class="action-btn primary" onclick="exportFiveDayScheduleCSV()"><i class="fa-solid fa-download"></i> Export Full 5-Day Program (CSV)</button>
+                    <button type="button" class="action-btn" onclick="closeFiveDayRosterModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

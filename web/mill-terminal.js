@@ -432,6 +432,7 @@ function initDataset() {
     renderQueueList();
     populateCircleFilter();
     fetchCloudStatsAndCircles();
+    fetchFiveDaySchedule();
 }
 
 function generateFallbackPlots() {
@@ -2232,4 +2233,168 @@ function renderBackendFraudTable(ghosts) {
     });
 
     tbody.innerHTML = html;
+}
+
+
+/* ==========================================================================
+   5-DAY SATELLITE CADENCE & DAILY CRUSHING DISPATCHER ENGINE
+   ========================================================================== */
+window.MillApp.fiveDaySchedule = null;
+window.MillApp.selectedCrushDay = 1;
+
+function fetchFiveDaySchedule() {
+    fetch('/api/harvest/fiveday_schedule')
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.status === 'SUCCESS') {
+                window.MillApp.fiveDaySchedule = data;
+                
+                // Update overpass telemetry
+                if (data.satellite_telemetry) {
+                    const tel = data.satellite_telemetry;
+                    setText('lblNextOverpassDate', `${tel.next_orbit_overpass} (In ${tel.days_until_refresh} Days)`);
+                }
+                
+                // Render Day Cards
+                if (data.days && data.days.length === 5) {
+                    data.days.forEach(d => {
+                        const card = document.getElementById(`cardDay${d.day_number}`);
+                        if (card) {
+                            const circles = d.primary_circles ? d.primary_circles.slice(0, 2).join(' / ') : 'Central';
+                            card.innerHTML = `
+                                <div class="fiveday-card-day"><span>DAY ${d.day_number}</span> <span style="color:#34d399;">${d.plot_count} Plots</span></div>
+                                <div class="fiveday-card-metric">${d.allocated_tonnage_mt.toLocaleString('en-IN')} MT</div>
+                                <div class="fiveday-card-sub"><i class="fa-solid fa-bullseye"></i> Avg CCS: <strong>${d.avg_ccs_pct}%</strong> &bull; ${circles}</div>
+                            `;
+                        }
+                    });
+                }
+            }
+        })
+        .catch(err => {
+            console.log('Five day schedule endpoint fallback');
+        });
+}
+
+function filterByCrushDay(dayNum) {
+    window.MillApp.selectedCrushDay = dayNum;
+    document.querySelectorAll('.fiveday-sprint-card').forEach((c, idx) => {
+        if (idx + 1 === dayNum) c.classList.add('active');
+        else c.classList.remove('active');
+    });
+    
+    if (window.playMillSound) window.playMillSound('ping');
+    
+    // If schedule data is available, populate cloud table with Day's plots
+    if (window.MillApp.fiveDaySchedule && window.MillApp.fiveDaySchedule.days) {
+        const dayData = window.MillApp.fiveDaySchedule.days.find(d => d.day_number === dayNum);
+        if (dayData && dayData.parcels) {
+            renderCloudTableRows(dayData.parcels);
+            setText('lblCloudPage', `Day ${dayNum}`);
+            setText('lblCloudTotalPages', `5`);
+            setText('lblCloudTotalCount', `${dayData.plot_count} Plots (${dayData.allocated_tonnage_mt.toLocaleString('en-IN')} MT)`);
+            showToast(`Loaded Day ${dayNum} Crushing Sprint: ${dayData.plot_count} Plots | Avg CCS ${dayData.avg_ccs_pct}%`);
+            return;
+        }
+    }
+    
+    // Fallback: fetch cloud plots with limit=75 and offset
+    fetch(`/api/cloud/plots?page=${dayNum}&limit=75&status=CUT_NOW`)
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.status === 'SUCCESS' && data.parcels) {
+                renderCloudTableRows(data.parcels);
+                setText('lblCloudPage', `Day ${dayNum}`);
+                setText('lblCloudTotalPages', `5`);
+                setText('lblCloudTotalCount', `${data.parcels.length} Plots`);
+                showToast(`Filtered Day ${dayNum} Crushing Batch (${data.parcels.length} Parcels)`);
+            }
+        });
+}
+
+function openCadenceGuideModal() {
+    const modal = document.getElementById('modalCadenceGuide');
+    if (modal) modal.style.display = 'flex';
+    if (window.playMillSound) window.playMillSound('sonar');
+}
+
+function closeCadenceGuideModal() {
+    const modal = document.getElementById('modalCadenceGuide');
+    if (modal) modal.style.display = 'none';
+}
+
+function openFiveDayRosterModal() {
+    const modal = document.getElementById('modalFiveDayRoster');
+    if (modal) modal.style.display = 'flex';
+    if (window.playMillSound) window.playMillSound('sonar');
+    
+    // Populate modal table
+    const tbody = document.getElementById('fiveDayRosterTableBody');
+    if (!tbody) return;
+    
+    if (window.MillApp.fiveDaySchedule && window.MillApp.fiveDaySchedule.days) {
+        let html = '';
+        window.MillApp.fiveDaySchedule.days.forEach(d => {
+            if (d.parcels) {
+                d.parcels.forEach(p => {
+                    html += `
+                        <tr>
+                            <td><span class="badge" style="background:#1e3a8a; color:#60a5fa;">Day ${d.day_number}</span></td>
+                            <td style="font-family:monospace; color:#38bdf8;">${p.docket_id}</td>
+                            <td><strong>${p.gat_no}</strong></td>
+                            <td>${p.farmer_en}</td>
+                            <td>${p.circle}</td>
+                            <td>${p.variety}</td>
+                            <td style="color:#10b981; font-weight:700;">${p.ccs}%</td>
+                            <td>${p.brix}&deg;Bx</td>
+                            <td>${p.est_tons} MT</td>
+                            <td><button class="action-btn" style="padding:2px 8px; font-size:11px;" onclick="openDigitalHealthSlip('${p.gat_no}')">Slip</button></td>
+                        </tr>
+                    `;
+                });
+            }
+        });
+        tbody.innerHTML = html;
+    } else {
+        fetch('/api/harvest/fiveday_schedule')
+            .then(r => r.json())
+            .then(data => {
+                if (data && data.status === 'SUCCESS') {
+                    window.MillApp.fiveDaySchedule = data;
+                    openFiveDayRosterModal();
+                }
+            });
+    }
+}
+
+function closeFiveDayRosterModal() {
+    const modal = document.getElementById('modalFiveDayRoster');
+    if (modal) modal.style.display = 'none';
+}
+
+function exportFiveDayScheduleCSV() {
+    fetch('/api/harvest/fiveday_schedule')
+        .then(r => r.json())
+        .then(data => {
+            if (!data || !data.days) {
+                showToast('Failed to generate 5-day CSV.');
+                return;
+            }
+            let csv = "Crushing Day,Docket ID,Gat No,Farmer Name,Circle,Village,Variety,Cane Type,Area (Ac),Est Tonnage (MT),CCS Recovery (%),Brix,Transit Target Hours,Status\n";
+            data.days.forEach(d => {
+                d.parcels.forEach(p => {
+                    csv += `Day ${d.day_number},${p.docket_id},${p.gat_no},"${p.farmer_en}",${p.circle},${p.village},${p.variety},${p.cane_type},${p.rep_acres},${p.est_tons},${p.ccs}%,${p.brix},${p.transit_target_hours || 18},READY_FOR_CRUSH\n`;
+                });
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `5Day_Crushing_Program_Gangamai_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast(`Exported 5-Day Crushing Program (${data.total_5day_plots} Parcels / ${data.total_5day_tonnage_mt} MT)`);
+        })
+        .catch(() => showToast('Error exporting 5-day schedule.'));
 }
