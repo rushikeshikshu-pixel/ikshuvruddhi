@@ -1,11 +1,40 @@
 /**
  * IKSHU SATELLITE ENGINE - MILL CALIBRATED PLOT MASTER REGISTER
  * Complete Ahilyanagar / Gangamai SSK Factory Command Area
- * 2,297 High-Fidelity Stratified Sugarcane Parcels across 21 Circles
+ * 2,298 High-Fidelity Stratified Sugarcane Parcels across 21 Circles
  * Status: CUT_NOW (Peak Sucrose), WINDOW_15D (Ripening), VEGETATIVE (Growth), GHOST_FLAG (Bare Soil)
  */
 
 window.IKSHU_PLOTS = [
+  {
+    "id": "PLT-00284",
+    "plotNo": 284,
+    "farmerEn": "SALUNKE PRABHAKAR KESHAVRAO",
+    "farmerMr": "Salunke Prabhakar Keshavrao (शेतकरी)",
+    "gatNo": "Gat 284",
+    "gatNumber": 284,
+    "circle": "Dhorkin",
+    "village": "WADALA",
+    "villageMr": "Wadala (गाव)",
+    "caneType": "Khodwa",
+    "variety": "CO-265",
+    "repAcres": 1.48,
+    "satAcres": 1.32,
+    "lat": 19.596782,
+    "lon": 75.417815,
+    "ndvi": 0.8,
+    "brix": 21.8,
+    "pol": 17.5,
+    "purity": 80.3,
+    "ccs": 12.04,
+    "status": "CUT_NOW",
+    "isGhost": false,
+    "estTons": 58.2,
+    "distKm": 32.4,
+    "plantationDate": "2025-11-18",
+    "transitTargetHours": 18,
+    "docketId": "DOK-2026-00284"
+  },
   {
     "id": "PLT-19524",
     "plotNo": 19524,
