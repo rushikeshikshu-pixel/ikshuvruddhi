@@ -496,6 +496,87 @@ function updateTelemetryRibbon() {
     updateDynamicFilterPillCounts();
 }
 
+// Biophysical Crop Age (in days) calculation from plantation date
+// Robust multi-format date parser supporting ISO (YYYY-MM-DD), Indian formats (DD-MM-YYYY, DD/MM/YYYY), Date objects, and timestamps
+function parsePlotDate(dateVal) {
+    if (!dateVal) return null;
+    if (dateVal instanceof Date) return isNaN(dateVal.getTime()) ? null : dateVal;
+    if (typeof dateVal === 'number') {
+        const d = new Date(dateVal);
+        return isNaN(d.getTime()) ? null : d;
+    }
+    const s = String(dateVal).trim();
+    if (!s) return null;
+
+    // Check DD-MM-YYYY or DD/MM/YYYY
+    const ddmmyyyy = s.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+    if (ddmmyyyy) {
+        const day = parseInt(ddmmyyyy[1], 10);
+        const month = parseInt(ddmmyyyy[2], 10) - 1;
+        const year = parseInt(ddmmyyyy[3], 10);
+        const d = new Date(year, month, day);
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    // Check YYYY-MM-DD or YYYY/MM/DD
+    const yyyymmdd = s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+    if (yyyymmdd) {
+        const year = parseInt(yyyymmdd[1], 10);
+        const month = parseInt(yyyymmdd[2], 10) - 1;
+        const day = parseInt(yyyymmdd[3], 10);
+        const d = new Date(year, month, day);
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    const t = Date.parse(s);
+    return isNaN(t) ? null : new Date(t);
+}
+
+function getPlotCropAgeDays(plot) {
+    if (!plot) return 0;
+    if (plot.cropAgeDays != null && Number.isFinite(Number(plot.cropAgeDays))) return Number(plot.cropAgeDays);
+    if (plot.crop_age_days != null && Number.isFinite(Number(plot.crop_age_days))) return Number(plot.crop_age_days);
+    const dateVal = plot.plantationDate || plot.plantation_date || plot.plantingDate;
+    if (!dateVal) return 0;
+    const plantDate = parsePlotDate(dateVal);
+    if (!plantDate) return 0;
+    const refVal = plot.observationDate || plot.acquisitionDate || plot.observation_date;
+    const refDate = refVal ? parsePlotDate(refVal) : new Date();
+    if (!refDate) return 0;
+    const diffMs = refDate.getTime() - plantDate.getTime();
+    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+}
+
+// Biophysical Inversion Risk Check:
+// Replaces fragile plantationDate string check with crop age (days > 480 for Adsali, > 375 for Suru, > 430 for CoM-0265)
+// Low purity (< 80%) is verified against mature crop age so immature vegetative cane is not falsely flagged.
+function isPlotInversionRisk(plot) {
+    if (!plot || plot.isGhost || plot.status === 'GHOST_FLAG') return false;
+    const ageDays = getPlotCropAgeDays(plot);
+    const caneType = String(plot.caneType || plot.planting_type || '').trim().toLowerCase();
+    const isAdsali = caneType.includes('adsali');
+    const variety = String(plot.variety || '').toLowerCase();
+    const is0265 = variety.includes('265');
+    const suruLimit = is0265 ? 430 : 375;
+    const minMaturityAge = isAdsali ? 365 : (is0265 ? 360 : 270);
+
+    // 1. Post-maturity age ceiling exceeded
+    if (ageDays > 0) {
+        if (isAdsali && ageDays > 480) return true;
+        if (!isAdsali && ageDays > suruLimit) return true;
+    }
+
+    // 2. Biochemical inversion (purity < 80% only in cane that has reached maturity age)
+    const purity = plot.purity != null ? Number(plot.purity) : (plot.predicted_purity_pct != null ? Number(plot.predicted_purity_pct) : null);
+    if (purity != null && purity > 0 && purity < 80) {
+        if (ageDays === 0 || ageDays >= minMaturityAge) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function updateDynamicFilterPillCounts() {
     const plots = window.MillApp.plots;
     if (!plots || plots.length === 0) return;
@@ -505,7 +586,7 @@ function updateDynamicFilterPillCounts() {
     const window15 = plots.filter(p => p.status === 'WINDOW_15D').length;
     const ghosts = plots.filter(p => p.isGhost || p.status === 'GHOST_FLAG').length;
     const newlyMatured = plots.filter(p => !p.isGhost && p.ccs >= 11.2 && (p.ccs - 0.5) < 11.2).length;
-    const inversionRisk = plots.filter(p => !p.isGhost && (p.purity < 80 || (p.plantationDate && p.plantationDate.includes('2024')))).length;
+    const inversionRisk = plots.filter(p => isPlotInversionRisk(p)).length;
 
     document.querySelectorAll('.filter-pill').forEach(btn => {
         const filterType = btn.getAttribute('data-filter');
@@ -760,15 +841,16 @@ function populateCircleFilter() {
     });
 }
 
-// Dynamic 5-Day Satellite Delta Engine
+// 14-Day Rolling Biophysical Cadence Delta Engine (Backward compatible with getPlot5DayDelta)
 function getPlot5DayDelta(plot) {
-    if (!plot) return { deltaCcs: 0, deltaBrix: 0, deltaPol: 0, deltaPurity: 0, label: "0.0%", velocity: "STABLE" };
-    if (plot.isGhost) {
-        return { deltaCcs: 0, deltaBrix: 0, deltaPol: 0, deltaPurity: 0, label: "0.0% (Fallow)", velocity: "FALLOW" };
+    if (!plot) return { deltaCcs: 0, deltaBrix: 0, deltaPol: 0, deltaPurity: 0, label: "0.0%", velocity: "STABLE", cadenceDays: 14 };
+    if (plot.isGhost || plot.status === 'GHOST_FLAG') {
+        return { deltaCcs: 0, deltaBrix: 0, deltaPol: 0, deltaPurity: 0, label: "0.0% (Fallow)", velocity: "FALLOW", cadenceDays: 14 };
     }
     
-    // Inversion plots (low purity or over-age) experience sucrose breakdown over 5 days
-    const isInversion = plot.purity < 80 || (plot.plantationDate && plot.plantationDate.includes('2024'));
+    // Inversion plots (low purity < 80% or over-age: > 480d Adsali, > 375d Suru)
+    // Post-Maturity Inversion: Pol loss -0.04 to -0.10 %/day (-0.56 to -1.40 % Pol / 14 days)
+    const isInversion = isPlotInversionRisk(plot);
     if (isInversion) {
         return {
             deltaCcs: -0.4,
@@ -776,22 +858,75 @@ function getPlot5DayDelta(plot) {
             deltaPol: -0.6,
             deltaPurity: -1.8,
             label: "▼ -0.4% CCS (Inversion Loss!)",
-            velocity: "INVERSION"
+            velocity: "INVERSION",
+            cadenceDays: 14
+        };
+    }
+
+    const ageDays = getPlotCropAgeDays(plot);
+    const caneType = String(plot.caneType || plot.planting_type || '').trim().toLowerCase();
+    const isAdsali = caneType.includes('adsali');
+    const variety = String(plot.variety || '').toLowerCase();
+    const is0265 = variety.includes('265');
+
+    // Peak Maturity Plateau check:
+    // Suru (standard Co-86032): 335-375 days (months 11-12)
+    // CoM-0265 (heavy biomass late): 390-430 days (13+ months)
+    // Adsali: 455-480 days (months 15-17)
+    // Or CUT_NOW status / mature CCS >= 11.5 with purity >= 82%
+    const isPlateau = (isAdsali && ageDays >= 455 && ageDays <= 480) ||
+                      (!isAdsali && !is0265 && ageDays >= 335 && ageDays <= 375) ||
+                      (!isAdsali && is0265 && ageDays >= 390 && ageDays <= 430) ||
+                      (plot.status === 'CUT_NOW') ||
+                      (plot.ccs >= 11.5 && plot.purity >= 82);
+
+    if (isPlateau) {
+        // Peak Maturity Plateau: net change 0.00 ± 0.02 °Bx/day (top-to-bottom ratio 0.95-1.00)
+        return {
+            deltaCcs: 0.0,
+            deltaBrix: +0.1,
+            deltaPol: +0.0,
+            deltaPurity: +0.1,
+            label: "● 0.0% CCS (Peak Plateau)",
+            velocity: "PLATEAU",
+            cadenceDays: 14
+        };
+    }
+
+    // Vegetative stage check (young cane before active ripening window)
+    const minActiveAge = isAdsali ? 365 : (is0265 ? 360 : 270);
+    const isVegetative = (ageDays > 0 && ageDays < minActiveAge) || plot.status === 'VEGETATIVE';
+    if (isVegetative) {
+        return {
+            deltaCcs: 0.1,
+            deltaBrix: +0.3,
+            deltaPol: +0.2,
+            deltaPurity: +0.3,
+            label: "▲ +0.1% CCS / 14d (Vegetative)",
+            velocity: "VEGETATIVE",
+            cadenceDays: 14
         };
     }
     
-    // Healthy ripening sugarcane: rapid sucrose accumulation
-    const isAdsali = plot.caneType === 'Adsali';
-    const rate = isAdsali ? 0.5 : 0.4;
+    // Active Ripening (months 9–11 Suru, 12–15 Adsali):
+    // +0.035 to +0.055 °Bx/day (+0.50 to +0.80 °Bx / 14 days, max +1.5 °Bx/month)
+    const ccsRate = isAdsali ? 0.5 : (is0265 ? 0.35 : 0.4);
+    const brixDelta = isAdsali ? 0.7 : (is0265 ? 0.55 : 0.6); // +0.050 / +0.043 °Bx/day (within +0.50 to +0.80 °Bx / 14d)
+    const polDelta = isAdsali ? 0.6 : (is0265 ? 0.45 : 0.5);
+
     return {
-        deltaCcs: rate,
-        deltaBrix: +(rate + 0.1).toFixed(1),
-        deltaPol: +(rate).toFixed(1),
-        deltaPurity: +0.6,
-        label: `▲ +${rate}% CCS / 5d`,
-        velocity: "ACCUMULATION"
+        deltaCcs: ccsRate,
+        deltaBrix: brixDelta,
+        deltaPol: polDelta,
+        deltaPurity: +0.8,
+        label: `▲ +${ccsRate}% CCS / 14d`,
+        velocity: "ACCUMULATION",
+        cadenceDays: 14
     };
 }
+
+// Alias for explicit 14-day cadence callers
+const getPlot14DayRollingDelta = getPlot5DayDelta;
 
 function applyFilters() {
     let list = [...window.MillApp.plots];
@@ -802,7 +937,7 @@ function applyFilters() {
         } else if (window.MillApp.filterStatus === 'NEW_TO_PEAK') {
             list = list.filter(p => !p.isGhost && p.ccs >= 11.2 && (p.ccs - 0.5) < 11.2);
         } else if (window.MillApp.filterStatus === 'INVERSION_ALERT') {
-            list = list.filter(p => !p.isGhost && (p.purity < 80 || (p.plantationDate && p.plantationDate.includes('2024'))));
+            list = list.filter(p => isPlotInversionRisk(p));
         } else {
             list = list.filter(p => p.status === window.MillApp.filterStatus);
         }
@@ -1817,7 +1952,7 @@ window.handleSatellitePassChange = function(selectElem) {
     
     // Dynamically update ribbon stats for the chosen pass
     const newlyMatured = window.MillApp.plots.filter(p => !p.isGhost && p.ccs >= 11.2 && (p.ccs - 0.5) < 11.2).length;
-    const inversionAlerts = window.MillApp.plots.filter(p => !p.isGhost && (p.purity < 80 || (p.plantationDate && p.plantationDate.includes('2024')))).length;
+    const inversionAlerts = window.MillApp.plots.filter(p => isPlotInversionRisk(p)).length;
     const next15d = window.MillApp.plots.filter(p => !p.isGhost && p.status === 'WINDOW_15D').length;
 
     const ribbon = document.getElementById('passDeltaRibbon');
@@ -1860,9 +1995,8 @@ window.openMobileHealthSlip = function(plotIdOrGat) {
         statusPill.style.borderColor = isPeak ? '#10b981' : '#f59e0b';
     }
 
-    setText('slipFarmerName', `${plot.farmerMr || plot.farmerEn} (${plot.farmerEn})`);
-    setText('slipGatVillage', `गट ${plot.gatNumber || plot.gatNo} • ${plot.village} (${plot.circle})`);
-    setText('slipVarietyType', `${plot.variety} (${plot.caneType}) • वय: ${plot.plantationDate ? '४४०+ दिवस' : 'परिपक्व'}`);
+    const slipAgeDays = getPlotCropAgeDays(plot);
+    setText('slipVarietyType', `${plot.variety} (${plot.caneType}) • वय: ${slipAgeDays > 0 ? slipAgeDays + ' दिवस' : 'परिपक्व'}`);
     setText('slipAreaTons', `${plot.repAcres} एकर (उपग्रह: ${plot.satAcres} Ac) • अंदाजे: ${plot.estTons} मे. टन`);
 
     setText('slipCutWindow', isPeak ? '१२ ऑक्टोबर ते १८ ऑक्टोबर २०२६' : '२५ ऑक्टोबर ते ०५ नोव्हेंबर २०२६');
@@ -2145,7 +2279,7 @@ function renderLiveBackendQueueTable(parcels) {
         var variety = p.variety || 'Co 86032';
         var acres = p.satellite_verified_acres || p.repAcres || 1.5;
 
-        var delta = getPlot5DayDelta({ ccs: ccs, brix: brix, pol: p.predicted_pol_pct, purity: p.predicted_purity_pct, status: 'CUT_NOW' });
+        var delta = getPlot5DayDelta(Object.assign({}, p, { ccs: ccs, brix: brix, pol: p.predicted_pol_pct || p.pol, purity: p.predicted_purity_pct || p.purity, variety: variety, status: 'CUT_NOW' }));
         var ccsDeltaHtml = '<span style="color:' + (delta.deltaCcs >= 0 ? '#00e676' : '#ef4444') + '; font-weight:800; font-family:monospace;">' + (delta.deltaCcs >= 0 ? '▲ +' : '▼ ') + delta.deltaCcs + '%</span>';
         var brixDeltaHtml = '<span style="color:' + (delta.deltaBrix >= 0 ? '#00f2fe' : '#ef4444') + '; font-weight:800; font-family:monospace;">' + (delta.deltaBrix >= 0 ? '▲ +' : '▼ ') + delta.deltaBrix + '&deg;Bx</span>';
 
