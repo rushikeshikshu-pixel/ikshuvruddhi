@@ -744,7 +744,8 @@
     e.preventDefault();
     const key = (document.getElementById('vaultKeyInput').value || '').trim().toLowerCase();
     const validKeys = ['gangamai', 'gangamai2026', 'shevgaon', '4500', 'ikshu2026', 'admin', 'vault2026'];
-    if (validKeys.includes(key) || key.length >= 4) {
+    const authorizedVaultKeys = ['gangamai', 'gangamai2026', 'gm414', 'shevgaon', '4500', 'ikshu2026', 'admin2026', 'vault2026'];
+    if (authorizedVaultKeys.includes(key)) {
       sessionStorage.setItem('ikshu_vault_unlocked', 'true');
       sessionStorage.setItem('ikshu_gangamai_auth', 'true');
       applyVaultState();

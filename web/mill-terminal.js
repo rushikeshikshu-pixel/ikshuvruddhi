@@ -359,6 +359,16 @@ function initMillProfile() {
     if (raw) {
         try {
             const p = JSON.parse(raw);
+            // Enforce 12-hour session expiration
+            if (p.timestamp) {
+                const sessionAgeHours = (Date.now() - new Date(p.timestamp).getTime()) / (1000 * 3600);
+                if (sessionAgeHours > 12) {
+                    sessionStorage.removeItem('ikshu_mill_profile');
+                    sessionStorage.removeItem('ikshu_gangamai_auth');
+                    console.log('Session expired (>12 hours). Re-authentication required.');
+                    return;
+                }
+            }
             if (p.millName) window.MillApp.millName = p.millName;
             if (p.shortName) window.MillApp.shortName = p.shortName;
             if (p.role) window.MillApp.role = p.role;
@@ -1815,7 +1825,8 @@ window.handleAuthSubmit = function(e) {
     e.preventDefault();
     const key = document.getElementById('accessKeyInput').value.trim().toLowerCase();
     const validKeys = ['gangamai', 'gangamai2026', 'shevgaon', '4500', 'ikshu2026', 'admin', 'mill2026'];
-    if (validKeys.includes(key) || key.length >= 4) {
+    const authorizedKeys = ['gangamai', 'gangamai2026', 'gm414', 'shevgaon', '4500', 'ikshu2026', 'admin2026', 'mill2026'];
+    if (authorizedKeys.includes(key)) {
         window.unlockForGangamai('Chief Agriculture Officer (CAO)');
     } else {
         document.getElementById('authErrorMsg').style.display = 'block';

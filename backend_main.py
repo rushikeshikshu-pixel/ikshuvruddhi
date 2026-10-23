@@ -1,4 +1,4 @@
-﻿try:
+try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
@@ -19,7 +19,10 @@ import pickle
 import numpy as np
 import sys
 
-from fastapi import FastAPI, Query, HTTPException, Body
+import time
+from collections import defaultdict
+from fastapi import FastAPI, Query, HTTPException, Body, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
@@ -41,16 +44,94 @@ from ml.bhunaksha_engine import (
     import_village_cadastral_geojson,
     get_cadastral_store_summary
 )
+from ml.biophysical_ripening_cadence import (
+    BiophysicalRipeningCadenceEngine,
+    detect_5day_anomaly,
+    project_14day_ripening,
+    check_inversion_risk
+)
 from supabase_client import supabase
 
 app = FastAPI(title="IkshuVruddhi Real Satellite & BhuNaksha Ingestion API", version="2.5.0")
 
+# ── RATE LIMITING CONFIGURATION (Anti-DDoS & Bot Scraping Guard) ──────────────
+_RATE_LIMIT_BUCKET: Dict[str, List[float]] = defaultdict(list)
+_RATE_LIMIT_MAX_PER_MINUTE = 200  # Max 200 standard requests/min per IP
+_HEAVY_RATE_LIMIT_MAX_PER_MINUTE = 40  # Max 40 heavy satellite queries/min per IP
+_RATE_LIMIT_WINDOW = 60.0  # 60 seconds
+
+def _is_rate_limited(ip: str, is_heavy: bool = False) -> bool:
+    now = time.time()
+    cutoff = now - _RATE_LIMIT_WINDOW
+    req_history = [t for t in _RATE_LIMIT_BUCKET[ip] if t > cutoff]
+    _RATE_LIMIT_BUCKET[ip] = req_history
+    max_allowed = _HEAVY_RATE_LIMIT_MAX_PER_MINUTE if is_heavy else _RATE_LIMIT_MAX_PER_MINUTE
+    if len(req_history) >= max_allowed:
+        return True
+    _RATE_LIMIT_BUCKET[ip].append(now)
+    return False
+
+# ── ENTERPRISE SECURITY HEADERS & DEFENSE-IN-DEPTH MIDDLEWARE ─────────────────
+@app.middleware("http")
+async def enterprise_security_middleware(request: Request, call_next):
+    # 1. Anti-DDoS Rate Limiting on API routes
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    path = request.url.path
+    if path.startswith("/api/"):
+        is_heavy = path.startswith("/api/satellite/")
+        if _is_rate_limited(client_ip, is_heavy=is_heavy):
+            return JSONResponse(
+                status_code=429,
+                content={
+                    "error": "RATE_LIMIT_EXCEEDED",
+                    "detail": "Too Many Requests. Defense rate-limiter engaged. Please retry in 60 seconds."
+                },
+                headers={"Retry-After": "60"}
+            )
+
+    # 2. Process Request
+    response = await call_next(request)
+
+    # 3. Inject Strict Enterprise Security Headers
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(self)"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self' https: data: blob:; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; "
+        "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; "
+        "img-src 'self' https: data: blob:; "
+        "connect-src 'self' https: wss:; "
+        "frame-ancestors 'self' https://ikshuintelligence.com https://*.ikshuintelligence.com;"
+    )
+    return response
+
+# ── SECURE CORS CONFIGURATION ────────────────────────────────────────────────
+ALLOWED_ORIGINS = [
+    "https://ikshuintelligence.com",
+    "https://www.ikshuintelligence.com",
+    "https://gangamai.ikshuintelligence.com",
+    "https://mill.ikshuintelligence.com",
+    "https://ikshuvruddhi.onrender.com",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://localhost:8123",
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:8123"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"^https://.*\.ikshuintelligence\.com$",
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
+    max_age=86400,
 )
 
 engine = CopernicusCDSEProcessEngine()
@@ -999,6 +1080,69 @@ def fiveday_harvest_schedule_endpoint():
         "average_queue_ccs_pct": round(sum(p['ccs'] for p in rows) / len(rows), 2) if rows else 0,
         "days": daily_schedule
     }
+
+
+class BiophysicalRipeningCadenceRequest(BaseModel):
+    current_brix: float = 18.0
+    current_pol: float = 15.0
+    crop_age_days: float = 340.0
+    cane_type: str = "Suru"
+    variety: str = "CO 86032"
+    cadence_days: int = 14
+    tmin: Optional[float] = None
+    tmax: Optional[float] = None
+    diurnal_range: Optional[float] = None
+    delta_ndwi_15d: Optional[float] = None
+    rainfall_15d_mm: float = 0.0
+    delta_gdd: Optional[float] = None
+    delta_ndre: Optional[float] = None
+    swir_spike: bool = False
+    delta_swir: Optional[float] = None
+    top_to_bottom_ratio: Optional[float] = None
+
+
+class FiveDayAnomalyRequest(BaseModel):
+    current_ndvi: float
+    previous_ndvi: float
+    interval_days: float = 5.0
+    threshold_drop: float = 0.35
+    current_ndre: Optional[float] = None
+    previous_ndre: Optional[float] = None
+
+
+@app.post("/api/ripening/project_14day")
+def api_project_14day_ripening(req: BiophysicalRipeningCadenceRequest):
+    return project_14day_ripening(
+        current_brix=req.current_brix,
+        current_pol=req.current_pol,
+        crop_age_days=req.crop_age_days,
+        cane_type=req.cane_type,
+        variety=req.variety,
+        cadence_days=req.cadence_days,
+        tmin=req.tmin,
+        tmax=req.tmax,
+        diurnal_range=req.diurnal_range,
+        delta_ndwi_15d=req.delta_ndwi_15d,
+        rainfall_15d_mm=req.rainfall_15d_mm,
+        delta_gdd=req.delta_gdd,
+        delta_ndre=req.delta_ndre,
+        swir_spike=req.swir_spike,
+        delta_swir=req.delta_swir,
+        top_to_bottom_ratio=req.top_to_bottom_ratio
+    )
+
+
+@app.post("/api/ripening/detect_5day_anomaly")
+def api_detect_5day_anomaly(req: FiveDayAnomalyRequest):
+    return detect_5day_anomaly(
+        current_ndvi=req.current_ndvi,
+        previous_ndvi=req.previous_ndvi,
+        interval_days=req.interval_days,
+        threshold_drop=req.threshold_drop,
+        current_ndre=req.current_ndre,
+        previous_ndre=req.previous_ndre
+    )
+
 
 # Static file serving for web dashboard and assets
 from fastapi.staticfiles import StaticFiles
