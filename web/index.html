@@ -51,8 +51,8 @@
                         <i class="fa-solid fa-globe"></i> EN | मराठी
                     </button>
                     <div id="navMillAuthContainer" style="display:inline-flex; align-items:center;">
-                        <button id="btnOpenMillAuthModal" class="btn-telemetry-portal">
-                            <i class="fa-solid fa-building-wheat"></i> Mill Portal VIP
+                        <button id="btnOpenMillAuthModal" class="btn-telemetry-portal" style="border:1px solid #10b981; color:#10b981; background:rgba(16, 185, 129, 0.12);">
+                            <i class="fa-solid fa-industry"></i> Gangamai Mill Login
                         </button>
                     </div>
                     <a href="console.html" class="btn-launch-terminal">
@@ -720,50 +720,80 @@
         <div class="modal-box-card hud-bracket">
             <button class="modal-close-x" id="btnCloseMillAuthModal" aria-label="Close dialog">&times;</button>
             
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-                <div class="brand-satellite-icon" style="width:36px; height:36px; font-size:1rem;">
-                    <i class="fa-solid fa-building-wheat"></i>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+                <div class="brand-satellite-icon" style="width:40px; height:40px; font-size:1.1rem; background:rgba(16,185,129,0.15); border:1px solid #10b981; color:#10b981;">
+                    <i class="fa-solid fa-industry"></i>
                 </div>
                 <div>
-                    <h3 style="font-size:1.15rem; font-weight:800; color:#ffffff;">Sugar Factory Enterprise Gateway</h3>
-                    <p style="font-size:0.75rem; color:var(--neon-green); font-family:var(--font-mono);">VIP ACCESS &bull; SATCANE AI ENGINE</p>
+                    <h3 style="font-size:1.2rem; font-weight:800; color:#ffffff;">Gangamai Sugar Mill Login</h3>
+                    <p style="font-size:0.75rem; color:#10b981; font-family:var(--font-mono); font-weight:700;">GANGAMAI SSK &bull; CODE: MILL-GM-414 &bull; 4,500 TCD</p>
                 </div>
             </div>
 
-            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:20px;">
-                Select your sugar factory and management role to immediately access the live calibrated 320-plot operational command terminal.
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:16px; line-height:1.5;">
+                Authorized portal for <strong>Gangamai Sahakari Sakhar Karkhana Ltd. (Shevgaon)</strong>. Access the live <strong>28,847 Gat plots</strong> command terminal, 5-day crushing schedule (75 plots/day = 4,500 TCD), and download all factory databases.
             </p>
 
             <form onsubmit="handleMillSignIn(event)">
-                <div class="form-input-group">
-                    <label for="selFactoryCode">Select Sugar Factory</label>
+                <div class="form-input-group" style="margin-bottom:14px;">
+                    <label for="selFactoryCode">Active Sugar Factory</label>
                     <select id="selFactoryCode">
-                        <option value="SAMARTH_SSK">Samarth Sahakari Sakhar Karkhana Ltd. (Jalna)</option>
-                        <option value="VITTHAL_SSK">Vitthal Sahakari Sakhar Karkhana Ltd. (Pandharpur)</option>
-                        <option value="SAHYADRI_SSK">Sahyadri Sahakari Sakhar Karkhana Ltd. (Karad)</option>
-                        <option value="DEMO_COOP">Maharashtra Cooperative Sugar Federation (Demo Mode)</option>
+                        <option value="GANGAMAI_SSK" selected>Gangamai Sahakari Sakhar Karkhana (SSK) &bull; Shevgaon (4,500 TCD)</option>
+                        <option value="SAMARTH_SSK">Samarth Sahakari Sakhar Karkhana Ltd. (Jalna - 3,500 TCD)</option>
+                        <option value="VITTHAL_SSK">Vitthal Sahakari Sakhar Karkhana Ltd. (Pandharpur - 7,500 TCD)</option>
+                        <option value="SAHYADRI_SSK">Sahyadri Sahakari Sakhar Karkhana Ltd. (Karad - 7,500 TCD)</option>
                     </select>
                 </div>
 
-                <div style="margin-bottom:20px;">
+                <div style="margin-bottom:16px;">
                     <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:8px;">Select Management Persona</label>
-                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
-                        <div class="variety-btn active role-choice-card" onclick="selectMillRole(this, 'Managing Director (MD)')" style="text-align:center;">
-                            <i class="fa-solid fa-user-tie"></i><br><strong>MD / CAO</strong>
+                    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
+                        <div class="variety-btn active role-choice-card" onclick="selectMillRole(this, 'Chief Agriculture Officer (CAO)')" style="text-align:center; padding:10px 4px;">
+                            <i class="fa-solid fa-wheat-awn"></i><br><strong style="font-size:11px;">Chief Agri</strong>
                         </div>
-                        <div class="variety-btn role-choice-card" onclick="selectMillRole(this, 'Chief Chemist / Lab')" style="text-align:center;">
-                            <i class="fa-solid fa-flask"></i><br><strong>Chief Chemist</strong>
+                        <div class="variety-btn role-choice-card" onclick="selectMillRole(this, 'Managing Director (MD)')" style="text-align:center; padding:10px 4px;">
+                            <i class="fa-solid fa-user-tie"></i><br><strong style="font-size:11px;">MD / Board</strong>
                         </div>
-                        <div class="variety-btn role-choice-card" onclick="selectMillRole(this, 'Cane Development Officer')" style="text-align:center;">
-                            <i class="fa-solid fa-tractor"></i><br><strong>Cane Dept</strong>
+                        <div class="variety-btn role-choice-card" onclick="selectMillRole(this, 'Chief Chemist / Lab')" style="text-align:center; padding:10px 4px;">
+                            <i class="fa-solid fa-flask"></i><br><strong style="font-size:11px;">Chemist</strong>
+                        </div>
+                        <div class="variety-btn role-choice-card" onclick="selectMillRole(this, 'Harvesting & Transport (H&T)')" style="text-align:center; padding:10px 4px;">
+                            <i class="fa-solid fa-truck-ramp-box"></i><br><strong style="font-size:11px;">H&T Dispatch</strong>
                         </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-hero-primary" style="width:100%; justify-content:center;">
-                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Enter Mill Operational Console
+                <button type="submit" class="btn-hero-primary" style="width:100%; justify-content:center; padding:14px; background:linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Enter Gangamai Operational Console
                 </button>
             </form>
+
+            <!-- GANGAMAI COMPLETE DATABASE & ARTIFACT REPOSITORY -->
+            <div style="margin-top:18px; padding:16px; background:rgba(15,23,42,0.95); border:1px solid rgba(16,185,129,0.35); border-radius:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span style="font-size:11px; font-weight:800; color:#10b981; letter-spacing:0.08em; text-transform:uppercase;">
+                        <i class="fa-solid fa-database"></i> Gangamai Master Database & Dossiers
+                    </span>
+                    <span style="font-size:10px; color:#38bdf8; font-family:var(--font-mono); font-weight:700;">28,847 PLOTS CALIBRATED</span>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                    <a href="downloads/full_28847_plots_oct17_anticloud_mill_calibrated_register.csv" download class="btn-download-sm" style="display:flex; align-items:center; gap:6px; padding:8px 10px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:6px; color:#6ee7b7; text-decoration:none; font-size:11px; font-weight:700;">
+                        <i class="fa-solid fa-file-csv"></i> 28,847 Master CSV (8.5 MB)
+                    </a>
+                    <a href="downloads/Cane_Department_Mill_Officers_Dossier_Pack.zip" download class="btn-download-sm" style="display:flex; align-items:center; gap:6px; padding:8px 10px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3); border-radius:6px; color:#38bdf8; text-decoration:none; font-size:11px; font-weight:700;">
+                        <i class="fa-solid fa-file-zipper"></i> Full Dossier ZIP (7.8 MB)
+                    </a>
+                    <a href="downloads/today_top25_weighbridge_core_sampling_manifest.html" target="_blank" class="btn-download-sm" style="display:flex; align-items:center; gap:6px; padding:8px 10px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); border-radius:6px; color:#fbbf24; text-decoration:none; font-size:11px; font-weight:700;">
+                        <i class="fa-solid fa-scale-balanced"></i> Weighbridge Manifest
+                    </a>
+                    <a href="downloads/index.html" target="_blank" class="btn-download-sm" style="display:flex; align-items:center; gap:6px; padding:8px 10px; background:rgba(168,85,247,0.12); border:1px solid rgba(168,85,247,0.3); border-radius:6px; color:#c084fc; text-decoration:none; font-size:11px; font-weight:700;">
+                        <i class="fa-solid fa-vault"></i> All Factory Artifacts &rarr;
+                    </a>
+                </div>
+                <p style="font-size:10px; color:#94a3b8; margin:0; line-height:1.4;">
+                    Contains all 22 Gangamai command circles, 1,450 CUT_NOW plots, 5-day daily crushing schedules (4,500 TCD), and polarimeter lab ground truth data.
+                </p>
+            </div>
         </div>
     </div>
 

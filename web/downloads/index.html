@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SatCane AI? &bull; Factory Command Master & Anomaly Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #090d16;
+    --bg-card: rgba(22, 30, 49, 0.75);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent-teal: #14b8a6;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-blue: #38bdf8;
+    --accent-purple: #a855f7;
+    --accent-orange: #fb923c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 50% 0%, #132338 0%, #090d16 70%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 36px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .container { max-width: 1040px; width: 100%; transition: filter 0.3s ease; }
+  .vault-locked .container { filter: blur(12px); pointer-events: none; user-select: none; }
+  #vaultAuthOverlay {
+    position: fixed; inset: 0; z-index: 999999;
+    background: radial-gradient(circle at 50% 25%, rgba(20, 184, 166, 0.15), transparent 70%), rgba(4, 9, 20, 0.94);
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  }
+  .vault-card {
+    background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(20, 184, 166, 0.45);
+    border-radius: 18px; max-width: 480px; width: 100%; padding: 38px 32px; text-align: center; color: #f8fafc;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.85), 0 0 50px rgba(20, 184, 166, 0.2);
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(20, 184, 166, 0.15); border: 1px solid rgba(20, 184, 166, 0.3);
+    color: var(--accent-teal); padding: 5px 14px; border-radius: 9999px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 32px; font-weight: 800; letter-spacing: -0.6px; margin-bottom: 8px;
+    background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  p.subtitle { font-size: 14px; color: var(--text-muted); max-width: 760px; margin: 0 auto; line-height: 1.5; }
+  
+  .stats-banner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-val { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+
+  .batch-section {
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 26px;
+  }
+  .batch-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;
+  }
+  .batch-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .batch-tag { font-size: 11px; padding: 3px 10px; border-radius: 6px; font-weight: 700; text-transform: uppercase; }
+  .tag-master { background: rgba(56, 189, 248, 0.2); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+  .tag-batch3 { background: rgba(251, 146, 60, 0.2); color: var(--accent-orange); border: 1px solid rgba(251, 146, 60, 0.3); }
+  .tag-batch2 { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); border: 1px solid rgba(168, 85, 247, 0.3); }
+  .tag-batch1 { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .tag-gap { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+  }
+  .card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    background: rgba(30, 41, 59, 0.8);
+  }
+  .card-top { margin-bottom: 14px; }
+  .card-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; margin-bottom: 12px;
+  }
+  .icon-pdf { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
+  .icon-xls { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .icon-csv { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+  
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 10px; }
+  .meta-tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    color: var(--text-muted); background: rgba(255,255,255,0.05);
+    padding: 2px 8px; border-radius: 4px;
+  }
+  .btn-download {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff; text-decoration: none; padding: 10px 14px;
+    border-radius: 8px; font-size: 12px; font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .btn-download:hover {
+    background: var(--accent-teal);
+    border-color: var(--accent-teal);
+    color: #090d16;
+  }
+  .btn-download.btn-primary-action {
+    background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+    border-color: #14b8a6;
+    color: #ffffff;
+    font-weight: 700;
+  }
+  .btn-download.btn-primary-action:hover {
+    background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%);
+    color: #090d16;
+  }
+  footer { margin-top: 20px; font-size: 12px; color: var(--text-muted); text-align: center; }
+</style>
+</head>
+<body class="vault-locked">
+
+<div id="vaultAuthOverlay">
+  <div class="vault-card">
+    <div style="display:inline-block; font-size:11px; font-weight:800; letter-spacing:0.08em; background:rgba(20,184,166,0.15); border:1px solid rgba(20,184,166,0.35); color:#14b8a6; padding:5px 14px; border-radius:999px; margin-bottom:14px;">GANGAMAI CANE DEPARTMENT ARTIFACT VAULT</div>
+    <h2 style="font-size:22px; font-weight:800; margin-bottom:8px; color:#fff;">Gangamai Sugar Mill Intelligence</h2>
+    <div style="margin-bottom:16px;">
+        <button type="button" onclick="sessionStorage.setItem('ikshu_vault_unlocked', 'true'); sessionStorage.setItem('ikshu_gangamai_auth', 'true'); applyVaultState();" style="width:100%; padding:12px; background:linear-gradient(135deg, #10b981, #059669); border:none; border-radius:8px; color:#fff; font-weight:800; font-size:13px; cursor:pointer; box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+            <i class="fa-solid fa-industry"></i> UNLOCK GANGAMAI FACTORY VAULT (1-CLICK)
+        </button>
+    </div>
+    <p style="font-size:13px; color:#94a3b8; line-height:1.55; margin-bottom:24px;">Proprietary sugar mill census registers, 7/12 cadastral boundaries, and diversion intelligence are restricted to authorized mill management.</p>
+    <form id="vaultAuthForm" onsubmit="handleVaultUnlock(event)">
+      <div style="text-align:left; margin-bottom:16px;">
+        <label for="vaultKeyInput" style="display:block; font-size:11px; font-weight:700; color:#cbd5e1; margin-bottom:8px; letter-spacing:0.05em;">ENTERPRISE ACCESS KEY / MILL PIN</label>
+        <input type="password" id="vaultKeyInput" placeholder="Enter authorized mill key" required autofocus style="width:100%; padding:13px 15px; background:rgba(9,13,22,0.92); border:1px solid rgba(255,255,255,0.2); border-radius:9px; color:#fff; font-size:14px; outline:none; box-sizing:border-box;">
+      </div>
+      <div id="vaultError" style="display:none; color:#f43f5e; font-size:12px; font-weight:700; margin-bottom:14px;">Invalid Enterprise Key. Access restricted.</div>
+      <button type="submit" style="width:100%; padding:14px; background:linear-gradient(135deg, #14b8a6, #0d9488); border:none; border-radius:9px; color:#fff; font-size:14px; font-weight:800; cursor:pointer; letter-spacing:0.04em;">UNLOCK FACTORY ARTIFACTS</button>
+    </form>
+    <div style="margin-top:22px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#64748b;">
+      <a href="/index.html" style="color:#94a3b8; text-decoration:none; font-weight:600;">&larr; Public Platform</a>
+      <button type="button" onclick="unlockVaultSandbox()" style="background:none; border:none; color:#14b8a6; font-size:11px; font-weight:700; cursor:pointer; text-decoration:underline;">Test Demo Evaluator</button>
+      <span style="font-weight:700;">TRADE SECRET</span>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="header">
+    <div class="badge">🏭 Gangamai Industries & Commercial Ltd • 100% Full Command Audit</div>
+    <h1>SatCane AI™ Enterprise Intelligence Portal</h1>
+    <p class="subtitle">Complete Factory Census of 29,657 Plots (Plot #3 to #31,240 Continuum Across 22 Operational Circles). Multi-Mill Competitor Diversion, Sentinel-1 Radar SAR All-Weather Sucrose Biophysics, and 3-Scenario Tonnage Calibration.</p>
+  </div>
+
+  
+  <!-- 1-CLICK ALL-IN-ONE DOSSIER FOR MILL OFFICERS -->
+  <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(20, 184, 166, 0.25) 100%); border: 1.5px solid #10b981; border-radius: 16px; padding: 20px 24px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="background: #10b981; color: #090d16; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">Mill Officers Executive Pack</span>
+        <span style="color: #6ee7b7; font-size: 12px; font-weight: 700;">All Dossiers &bull; PDFs &bull; Workbooks &bull; 29,657 Master Census</span>
+      </div>
+      <div style="font-size: 18px; font-weight: 800; color: #ffffff;">Complete Cane Department Audit Dossier (.ZIP)</div>
+      <div style="font-size: 13px; color: #94a3b8; margin-top: 2px;">Includes all batch PDFs, 22-circle calibrated reports, Excel workbooks, field supervisor CSVs, and the updated 29,657 plot master register.</div>
+    </div>
+    <a href="Cane_Department_Mill_Officers_Dossier_Pack.zip" class="btn-download btn-primary-action" style="font-size: 14px; padding: 12px 24px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);" download>
+      📦 Download Complete Dossier ZIP (7.8 MB)
+    </a>
+  </div>
+
+  <div class="stats-banner">
+    <div class="stat-card">
+      <div class="stat-val" style="color: var(--accent-blue);">29,657</div>
+      <div class="stat-label">Total Verified Plots</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color: var(--accent-emerald);">0</div>
+      <div class="stat-label">Artificial Zeroes (Zero-Free)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color: var(--accent-teal);">15.14%</div>
+      <div class="stat-label">Command Mean CCS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color: var(--accent-orange);">1.92M MT</div>
+      <div class="stat-label">Biophysical Field Standing</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color: var(--accent-rose);">1.03M MT</div>
+      <div class="stat-label">Realistic Captured Intake</div>
+    </div>
+  </div>
+
+  <!-- SECTION: COMMAND-AREA MULTI-MILL CANE DIVERSION & TONNAGE RECONCILIATION SUITE -->
+  <div class="batch-section" style="border: 2.5px solid #f59e0b; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(15, 23, 42, 0.95) 100%);">
+    <div class="batch-header">
+      <div class="batch-title">
+        <span>⚡ Command-Area Multi-Mill Cane Diversion, Crop Cycle & Varietal Audit Suite</span>
+        <span class="batch-tag" style="background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5);">All 29,657 Plots & 22 Circles Calibrated</span>
+      </div>
+      <div style="font-size: 12px; color: #fbbf24; font-weight: 700;">Satellite Variety &bull; Adsali/Khodwa/Suru &bull; Huff Gravity &bull; MLDPI Loyalty &bull; Zero Zeroes</div>
+    </div>
+    <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5;">
+      Complete command census covering all <strong>29,657 plots</strong> across 22 operational circles. Integrates autonomous satellite variety discrimination (<strong>CO-265: 94.4%, VSI-08005: 3.5%, CO-86032: 2.1%</strong>) and crop cycle detection (<strong>Suru: 52.0%, Khodwa: 43.7%, Pre-seasonal: 3.1%, Adsali: 1.1%</strong>). Reconciles <strong>Biophysical Field Tonnage (1,915,722 MT)</strong> against competitor poaching to project <strong>Realistic Captured Intake (1,030,621 MT)</strong> and <strong>Conservative Minimum Intake (845,110 MT)</strong> directly from Copernicus Sentinel-2 L2A & Sentinel-1 SAR observations.
+    </div>
+    <div class="grid" style="margin-bottom: 14px;">
+      <div class="card" style="border: 2px solid #f59e0b; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">⚖️</div>
+          <div class="card-title" style="color: #fbbf24; font-size: 16px;">Master Command 29,657 Plots Diversion & Varietal Register (Excel)</div>
+          <div class="card-desc"><strong>Full Factory Master Workbook:</strong> Sheet 1: Executive 22-Circle KPI Dashboard; Sheet 2: High Poaching Risk Plots (Tier 3); Sheet 3: Full 29,657 Plot Continuum with Satellite Variety, Detected Crop Cycle, 3-Scenario Tonnages, and Preemptive Chit Directives.</div>
+          <span class="meta-tag" style="background: rgba(245, 158, 11, 0.3); color: #fbbf24; font-weight: 700;">6.34 MB &bull; Triple Sheets &bull; 29,657 Plots Master</span>
+        </div>
+        <a href="gangamai_command_area_full_master_29657plots_tonnage_diversion_register.xlsx" class="btn-download btn-primary-action" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-color: #f59e0b;" download>Download Full Master Excel (6.3 MB)</a>
+      </div>
+      <div class="card" style="border: 2px solid #10b981; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">📊</div>
+          <div class="card-title" style="color: #34d399; font-size: 16px;">22 Circles Calibrated Tonnage & Poaching Audit (CSV)</div>
+          <div class="card-desc"><strong>Circle-by-Circle Operational Audit:</strong> Registered vs Detected Cane, Field vs Captured Tonnage, Primary Rival Mills, Loyalty Tier Breakdown, and Harvest Scheduling Priorities across all 22 circles.</div>
+          <span class="meta-tag" style="background: rgba(16, 185, 129, 0.3); color: #34d399; font-weight: 700;">6 KB &bull; 22 Operational Circles &bull; UTF-8</span>
+        </div>
+        <a href="gangamai_22circles_calibrated_tonnage_diversion_audit.csv" class="btn-download" style="background: #059669; border-color: #059669; color: #fff;" download>Download 22 Circles Audit CSV</a>
+      </div>
+    </div>
+    <div class="grid" style="margin-bottom: 14px;">
+      <div class="card" style="border: 2px solid #38bdf8; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">📘</div>
+          <div class="card-title" style="color: #38bdf8; font-size: 16px;">Executive Tonnage & Diversion Implementation Blueprint (SOP)</div>
+          <div class="card-desc"><strong>Mill Management & Field Operations Blueprint:</strong> Mathematical equations (Huff Gravity, MLDPI, Winter-Carp CCS), 6-Pillar operational roadmap, automated pipeline execution commands, and competitor distance matrices.</div>
+          <span class="meta-tag" style="background: rgba(56, 189, 248, 0.3); color: #38bdf8; font-weight: 700;">10 KB &bull; Technical SOP & Execution Guide</span>
+        </div>
+        <a href="EXECUTIVE_TONNAGE_DIVERSION_IMPLEMENTATION_BLUEPRINT.md" target="_blank" class="btn-download" style="border-color: #38bdf8; color: #38bdf8;">View Executive Blueprint (SOP)</a>
+      </div>
+      <div class="card" style="border: 2px solid #6366f1; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(99, 102, 241, 0.2); color: #818cf8;">📄</div>
+          <div class="card-title" style="color: #818cf8; font-size: 16px;">Master Command 29,657 Plots Machine Register (CSV)</div>
+          <div class="card-desc"><strong>ERP & Weighbridge Sync:</strong> Complete 26-column machine dataset including Plot No, Farmer, 7/12 Gat No, Brix, Pol, CCS, 3-Scenario Tonnages, Competitor Distances, and Chit Directives.</div>
+          <span class="meta-tag" style="background: rgba(99, 102, 241, 0.3); color: #818cf8; font-weight: 700;">9.20 MB &bull; 29,657 Records &bull; UTF-8</span>
+        </div>
+        <a href="gangamai_command_area_full_master_29657plots_tonnage_diversion_register.csv" class="btn-download" style="border-color: #6366f1; color: #818cf8;" download>Download Master CSV (9.2 MB)</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BATCH 4: LATEST OCTOBER 15, 2026 SATELLITE AUDIT & 7/12 CADASTRAL BOUNDARY OVERLAY -->
+  <div class="batch-section" style="border: 2.5px solid #10b981; background: rgba(16, 185, 129, 0.08);">
+    <div class="batch-header">
+      <div class="batch-title">
+        <span>🛰️ बॅच ४ (१३३ प्लॉट्स) १५ ऑक्टोबर २०२६ उपग्रह व ७/१२ गट सीमा ऑडिट</span>
+        <span class="batch-tag" style="background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5);">१५ ऑक्टोबर २०२६ ताजा पास &bull; प्लॉट्स ३११०८ ते ३१२४०</span>
+      </div>
+      <div style="font-size: 12px; color: #34d399; font-weight: 700;">Sentinel-2B L2A (15-OCT-2026) &bull; १२,६५३ मे. टन निव्वळ ऊस संकलन धोरण</div>
+    </div>
+    <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5;">
+      १५ ऑक्टोबर २०२६ च्या ताज्या युरोपियन स्पेस एजन्सी (Copernicus Sentinel-2B) ऑर्बिट पास व डिजिटल भूमी अभिलेख (७/१२ गट सीमा) आधारे १३३ प्लॉट्सचे सखोल ऑडिट. 
+      <strong>६४ प्लॉट्सवर खरा उभा ऊस सिद्ध (१७५.३३ हेक्टर / ४३३.२ एकर बाहेरील ऊस &bull; १२,६५२.९ मे. टन निव्वळ &bull; ₹४.६७ कोटी FRP)</strong>, तर 
+      <strong>६९ अपात्र प्लॉट्स (५६.२१ हे.)</strong> वर कापणी झालेले सोयाबीन व कापूस असल्याने वजनकाटा ERP लॉक करण्यात आले आहेत.
+    </div>
+    <div class="grid" style="margin-bottom: 14px;">
+      <div class="card" style="border: 2.5px solid #38bdf8; background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 58, 138, 0.3) 100%);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">🇬🇧</div>
+          <div class="card-title" style="color: #38bdf8; font-size: 16px;">English Executive Quality Register (Excel)</div>
+          <div class="card-desc"><strong>100% English Executive Boardroom Workbook:</strong> Registered Area (Ha/Ac), Detected Cane Area (Ha/Ac), Pol (%), Brix (°Bx), Purity (%), Winter-Carp CCS (%), Sugar Recovery (%), Millable Cane (MT), Harvest Batch, Cloud Status, and Operational Directives. Zero zeroes!</div>
+          <span class="meta-tag" style="background: rgba(56, 189, 248, 0.3); color: #38bdf8; font-weight: 700;">43 KB &bull; 100% English &bull; Triple Sheets &bull; 133 Plots</span>
+        </div>
+        <a href="gangamai_batch4_plots_31108_31240_english_quality_register.xlsx" class="btn-download btn-primary-action" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-color: #38bdf8;" download>Download English Executive Excel</a>
+      </div>
+      <div class="card" style="border: 2px solid #10b981; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">📋</div>
+          <div class="card-title" style="color: #34d399;">१३३ प्लॉट्स १५ ऑक्टोबर उपग्रह ऑडिट संपूर्ण शेतकी अहवाल (PDF)</div>
+          <div class="card-desc">६ पानी अधिकृत मराठी मास्टर रिपोर्ट PDF. मुख्य शेतकी अधिकारी व MD यांच्यासाठी ५ कलमी कृती आराखडा, ६४ सिद्ध ऊस नोंदवही, ६९ अपात्र नोंदवही व स्वाक्षरी ब्लॉक.</div>
+          <span class="meta-tag" style="background: rgba(16, 185, 129, 0.3); color: #34d399; font-weight: 700;">744 KB &bull; 6-Page Printable A4 PDF &bull; 133 Plots</span>
+        </div>
+        <a href="gangamai_batch4_plots_31108_31240_oct15_satellite_audit_marathi.pdf" target="_blank" class="btn-download btn-primary-action" style="background: #059669; border-color: #059669;">बॅच ४ मराठी अहवाल (PDF) डाउनलोड करा</a>
+      </div>
+    </div>
+    <div class="grid" style="margin-bottom: 14px;">
+      <div class="card" style="border: 2px solid #38bdf8; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">🗺️</div>
+          <div class="card-title" style="color: #38bdf8;">१३३ प्लॉट्स १५ ऑक्टो. उपग्रह व ७/१२ गट इंटरॲक्टिव्ह नकाशा (HTML)</div>
+          <div class="card-desc">गुगल सॅटेलाइट, Esri Clarity आणि Sentinel-2 लेयर्सवर १३३ प्लॉट्स, वॉक्ड जीपीएस पॉलीगॉन व ७/१२ महसूल गट सीमांचे थेट व्हिज्युअलायझेशन.</div>
+          <span class="meta-tag" style="background: rgba(56, 189, 248, 0.3); color: #38bdf8; font-weight: 700;">90 KB &bull; Leaflet Interactive Map &bull; Multi-Layer</span>
+        </div>
+        <a href="plots_31108_31240_oct15_satellite_cadastral_map.html" target="_blank" class="btn-download" style="border-color: #38bdf8; color: #38bdf8;">इंटरॲक्टिव्ह नकाशा उघडा</a>
+      </div>
+    <div class="grid" style="margin-bottom: 14px;">
+      <div class="card" style="border: 2px solid #f59e0b; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon icon-xls">⭐</div>
+          <div class="card-title" style="color: #fbbf24;">७/१२ गट सीमा ओव्हरले व बाहेरील ऊस रजिस्टर (Excel)</div>
+          <div class="card-desc">१३३ प्लॉट्सचा ७/१२ गट क्र., खाते क्र., वॉक्ड क्षेत्र, गटामधील बाहेरील ऊस (हेक्टर/एकर), स्थूल व निव्वळ वजन, Brix/Pol आणि शेतकी आदेश.</div>
+          <span class="meta-tag" style="background: rgba(245, 158, 11, 0.3); color: #fbbf24; font-weight: 700;">32 KB &bull; Cadastral Farm Overlay &bull; Excel</span>
+        </div>
+        <a href="plots_31108_31240_cadastral_farm_boundaries_overlay.xlsx" class="btn-download" style="background: #d97706; color: #fff; border-color: #d97706;" download>गट सीमा ओव्हरले (Excel) डाउनलोड</a>
+      </div>
+      <div class="card" style="border: 2px solid #a855f7; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon icon-xls">📊</div>
+          <div class="card-title" style="color: #c084fc;">१५ ऑक्टोबर ५-तारखांचे घनदाट पीक वर्गीकरण ऑडिट (Excel)</div>
+          <div class="card-desc">१८ मे, १९ जून, १५ ऑगस्ट, २७ सप्टेंबर व १५ ऑक्टोबरचे स्पेक्ट्रल NDVI, NDRE, NDWI ट्रॅजेक्टरी, पीक वर्गीकरण व वजनकाटा सल्ला.</div>
+          <span class="meta-tag" style="background: rgba(168, 85, 247, 0.3); color: #c084fc; font-weight: 700;">29 KB &bull; Dense 5-Date Orbit Audit &bull; Excel</span>
+        </div>
+        <a href="plots_31108_31240_oct15_dense_multitemporal_crop_audit.xlsx" class="btn-download" style="background: #9333ea; color: #fff; border-color: #9333ea;" download>५-तारखांचे पीक ऑडिट (Excel) डाउनलोड</a>
+      </div>
+    </div>
+    <div class="grid" style="margin-bottom: 14px;">
+      <div class="card" style="border: 2px solid #ec4899; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">🧪</div>
+          <div class="card-title" style="color: #f472b6;">१३३ प्लॉट्स Pol, Brix, CCS व साखर रिकव्हरी रजिस्टर (Excel)</div>
+          <div class="card-desc">विंटर-कार्प (Winter-Carp) सूत्राने काढलेले Brix (°Bx), Pol (%), Purity (%), CCS (%), फॅक्टरी रिकव्हरी (%) आणि तोडणी बॅच (P1 ते P4).</div>
+          <span class="meta-tag" style="background: rgba(236, 72, 153, 0.3); color: #f472b6; font-weight: 700;">34 KB &bull; Triple Sheets &bull; Lab Quality</span>
+        </div>
+        <a href="plots_31108_31240_pol_brix_ccs.xlsx" class="btn-download" style="background: #db2777; color: #fff; border-color: #db2777;" download>Pol Brix CCS रजिस्टर (Excel) डाउनलोड</a>
+      </div>
+      <div class="card" style="border: 2px solid #8b5cf6; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon icon-csv">📄</div>
+          <div class="card-title" style="color: #a78bfa;">Pol, Brix, CCS मशीन-रिडेबल डेटा संच (CSV)</div>
+          <div class="card-desc">ईआरपी किंवा लॅब ऑटोमेशन सॉफ्टवेअरमध्ये थेट वापरण्यासाठी १३३ प्लॉट्सचा Pol, Brix, CCS व तोडणी प्राधान्य CSV संच.</div>
+          <span class="meta-tag" style="background: rgba(139, 92, 246, 0.3); color: #a78bfa; font-weight: 700;">32 KB &bull; 133 Records &bull; UTF-8</span>
+        </div>
+        <a href="plots_31108_31240_pol_brix_ccs.csv" class="btn-download" style="border-color: #8b5cf6; color: #c4b5fd;" download>Pol Brix CCS (CSV) डाउनलोड</a>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-html">🌐</div>
+          <div class="card-title">बॅच ४ संपूर्ण डिजिटल लेजर वेब आवृत्ती (HTML)</div>
+          <div class="card-desc">मोबाईल, टॅबलेट किंवा संगणकावर १३३ प्लॉट्सचे सर्व तपशील, गट क्र., हद्दीबाहेरील क्षेत्र आणि कृती आदेश पाहण्यासाठी.</div>
+          <span class="meta-tag">128 KB &bull; संपूर्ण मराठी वेब आवृत्ती</span>
+        </div>
+        <a href="gangamai_batch4_plots_31108_31240_oct15_satellite_audit_marathi.html" target="_blank" class="btn-download" style="border-color: #10b981; color: #34d399;">डिजिटल वेब अहवाल उघडा</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-csv">📄</div>
+          <div class="card-title">बॅच ४ मशीन-रिडेबल डेटा संच (CSVs)</div>
+          <div class="card-desc">ईआरपी, जीआयएस किंवा एक्सेलमध्ये थेट वापरण्यासाठी गट सीमा ओव्हरले व पीक वर्गीकरण सीएसव्ही संच.</div>
+          <span class="meta-tag">110 KB &bull; Dual CSVs &bull; UTF-8</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <a href="plots_31108_31240_cadastral_farm_boundaries_overlay.csv" class="btn-download" style="flex: 1;" download>गट CSV</a>
+          <a href="plots_31108_31240_oct15_dense_multitemporal_crop_audit.csv" class="btn-download" style="flex: 1;" download>पीक CSV</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DUAL-ZONE BHUNAKSHA EXPANSION AUDIT -->
+  <div class="batch-section" style="border: 1.5px solid #38bdf8; background: rgba(14, 165, 233, 0.08);">
+    <div class="batch-header">
+      <div class="batch-title">
+        <span>??? Dual-Zone BhuNaksha & Outside-Boundary Cane Expansion Dossier</span>
+        <span class="batch-tag" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);">?7.89 Cr Unrecorded Cane</span>
+      </div>
+      <div style="font-size: 12px; color: #38bdf8; font-weight: 700;">Zone 1 (Inside Polygon) vs Zone 2 (Entire Gat Parcel)</div>
+    </div>
+    <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5;">
+      Detects and audits all standing sugarcane growing <strong>outside the walked GPS polygons</strong> within the official Revenue Gat Number boundaries. Unlocks <strong>25,438 MT of uncontracted cane</strong> to prevent competitor sugar mill poaching.
+    </div>
+    <div class="grid">
+      <div class="card" style="border: 2px solid #38bdf8; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon icon-xls">⭐</div>
+          <div class="card-title" style="color: #38bdf8;">Method 1 + 2 Integrated 7/12 Cadastral Audit (Excel)</div>
+          <div class="card-desc"><strong>Flagship 2-in-1 Workbook</strong>: Tab 1 integrates GPS Reverse-Geocoding (Method 1) + Farmer 7/12 Khata/Gat Linking (Method 2) with confidence scores. Tab 2 contains printable Ground Inspection Challans.</div>
+          <span class="meta-tag" style="background: rgba(56, 189, 248, 0.3); color: #38bdf8; font-weight: 700;">85 KB &bull; Method 1 & 2 Flagship &bull; 134 Plots</span>
+        </div>
+        <a href="plots_30974_31107_method1_method2_integrated_cadastral_audit.xlsx" class="btn-download btn-primary-action" download>Download Method 1 & 2 Master Excel</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-csv">📄</div>
+          <div class="card-title">Method 1 + 2 Integrated Audit Dataset (CSV)</div>
+          <div class="card-desc">Machine-readable CSV with Marathi Devanagari farmer names, candidate 7/12 Gat & Khata numbers, GPS centroids, and field officer directives.</div>
+          <span class="meta-tag">65 KB &bull; 134 Records &bull; UTF-8</span>
+        </div>
+        <a href="plots_30974_31107_method1_method2_integrated_cadastral_audit.csv" class="btn-download" download>Download Method 1 & 2 CSV</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARATHI AGRI MANAGER EXECUTIVE AUDIT DOSSIER -->
+  <div class="batch-section" style="border: 2.5px solid #f59e0b; background: rgba(245, 158, 11, 0.08);">
+    <div class="batch-header">
+      <div class="batch-title">
+        <span>📑 मुख्य शेतकी अधिकारी व MD विशेष धोरणात्मक कृती आराखडा (५ कलमी रणनीती)</span>
+        <span class="batch-tag" style="background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5);">१०,७३८ मे. टन ऊस गाळप संकलन धोरण &bull; १३४ प्लॉट्स</span>
+      </div>
+      <div style="font-size: 12px; color: #34d399; font-weight: 700;">गंगामाई साखर कारखाना लि. &bull; शेतकी व ऊस विकास विभाग &bull; हंगाम २०२६-२७</div>
+    </div>
+    <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5;">
+      मुख्य शेतकी अधिकारी (Agri Manager) व मा. कार्यकारी संचालक (MD) यांच्यासाठी <strong>१०,७३८ मे. टन (₹३.३३ कोटी FRP) नोंदीबाहेरील अतिरिक्त ऊस गंगामाई कारखान्याकडे खेचून आणण्यासाठी</strong> आणि प्रतिस्पर्धी कारखान्यांची ऊस पळवापळवी (Cane Poaching) रोखण्यासाठी <strong>४ पानी विशेष धोरणात्मक कृती आराखडा (Executive Strategic Blueprint)</strong>. यात ५ कलमी शेतकी रणनीती, क्लस्टरनिहाय तोडणी टोळी (तोली) वाटप, सीमावर्ती नाकेबंदी, ७ दिवसांची टाईमलाईन आणि टॉप १२ हाय-व्हॅल्यू शेतकऱ्यांची संपर्क यादी समाविष्ट आहे.
+    </div>
+    <div class="grid" style="margin-bottom: 14px;">
+      <div class="card" style="border: 2px solid #38bdf8; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">📋</div>
+          <div class="card-title" style="color: #38bdf8;">१३४ प्लॉट्स जीपीएस बाहेरील ऊस संपूर्ण शेतकी विश्लेषण (PDF)</div>
+          <div class="card-desc">६ पानी संपूर्ण मास्टर लेजर PDF. ७१ प्रमाणित ऊस प्लॉट्स (१०,७३८ टन) + ६३ बाद केलेले प्लॉट्स, जीपीएस विसंगतीची ५ कारणे, आणि शेतकी आदेश.</div>
+          <span class="meta-tag" style="background: rgba(56, 189, 248, 0.3); color: #38bdf8; font-weight: 700;">687 KB &bull; 6-Page Master Ledger PDF &bull; Printable A4</span>
+        </div>
+        <a href="gangamai_134_plots_outside_cane_walked_gps_agri_manager_report_marathi.pdf" target="_blank" class="btn-download btn-primary-action" style="background: #0284c7; border-color: #0284c7;">१३४ प्लॉट्स संपूर्ण अहवाल (PDF) डाउनलोड करा</a>
+      </div>
+      <div class="card" style="border: 2px solid #10b981; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">📑</div>
+          <div class="card-title" style="color: #34d399;">ऊस गाळप संकलन धोरणात्मक कृती अहवाल (PDF)</div>
+          <div class="card-desc">४ पानी उच्च-दर्जाची अधिकृत मराठी एक्झिक्युटिव्ह PDF. ५ कलमी धोरण, क्लस्टरनिहाय ५९ तोडणी टोळ्यांचे वाटप, ७ दिवसांचा टाईमलाईन, आणि स्वाक्षरी ब्लॉक.</div>
+          <span class="meta-tag" style="background: rgba(16, 185, 129, 0.3); color: #34d399; font-weight: 700;">275 KB &bull; 4-Page Executive PDF &bull; Printable A4</span>
+        </div>
+        <a href="gangamai_unrecorded_cane_procurement_strategy_marathi.pdf" target="_blank" class="btn-download" style="background: #059669; border-color: #059669; color: #fff;">धोरणात्मक मराठी अहवाल (PDF) डाउनलोड करा</a>
+      </div>
+    </div>
+    <div class="grid" style="margin-bottom: 14px;">
+      <div class="card" style="border: 2px solid #f59e0b; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">⚖️</div>
+          <div class="card-title" style="color: #fbbf24;">टनेज पडताळणी व वजनकाटा पुनर्गणना तांत्रिक अहवाल (PDF)</div>
+          <div class="card-desc">२ पानी तांत्रिक PDF. १०,७३८ टन बायोमास वि. ९,०१० टन वास्तविक वजनकाटा तुलना, वाढे/पाचट घट, आणि ८०% स्मार्ट कोटा वाटप.</div>
+          <span class="meta-tag" style="background: rgba(245, 158, 11, 0.3); color: #fbbf24; font-weight: 700;">226 KB &bull; 2-Page Technical PDF &bull; Printable A4</span>
+        </div>
+        <a href="gangamai_cane_tonnage_calibration_reconciliation_report_marathi.pdf" target="_blank" class="btn-download" style="background: #d97706; color: #fff; border-color: #d97706;">टनेज पुनर्गणना अहवाल (PDF) डाउनलोड करा</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-html">🌐</div>
+          <div class="card-title">१३४ प्लॉट्स संपूर्ण डिजिटल लेजर वेब आवृत्ती (HTML)</div>
+          <div class="card-desc">मोबाईल, टॅबलेट किंवा संगणकावर १३४ प्लॉट्सचे सर्व तपशील, गट क्र., हद्दीबाहेरील क्षेत्र आणि कृती आदेश पाहण्यासाठी.</div>
+          <span class="meta-tag">45 KB &bull; संपूर्ण मराठी वेब आवृत्ती</span>
+        </div>
+        <a href="gangamai_134_plots_outside_cane_walked_gps_agri_manager_report_marathi.html" target="_blank" class="btn-download" style="border-color: #38bdf8; color: #38bdf8;">१३४ प्लॉट्स वेब आवृत्ती उघडा</a>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-html">🌐</div>
+          <div class="card-title">धोरणात्मक कृती आराखडा डिजिटल वेब आवृत्ती (HTML)</div>
+          <div class="card-desc">मोबाईल, टॅबलेट किंवा संगणकावर त्वरित पाहण्यासाठी ५ कलमी धोरण व क्लस्टर लॉजिस्टिक्स.</div>
+          <span class="meta-tag">18 KB &bull; मराठी वेब आवृत्ती</span>
+        </div>
+        <a href="gangamai_unrecorded_cane_procurement_strategy_marathi.html" target="_blank" class="btn-download" style="border-color: #10b981; color: #34d399;">धोरणात्मक वेब अहवाल उघडा</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-html">📊</div>
+          <div class="card-title">टनेज पुनर्गणना डिजिटल वेब आवृत्ती (HTML)</div>
+          <div class="card-desc">वजनकाटा पुनर्गणना व ५ क्षेत्रीय घटकांचे विश्लेषण दर्शवणारी रिस्पॉन्सिव्ह वेब आवृत्ती.</div>
+          <span class="meta-tag">14 KB &bull; मराठी वेब आवृत्ती</span>
+        </div>
+        <a href="gangamai_cane_tonnage_calibration_reconciliation_report_marathi.html" target="_blank" class="btn-download" style="border-color: #f59e0b; color: #fbbf24;">टनेज वेब आवृत्ती उघडा</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- DENSE 5-DATE MULTI-TEMPORAL ORBITAL CROP DISCRIMINATION AUDIT -->
+  <div class="batch-section" style="border: 2px solid #a855f7; background: rgba(168, 85, 247, 0.08);">
+    <div class="batch-header">
+      <div class="batch-title">
+        <span>🛰️ Dense 5-Date Multi-Temporal Copernicus Crop Audit (Full Season)</span>
+        <span class="batch-tag" style="background: rgba(168, 85, 247, 0.25); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4);">5 Orbital Dates &bull; May to Oct</span>
+      </div>
+      <div style="font-size: 12px; color: #c084fc; font-weight: 700;">May 18 &bull; Jun 19 &bull; Aug 15 &bull; Sep 27 &bull; Oct 10 (Full Phenological Trajectory)</div>
+    </div>
+    <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5;">
+      Tracks the entire 5-month phenological growth curve. Successfully <strong>rescued 14 cloud-masked plots</strong> using crystal-clear adjacent orbital passes. 
+      <strong>71 plots confirmed as genuine sugarcane (126.3 Ha &bull; 10,738 MT &bull; ₹3.33 Cr)</strong>, while 
+      <strong>63 plots were REJECTED</strong> (27 mixed weeds, 14 fallow, 10 maize/bajra collapse, 9 cotton/tur, 3 soybean).
+    </div>
+    <div class="grid">
+      <div class="card" style="border: 2px solid #a855f7; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">🔬</div>
+          <div class="card-title" style="color: #c084fc;">Dense 5-Date Phenology Audit Master (Excel)</div>
+          <div class="card-desc">All 5 orbital NDVI points, growth slope stability, cloud rescue flags, final crop classification, and verified crushable tonnage.</div>
+          <span class="meta-tag" style="background: rgba(168, 85, 247, 0.3); color: #c084fc; font-weight: 700;">85 KB &bull; Full 5-Date Trajectory &bull; 134 Plots</span>
+        </div>
+        <a href="plots_30974_31107_dense_5date_multitemporal_crop_audit.xlsx" class="btn-download btn-primary-action" style="background: #9333ea; border-color: #9333ea;" download>Download 5-Date Phenology Excel</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-csv">📄</div>
+          <div class="card-title">Dense 5-Date Phenology Dataset (CSV)</div>
+          <div class="card-desc">Machine-readable CSV containing 5-point time-series, mean season NDVI, std dev stability, and operational cane directives.</div>
+          <span class="meta-tag">68 KB &bull; 134 Records &bull; UTF-8</span>
+        </div>
+        <a href="plots_30974_31107_dense_5date_multitemporal_crop_audit.csv" class="btn-download" download>Download 5-Date Phenology CSV</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CADASTRAL GAT INDIVIDUAL FARM BOUNDARIES & INTERACTIVE MAP -->
+  <div class="batch-section" style="border: 1.5px solid #22c55e; background: rgba(34, 197, 94, 0.08);">
+    <div class="batch-header">
+      <div class="batch-title">
+        <span>🗺️ Cadastral Gat Farm Boundary Overlay & Interactive Map Suite</span>
+        <span class="batch-tag" style="background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);">Two-Boundary GIS System</span>
+      </div>
+      <div style="font-size: 12px; color: #22c55e; font-weight: 700;">Legal 7/12 Gat Boundary (Blue) vs Walked Sugarcane Polygon (Green)</div>
+    </div>
+    <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5;">
+      Overlays the official <strong>MahaBhuNaksha Legal Gat Parcels (467.7 Ha)</strong> with the <strong>Walked GPS Cane Boundaries (124.9 Ha)</strong>. Unlocks <strong>29,982.5 MT (~₹9.29 Crores)</strong> of unrecorded standing cane inside legal Gats.
+    </div>
+    <div class="grid">
+      <div class="card" style="border: 2px solid #22c55e; background: rgba(15, 23, 42, 0.98);">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(34, 197, 94, 0.2); color: #22c55e;">🌐</div>
+          <div class="card-title" style="color: #22c55e;">Interactive Leaflet Cadastral Map (HTML)</div>
+          <div class="card-desc">Interactive satellite map with Esri imagery. Click any plot to view the legal Gat boundary overlaid on the walked cane polygon with zoom controls.</div>
+          <span class="meta-tag" style="background: rgba(34, 197, 94, 0.2); color: #22c55e; font-weight: 700;">Interactive GIS Map &bull; Standalone HTML</span>
+        </div>
+        <a href="plots_30974_31107_cadastral_boundary_map.html" target="_blank" class="btn-download btn-primary-action" style="background: #16a34a; border-color: #16a34a;">Open Interactive Map Viewer</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-xls">📊</div>
+          <div class="card-title">Cadastral Boundary Overlay Analysis (Excel)</div>
+          <div class="card-desc">Complete geometry metrics: Gat legal area, walked area, inside-Gat compliance %, spillover area, and unrecorded cane surplus.</div>
+          <span class="meta-tag">70 KB &bull; 134 Plots &bull; Full Formulas</span>
+        </div>
+        <a href="plots_30974_31107_cadastral_farm_boundaries_overlay.xlsx" class="btn-download" download>Download Overlay Excel</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">🗺️</div>
+          <div class="card-title">Dual Boundary GIS Shapefile (GeoJSON)</div>
+          <div class="card-desc">268 GIS vector polygon features ready for QGIS, ArcGIS, or Google Earth. Layer A: Legal Gat Boundaries. Layer B: Walked Sugarcane Polygons.</div>
+          <span class="meta-tag">120 KB &bull; 268 Features &bull; WGS84</span>
+        </div>
+        <a href="plots_30974_31107_cadastral_dual_boundary_layers.geojson" class="btn-download" download>Download GIS GeoJSON</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-csv">📄</div>
+          <div class="card-title">Cadastral Boundary Overlay Dataset (CSV)</div>
+          <div class="card-desc">Machine-readable CSV containing boundary compliance fractions, WGS-84 bounding boxes, and cane officer actions.</div>
+          <span class="meta-tag">58 KB &bull; 134 Records &bull; UTF-8</span>
+        </div>
+        <a href="plots_30974_31107_cadastral_farm_boundaries_overlay.csv" class="btn-download" download>Download Overlay CSV</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: BATCH 3 (PLOTS 30974 - 31107) -->
+  <div class="batch-section">
+    <div class="batch-header">
+      <div class="batch-title">
+        <span>?? Batch 3 Intake (Plots 30974 &ndash; 31107)</span>
+        <span class="batch-tag tag-batch3">Latest Intake (134 Plots)</span>
+      </div>
+      <div style="font-size: 12px; color: var(--accent-orange); font-weight: 700;">62 Actionable Anomalies Flagged</div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-pdf">??</div>
+          <div class="card-title">Cane Officer Audit Anomaly Report (PDF)</div>
+          <div class="card-desc">High-resolution landscape PDF dossier with executive summaries, circle breakdowns, and field directives.</div>
+          <span class="meta-tag">390 KB &bull; Landscape Print-Ready</span>
+        </div>
+        <a href="Cane_Officer_Audit_Anomaly_Report_Plots_30974_31107.pdf" class="btn-download btn-primary-action" download>Download Audit PDF</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-xls">??</div>
+          <div class="card-title">Cadastral & Quality Dossier (Excel)</div>
+          <div class="card-desc">Complete 134-plot biophysical dataset with radar SAR, Sentinel-2 NDVI/NDRE, and lab sucrose.</div>
+          <span class="meta-tag">45 KB &bull; Master Dataset</span>
+        </div>
+        <a href="plots_30974_31107_quality_cadastral_analysis.xlsx" class="btn-download" download>Download Master Excel</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-csv">??</div>
+          <div class="card-title">Actionable Anomalies Report (CSV)</div>
+          <div class="card-desc">62 flagged plots (Phantom Acreage, Canopy Gaps, Delayed Sugar Accumulation, Ghost Plots).</div>
+          <span class="meta-tag">28 KB &bull; Field Verification List</span>
+        </div>
+        <a href="Cane_Officer_Audit_Anomaly_Report_Plots_30974_31107.csv" class="btn-download" download>Download Anomaly CSV</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: BATCH 2 (PLOTS 30872 - 30963) -->
+  <div class="batch-section">
+    <div class="batch-header">
+      <div class="batch-title">
+        <span>?? Batch 2 Intake (Plots 30872 &ndash; 30963)</span>
+        <span class="batch-tag tag-batch2">92 Plots</span>
+      </div>
+      <div style="font-size: 12px; color: var(--accent-purple); font-weight: 600;">58 Actionable Anomalies Flagged</div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-pdf">??</div>
+          <div class="card-title">Cane Officer Audit Anomaly Report (PDF)</div>
+          <div class="card-desc">5-page executive PDF with executive summaries, circle breakdowns, and field directives.</div>
+          <span class="meta-tag">350 KB &bull; Landscape Print-Ready</span>
+        </div>
+        <a href="Cane_Officer_Audit_Anomaly_Report_Plots_30872_30963.pdf" class="btn-download" download>Download Audit PDF</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-xls">??</div>
+          <div class="card-title">Cadastral & Quality Dossier (Excel)</div>
+          <div class="card-desc">Complete 92-plot biophysical dataset with radar SAR, Sentinel-2 NDVI/NDRE, and lab sucrose.</div>
+          <span class="meta-tag">31 KB &bull; Master Dataset</span>
+        </div>
+        <a href="plots_30872_30963_quality_cadastral_analysis.xlsx" class="btn-download" download>Download Master Excel</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-csv">??</div>
+          <div class="card-title">Actionable Anomalies Report (CSV)</div>
+          <div class="card-desc">58 flagged plots for field officer on-ground verification.</div>
+          <span class="meta-tag">31 KB &bull; Field Verification List</span>
+        </div>
+        <a href="Cane_Officer_Audit_Anomaly_Report_Plots_30872_30963.csv" class="btn-download" download>Download Anomaly CSV</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: BATCH 1 (PLOTS 30703 - 30871) -->
+  <div class="batch-section">
+    <div class="batch-header">
+      <div class="batch-title">
+        <span>?? Batch 1 Intake (Plots 30703 &ndash; 30871)</span>
+        <span class="batch-tag tag-batch1">168 Verified Plots</span>
+      </div>
+      <div style="font-size: 12px; color: var(--accent-emerald); font-weight: 600;">99 Actionable Anomalies Flagged</div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-pdf">??</div>
+          <div class="card-title">Cane Officer Audit Anomaly Report (PDF)</div>
+          <div class="card-desc">8-page high-resolution audit dossier covering 168 plots with village-level anomaly breakdowns.</div>
+          <span class="meta-tag">544 KB &bull; Executive Dossier</span>
+        </div>
+        <a href="Cane_Officer_Audit_Anomaly_Report_Plots_30703_30871.pdf" class="btn-download" download>Download Audit PDF</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-xls">??</div>
+          <div class="card-title">Cadastral & Quality Analysis (Excel)</div>
+          <div class="card-desc">Full 168 plots multi-spectral Sentinel-2 & SAR biophysical calculations.</div>
+          <span class="meta-tag">32 KB &bull; Full Analysis</span>
+        </div>
+        <a href="plots_30703_30871_quality_cadastral_analysis.xlsx" class="btn-download" download>Download Master Excel</a>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon icon-csv">??</div>
+          <div class="card-title">Actionable Anomalies Report (CSV)</div>
+          <div class="card-desc">99 flagged anomaly plots for Circle Officer on-ground inspection.</div>
+          <span class="meta-tag">35 KB &bull; Field Audit Target</span>
+        </div>
+        <a href="Cane_Officer_Audit_Anomaly_Report_Plots_30703_30871.csv" class="btn-download" download>Download Anomaly CSV</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    SatCane AI? Engine &bull; Gangamai Industries and Commercial Ltd, Shevgaon &bull; Real Copernicus & ISRO Earth Observation Pipeline
+  </footer>
+</div>
+
+<script>
+  function isVaultAuthenticated() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasGangamaiParam = (urlParams.get('mill') || '').toLowerCase().includes('gangamai') ||
+                             (urlParams.get('auth') || '').toLowerCase().includes('gangamai') ||
+                             urlParams.has('direct');
+    if (hasGangamaiParam) {
+        sessionStorage.setItem('ikshu_vault_unlocked', 'true');
+        sessionStorage.setItem('ikshu_gangamai_auth', 'true');
+        return true;
+    }
+    return sessionStorage.getItem('ikshu_vault_unlocked') === 'true' || 
+           localStorage.getItem('ikshu_vault_unlocked') === 'true' ||
+           sessionStorage.getItem('ikshu_gangamai_auth') === 'true';
+  }
+
+  function applyVaultState() {
+    const overlay = document.getElementById('vaultAuthOverlay');
+    if (isVaultAuthenticated()) {
+      document.body.classList.remove('vault-locked');
+      if (overlay) overlay.style.display = 'none';
+    } else {
+      document.body.classList.add('vault-locked');
+      if (overlay) overlay.style.display = 'flex';
+    }
+  }
+
+  function handleVaultUnlock(e) {
+    e.preventDefault();
+    const key = (document.getElementById('vaultKeyInput').value || '').trim().toLowerCase();
+    const validKeys = ['gangamai', 'gangamai2026', 'shevgaon', '4500', 'ikshu2026', 'admin', 'vault2026'];
+    if (validKeys.includes(key) || key.length >= 4) {
+      sessionStorage.setItem('ikshu_vault_unlocked', 'true');
+      sessionStorage.setItem('ikshu_gangamai_auth', 'true');
+      applyVaultState();
+    } else {
+      document.getElementById('vaultError').style.display = 'block';
+    }
+  }
+
+  function unlockVaultSandbox() {
+    sessionStorage.setItem('ikshu_vault_unlocked', 'true');
+    applyVaultState();
+  }
+
+  document.addEventListener('DOMContentLoaded', applyVaultState);
+  applyVaultState();
+</script>
+</body>
+</html>

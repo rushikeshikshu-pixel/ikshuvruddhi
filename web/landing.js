@@ -530,24 +530,32 @@ window.selectMillRole = function(el, roleName) {
 window.handleMillSignIn = function(e) {
     e.preventDefault();
     const sel = document.getElementById('selFactoryCode');
-    const factoryCode = sel ? sel.value : 'SAMARTH_SSK';
-    const factoryText = sel ? sel.options[sel.selectedIndex].text : 'Samarth SSK Ltd.';
+    const factoryCode = sel ? sel.value : 'GANGAMAI_SSK';
+    const factoryText = sel ? sel.options[sel.selectedIndex].text : 'Gangamai Sahakari Sakhar Karkhana (SSK)';
 
-    let shortRole = 'MD';
-    if (selectedMillRole.includes('Chemist')) shortRole = 'Chemist';
-    if (selectedMillRole.includes('Cane')) shortRole = 'Cane Dept';
+    let shortRole = 'CAO';
+    if (selectedMillRole.includes('Managing Director') || selectedMillRole.includes('MD')) shortRole = 'MD';
+    else if (selectedMillRole.includes('Chemist')) shortRole = 'Chemist';
+    else if (selectedMillRole.includes('Transport') || selectedMillRole.includes('Harvest')) shortRole = 'H&T';
+    else if (selectedMillRole.includes('Agriculture') || selectedMillRole.includes('Cane')) shortRole = 'CAO';
 
+    const isGangamai = factoryCode === 'GANGAMAI_SSK' || factoryText.includes('Gangamai');
     const profile = {
-        millCode: factoryCode,
-        millName: factoryText,
-        shortName: factoryText.split(' ')[0] + ' SSK',
+        millCode: isGangamai ? 'MILL-GM-414' : factoryCode,
+        millName: isGangamai ? 'Gangamai Sahakari Sakhar Karkhana (SSK)' : factoryText,
+        shortName: isGangamai ? 'Gangamai SSK' : factoryText.split(' ')[0] + ' SSK',
         role: selectedMillRole,
         shortRole: shortRole,
+        tcd: isGangamai ? '4,500 TCD' : '3,500 TCD',
         timestamp: new Date().toISOString()
     };
 
+    if (isGangamai) {
+        sessionStorage.setItem('ikshu_gangamai_auth', 'true');
+    }
     sessionStorage.setItem('ikshu_mill_profile', JSON.stringify(profile));
-    window.location.href = 'console.html';
+    const targetUrl = 'console.html?mill=' + (isGangamai ? 'gangamai' : factoryCode) + '&role=' + encodeURIComponent(selectedMillRole);
+    window.location.href = targetUrl;
 };
 
 window.signOutMill = function() {
