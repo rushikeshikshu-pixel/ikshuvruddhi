@@ -1975,7 +1975,10 @@ window.openMobileHealthSlip = function(plotIdOrGat) {
         { pass: 16, date: '25-Sep', ccs: Math.max((plot.ccs - 1.8), 9.5).toFixed(1), brix: Math.max((plot.brix - 2.0), 15.5).toFixed(1), ndvi: (plot.ndvi * 0.89).toFixed(2) },
         { pass: 17, date: '30-Sep', ccs: Math.max((plot.ccs - 1.1), 10.4).toFixed(1), brix: Math.max((plot.brix - 1.3), 16.8).toFixed(1), ndvi: (plot.ndvi * 0.94).toFixed(2) },
         { pass: 18, date: '05-Oct', ccs: Math.max((plot.ccs - 0.5), 11.0).toFixed(1), brix: Math.max((plot.brix - 0.6), 18.0).toFixed(1), ndvi: (plot.ndvi * 0.98).toFixed(2) },
-        { pass: 19, date: '10-Oct', ccs: Number(plot.ccs).toFixed(1), brix: Number(plot.brix).toFixed(1), ndvi: Number(plot.ndvi).toFixed(2), current: true }
+        { pass: 19, date: '10-Oct', ccs: Math.max((plot.ccs - 1.2), 9.0).toFixed(1), brix: Math.max((plot.brix - 1.4), 14.5).toFixed(1), ndvi: (plot.ndvi * 0.94).toFixed(2) },
+        { pass: 20, date: '15-Oct', ccs: Math.max((plot.ccs - 0.7), 9.5).toFixed(1), brix: Math.max((plot.brix - 0.9), 15.0).toFixed(1), ndvi: (plot.ndvi * 0.96).toFixed(2) },
+        { pass: 21, date: '20-Oct', ccs: Math.max((plot.ccs - 0.3), 9.8).toFixed(1), brix: Math.max((plot.brix - 0.4), 15.2).toFixed(1), ndvi: (plot.ndvi * 0.98).toFixed(2) },
+        { pass: 22, date: '25-Oct', ccs: Number(plot.ccs).toFixed(1), brix: Number(plot.brix).toFixed(1), ndvi: Number(plot.ndvi).toFixed(2), current: true }
     ];
 
     const trajContainer = document.getElementById('slipTrajectoryRow');

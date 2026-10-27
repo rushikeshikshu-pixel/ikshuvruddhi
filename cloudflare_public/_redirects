@@ -1,0 +1,5 @@
+/demo /console.html 302
+/terminal /console.html 302
+/command /console.html 302
+/downloads /console.html 302
+/downloads/* /console.html 302

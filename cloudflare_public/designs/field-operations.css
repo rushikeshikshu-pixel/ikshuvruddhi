@@ -1,0 +1,11 @@
+/* Design 2: field operations, optimized for tablets and supervisors */
+:root { --bg-core:#f2f7ef; --bg-card:#fff; --text-main:#183324; --text-muted:#637667; --accent-cyan:#19764f; --accent-green:#2b9959; --accent-amber:#b7791f; --border-dim:#d6e4d5; }
+body { background:#f2f7ef; color:var(--text-main); }
+.app-container { max-width:1600px; }
+.app-header { background:#1b4b32; color:#fff; border:0; }
+.kpi-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.kpi-card,.glass-card { background:#fff; border-color:#d6e4d5; box-shadow:0 4px 12px #305a3812; }
+.kpi-value,.card-header h3 { color:#1b4b32 !important; }
+.toolbar-bar { position:sticky; top:8px; z-index:20; background:#ffffffee; }
+.btn-primary { background:#19764f !important; border-color:#19764f !important; }
+.form-control { background:#fbfef9 !important; color:#183324 !important; border-color:#c7dac8 !important; }
