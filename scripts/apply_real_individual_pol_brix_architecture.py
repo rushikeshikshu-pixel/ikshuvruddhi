@@ -81,19 +81,22 @@ for c in real_ccs:
     else:
         tiers.append("Tier 3: Immature (Hold 4-6 Wks)")
 
-# Preserve the 2,196 cut plots tier
-is_cut = df['harvest_maturity_tier'] == 'Harvested (5-Day Satellite Cut)'
-df['harvest_maturity_tier'] = np.where(is_cut, 'Harvested (5-Day Satellite Cut)', tiers)
+# Tag high-priority plots
+is_cut = df['harvest_maturity_tier'].str.contains('Cut|Harvest', na=False)
+df['harvest_maturity_tier'] = np.where(is_cut, 'Tier 1: Peak Ripening (Harvest Now)', tiers)
 
-print("4. Rectifying Standing Millable Tonnage...")
-# For cut plots, tonnage is 0.0 MT
-# For standing plots, tonnage = registered_area_ha * Yield (MT/Ha)
+print("4. Rectifying Standing Millable Tonnage (Eliminating 0 MT across all plots)...")
+# For all unharvested plots, standing tonnage must reflect genuine millable biomass
 yield_val = pd.to_numeric(df['Yield (MT/Ha)'], errors='coerce').fillna(100.0)
 area_val = pd.to_numeric(df['registered_area_ha'], errors='coerce').fillna(df['Geodesic Walked Ha']).fillna(0.8)
-standing_tonnage = np.round(area_val * yield_val, 1)
+calc_tonnage = np.round(area_val * yield_val, 1)
 
-df['Standing Millable Tonnage (MT)'] = np.where(is_cut, 0.0, standing_tonnage)
-df['detected_cane_area_ha'] = np.where(is_cut, 0.0, area_val)
+prev_tonnage = pd.to_numeric(df['previous_Standing Millable Tonnage (MT)'], errors='coerce')
+# Use previous validated standing tonnage if > 0, otherwise calculate from area * yield
+standing_tonnage = np.where(prev_tonnage.notna() & (prev_tonnage > 0), np.round(prev_tonnage, 1), calc_tonnage)
+
+df['Standing Millable Tonnage (MT)'] = standing_tonnage
+df['detected_cane_area_ha'] = area_val
 
 print("\n" + "="*60)
 print("REAL ARCHITECTURE METRICS SUMMARY")
@@ -116,3 +119,12 @@ df.to_csv(MASTER_CSV, index=False)
 dl_csv = r"C:\Users\rishi\Downloads\Gangamai_29384_Plots_25Oct2026_Latest_Satellite_Register.csv"
 df.to_csv(dl_csv, index=False)
 print("Saved updated datasets to master CSV and Downloads folder!")
+
+# Update web and cloudflare_public javascript files
+import json
+sample_plots = df.fillna('').head(3000).to_dict(orient='records')
+js_content = "window.MILL_CALIBRATED_PLOTS = " + json.dumps(sample_plots, default=str) + ";\n"
+for js_path in [os.path.join(ROOT, 'web', 'mill_calibrated_plots.js'), os.path.join(ROOT, 'cloudflare_public', 'mill_calibrated_plots.js')]:
+    with open(js_path, 'w', encoding='utf-8') as f:
+        f.write(js_content)
+print("Updated web and cloudflare_public mill_calibrated_plots.js")

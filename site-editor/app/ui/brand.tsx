@@ -1,0 +1,1 @@
+export default function Brand(){return <span className="brand"><svg width="34" height="38" viewBox="0 0 34 38" fill="none" aria-hidden="true"><path d="M7 32V8M16 32V4M25 32V11" stroke="currentColor" strokeWidth="3"/><path d="M7 14L1 9M16 13l6-6M25 19l7-6M7 24l7-5M16 26l-6-5" stroke="currentColor" strokeWidth="2"/></svg><span>ikshu<strong>INTELLIGENCE</strong></span></span>}

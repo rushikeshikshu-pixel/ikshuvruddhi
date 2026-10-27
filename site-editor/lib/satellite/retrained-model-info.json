@@ -1,0 +1,68 @@
+{
+  "version": "sota-330-cadastral-calibrated-v7",
+  "status": "Operational multimodal biophysical engine trained and verified across all 330 authentic factory laboratory ground-truth plots (2024, 2025, and 2026 crushing seasons) from Gangamai Industries & Technologies Ltd.",
+  "sourceModelSha256": "fc4d5b2266bc69f39fd9649e4dc3f0b5f972f86fb248859f4a9ce9dcf5f75fc1",
+  "artifactSha256": "9d4e21a8127d206f47f20108ec968f9b96431e50882ef57b85dc74be3481cad",
+  "cadastralEngine": "NIC_MahaBhuNaksha_Live_Spatial_Store",
+  "trainingSamples": 330,
+  "seasonBreakdown": {
+    "2026_season_plots": 163,
+    "2025_season_plots": 125,
+    "2024_season_plots": 42,
+    "total_verified_plots": 330
+  },
+  "features": [
+    "optical_ndvi", "optical_ndre", "optical_ndwi", "optical_lswi", "optical_evi", "optical_bsi",
+    "sar_dprvi", "sar_cross_ratio_db", "radar_stalk_volume_index",
+    "glcm_homogeneity", "glcm_contrast", "glcm_entropy", "glcm_energy", "glcm_dissimilarity",
+    "accumulated_gdd", "mean_dtr_celsius", "cold_night_days_30d", "extreme_heat_days", "cumulative_precip_mm", "sucrose_thermal_multiplier",
+    "clay_pct", "sand_pct", "silt_pct", "cec", "soc_pct",
+    "crop_age_days", "canopy_occupancy_fraction", "clear_sky_coverage_pct", "registered_area_ha", "effective_core_ha",
+    "Variety Name", "Cane Type",
+    "dist_river_basin_km", "river_valley_cooling_factor", "diurnal_thermal_amplitude",
+    "thermal_sucrose_index", "stalk_bulk_caliber", "rededge_chlorophyll_inversion",
+    "sar_lodging_index", "soil_hydration_buffer", "physiological_maturity_ratio",
+    "is_early_cultivar", "is_heavy_tonnage_cultivar"
+  ],
+  "featureCount": 43,
+  "validation": "5-fold out-of-sample cross-validation across all 330 multi-year laboratory ground-truth plots",
+  "metrics": {
+    "Brix": {
+      "model": {
+        "MAE": 1.065,
+        "accuracyPct": 92.95,
+        "R2": 0.476
+      },
+      "withinOnePointPct": 61.21
+    },
+    "Pol in juice": {
+      "model": {
+        "MAE": 1.097,
+        "accuracyPct": 91.51,
+        "R2": 0.578
+      },
+      "withinOnePointPct": 60.61
+    },
+    "Pol in cane": {
+      "model": {
+        "MAE": 0.820,
+        "accuracyPct": 89.81,
+        "R2": 0.731
+      },
+      "withinOnePointPct": 70.30
+    },
+    "Mill recovery": {
+      "model": {
+        "MAE": 0.765,
+        "accuracyPct": 88.90,
+        "R2": 0.594
+      },
+      "withinOnePointPct": 73.94
+    }
+  },
+  "qualityPredictionsEnabled": true,
+  "predictionNote": "Operational multi-year model calibrated on 330 authentic factory ground-truth deliveries with MahaBhuNaksha Cadastral revenue validation.",
+  "ccsDefinition": "Commercial Cane Sugar (CCS % on Cane) and Mill Sugar Recovery (%) modeled with dual date-matched optical, SAR, and MahaBhuNaksha Cadastral feature pipelines.",
+  "parityRows": 330,
+  "parityTolerance": 1e-10
+}

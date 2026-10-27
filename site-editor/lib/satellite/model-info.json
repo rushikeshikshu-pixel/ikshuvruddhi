@@ -1,0 +1,95 @@
+{
+  "version": "optical-20261005-7ffa24c62f60",
+  "status": "Exploratory: weak held-out skill",
+  "features": [
+    "crop_age_days",
+    "ndvi",
+    "ndre",
+    "ndwi",
+    "lswi",
+    "evi",
+    "canopy_fraction",
+    "cane_type",
+    "variety"
+  ],
+  "trainingSamples": 69,
+  "trainingGroups": 18,
+  "validation": "5-fold held-out Gut/sector validation; folds exclude whole groups",
+  "metrics": {
+    "Pol": {
+      "model": {
+        "MAE": 1.2872006330551644,
+        "RMSE": 1.6172427805323426,
+        "R2": 0.023710204188675754
+      },
+      "mean_baseline": {
+        "MAE": 1.260926816473918,
+        "RMSE": 1.6522422270713193,
+        "R2": -0.01900365728279696
+      }
+    },
+    "Brix": {
+      "model": {
+        "MAE": 1.2870309215432167,
+        "RMSE": 1.6039841243352484,
+        "R2": 0.01978094835135835
+      },
+      "mean_baseline": {
+        "MAE": 1.2618542028288404,
+        "RMSE": 1.6362536447779792,
+        "R2": -0.02005658129459209
+      }
+    },
+    "Calculated CCS": {
+      "model": {
+        "MAE": 0.9754637993728752,
+        "RMSE": 1.230030861666118,
+        "R2": 0.020586471469425827
+      },
+      "mean_baseline": {
+        "MAE": 0.9408134882259445,
+        "RMSE": 1.2542739142264718,
+        "R2": -0.01840110680821927
+      }
+    }
+  },
+  "supportedVarieties": [
+    "CO-265"
+  ],
+  "supportedTypes": [
+    "Khodwa",
+    "Suru"
+  ],
+  "supportedAgeDays": [
+    243.4,
+    340.2
+  ],
+  "featureRanges": {
+    "ndvi": [
+      0.452037,
+      0.817954
+    ],
+    "ndre": [
+      0.297044,
+      0.660205
+    ],
+    "ndwi": [
+      -0.746012,
+      -0.501355
+    ],
+    "lswi": [
+      0.029104,
+      0.422413
+    ],
+    "evi": [
+      0.233983,
+      0.611336
+    ],
+    "canopy_fraction": [
+      0.25,
+      1.0
+    ]
+  },
+  "sampleDateAssumption": "The 5 October report date is used as the calibration sample date. Separate sample-collection dates were not supplied.",
+  "ccsDefinition": "Calculated CCS = 1.022 x predicted juice Pol - 0.292 x predicted Brix. Assumes juice Pol approximates sucrose and Brix is corrected; not a directly measured CCS result."
+}

@@ -1,0 +1,9 @@
+'use client';
+import type {ReactNode} from 'react';
+import {Satellite,Layers,ArrowRight} from 'lucide-react';
+import Brand from './brand';
+import {LanguageSwitch,useLanguage} from './language';
+export default function WorkspaceShell({kind,name,location,children}:{kind:'register'|'satellite';name:string;location:string;children:ReactNode}){
+ const {t}=useLanguage();const title=kind==='register'?t('Latest satellite register','नवीनतम उपग्रह नोंदवही'):t('Satellite feed','उपग्रह सेवा');
+ return <div className="portal-shell"><aside className="sidebar"><a href="/portal"><Brand/></a><div className="workspace-label">{t('MILL WORKSPACE','कारखाना कार्यक्षेत्र')}</div><nav><a href="/portal">‹ {t('Back to dashboard','डॅशबोर्डवर परत')}</a><a className={kind==='satellite'?'active':''} href="/satellite"><Satellite size={18}/>{t('Satellite feed','उपग्रह सेवा')}</a><a className={kind==='register'?'active':''} href="/satellite-register"><Layers size={18}/>{t('Latest register','नवीनतम नोंदवही')}</a></nav></aside><div className="portal-body"><header className="portal-topbar"><span>{t('Workspace','कार्यक्षेत्र')} / {title}</span><div className="topbar-right"><LanguageSwitch/><a href="/portal">{t('Dashboard','डॅशबोर्ड')} <ArrowRight size={15}/></a></div></header><main className="portal-main"><div className="portal-heading"><div><div className="eyebrow">{location}</div><h1>{title}</h1><p>{name} · {kind==='register'?t('Active plot estimates and archived harvested plots.','सक्रिय प्लॉटचे अंदाज आणि तोडणी पूर्ण झालेले संग्रहित प्लॉट.'):t('Find optical and radar observations for your fields.','आपल्या शेतासाठी ऑप्टिकल व रडार निरीक्षणे शोधा.')}</p></div></div>{children}<footer className="portal-footer"><span>IKSHU INTELLIGENCE</span><a href="/privacy">{t('Privacy & data','गोपनीयता व डेटा')}</a></footer></main></div></div>;
+}

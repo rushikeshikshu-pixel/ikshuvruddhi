@@ -1,4 +1,4 @@
-﻿# Byte-compiled / optimized / DLL files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *.class
@@ -55,6 +55,13 @@ data/
 # Node / JS artifacts
 node_modules/
 package-lock.json
+site-editor/node_modules/
+site-editor/.next/
+site-editor/.vinext/
+site-editor/dist/
+site-editor/.wrangler/
+site-editor/.git_sites_backup/
+site-editor/.env*
 
 # OS files
 .DS_Store
