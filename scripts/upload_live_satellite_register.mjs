@@ -66,7 +66,8 @@ async function postImport(body) {
           'Origin': 'https://ikshuintelligence.com',
           'Cookie': 'ikshu_mill_session=' + token
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(20000)
       });
       const result = await response.json();
       if (response.ok) return result;
