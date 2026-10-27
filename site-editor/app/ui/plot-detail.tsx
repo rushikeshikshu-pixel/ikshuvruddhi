@@ -210,8 +210,44 @@ export default function PlotDetail({plot,sample,onClose,onUpdatePriority}:PlotVi
                 <div style={{fontSize:'0.82rem',color:'#1e3a8a',marginTop:2}}>
                   <strong>{format(plot.registeredAreaHa ?? plot.area, 2)} ha</strong> {t('Reg.','नोंद')} · <strong>{format(plot.detectedCaneAreaHa ?? plot.area, 2)} ha</strong> {t('Sat.','उपग्रह')}
                 </div>
-                <div style={{fontSize:'0.7rem',color:plot.tonnage===0?'#dc2626':'#059669',marginTop:2,fontWeight:600}}>
-                  {plot.tonnage===0 ? '🔴 ' + t('Harvested (0 MT Standing)','तोडणी पूर्ण (० टन उभा)') : '🟢 ' + t('Standing Biomass Verified','उभा ऊस बायोमास प्रमाणित')}
+                <div style={{fontSize:'0.7rem',color:Number(plot.harvestProgressPct||0)>50?'#ea580c':'#059669',marginTop:2,fontWeight:600}}>
+                  {Number(plot.harvestProgressPct||0)>10 ? `✂️ ${format(plot.harvestProgressPct,0)}% ${t('Harvested','तोडला')} · ${format(plot.detectedCaneAreaHa,2)} ha ${t('Standing','उभा')}` : '🟢 ' + t('Standing Biomass Verified','उभा ऊस बायोमास प्रमाणित')}
+                </div>
+              </div>
+            </div>
+
+            {/* Partial Harvesting Progress & Area Split */}
+            <div style={{background:'rgba(255,255,255,0.95)',padding:'10px 12px',borderRadius:8,border:'1px solid #e5e7eb',margin:'10px 0'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:4}}>
+                <span style={{fontSize:'0.78rem',fontWeight:700,color:'#1f2937'}}>
+                  ✂️ {t('Partial Harvest & Detected Cane Area','अंशतः तोडणी व उपग्रहाधारित क्षेत्र विभाजन')}
+                </span>
+                <span style={{fontSize:'0.72rem',fontWeight:700,color:Number(plot.harvestProgressPct||0)>50?'#c2410c':'#047857',background:Number(plot.harvestProgressPct||0)>50?'#fff7ed':'#ecfdf5',padding:'2px 8px',borderRadius:10,border:`1px solid ${Number(plot.harvestProgressPct||0)>50?'#fdba74':'#a7f3d0'}`}}>
+                  {Number(plot.harvestProgressPct||0) > 10 ? `${format(plot.harvestProgressPct, 0)}% ${t('Cut','तोडला')}` : t('100% Standing','१००% उभा')}
+                </span>
+              </div>
+
+              {/* Progress Bar */}
+              <div style={{width:'100%',height:7,background:'#e5e7eb',borderRadius:4,overflow:'hidden',display:'flex',margin:'4px 0 8px 0'}}>
+                <div style={{width:`${Math.min(100, Math.max(0, Number(plot.harvestProgressPct||0)))}%`,background:'#ea580c'}} />
+                <div style={{flex:1,background:'#10b981'}} />
+              </div>
+
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,fontSize:'0.75rem'}}>
+                <div style={{background:'#fef2f2',padding:'6px 8px',borderRadius:4,border:'1px solid #fecaca'}}>
+                  <span style={{color:'#991b1b',fontWeight:600}}>🔴 {t('Harvested Cut Area','तोडलेले क्षेत्र')}:</span>
+                  <strong style={{color:'#b91c1c',marginLeft:4}}>{format(plot.harvestedAreaHa ?? ((plot.area ?? 0) * (Number(plot.harvestProgressPct||0)/100)), 2)} ha</strong>
+                  <div style={{fontSize:'0.68rem',color:'#7f1d1d',marginTop:2}}>
+                    {t('Delivered to Mill','कारखान्यात जमा')}: ~{format(plot.harvestedTonnage ?? ((plot.harvestedAreaHa ?? 0) * (plot.yieldPerHa ?? 100)), 1)} MT
+                  </div>
+                </div>
+
+                <div style={{background:'#ecfdf5',padding:'6px 8px',borderRadius:4,border:'1px solid #a7f3d0'}}>
+                  <span style={{color:'#065f46',fontWeight:600}}>🟢 {t('Standing Cane Area','उभा शिल्लक ऊस')}:</span>
+                  <strong style={{color:'#047857',marginLeft:4}}>{format(plot.detectedCaneAreaHa ?? plot.area, 2)} ha</strong>
+                  <div style={{fontSize:'0.68rem',color:'#064e3b',marginTop:2}}>
+                    {t('Standing Millable Biomass','शेतात उभा बायोमास')}: {format(plot.tonnage, 1)} MT
+                  </div>
                 </div>
               </div>
             </div>

@@ -49,7 +49,7 @@ export async function registerPlots(db: Db, owner: string, options: {offset?:num
     tonnage:numeric('Standing Millable Tonnage (MT)'),yieldPerHa:numeric('Yield (MT/Ha)'),canopyFraction:numeric('canopy_occupancy_fraction'),clearSkyCoveragePct:numeric('clear_sky_coverage_pct'),
     latitude:numeric('Lat 1'),longitude:numeric('Long 1'),harvestTier:value('harvest_maturity_tier'),sourceTimestamp:satelliteRegister.sourceTimestamp,
     satelliteRefreshStatus:value('satellite_refresh_status'),predictionRefreshStatus:value('prediction_refresh_status'),
-    detectedCaneAreaHa:numeric('detected_cane_area_ha'),satelliteResolutionM:numeric('satellite_resolution_m'),
+    detectedCaneAreaHa:numeric('detected_cane_area_ha'),harvestedAreaHa:numeric('harvested_cane_area_ha'),harvestProgressPct:numeric('harvest_progress_pct'),harvestedTonnage:numeric('Harvested Cut Tonnage (MT)'),satelliteResolutionM:numeric('satellite_resolution_m'),
     tonnageBasis:value('tonnage_basis'),cropAgeReferenceDate:value('crop_age_reference_date'),
     inputPolicy:value('input_provenance_policy'),qualityModelVariant:value('quality_model_variant'),qualityInputCount:numeric('quality_input_count'),
     ccsBasis:value('ccs_basis'),weatherLastDate:value('weather_last_date'),radarDate:value('s1_date_max'),soilSource:value('soil_source'),

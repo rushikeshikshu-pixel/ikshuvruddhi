@@ -81,22 +81,46 @@ for c in real_ccs:
     else:
         tiers.append("Tier 3: Immature (Hold 4-6 Wks)")
 
-# Tag high-priority plots
-is_cut = df['harvest_maturity_tier'].str.contains('Cut|Harvest', na=False)
-df['harvest_maturity_tier'] = np.where(is_cut, 'Tier 1: Peak Ripening (Harvest Now)', tiers)
-
-print("4. Rectifying Standing Millable Tonnage (Eliminating 0 MT across all plots)...")
-# For all unharvested plots, standing tonnage must reflect genuine millable biomass
+print("4. Calculating Partial Harvesting & Detected Cane Area...")
 yield_val = pd.to_numeric(df['Yield (MT/Ha)'], errors='coerce').fillna(100.0)
 area_val = pd.to_numeric(df['registered_area_ha'], errors='coerce').fillna(df['Geodesic Walked Ha']).fillna(0.8)
-calc_tonnage = np.round(area_val * yield_val, 1)
 
-prev_tonnage = pd.to_numeric(df['previous_Standing Millable Tonnage (MT)'], errors='coerce')
-# Use previous validated standing tonnage if > 0, otherwise calculate from area * yield
-standing_tonnage = np.where(prev_tonnage.notna() & (prev_tonnage > 0), np.round(prev_tonnage, 1), calc_tonnage)
+curr_ndvi = pd.to_numeric(df['optical_ndvi'], errors='coerce').fillna(0.60)
+prev_ndvi = pd.to_numeric(df['previous_optical_ndvi'], errors='coerce').fillna(0.65)
 
+# Stubble baseline is 0.18, full canopy baseline is max(previous, 0.50)
+ndvi_stubble = 0.18
+ndvi_full = np.maximum(prev_ndvi, 0.50)
+
+# Calculate standing canopy retention ratio R
+retention = np.clip((curr_ndvi - ndvi_stubble) / (ndvi_full - ndvi_stubble), 0.05, 1.00)
+harvest_progress = np.round((1.0 - retention) * 100.0, 1)
+
+# Detected standing cane area and harvested cut area
+detected_standing_area = np.round(area_val * retention, 4)
+harvested_cut_area = np.round(area_val * (1.0 - retention), 4)
+
+standing_tonnage = np.round(detected_standing_area * yield_val, 1)
+harvested_tonnage = np.round(harvested_cut_area * yield_val, 1)
+
+df['canopy_occupancy_fraction'] = np.round(retention, 3)
+df['detected_cane_area_ha'] = detected_standing_area
+df['harvested_cane_area_ha'] = harvested_cut_area
+df['harvest_progress_pct'] = harvest_progress
 df['Standing Millable Tonnage (MT)'] = standing_tonnage
-df['detected_cane_area_ha'] = area_val
+df['Harvested Cut Tonnage (MT)'] = harvested_tonnage
+
+# Maturity tiers: accurately reflect partial harvesting progression
+partial_tiers = []
+for i, h in enumerate(harvest_progress):
+    if h >= 85.0:
+        partial_tiers.append("Tier 1: Harvest Nearly Complete (85-95% Cut)")
+    elif h >= 20.0:
+        partial_tiers.append(f"Tier 1: Partial Harvest Active ({h:.0f}% Cut)")
+    else:
+        partial_tiers.append(tiers[i])
+
+df['harvest_maturity_tier'] = partial_tiers
 
 print("\n" + "="*60)
 print("REAL ARCHITECTURE METRICS SUMMARY")
@@ -109,9 +133,11 @@ print(f"Pol Range:  {df['predicted_pol_juice_pct'].min():.2f}% to {df['predicted
 print(f"Brix Range: {df['predicted_brix_bx'].min():.2f}°Bx to {df['predicted_brix_bx'].max():.2f}°Bx (Mean: {df['predicted_brix_bx'].mean():.2f}°Bx)")
 print(f"CCS Range:  {df['predicted_ccs_pct'].min():.2f}% to {df['predicted_ccs_pct'].max():.2f}% (Mean: {df['predicted_ccs_pct'].mean():.2f}%)")
 print(f"Purity Range: {df['predicted_juice_purity_pct'].min():.2f}% to {df['predicted_juice_purity_pct'].max():.2f}% (Mean: {df['predicted_juice_purity_pct'].mean():.2f}%)")
-print(f"Cut Plots (0 MT): {is_cut.sum():,} plots")
-print(f"Standing Plots (>0 MT): {(~is_cut).sum():,} plots")
+print(f"Full Standing (>=85% Canopy): {(harvest_progress < 15.0).sum():,} plots")
+print(f"Partial Cut in Progress (15-85% Cut): {((harvest_progress >= 15.0) & (harvest_progress < 85.0)).sum():,} plots")
+print(f"Near-Complete Cut (>=85% Cut): {(harvest_progress >= 85.0).sum():,} plots")
 print(f"Total Standing Millable Tonnage: {df['Standing Millable Tonnage (MT)'].sum():,.1f} MT")
+print(f"Total Harvested Cut Tonnage: {df['Harvested Cut Tonnage (MT)'].sum():,.1f} MT")
 print("="*60 + "\n")
 
 # Save to master and downloads

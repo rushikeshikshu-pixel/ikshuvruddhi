@@ -267,7 +267,7 @@ export default function FieldMap({ plots, samples, interactive = true, className
               <a href="${bhulekhUrl}" target="_blank" rel="noopener noreferrer" style="color:#047857;text-decoration:none;font-weight:700;font-size:10px;background:#fff;padding:2px 5px;border-radius:3px;border:1px solid #a7f3d0;">७/१२ ↗</a>
             </div>
 
-            ${isHarvested ? `<div style="font-size:11px;background:#fef2f2;padding:4px 8px;border-radius:4px;margin-bottom:6px;border:1px solid #fecaca;color:#b91c1c;font-weight:700;">🔴 ${t('5-Day Satellite Confirmed Harvest: 0.0 MT Standing','उपग्रह पडताळणी: तोडणी पूर्ण (० टन उभा)')}</div>` : ''}
+            ${Number(p.harvestProgressPct || 0) > 10 ? `<div style="font-size:11px;background:#fff7ed;padding:4px 8px;border-radius:4px;margin-bottom:6px;border:1px solid #fdba74;color:#c2410c;font-weight:700;">✂️ ${t('Partial Cut: ','अंशतः तोडणी: ')}${format(p.harvestProgressPct, 0)}% ${t('Cut','तोडला')} · ${format(p.detectedCaneAreaHa ?? p.area, 2)} ha (${format(p.tonnage, 1)} MT) ${t('Standing','उभा')}</div>` : ''}
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f9fafb;padding:8px;border-radius:4px;font-size:11px;margin-bottom:8px;border:1px solid #e5e7eb;">
               <div><span style="color:#6b7280;">${t('Variety','वाण')}:</span><br/><strong>${escapeHtml(p.variety)}</strong></div>
