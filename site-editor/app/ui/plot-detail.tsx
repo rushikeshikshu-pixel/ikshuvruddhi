@@ -252,6 +252,38 @@ export default function PlotDetail({plot,sample,onClose,onUpdatePriority}:PlotVi
               </div>
             </div>
 
+            {/* Todni Ripening Ranking & Kriging Delta Card */}
+            <div style={{background:'linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)',padding:'12px',borderRadius:8,border:'1.5px solid #93c5fd',margin:'10px 0'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
+                <span style={{fontSize:'0.82rem',fontWeight:700,color:'#1e3a8a',display:'inline-flex',alignItems:'center',gap:5}}>
+                  🎯 {t('Todni Ripening Rank & Harvest Priority','तोडणी प्राधान्य क्रम व परिपक्वता स्कोअर')}
+                </span>
+                <span style={{background:Number(plot.todniPriorityScore||0)>=70?'#15803d':'#ea580c',color:'#fff',fontSize:'0.7rem',fontWeight:700,padding:'2px 8px',borderRadius:10}}>
+                  {Number(plot.todniPriorityScore||0)>=70 ? t('Top Priority: Cut Now','तात्काळ तोडणी') : t('In Maturation Phase','पक्वता टप्प्यात')}
+                </span>
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(130px, 1fr))',gap:8,marginTop:6}}>
+                <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bfdbfe'}}>
+                  <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Circle Todni Rank','सर्कल तोडणी क्रमांक')}</div>
+                  <div style={{fontSize:'1.1rem',fontWeight:800,color:'#1e40af'}}>#{plot.todniCircleRank || '—'} <span style={{fontSize:'0.7rem',fontWeight:500,color:'#6b7280'}}>in {plot.circle || 'Circle'}</span></div>
+                </div>
+                <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bfdbfe'}}>
+                  <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Global Command Rank','कारखाना एकूण क्रम')}</div>
+                  <div style={{fontSize:'1.1rem',fontWeight:800,color:'#0369a1'}}>#{plot.todniGlobalRank || '—'} <span style={{fontSize:'0.7rem',fontWeight:500,color:'#6b7280'}}>/ 29,384</span></div>
+                </div>
+                <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bfdbfe'}}>
+                  <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Ripening Index Score','परिपक्वता स्कोअर')}</div>
+                  <div style={{fontSize:'1.1rem',fontWeight:800,color:'#059669'}}>{plot.todniPriorityScore != null ? `${format(plot.todniPriorityScore, 1)} / 100` : '—'}</div>
+                </div>
+                <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bfdbfe'}}>
+                  <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Spatial Kriging Boost','शेजारील काटा ताळमेळ')}</div>
+                  <div style={{fontSize:'0.85rem',fontWeight:700,color:'#374151',marginTop:4}}>
+                    {plot.spatialCalibrationDelta != null && plot.spatialCalibrationDelta !== 0 ? `${plot.spatialCalibrationDelta > 0 ? '+' : ''}${format(plot.spatialCalibrationDelta, 2)}% Pol` : 'Baseline Anchor'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Factory Weighbridge Crushing Receipts (25-26 Oct Actual Mill Deliveries) */}
             {Boolean(plot.factoryCrushedTonnage && plot.factoryCrushedTonnage > 0) && (
               <div style={{background:'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',padding:'12px',borderRadius:8,border:'1.5px solid #86efac',margin:'10px 0'}}>

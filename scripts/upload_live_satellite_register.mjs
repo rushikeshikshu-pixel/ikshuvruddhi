@@ -67,7 +67,7 @@ async function postImport(body) {
           'Cookie': 'ikshu_mill_session=' + token
         },
         body: JSON.stringify(body),
-        signal: AbortSignal.timeout(20000)
+        signal: AbortSignal.timeout(60000)
       });
       const result = await response.json();
       if (response.ok) return result;
@@ -98,7 +98,7 @@ async function run() {
   const timestamp = '2026-10-27 17:30:00';
   console.log(`Starting staging for snapshotId: ${snapshotId} with timestamp: ${timestamp}`);
 
-  const batchSize = 200;
+  const batchSize = 120;
   const totalBatches = Math.ceil(rows.length / batchSize);
 
   for (let b = 0; b < totalBatches; b++) {
