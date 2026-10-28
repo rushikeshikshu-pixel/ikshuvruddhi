@@ -95,7 +95,7 @@ async function run() {
   }
 
   const snapshotId = crypto.randomUUID();
-  const timestamp = '2026-10-27 17:30:00';
+  const timestamp = '2026-10-28 12:00:00';
   console.log(`Starting staging for snapshotId: ${snapshotId} with timestamp: ${timestamp}`);
 
   const batchSize = 120;

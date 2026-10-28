@@ -33,7 +33,7 @@ df_crush_raw['DOCUMENT_NO'] = pd.to_numeric(df_crush_raw['DOCUMENT_NO'], errors=
 df_crush_raw = df_crush_raw.dropna(subset=['DOCUMENT_NO'])
 df_crush_raw['DOCUMENT_NO'] = df_crush_raw['DOCUMENT_NO'].astype(int)
 
-engine = HierarchicalDualScaleEngine(kf=0.814, noise_floor=0.34)
+engine = HierarchicalDualScaleEngine(kf=0.814, base_aleatoric=0.34)
 df_crush_raw['slip_noise_sigma'] = engine.compute_aleatoric_noise(df_crush_raw)
 
 # Aggregate per plot with noise precision

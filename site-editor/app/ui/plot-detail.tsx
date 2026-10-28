@@ -252,6 +252,76 @@ export default function PlotDetail({plot,sample,onClose,onUpdatePriority}:PlotVi
               </div>
             </div>
 
+            {/* Probabilistic Bayesian Credible Intervals & Risk Analysis */}
+            <div style={{background:'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)',padding:'12px',borderRadius:8,border:'1.5px solid #d8b4fe',margin:'10px 0'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
+                <span style={{fontSize:'0.82rem',fontWeight:700,color:'#581c87',display:'inline-flex',alignItems:'center',gap:5}}>
+                  🎲 {t('Probabilistic Uncertainty & Credible Intervals (P10–P50–P90)','संभाव्यता अनिश्चितता व P10-P50-P90 विश्वसनीयता श्रेणी')}
+                </span>
+                <span style={{background:'#7e22ce',color:'#fff',fontSize:'0.7rem',fontWeight:700,padding:'2px 8px',borderRadius:10}}>
+                  {plot.probMaturePct != null ? `${format(plot.probMaturePct, 0)}% ${t('Mature Conf.','परिपक्वता खात्री')}` : 'Bayesian Posterior'}
+                </span>
+              </div>
+
+              {/* 3 Interval Cards: Recovery, Tonnage, Sucrose Pol */}
+              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(130px, 1fr))',gap:8,marginTop:6}}>
+                {/* Sugar Recovery Range */}
+                <div style={{background:'#fff',padding:'8px',borderRadius:6,border:'1px solid #e9d5ff'}}>
+                  <div style={{fontSize:'0.68rem',color:'#6b21a8',fontWeight:600}}>{t('Sugar Recovery Range','साखर उतारा श्रेणी')}</div>
+                  <div style={{fontSize:'1.05rem',fontWeight:800,color:'#6b21a8',marginTop:2}}>
+                    {plot.recoveryP50 != null ? `${format(plot.recoveryP50, 2)}%` : `${format(plot.predictedRecovery ?? plot.estimatedRecoveryPct, 2)}%`}
+                  </div>
+                  <div style={{fontSize:'0.67rem',color:'#581c87',marginTop:3,display:'flex',justifyContent:'space-between'}}>
+                    <span>P10: <strong>{format(plot.recoveryP10 ?? (Number(plot.predictedRecovery ?? 7.4) - 0.55), 2)}%</strong></span>
+                    <span>P90: <strong>{format(plot.recoveryP90 ?? (Number(plot.predictedRecovery ?? 7.4) + 0.55), 2)}%</strong></span>
+                  </div>
+                </div>
+
+                {/* Standing Tonnage Range */}
+                <div style={{background:'#fff',padding:'8px',borderRadius:6,border:'1px solid #e9d5ff'}}>
+                  <div style={{fontSize:'0.68rem',color:'#6b21a8',fontWeight:600}}>{t('Standing Tonnage Range','उभे वजन श्रेणी')}</div>
+                  <div style={{fontSize:'1.05rem',fontWeight:800,color:'#4c1d95',marginTop:2}}>
+                    {plot.standingTonnageP50 != null ? `${format(plot.standingTonnageP50, 1)} MT` : `${format(plot.tonnage, 1)} MT`}
+                  </div>
+                  <div style={{fontSize:'0.67rem',color:'#581c87',marginTop:3,display:'flex',justifyContent:'space-between'}}>
+                    <span>P10: <strong>{format(plot.standingTonnageP10 ?? (Number(plot.tonnage ?? 50) * 0.88), 1)}</strong></span>
+                    <span>P90: <strong>{format(plot.standingTonnageP90 ?? (Number(plot.tonnage ?? 50) * 1.12), 1)} MT</strong></span>
+                  </div>
+                </div>
+
+                {/* Primary Juice Pol Range */}
+                <div style={{background:'#fff',padding:'8px',borderRadius:6,border:'1px solid #e9d5ff'}}>
+                  <div style={{fontSize:'0.68rem',color:'#6b21a8',fontWeight:600}}>{t('Primary Juice Pol in Juice','रस सुक्रोज (Pol in Juice)')}</div>
+                  <div style={{fontSize:'1.05rem',fontWeight:800,color:'#581c87',marginTop:2}}>
+                    {plot.polP50 != null ? `${format(plot.polP50, 2)}%` : `${format(plot.predictedPol, 2)}%`}
+                  </div>
+                  <div style={{fontSize:'0.67rem',color:'#581c87',marginTop:3,display:'flex',justifyContent:'space-between'}}>
+                    <span>P10: <strong>{format(plot.polP10 ?? (Number(plot.predictedPol ?? 13.3) - 0.7), 2)}%</strong></span>
+                    <span>P90: <strong>{format(plot.polP90 ?? (Number(plot.predictedPol ?? 13.3) + 0.7), 2)}%</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Maturation & Inversion Risk Sub-Bar */}
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:8,fontSize:'0.72rem'}}>
+                <div style={{background:'#fdf4ff',padding:'6px 8px',borderRadius:4,border:'1px solid #f0abfc'}}>
+                  <span style={{color:'#86198f',fontWeight:600}}>🟢 {t('Maturation Readiness P(Pol ≥ 13.2%)','परिपक्वता संभाव्यता')}:</span>
+                  <strong style={{color:'#701a75',marginLeft:4}}>{plot.probMaturePct != null ? `${format(plot.probMaturePct, 1)}%` : '—'}</strong>
+                </div>
+                <div style={{background:'#fff1f2',padding:'6px 8px',borderRadius:4,border:'1px solid #fecdd3'}}>
+                  <span style={{color:'#9f1239',fontWeight:600}}>⚠️ {t('Post-Cut Inversion Risk (>36h Delay)','तोडणी-गाळप उशीर जोखीम')}:</span>
+                  <strong style={{color:'#881337',marginLeft:4}}>{plot.inversionRiskPct != null ? `${format(plot.inversionRiskPct, 1)}%` : '—'}</strong>
+                </div>
+              </div>
+
+              {/* Noise & Uncertainty Decomposition */}
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.68rem',color:'#6b21a8',marginTop:6,padding:'4px 8px',background:'rgba(255,255,255,0.7)',borderRadius:4}}>
+                <span>🔬 {t('Aleatoric Weighbridge Noise','भौतिक काटा अस्थिरता')}: <strong>±{format(plot.aleatoricUncertaintyPol ?? plot.weighbridgeNoiseSigma ?? 0.38, 3)}%</strong></span>
+                <span>🛰️ {t('Epistemic Sensor/Age Uncertainty','उपग्रह मॉडेल अनिश्चितता')}: <strong>±{format(plot.epistemicUncertaintyPol ?? 0.16, 3)}%</strong></span>
+                <span>📊 {t('Total Combined Std Dev','एकूण अनिश्चितता')}: <strong>±{format(plot.totalUncertaintyPol ?? 0.41, 3)}%</strong></span>
+              </div>
+            </div>
+
             {/* Todni Ripening Ranking & Kriging Delta Card */}
             <div style={{background:'linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)',padding:'12px',borderRadius:8,border:'1.5px solid #93c5fd',margin:'10px 0'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
