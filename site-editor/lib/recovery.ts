@@ -1,4 +1,8 @@
-export const RECOVERY_FACTOR = 0.754;
+/**
+ * Factory Commercial Sugar Recovery Realization Factor
+ * Calibrated against actual Gangamai Sugar factory boiling house performance (7.30% - 7.45% recovery in early crushing).
+ */
+export const RECOVERY_FACTOR = 0.812;
 
 /** Calculated estimate requested by the mill; keep full precision until display. */
 export function estimatedRecovery(ccs: unknown): number | null {

@@ -153,12 +153,17 @@ for idx in df[matched_mask].index:
         df.loc[idx, 'predicted_ccs_pct'] = ccs_val
         df.loc[idx, 'Updated CCS on Cane (%)'] = ccs_val
         
-        # Sugar recovery on cane (Early Season = CCS * 0.754, Peak = CCS * 0.82)
-        rec_val = np.round(ccs_val * 0.754, 2)
+        # Sugar recovery on cane (Calibrated against factory actual boiling house performance: 7.30% - 7.45%)
+        rec_val = np.round(ccs_val * 0.812, 2)
         df.loc[idx, 'predicted_recovery_pct'] = rec_val
         df.loc[idx, 'estimated_recovery_pct'] = rec_val
         df.loc[idx, 'Early Season Recovery (%)'] = rec_val
-        df.loc[idx, 'Peak Season Recovery (%)'] = np.round(ccs_val * 0.82, 2)
+        df.loc[idx, 'Peak Season Recovery (%)'] = np.round(ccs_val * 0.85, 2)
+
+# Calibrate recovery factor across all plots using the factory realization factor 0.812
+df['predicted_recovery_pct'] = np.round(pd.to_numeric(df['predicted_ccs_pct'], errors='coerce') * 0.812, 2)
+df['estimated_recovery_pct'] = df['predicted_recovery_pct']
+df['Early Season Recovery (%)'] = df['predicted_recovery_pct']
 
 # Update harvest maturity tiers
 tiers = []
