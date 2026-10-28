@@ -33,6 +33,23 @@ python -m http.server 8123 --directory web
 
 Then open <http://localhost:8123> and upload the season register CSV.
 
+## Publishing ikshuintelligence.com
+
+The public website bundle is `cloudflare_public/`. Edit those files in this
+repository from Antigravity, then commit and push the intended site changes to
+`main`. The GitHub Actions workflow deploys that folder to Cloudflare Pages;
+ChatGPT site-editor access is not needed for updates.
+
+Before the first deploy, add these values in the GitHub repository settings:
+
+- Actions secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`. The token
+  needs Cloudflare Pages Edit permission for the account.
+- Repository variable `CLOUDFLARE_PAGES_PROJECT_NAME`, set to the existing
+  Cloudflare Pages project name for ikshuintelligence.com.
+
+The separate mill access-key screen in the website is unchanged. This publishing
+workflow does not remove the site's console access control.
+
 Column names are matched loosely (exact, then normalised, then prefix), so the
 factory's own headers work unchanged — including the unbalanced
 `Area (Hectare` header in the sample file. Hectares are detected from the
