@@ -23,11 +23,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.268203,
     "lon": 75.949671,
     "ndvi": 0.657,
-    "brix": 14.91,
-    "pol": 13.24,
+    "brix": 15.88,
+    "pol": 12.96,
     "purity": 88.8,
-    "ccs": 9.18,
-    "recovery": 7.47,
+    "ccs": 8.61,
+    "recovery": 7.01,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 74.2,
@@ -51,8 +51,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.99,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2860.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2992.0,
+      "cumulative_precip_mm": 60.2,
+      "mean_dtr_celsius": 12.41,
+      "clay_pct": 46.5,
+      "soc_pct": 0.67
     }
   },
   {
@@ -72,11 +75,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.267654,
     "lon": 75.949903,
     "ndvi": 0.717,
-    "brix": 14.65,
-    "pol": 13.12,
+    "brix": 16.41,
+    "pol": 13.7,
     "purity": 89.6,
-    "ccs": 9.13,
-    "recovery": 7.43,
+    "ccs": 9.21,
+    "recovery": 7.5,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 219.4,
@@ -100,8 +103,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.95,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3113.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3193.0,
+      "cumulative_precip_mm": 60.2,
+      "mean_dtr_celsius": 12.41,
+      "clay_pct": 46.5,
+      "soc_pct": 0.67
     }
   },
   {
@@ -121,11 +127,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.268217,
     "lon": 75.948509,
     "ndvi": 0.718,
-    "brix": 14.52,
-    "pol": 13.06,
+    "brix": 15.83,
+    "pol": 13.46,
     "purity": 89.9,
-    "ccs": 9.11,
-    "recovery": 7.42,
+    "ccs": 9.13,
+    "recovery": 7.43,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 88.2,
@@ -149,8 +155,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.19,
       "cadastral_wind_alignment": 0.9,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3160.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3236.0,
+      "cumulative_precip_mm": 60.2,
+      "mean_dtr_celsius": 12.41,
+      "clay_pct": 46.5,
+      "soc_pct": 0.67
     }
   },
   {
@@ -170,11 +179,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.316625,
     "lon": 75.823336,
     "ndvi": 0.66,
-    "brix": 15.12,
-    "pol": 13.29,
+    "brix": 15.36,
+    "pol": 13.28,
     "purity": 87.9,
-    "ccs": 9.17,
-    "recovery": 7.46,
+    "ccs": 9.09,
+    "recovery": 7.4,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 150.4,
@@ -198,8 +207,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.49,
       "cadastral_wind_alignment": 0.71,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2871.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2970.0,
+      "cumulative_precip_mm": 62.4,
+      "mean_dtr_celsius": 12.29,
+      "clay_pct": 48.8,
+      "soc_pct": 0.77
     }
   },
   {
@@ -219,11 +231,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.462122,
     "lon": 75.725748,
     "ndvi": 0.661,
-    "brix": 15.4,
-    "pol": 13.28,
+    "brix": 15.65,
+    "pol": 13.39,
     "purity": 86.2,
-    "ccs": 9.08,
-    "recovery": 7.39,
+    "ccs": 9.11,
+    "recovery": 7.42,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 335.2,
@@ -247,8 +259,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.03,
       "cadastral_wind_alignment": 0.41,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2987.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3017.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 44.8,
+      "soc_pct": 0.76
     }
   },
   {
@@ -268,11 +283,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.316675,
     "lon": 75.824725,
     "ndvi": 0.662,
-    "brix": 14.89,
-    "pol": 13.48,
+    "brix": 15.3,
+    "pol": 13.07,
     "purity": 90.5,
-    "ccs": 9.43,
-    "recovery": 7.68,
+    "ccs": 8.89,
+    "recovery": 7.24,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 119.7,
@@ -296,8 +311,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.66,
       "cadastral_wind_alignment": 0.97,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2939.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3019.0,
+      "cumulative_precip_mm": 62.4,
+      "mean_dtr_celsius": 12.29,
+      "clay_pct": 48.9,
+      "soc_pct": 0.73
     }
   },
   {
@@ -317,11 +335,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.317558,
     "lon": 75.82376,
     "ndvi": 0.663,
-    "brix": 15.42,
-    "pol": 13.41,
+    "brix": 15.79,
+    "pol": 13.25,
     "purity": 87.0,
-    "ccs": 9.2,
-    "recovery": 7.49,
+    "ccs": 8.93,
+    "recovery": 7.27,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 152.6,
@@ -345,8 +363,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.06,
       "cadastral_wind_alignment": 0.35,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2874.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2963.0,
+      "cumulative_precip_mm": 62.4,
+      "mean_dtr_celsius": 12.29,
+      "clay_pct": 48.8,
+      "soc_pct": 0.77
     }
   },
   {
@@ -366,11 +387,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.015893,
     "lon": 75.349048,
     "ndvi": 0.664,
-    "brix": 15.85,
-    "pol": 13.85,
+    "brix": 16.11,
+    "pol": 14.61,
     "purity": 87.4,
-    "ccs": 9.53,
-    "recovery": 7.76,
+    "ccs": 10.23,
+    "recovery": 8.33,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 103.1,
@@ -394,8 +415,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.06,
       "cadastral_wind_alignment": 0.26,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3007.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2802.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 46.5,
+      "soc_pct": 0.81
     }
   },
   {
@@ -415,11 +439,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.308995,
     "lon": 75.821741,
     "ndvi": 0.665,
-    "brix": 15.22,
-    "pol": 13.59,
+    "brix": 15.15,
+    "pol": 13.2,
     "purity": 89.3,
-    "ccs": 9.44,
-    "recovery": 7.68,
+    "ccs": 9.07,
+    "recovery": 7.38,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 91.1,
@@ -443,8 +467,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.02,
       "cadastral_wind_alignment": 0.39,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2873.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2956.0,
+      "cumulative_precip_mm": 62.4,
+      "mean_dtr_celsius": 12.29,
+      "clay_pct": 48.0,
+      "soc_pct": 0.73
     }
   },
   {
@@ -464,11 +491,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.015604,
     "lon": 75.34904,
     "ndvi": 0.666,
-    "brix": 15.71,
-    "pol": 14.13,
+    "brix": 15.93,
+    "pol": 14.54,
     "purity": 89.9,
-    "ccs": 9.85,
-    "recovery": 8.02,
+    "ccs": 10.21,
+    "recovery": 8.31,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 110.5,
@@ -492,8 +519,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.41,
       "cadastral_wind_alignment": 0.08,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2954.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2767.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 46.5,
+      "soc_pct": 0.81
     }
   },
   {
@@ -513,11 +543,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.015286,
     "lon": 75.349066,
     "ndvi": 0.667,
-    "brix": 15.67,
-    "pol": 13.92,
+    "brix": 15.81,
+    "pol": 14.24,
     "purity": 88.8,
-    "ccs": 9.65,
-    "recovery": 7.86,
+    "ccs": 9.94,
+    "recovery": 8.09,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 100.3,
@@ -541,8 +571,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.58,
       "cadastral_wind_alignment": 0.13,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2880.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2708.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 46.5,
+      "soc_pct": 0.81
     }
   },
   {
@@ -562,11 +595,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.016548,
     "lon": 75.350476,
     "ndvi": 0.668,
-    "brix": 15.84,
-    "pol": 14.17,
+    "brix": 15.99,
+    "pol": 14.53,
     "purity": 89.5,
-    "ccs": 9.86,
-    "recovery": 8.03,
+    "ccs": 10.18,
+    "recovery": 8.29,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 106.1,
@@ -590,8 +623,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.47,
       "cadastral_wind_alignment": 0.11,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2901.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2721.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 46.5,
+      "soc_pct": 0.81
     }
   },
   {
@@ -611,11 +647,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.44061,
     "lon": 75.87686,
     "ndvi": 0.669,
-    "brix": 15.49,
-    "pol": 13.88,
+    "brix": 15.84,
+    "pol": 13.63,
     "purity": 89.6,
-    "ccs": 9.66,
-    "recovery": 7.86,
+    "ccs": 9.3,
+    "recovery": 7.57,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 185.6,
@@ -639,8 +675,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.75,
       "cadastral_wind_alignment": 0.81,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3086.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3106.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.7,
+      "soc_pct": 0.8
     }
   },
   {
@@ -660,11 +699,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.439809,
     "lon": 75.877437,
     "ndvi": 0.67,
-    "brix": 16.19,
-    "pol": 14.37,
+    "brix": 15.98,
+    "pol": 13.51,
     "purity": 88.8,
-    "ccs": 9.96,
-    "recovery": 8.11,
+    "ccs": 9.14,
+    "recovery": 7.44,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 81.0,
@@ -688,8 +727,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.14,
       "cadastral_wind_alignment": 0.1,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2969.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3024.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.7,
+      "soc_pct": 0.8
     }
   },
   {
@@ -709,11 +751,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.411598,
     "lon": 75.110921,
     "ndvi": 0.671,
-    "brix": 15.35,
-    "pol": 13.68,
+    "brix": 15.36,
+    "pol": 13.49,
     "purity": 89.1,
-    "ccs": 9.5,
-    "recovery": 7.73,
+    "ccs": 9.3,
+    "recovery": 7.57,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 77.3,
@@ -737,8 +779,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.07,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2904.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2814.0,
+      "cumulative_precip_mm": 81.8,
+      "mean_dtr_celsius": 11.25,
+      "clay_pct": 45.5,
+      "soc_pct": 0.93
     }
   },
   {
@@ -758,11 +803,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.016775,
     "lon": 75.349386,
     "ndvi": 0.672,
-    "brix": 15.98,
-    "pol": 14.15,
+    "brix": 16.15,
+    "pol": 14.51,
     "purity": 88.5,
-    "ccs": 9.8,
-    "recovery": 7.98,
+    "ccs": 10.11,
+    "recovery": 8.23,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 111.3,
@@ -786,8 +831,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.99,
       "cadastral_wind_alignment": 0.61,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2968.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2762.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 46.5,
+      "soc_pct": 0.81
     }
   },
   {
@@ -807,11 +855,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.016848,
     "lon": 75.348651,
     "ndvi": 0.673,
-    "brix": 15.75,
-    "pol": 13.9,
+    "brix": 15.89,
+    "pol": 14.17,
     "purity": 88.2,
-    "ccs": 9.61,
-    "recovery": 7.82,
+    "ccs": 9.84,
+    "recovery": 8.01,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 98.9,
@@ -835,8 +883,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.4,
       "cadastral_wind_alignment": 0.57,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2894.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2703.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 46.5,
+      "soc_pct": 0.81
     }
   },
   {
@@ -856,11 +907,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.016859,
     "lon": 75.349709,
     "ndvi": 0.674,
-    "brix": 15.7,
-    "pol": 13.82,
+    "brix": 16.02,
+    "pol": 14.4,
     "purity": 88.0,
-    "ccs": 9.54,
-    "recovery": 7.77,
+    "ccs": 10.04,
+    "recovery": 8.17,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 102.0,
@@ -884,8 +935,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.73,
       "cadastral_wind_alignment": 0.81,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2904.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2767.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 46.5,
+      "soc_pct": 0.81
     }
   },
   {
@@ -905,11 +959,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.01479,
     "lon": 75.350784,
     "ndvi": 0.675,
-    "brix": 15.5,
-    "pol": 14.01,
+    "brix": 15.89,
+    "pol": 14.6,
     "purity": 90.4,
-    "ccs": 9.79,
-    "recovery": 7.97,
+    "ccs": 10.28,
+    "recovery": 8.37,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 108.7,
@@ -933,8 +987,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.33,
       "cadastral_wind_alignment": 0.96,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2899.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2762.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 46.3,
+      "soc_pct": 0.84
     }
   },
   {
@@ -954,11 +1011,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.439849,
     "lon": 75.878046,
     "ndvi": 0.676,
-    "brix": 16.23,
-    "pol": 14.25,
+    "brix": 15.97,
+    "pol": 13.57,
     "purity": 87.8,
-    "ccs": 9.82,
-    "recovery": 7.99,
+    "ccs": 9.21,
+    "recovery": 7.5,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 169.6,
@@ -982,8 +1039,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.02,
       "cadastral_wind_alignment": 0.1,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2963.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3056.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.2,
+      "soc_pct": 0.81
     }
   },
   {
@@ -1003,11 +1063,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.464609,
     "lon": 75.300325,
     "ndvi": 0.678,
-    "brix": 16.03,
+    "brix": 16.24,
     "pol": 13.57,
     "purity": 84.7,
-    "ccs": 9.19,
-    "recovery": 7.48,
+    "ccs": 9.13,
+    "recovery": 7.43,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 48.4,
@@ -1031,8 +1091,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 4.44,
       "cadastral_wind_alignment": 0.33,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2833.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2870.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 50.2,
+      "soc_pct": 2.05
     }
   },
   {
@@ -1052,11 +1115,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.43391,
     "lon": 75.250005,
     "ndvi": 0.68,
-    "brix": 15.91,
-    "pol": 13.5,
+    "brix": 15.69,
+    "pol": 13.68,
     "purity": 84.8,
-    "ccs": 9.15,
-    "recovery": 7.45,
+    "ccs": 9.4,
+    "recovery": 7.65,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 132.0,
@@ -1080,8 +1143,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.36,
       "cadastral_wind_alignment": 0.37,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3233.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3214.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 48.8,
+      "soc_pct": 0.68
     }
   },
   {
@@ -1101,11 +1167,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.439216,
     "lon": 75.867932,
     "ndvi": 0.705,
-    "brix": 16.34,
-    "pol": 14.22,
+    "brix": 17.14,
+    "pol": 14.33,
     "purity": 87.0,
-    "ccs": 9.76,
-    "recovery": 7.94,
+    "ccs": 9.64,
+    "recovery": 7.85,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 86.8,
@@ -1129,8 +1195,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.15,
       "cadastral_wind_alignment": 0.26,
       "cultivar_fiber_pct": 12.5,
-      "accumulated_gdd": 3039.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3058.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.8,
+      "soc_pct": 0.72
     }
   },
   {
@@ -1150,11 +1219,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.439871,
     "lon": 75.866801,
     "ndvi": 0.706,
-    "brix": 15.25,
-    "pol": 13.45,
+    "brix": 16.85,
+    "pol": 14.15,
     "purity": 88.2,
-    "ccs": 9.29,
-    "recovery": 7.56,
+    "ccs": 9.54,
+    "recovery": 7.77,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 286.8,
@@ -1178,8 +1247,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.99,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 12.5,
-      "accumulated_gdd": 3094.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3108.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -1199,11 +1271,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.108914,
     "lon": 75.335346,
     "ndvi": 0.687,
-    "brix": 15.89,
-    "pol": 13.83,
+    "brix": 16.12,
+    "pol": 14.17,
     "purity": 87.0,
-    "ccs": 9.49,
-    "recovery": 7.72,
+    "ccs": 9.77,
+    "recovery": 7.95,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 87.8,
@@ -1227,8 +1299,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.32,
       "cadastral_wind_alignment": 0.73,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3528.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3249.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 47.8,
+      "soc_pct": 0.76
     }
   },
   {
@@ -1248,11 +1323,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.328424,
     "lon": 75.139753,
     "ndvi": 0.624,
-    "brix": 15.38,
-    "pol": 13.45,
+    "brix": 15.14,
+    "pol": 13.27,
     "purity": 87.5,
-    "ccs": 9.25,
-    "recovery": 7.53,
+    "ccs": 9.14,
+    "recovery": 7.44,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 92.4,
@@ -1276,8 +1351,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.35,
       "cadastral_wind_alignment": 0.36,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2861.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2912.0,
+      "cumulative_precip_mm": 74.5,
+      "mean_dtr_celsius": 11.48,
+      "clay_pct": 46.7,
+      "soc_pct": 0.72
     }
   },
   {
@@ -1297,11 +1375,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.316994,
     "lon": 75.198745,
     "ndvi": 0.689,
-    "brix": 15.57,
-    "pol": 13.62,
+    "brix": 16.29,
+    "pol": 14.0,
     "purity": 87.5,
-    "ccs": 9.37,
-    "recovery": 7.63,
+    "ccs": 9.55,
+    "recovery": 7.77,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 109.8,
@@ -1325,8 +1403,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.35,
       "cadastral_wind_alignment": 0.32,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3165.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3161.0,
+      "cumulative_precip_mm": 74.5,
+      "mean_dtr_celsius": 11.48,
+      "clay_pct": 46.0,
+      "soc_pct": 0.75
     }
   },
   {
@@ -1346,11 +1427,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.446959,
     "lon": 75.544598,
     "ndvi": 0.626,
-    "brix": 15.77,
-    "pol": 13.65,
+    "brix": 15.41,
+    "pol": 13.19,
     "purity": 86.6,
-    "ccs": 9.35,
-    "recovery": 7.61,
+    "ccs": 8.98,
+    "recovery": 7.31,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 90.2,
@@ -1374,8 +1455,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.41,
       "cadastral_wind_alignment": 0.17,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2877.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2894.0,
+      "cumulative_precip_mm": 84.3,
+      "mean_dtr_celsius": 11.51,
+      "clay_pct": 48.8,
+      "soc_pct": 0.7
     }
   },
   {
@@ -1395,11 +1479,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.30203,
     "lon": 75.852626,
     "ndvi": 0.627,
-    "brix": 15.57,
-    "pol": 13.46,
+    "brix": 15.67,
+    "pol": 13.2,
     "purity": 86.5,
-    "ccs": 9.21,
-    "recovery": 7.5,
+    "ccs": 8.91,
+    "recovery": 7.25,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 148.5,
@@ -1423,8 +1507,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.2,
       "cadastral_wind_alignment": 0.27,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3035.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3076.0,
+      "cumulative_precip_mm": 62.4,
+      "mean_dtr_celsius": 12.29,
+      "clay_pct": 47.3,
+      "soc_pct": 0.92
     }
   },
   {
@@ -1444,11 +1531,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.110646,
     "lon": 75.33507,
     "ndvi": 0.691,
-    "brix": 15.94,
-    "pol": 14.11,
+    "brix": 16.04,
+    "pol": 14.12,
     "purity": 88.5,
-    "ccs": 9.77,
-    "recovery": 7.95,
+    "ccs": 9.75,
+    "recovery": 7.94,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 64.0,
@@ -1472,8 +1559,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.75,
       "cadastral_wind_alignment": 0.49,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3564.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3264.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 49.4,
+      "soc_pct": 0.75
     }
   },
   {
@@ -1493,11 +1583,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.410427,
     "lon": 75.705174,
     "ndvi": 0.629,
-    "brix": 15.18,
-    "pol": 13.57,
+    "brix": 15.41,
+    "pol": 13.2,
     "purity": 89.4,
-    "ccs": 9.44,
-    "recovery": 7.68,
+    "ccs": 8.99,
+    "recovery": 7.32,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 106.7,
@@ -1521,8 +1611,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.92,
       "cadastral_wind_alignment": 0.52,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2957.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2985.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 46.4,
+      "soc_pct": 0.74
     }
   },
   {
@@ -1542,11 +1635,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.409704,
     "lon": 75.705474,
     "ndvi": 0.63,
-    "brix": 15.16,
-    "pol": 13.68,
+    "brix": 15.99,
+    "pol": 13.31,
     "purity": 90.2,
-    "ccs": 9.55,
-    "recovery": 7.77,
+    "ccs": 8.93,
+    "recovery": 7.27,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 90.8,
@@ -1570,8 +1663,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 3.97,
       "cadastral_wind_alignment": 0.71,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2961.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2985.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 47.3,
+      "soc_pct": 0.75
     }
   },
   {
@@ -1591,11 +1687,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.356566,
     "lon": 75.3105,
     "ndvi": 0.695,
-    "brix": 14.91,
-    "pol": 13.59,
+    "brix": 15.73,
+    "pol": 13.5,
     "purity": 91.2,
-    "ccs": 9.54,
-    "recovery": 7.77,
+    "ccs": 9.2,
+    "recovery": 7.49,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 65.5,
@@ -1619,8 +1715,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.48,
       "cadastral_wind_alignment": 0.88,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3157.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3128.0,
+      "cumulative_precip_mm": 74.5,
+      "mean_dtr_celsius": 11.48,
+      "clay_pct": 43.4,
+      "soc_pct": 0.73
     }
   },
   {
@@ -1640,11 +1739,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.262041,
     "lon": 75.981369,
     "ndvi": 0.717,
-    "brix": 15.04,
-    "pol": 13.38,
+    "brix": 15.94,
+    "pol": 13.82,
     "purity": 89.0,
-    "ccs": 9.28,
-    "recovery": 7.55,
+    "ccs": 9.47,
+    "recovery": 7.71,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 71.4,
@@ -1668,8 +1767,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.72,
       "cadastral_wind_alignment": 0.71,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3031.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3074.0,
+      "cumulative_precip_mm": 60.2,
+      "mean_dtr_celsius": 12.41,
+      "clay_pct": 47.0,
+      "soc_pct": 0.68
     }
   },
   {
@@ -1689,11 +1791,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.347531,
     "lon": 75.391772,
     "ndvi": 0.636,
-    "brix": 15.42,
-    "pol": 13.41,
+    "brix": 15.1,
+    "pol": 13.06,
     "purity": 87.0,
-    "ccs": 9.2,
-    "recovery": 7.49,
+    "ccs": 8.94,
+    "recovery": 7.28,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 121.9,
@@ -1717,8 +1819,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.37,
       "cadastral_wind_alignment": 0.23,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2817.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2941.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 47.4,
+      "soc_pct": 0.67
     }
   },
   {
@@ -1738,11 +1843,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.262459,
     "lon": 75.980922,
     "ndvi": 0.719,
-    "brix": 14.7,
-    "pol": 13.19,
+    "brix": 15.81,
+    "pol": 13.8,
     "purity": 89.7,
-    "ccs": 9.19,
-    "recovery": 7.48,
+    "ccs": 9.49,
+    "recovery": 7.72,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 157.2,
@@ -1766,8 +1871,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.29,
       "cadastral_wind_alignment": 0.76,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3001.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3104.0,
+      "cumulative_precip_mm": 60.2,
+      "mean_dtr_celsius": 12.41,
+      "clay_pct": 48.1,
+      "soc_pct": 0.67
     }
   },
   {
@@ -1787,11 +1895,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.346155,
     "lon": 75.412774,
     "ndvi": 0.721,
-    "brix": 14.97,
-    "pol": 13.42,
+    "brix": 16.57,
+    "pol": 14.1,
     "purity": 89.7,
-    "ccs": 9.34,
-    "recovery": 7.6,
+    "ccs": 9.57,
+    "recovery": 7.79,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 101.4,
@@ -1815,8 +1923,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.54,
       "cadastral_wind_alignment": 0.72,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 2975.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3050.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 46.5,
+      "soc_pct": 1.67
     }
   },
   {
@@ -1836,11 +1947,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.514296,
     "lon": 75.089125,
     "ndvi": 0.702,
-    "brix": 14.84,
-    "pol": 13.49,
+    "brix": 16.39,
+    "pol": 14.06,
     "purity": 90.9,
-    "ccs": 9.45,
-    "recovery": 7.69,
+    "ccs": 9.58,
+    "recovery": 7.8,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 123.6,
@@ -1864,8 +1975,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.64,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3099.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3011.0,
+      "cumulative_precip_mm": 81.8,
+      "mean_dtr_celsius": 11.25,
+      "clay_pct": 46.6,
+      "soc_pct": 0.72
     }
   },
   {
@@ -1885,11 +1999,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.42614,
     "lon": 75.714456,
     "ndvi": 0.641,
-    "brix": 15.42,
-    "pol": 13.66,
+    "brix": 15.44,
+    "pol": 13.42,
     "purity": 88.6,
-    "ccs": 9.46,
-    "recovery": 7.7,
+    "ccs": 9.21,
+    "recovery": 7.5,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 62.9,
@@ -1913,8 +2027,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.01,
       "cadastral_wind_alignment": 0.17,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2922.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2985.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 47.0,
+      "soc_pct": 0.99
     }
   },
   {
@@ -1934,11 +2051,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.096374,
     "lon": 75.326473,
     "ndvi": 0.642,
-    "brix": 15.61,
-    "pol": 13.61,
+    "brix": 15.94,
+    "pol": 14.26,
     "purity": 87.2,
-    "ccs": 9.35,
-    "recovery": 7.61,
+    "ccs": 9.92,
+    "recovery": 8.07,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 249.6,
@@ -1962,8 +2079,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.72,
       "cadastral_wind_alignment": 0.55,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3003.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2813.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 47.8,
+      "soc_pct": 0.68
     }
   },
   {
@@ -1983,11 +2103,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.269371,
     "lon": 75.973354,
     "ndvi": 0.724,
-    "brix": 15.02,
-    "pol": 13.39,
+    "brix": 16.22,
+    "pol": 13.94,
     "purity": 89.2,
-    "ccs": 9.3,
-    "recovery": 7.57,
+    "ccs": 9.51,
+    "recovery": 7.74,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 83.8,
@@ -2011,8 +2131,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.78,
       "cadastral_wind_alignment": 0.01,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 2929.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3040.0,
+      "cumulative_precip_mm": 60.2,
+      "mean_dtr_celsius": 12.41,
+      "clay_pct": 47.2,
+      "soc_pct": 0.68
     }
   },
   {
@@ -2032,11 +2155,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.425846,
     "lon": 75.714741,
     "ndvi": 0.644,
-    "brix": 15.04,
-    "pol": 13.12,
+    "brix": 15.61,
+    "pol": 13.55,
     "purity": 87.2,
-    "ccs": 9.02,
-    "recovery": 7.34,
+    "ccs": 9.29,
+    "recovery": 7.56,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 74.0,
@@ -2060,8 +2183,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.24,
       "cadastral_wind_alignment": 0.63,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3200.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3210.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 47.1,
+      "soc_pct": 0.96
     }
   },
   {
@@ -2081,11 +2207,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.558762,
     "lon": 75.852105,
     "ndvi": 0.727,
-    "brix": 15.75,
-    "pol": 13.82,
+    "brix": 16.66,
+    "pol": 14.32,
     "purity": 87.8,
-    "ccs": 9.53,
-    "recovery": 7.76,
+    "ccs": 9.77,
+    "recovery": 7.95,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 59.8,
@@ -2109,8 +2235,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.07,
       "cadastral_wind_alignment": 0.26,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 3070.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3074.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 49.6,
+      "soc_pct": 2.55
     }
   },
   {
@@ -2130,11 +2259,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.41229,
     "lon": 75.533197,
     "ndvi": 0.647,
-    "brix": 15.09,
-    "pol": 13.49,
+    "brix": 15.06,
+    "pol": 13.31,
     "purity": 89.4,
-    "ccs": 9.38,
-    "recovery": 7.64,
+    "ccs": 9.21,
+    "recovery": 7.5,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 106.0,
@@ -2158,8 +2287,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.71,
       "cadastral_wind_alignment": 0.68,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2858.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2882.0,
+      "cumulative_precip_mm": 84.3,
+      "mean_dtr_celsius": 11.51,
+      "clay_pct": 47.1,
+      "soc_pct": 0.65
     }
   },
   {
@@ -2179,11 +2311,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.33708,
     "lon": 75.557422,
     "ndvi": 0.648,
-    "brix": 15.16,
-    "pol": 13.22,
+    "brix": 15.52,
+    "pol": 13.31,
     "purity": 87.2,
-    "ccs": 9.08,
-    "recovery": 7.39,
+    "ccs": 9.07,
+    "recovery": 7.38,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 128.8,
@@ -2207,8 +2339,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.58,
       "cadastral_wind_alignment": 0.74,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3000.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3044.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 48.6,
+      "soc_pct": 0.76
     }
   },
   {
@@ -2228,11 +2363,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.269513,
     "lon": 75.973313,
     "ndvi": 0.649,
-    "brix": 15.54,
-    "pol": 14.31,
+    "brix": 16.13,
+    "pol": 13.63,
     "purity": 92.1,
-    "ccs": 10.09,
-    "recovery": 8.21,
+    "ccs": 9.22,
+    "recovery": 7.51,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 74.3,
@@ -2256,8 +2391,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.8,
       "cadastral_wind_alignment": 0.83,
       "cultivar_fiber_pct": 11.9,
-      "accumulated_gdd": 3012.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3080.0,
+      "cumulative_precip_mm": 60.2,
+      "mean_dtr_celsius": 12.41,
+      "clay_pct": 47.2,
+      "soc_pct": 0.68
     }
   },
   {
@@ -2277,11 +2415,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.55873,
     "lon": 75.852162,
     "ndvi": 0.73,
-    "brix": 15.62,
-    "pol": 13.75,
+    "brix": 16.85,
+    "pol": 14.43,
     "purity": 88.0,
-    "ccs": 9.49,
-    "recovery": 7.72,
+    "ccs": 9.83,
+    "recovery": 8.0,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 121.0,
@@ -2305,8 +2443,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.17,
       "cadastral_wind_alignment": 0.11,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 3102.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3091.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 49.6,
+      "soc_pct": 2.55
     }
   },
   {
@@ -2326,11 +2467,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.421436,
     "lon": 75.487932,
     "ndvi": 0.651,
-    "brix": 15.35,
-    "pol": 13.46,
+    "brix": 15.26,
+    "pol": 13.17,
     "purity": 87.7,
-    "ccs": 9.27,
-    "recovery": 7.55,
+    "ccs": 9.0,
+    "recovery": 7.33,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 90.4,
@@ -2354,8 +2495,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.37,
       "cadastral_wind_alignment": 0.54,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2891.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2894.0,
+      "cumulative_precip_mm": 84.3,
+      "mean_dtr_celsius": 11.51,
+      "clay_pct": 47.8,
+      "soc_pct": 0.62
     }
   },
   {
@@ -2375,11 +2519,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.426673,
     "lon": 75.714652,
     "ndvi": 0.652,
-    "brix": 15.5,
-    "pol": 13.74,
+    "brix": 15.45,
+    "pol": 13.37,
     "purity": 88.7,
-    "ccs": 9.52,
-    "recovery": 7.75,
+    "ccs": 9.15,
+    "recovery": 7.45,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 156.6,
@@ -2403,8 +2547,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.42,
       "cadastral_wind_alignment": 0.32,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2963.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2985.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 47.0,
+      "soc_pct": 0.99
     }
   },
   {
@@ -2424,11 +2571,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.558782,
     "lon": 75.852294,
     "ndvi": 0.733,
-    "brix": 15.7,
-    "pol": 13.72,
+    "brix": 16.82,
+    "pol": 14.34,
     "purity": 87.4,
-    "ccs": 9.44,
-    "recovery": 7.68,
+    "ccs": 9.74,
+    "recovery": 7.93,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 56.8,
@@ -2452,8 +2599,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.9,
       "cadastral_wind_alignment": 0.19,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 3070.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3051.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 49.6,
+      "soc_pct": 2.55
     }
   },
   {
@@ -2474,10 +2624,10 @@ window.IKSHU_PLOTS = [
     "lon": 75.714675,
     "ndvi": 0.654,
     "brix": 15.47,
-    "pol": 13.83,
+    "pol": 13.4,
     "purity": 89.4,
-    "ccs": 9.62,
-    "recovery": 7.83,
+    "ccs": 9.18,
+    "recovery": 7.47,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 157.4,
@@ -2501,8 +2651,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.15,
       "cadastral_wind_alignment": 0.42,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2971.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2985.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 47.0,
+      "soc_pct": 0.99
     }
   },
   {
@@ -2522,11 +2675,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.358234,
     "lon": 75.296601,
     "ndvi": 0.714,
-    "brix": 15.77,
-    "pol": 13.89,
+    "brix": 15.67,
+    "pol": 13.53,
     "purity": 88.1,
-    "ccs": 9.59,
-    "recovery": 7.81,
+    "ccs": 9.25,
+    "recovery": 7.53,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 68.9,
@@ -2550,8 +2703,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.28,
       "cadastral_wind_alignment": 0.95,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3155.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3120.0,
+      "cumulative_precip_mm": 74.5,
+      "mean_dtr_celsius": 11.48,
+      "clay_pct": 46.3,
+      "soc_pct": 0.7
     }
   },
   {
@@ -2571,11 +2727,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.558733,
     "lon": 75.851202,
     "ndvi": 0.735,
-    "brix": 15.57,
-    "pol": 13.68,
+    "brix": 16.59,
+    "pol": 14.35,
     "purity": 87.9,
-    "ccs": 9.43,
-    "recovery": 7.68,
+    "ccs": 9.82,
+    "recovery": 7.99,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 189.4,
@@ -2599,8 +2755,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.2,
       "cadastral_wind_alignment": 0.57,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 3107.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3074.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 49.2,
+      "soc_pct": 2.68
     }
   },
   {
@@ -2620,11 +2779,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.426292,
     "lon": 75.714266,
     "ndvi": 0.657,
-    "brix": 14.65,
-    "pol": 13.32,
+    "brix": 15.41,
+    "pol": 13.33,
     "purity": 90.9,
-    "ccs": 9.34,
-    "recovery": 7.6,
+    "ccs": 9.12,
+    "recovery": 7.42,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 167.4,
@@ -2648,8 +2807,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.13,
       "cadastral_wind_alignment": 0.94,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2902.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2985.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 47.0,
+      "soc_pct": 0.99
     }
   },
   {
@@ -2669,11 +2831,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.42677,
     "lon": 75.714758,
     "ndvi": 0.658,
-    "brix": 15.4,
-    "pol": 13.58,
+    "brix": 15.41,
+    "pol": 13.39,
     "purity": 88.2,
-    "ccs": 9.38,
-    "recovery": 7.64,
+    "ccs": 9.18,
+    "recovery": 7.47,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 238.5,
@@ -2697,8 +2859,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.62,
       "cadastral_wind_alignment": 0.02,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2906.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2985.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 47.0,
+      "soc_pct": 0.99
     }
   },
   {
@@ -2718,11 +2883,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.559346,
     "lon": 75.877463,
     "ndvi": 0.659,
-    "brix": 15.11,
-    "pol": 13.58,
+    "brix": 15.47,
+    "pol": 13.28,
     "purity": 89.9,
-    "ccs": 9.47,
-    "recovery": 7.71,
+    "ccs": 9.05,
+    "recovery": 7.37,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 133.6,
@@ -2746,8 +2911,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.37,
       "cadastral_wind_alignment": 0.52,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2961.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3056.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 48.9,
+      "soc_pct": 0.77
     }
   },
   {
@@ -2767,11 +2935,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.405736,
     "lon": 75.439792,
     "ndvi": 0.66,
-    "brix": 14.92,
-    "pol": 13.37,
+    "brix": 15.08,
+    "pol": 13.21,
     "purity": 89.6,
-    "ccs": 9.31,
-    "recovery": 7.58,
+    "ccs": 9.1,
+    "recovery": 7.41,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 152.8,
@@ -2795,8 +2963,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.18,
       "cadastral_wind_alignment": 0.81,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2845.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2894.0,
+      "cumulative_precip_mm": 84.3,
+      "mean_dtr_celsius": 11.51,
+      "clay_pct": 46.3,
+      "soc_pct": 0.67
     }
   },
   {
@@ -2816,11 +2987,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.252404,
     "lon": 75.475393,
     "ndvi": 0.661,
-    "brix": 14.96,
-    "pol": 13.22,
+    "brix": 15.36,
+    "pol": 13.28,
     "purity": 88.4,
-    "ccs": 9.14,
-    "recovery": 7.44,
+    "ccs": 9.09,
+    "recovery": 7.4,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 64.6,
@@ -2844,8 +3015,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.98,
       "cadastral_wind_alignment": 0.98,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2960.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3038.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 46.7,
+      "soc_pct": 1.54
     }
   },
   {
@@ -2865,11 +3039,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.559063,
     "lon": 75.852496,
     "ndvi": 0.74,
-    "brix": 15.83,
-    "pol": 13.88,
+    "brix": 16.68,
+    "pol": 14.39,
     "purity": 87.7,
-    "ccs": 9.56,
-    "recovery": 7.78,
+    "ccs": 9.84,
+    "recovery": 8.01,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 120.8,
@@ -2893,8 +3067,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 3.05,
       "cadastral_wind_alignment": 0.21,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 3076.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3099.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 49.6,
+      "soc_pct": 2.55
     }
   },
   {
@@ -2914,11 +3091,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.252329,
     "lon": 75.475385,
     "ndvi": 0.663,
-    "brix": 14.96,
-    "pol": 13.23,
+    "brix": 15.89,
+    "pol": 13.35,
     "purity": 88.4,
-    "ccs": 9.15,
-    "recovery": 7.45,
+    "ccs": 9.0,
+    "recovery": 7.33,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 74.8,
@@ -2942,8 +3119,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.17,
       "cadastral_wind_alignment": 0.95,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2976.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3044.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 46.7,
+      "soc_pct": 1.54
     }
   },
   {
@@ -2964,10 +3144,10 @@ window.IKSHU_PLOTS = [
     "lon": 75.521814,
     "ndvi": 0.664,
     "brix": 15.11,
-    "pol": 13.59,
+    "pol": 13.26,
     "purity": 89.9,
-    "ccs": 9.48,
-    "recovery": 7.72,
+    "ccs": 9.14,
+    "recovery": 7.44,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 73.9,
@@ -2991,8 +3171,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.11,
       "cadastral_wind_alignment": 0.66,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2860.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2894.0,
+      "cumulative_precip_mm": 84.3,
+      "mean_dtr_celsius": 11.51,
+      "clay_pct": 46.7,
+      "soc_pct": 0.59
     }
   },
   {
@@ -3012,11 +3195,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.184441,
     "lon": 75.186511,
     "ndvi": 0.723,
-    "brix": 15.74,
-    "pol": 13.65,
+    "brix": 16.08,
+    "pol": 13.68,
     "purity": 86.7,
-    "ccs": 9.35,
-    "recovery": 7.61,
+    "ccs": 9.29,
+    "recovery": 7.56,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 214.6,
@@ -3040,8 +3223,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.02,
       "cadastral_wind_alignment": 0.85,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3173.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3179.0,
+      "cumulative_precip_mm": 74.5,
+      "mean_dtr_celsius": 11.48,
+      "clay_pct": 47.7,
+      "soc_pct": 0.66
     }
   },
   {
@@ -3061,11 +3247,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.339218,
     "lon": 75.341638,
     "ndvi": 0.666,
-    "brix": 15.4,
-    "pol": 13.38,
+    "brix": 15.59,
+    "pol": 13.17,
     "purity": 86.9,
-    "ccs": 9.18,
-    "recovery": 7.47,
+    "ccs": 8.91,
+    "recovery": 7.25,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 133.6,
@@ -3089,8 +3275,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.19,
       "cadastral_wind_alignment": 0.66,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2979.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3005.0,
+      "cumulative_precip_mm": 74.5,
+      "mean_dtr_celsius": 11.48,
+      "clay_pct": 46.3,
+      "soc_pct": 0.69
     }
   },
   {
@@ -3110,11 +3299,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.53081,
     "lon": 75.520669,
     "ndvi": 0.745,
-    "brix": 15.09,
-    "pol": 13.62,
+    "brix": 16.48,
+    "pol": 14.13,
     "purity": 90.3,
-    "ccs": 9.51,
-    "recovery": 7.74,
+    "ccs": 9.63,
+    "recovery": 7.84,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 83.1,
@@ -3138,8 +3327,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.01,
       "cadastral_wind_alignment": 0.61,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 2940.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2950.0,
+      "cumulative_precip_mm": 84.3,
+      "mean_dtr_celsius": 11.51,
+      "clay_pct": 46.8,
+      "soc_pct": 0.59
     }
   },
   {
@@ -3159,11 +3351,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.184459,
     "lon": 75.185897,
     "ndvi": 0.725,
-    "brix": 15.41,
-    "pol": 13.38,
+    "brix": 16.07,
+    "pol": 13.73,
     "purity": 86.8,
-    "ccs": 9.17,
-    "recovery": 7.46,
+    "ccs": 9.34,
+    "recovery": 7.6,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 32.2,
@@ -3187,8 +3379,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.86,
       "cadastral_wind_alignment": 0.19,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3201.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3196.0,
+      "cumulative_precip_mm": 74.5,
+      "mean_dtr_celsius": 11.48,
+      "clay_pct": 47.7,
+      "soc_pct": 0.66
     }
   },
   {
@@ -3208,11 +3403,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.577785,
     "lon": 75.864752,
     "ndvi": 0.67,
-    "brix": 15.15,
-    "pol": 13.27,
+    "brix": 15.71,
+    "pol": 13.44,
     "purity": 87.6,
-    "ccs": 9.14,
-    "recovery": 7.44,
+    "ccs": 9.15,
+    "recovery": 7.45,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 439.1,
@@ -3236,8 +3431,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.45,
       "cadastral_wind_alignment": 0.72,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3059.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3058.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.5,
+      "soc_pct": 0.75
     }
   },
   {
@@ -3257,11 +3455,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.530082,
     "lon": 75.519681,
     "ndvi": 0.747,
-    "brix": 14.75,
-    "pol": 12.95,
+    "brix": 16.35,
+    "pol": 13.81,
     "purity": 87.8,
-    "ccs": 8.93,
-    "recovery": 7.27,
+    "ccs": 9.34,
+    "recovery": 7.6,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 104.3,
@@ -3285,8 +3483,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.3,
       "cadastral_wind_alignment": 0.84,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 2994.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2977.0,
+      "cumulative_precip_mm": 84.3,
+      "mean_dtr_celsius": 11.51,
+      "clay_pct": 46.8,
+      "soc_pct": 0.59
     }
   },
   {
@@ -3306,11 +3507,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.420532,
     "lon": 75.353846,
     "ndvi": 0.673,
-    "brix": 15.69,
-    "pol": 13.81,
+    "brix": 16.57,
+    "pol": 13.93,
     "purity": 88.0,
-    "ccs": 9.53,
-    "recovery": 7.76,
+    "ccs": 9.4,
+    "recovery": 7.65,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 63.7,
@@ -3334,8 +3535,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 3.21,
       "cadastral_wind_alignment": 0.98,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3001.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2969.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 51.3,
+      "soc_pct": 0.56
     }
   },
   {
@@ -3355,11 +3559,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.420512,
     "lon": 75.354513,
     "ndvi": 0.674,
-    "brix": 15.58,
-    "pol": 13.87,
+    "brix": 15.61,
+    "pol": 13.68,
     "purity": 89.0,
-    "ccs": 9.63,
-    "recovery": 7.84,
+    "ccs": 9.42,
+    "recovery": 7.67,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 58.6,
@@ -3383,8 +3587,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.39,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2902.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2890.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 51.3,
+      "soc_pct": 0.56
     }
   },
   {
@@ -3404,11 +3611,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.361845,
     "lon": 75.38749,
     "ndvi": 0.675,
-    "brix": 15.66,
-    "pol": 13.69,
+    "brix": 15.36,
+    "pol": 13.27,
     "purity": 87.4,
-    "ccs": 9.42,
-    "recovery": 7.67,
+    "ccs": 9.08,
+    "recovery": 7.39,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 83.5,
@@ -3432,8 +3639,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.73,
       "cadastral_wind_alignment": 0.2,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3000.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3032.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 47.9,
+      "soc_pct": 0.73
     }
   },
   {
@@ -3453,11 +3663,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.57367,
     "lon": 75.88399,
     "ndvi": 0.676,
-    "brix": 15.47,
-    "pol": 14.04,
+    "brix": 16.04,
+    "pol": 13.59,
     "purity": 90.8,
-    "ccs": 9.83,
-    "recovery": 8.0,
+    "ccs": 9.21,
+    "recovery": 7.5,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 98.0,
@@ -3481,8 +3691,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.9,
       "cadastral_wind_alignment": 0.74,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3021.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3056.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.2,
+      "soc_pct": 0.71
     }
   },
   {
@@ -3502,11 +3715,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.358644,
     "lon": 75.378259,
     "ndvi": 0.752,
-    "brix": 15.17,
-    "pol": 13.06,
+    "brix": 16.14,
+    "pol": 13.56,
     "purity": 86.1,
-    "ccs": 8.92,
-    "recovery": 7.26,
+    "ccs": 9.15,
+    "recovery": 7.45,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 62.2,
@@ -3530,8 +3743,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.25,
       "cadastral_wind_alignment": 0.12,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3137.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3138.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 47.7,
+      "soc_pct": 0.62
     }
   },
   {
@@ -3551,11 +3767,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.573571,
     "lon": 75.883536,
     "ndvi": 0.678,
-    "brix": 15.31,
-    "pol": 13.92,
+    "brix": 15.95,
+    "pol": 13.61,
     "purity": 90.9,
-    "ccs": 9.76,
-    "recovery": 7.94,
+    "ccs": 9.25,
+    "recovery": 7.53,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 93.6,
@@ -3579,8 +3795,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.35,
       "cadastral_wind_alignment": 0.95,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3020.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3051.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.2,
+      "soc_pct": 0.71
     }
   },
   {
@@ -3600,11 +3819,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.573557,
     "lon": 75.884764,
     "ndvi": 0.679,
-    "brix": 15.84,
-    "pol": 14.5,
+    "brix": 16.24,
+    "pol": 13.82,
     "purity": 91.5,
-    "ccs": 10.19,
-    "recovery": 8.29,
+    "ccs": 9.38,
+    "recovery": 7.64,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 93.8,
@@ -3628,8 +3847,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.93,
       "cadastral_wind_alignment": 0.04,
       "cultivar_fiber_pct": 11.9,
-      "accumulated_gdd": 3024.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3051.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 46.8,
+      "soc_pct": 0.68
     }
   },
   {
@@ -3649,11 +3871,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.573007,
     "lon": 75.884931,
     "ndvi": 0.68,
-    "brix": 15.98,
-    "pol": 14.78,
+    "brix": 16.32,
+    "pol": 13.91,
     "purity": 92.5,
-    "ccs": 10.44,
-    "recovery": 8.5,
+    "ccs": 9.45,
+    "recovery": 7.69,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 93.8,
@@ -3677,8 +3899,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.32,
       "cadastral_wind_alignment": 0.07,
       "cultivar_fiber_pct": 11.9,
-      "accumulated_gdd": 2948.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3051.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 46.8,
+      "soc_pct": 0.68
     }
   },
   {
@@ -3698,11 +3923,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.573258,
     "lon": 75.883505,
     "ndvi": 0.706,
-    "brix": 15.55,
-    "pol": 14.03,
+    "brix": 16.56,
+    "pol": 14.4,
     "purity": 90.2,
-    "ccs": 9.8,
-    "recovery": 7.98,
+    "ccs": 9.88,
+    "recovery": 8.04,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 98.2,
@@ -3726,8 +3951,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.09,
       "cadastral_wind_alignment": 0.54,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 2831.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2963.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.2,
+      "soc_pct": 0.71
     }
   },
   {
@@ -3747,11 +3975,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.573914,
     "lon": 75.88464,
     "ndvi": 0.706,
-    "brix": 15.88,
-    "pol": 14.31,
+    "brix": 16.78,
+    "pol": 14.38,
     "purity": 90.1,
-    "ccs": 9.99,
-    "recovery": 8.13,
+    "ccs": 9.8,
+    "recovery": 7.98,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 94.3,
@@ -3775,8 +4003,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 4.26,
       "cadastral_wind_alignment": 0.45,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 2895.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3013.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 46.8,
+      "soc_pct": 0.68
     }
   },
   {
@@ -3796,11 +4027,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.533725,
     "lon": 75.503574,
     "ndvi": 0.623,
-    "brix": 15.37,
-    "pol": 13.48,
+    "brix": 15.19,
+    "pol": 13.44,
     "purity": 87.7,
-    "ccs": 9.29,
-    "recovery": 7.56,
+    "ccs": 9.3,
+    "recovery": 7.57,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 60.1,
@@ -3824,8 +4055,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.3,
       "cadastral_wind_alignment": 0.34,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2830.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2882.0,
+      "cumulative_precip_mm": 84.3,
+      "mean_dtr_celsius": 11.51,
+      "clay_pct": 48.1,
+      "soc_pct": 1.64
     }
   },
   {
@@ -3845,11 +4079,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.57364,
     "lon": 75.883933,
     "ndvi": 0.708,
-    "brix": 15.62,
-    "pol": 14.09,
+    "brix": 16.56,
+    "pol": 14.41,
     "purity": 90.2,
-    "ccs": 9.84,
-    "recovery": 8.01,
+    "ccs": 9.89,
+    "recovery": 8.05,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 94.4,
@@ -3873,8 +4107,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.06,
       "cadastral_wind_alignment": 0.45,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 2842.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2963.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.2,
+      "soc_pct": 0.71
     }
   },
   {
@@ -3894,11 +4131,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.380426,
     "lon": 75.28645,
     "ndvi": 0.625,
-    "brix": 15.09,
-    "pol": 13.4,
+    "brix": 15.43,
+    "pol": 13.62,
     "purity": 88.8,
-    "ccs": 9.29,
-    "recovery": 7.56,
+    "ccs": 9.41,
+    "recovery": 7.66,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 15.9,
@@ -3922,8 +4159,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.87,
       "cadastral_wind_alignment": 0.98,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2898.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2922.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 47.5,
+      "soc_pct": 0.75
     }
   },
   {
@@ -3943,11 +4183,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.573266,
     "lon": 75.883452,
     "ndvi": 0.626,
-    "brix": 15.2,
-    "pol": 13.57,
+    "brix": 15.29,
+    "pol": 13.1,
     "purity": 89.3,
-    "ccs": 9.43,
-    "recovery": 7.68,
+    "ccs": 8.92,
+    "recovery": 7.26,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 92.8,
@@ -3971,8 +4211,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.54,
       "cadastral_wind_alignment": 0.58,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2910.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3013.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.2,
+      "soc_pct": 0.71
     }
   },
   {
@@ -3992,8 +4235,8 @@ window.IKSHU_PLOTS = [
     "lat": 19.380862,
     "lon": 75.286434,
     "ndvi": 0.627,
-    "brix": 15.21,
-    "pol": 13.46,
+    "brix": 15.54,
+    "pol": 13.55,
     "purity": 88.5,
     "ccs": 9.31,
     "recovery": 7.58,
@@ -4020,8 +4263,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.96,
       "cadastral_wind_alignment": 0.46,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2854.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2876.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 47.5,
+      "soc_pct": 0.75
     }
   },
   {
@@ -4041,11 +4287,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.200938,
     "lon": 75.229367,
     "ndvi": 0.692,
-    "brix": 14.71,
-    "pol": 13.16,
+    "brix": 16.1,
+    "pol": 13.78,
     "purity": 89.5,
-    "ccs": 9.15,
-    "recovery": 7.45,
+    "ccs": 9.38,
+    "recovery": 7.64,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 66.8,
@@ -4069,8 +4315,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.52,
       "cadastral_wind_alignment": 0.99,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3176.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3179.0,
+      "cumulative_precip_mm": 74.5,
+      "mean_dtr_celsius": 11.48,
+      "clay_pct": 47.0,
+      "soc_pct": 0.7
     }
   },
   {
@@ -4090,11 +4339,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.464128,
     "lon": 75.119725,
     "ndvi": 0.629,
-    "brix": 15.37,
-    "pol": 13.69,
+    "brix": 15.56,
+    "pol": 13.66,
     "purity": 89.1,
-    "ccs": 9.5,
-    "recovery": 7.73,
+    "ccs": 9.42,
+    "recovery": 7.67,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 83.4,
@@ -4118,8 +4367,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.34,
       "cadastral_wind_alignment": 0.95,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2982.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2899.0,
+      "cumulative_precip_mm": 81.8,
+      "mean_dtr_celsius": 11.25,
+      "clay_pct": 47.3,
+      "soc_pct": 0.75
     }
   },
   {
@@ -4139,11 +4391,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.112673,
     "lon": 75.329019,
     "ndvi": 0.693,
-    "brix": 15.95,
-    "pol": 14.1,
+    "brix": 16.12,
+    "pol": 14.13,
     "purity": 88.4,
-    "ccs": 9.75,
-    "recovery": 7.94,
+    "ccs": 9.73,
+    "recovery": 7.92,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 111.5,
@@ -4167,8 +4419,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.22,
       "cadastral_wind_alignment": 0.48,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3553.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3264.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.0,
+      "soc_pct": 0.77
     }
   },
   {
@@ -4188,11 +4443,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.112737,
     "lon": 75.328305,
     "ndvi": 0.631,
-    "brix": 15.53,
-    "pol": 13.74,
+    "brix": 15.88,
+    "pol": 14.47,
     "purity": 88.5,
-    "ccs": 9.51,
-    "recovery": 7.74,
+    "ccs": 10.15,
+    "recovery": 8.26,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 80.8,
@@ -4216,8 +4471,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.03,
       "cadastral_wind_alignment": 0.95,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2998.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2797.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.0,
+      "soc_pct": 0.77
     }
   },
   {
@@ -4237,11 +4495,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.11321,
     "lon": 75.328497,
     "ndvi": 0.695,
-    "brix": 15.65,
-    "pol": 13.7,
+    "brix": 15.85,
+    "pol": 13.83,
     "purity": 87.5,
-    "ccs": 9.43,
-    "recovery": 7.68,
+    "ccs": 9.51,
+    "recovery": 7.74,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 107.1,
@@ -4265,8 +4523,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.16,
       "cadastral_wind_alignment": 0.89,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3561.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3264.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.0,
+      "soc_pct": 0.77
     }
   },
   {
@@ -4286,11 +4547,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.129711,
     "lon": 75.384044,
     "ndvi": 0.696,
-    "brix": 15.94,
-    "pol": 14.21,
+    "brix": 16.29,
+    "pol": 14.29,
     "purity": 89.2,
-    "ccs": 9.87,
-    "recovery": 8.03,
+    "ccs": 9.85,
+    "recovery": 8.02,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 165.8,
@@ -4314,8 +4575,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.25,
       "cadastral_wind_alignment": 0.29,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3495.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3500.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 46.7,
+      "soc_pct": 0.95
     }
   },
   {
@@ -4335,11 +4599,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.113179,
     "lon": 75.328104,
     "ndvi": 0.697,
-    "brix": 15.95,
-    "pol": 14.13,
+    "brix": 15.88,
+    "pol": 13.92,
     "purity": 88.6,
-    "ccs": 9.78,
-    "recovery": 7.96,
+    "ccs": 9.59,
+    "recovery": 7.81,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 107.1,
@@ -4363,8 +4627,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.14,
       "cadastral_wind_alignment": 0.53,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3577.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3272.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.0,
+      "soc_pct": 0.77
     }
   },
   {
@@ -4384,11 +4651,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.12945,
     "lon": 75.383875,
     "ndvi": 0.698,
-    "brix": 15.81,
-    "pol": 13.91,
+    "brix": 16.07,
+    "pol": 13.78,
     "purity": 88.0,
-    "ccs": 9.6,
-    "recovery": 7.81,
+    "ccs": 9.39,
+    "recovery": 7.64,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 187.2,
@@ -4412,8 +4679,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.47,
       "cadastral_wind_alignment": 0.58,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3254.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3264.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 46.7,
+      "soc_pct": 0.94
     }
   },
   {
@@ -4433,11 +4703,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.437613,
     "lon": 75.868779,
     "ndvi": 0.636,
-    "brix": 15.12,
-    "pol": 13.89,
+    "brix": 15.56,
+    "pol": 13.32,
     "purity": 91.9,
-    "ccs": 9.78,
-    "recovery": 7.96,
+    "ccs": 9.07,
+    "recovery": 7.38,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 74.0,
@@ -4461,8 +4731,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.43,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2879.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2918.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.8,
+      "soc_pct": 0.72
     }
   },
   {
@@ -4482,11 +4755,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.356572,
     "lon": 75.329139,
     "ndvi": 0.637,
-    "brix": 15.23,
-    "pol": 13.53,
+    "brix": 15.31,
+    "pol": 13.09,
     "purity": 88.8,
-    "ccs": 9.38,
-    "recovery": 7.64,
+    "ccs": 8.91,
+    "recovery": 7.25,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 43.7,
@@ -4510,8 +4783,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.43,
       "cadastral_wind_alignment": 0.98,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3012.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3005.0,
+      "cumulative_precip_mm": 74.5,
+      "mean_dtr_celsius": 11.48,
+      "clay_pct": 45.8,
+      "soc_pct": 0.69
     }
   },
   {
@@ -4531,11 +4807,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.111737,
     "lon": 75.328037,
     "ndvi": 0.7,
-    "brix": 15.68,
-    "pol": 13.76,
+    "brix": 16.16,
+    "pol": 14.19,
     "purity": 87.8,
-    "ccs": 9.48,
-    "recovery": 7.72,
+    "ccs": 9.78,
+    "recovery": 7.96,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 85.7,
@@ -4559,8 +4835,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.54,
       "cadastral_wind_alignment": 0.65,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3334.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3053.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.0,
+      "soc_pct": 0.77
     }
   },
   {
@@ -4580,11 +4859,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.111744,
     "lon": 75.328578,
     "ndvi": 0.701,
-    "brix": 15.73,
-    "pol": 13.87,
+    "brix": 16.22,
+    "pol": 14.27,
     "purity": 88.2,
-    "ccs": 9.58,
-    "recovery": 7.8,
+    "ccs": 9.85,
+    "recovery": 8.02,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 107.1,
@@ -4608,8 +4887,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.27,
       "cadastral_wind_alignment": 0.25,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3329.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3045.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.0,
+      "soc_pct": 0.77
     }
   },
   {
@@ -4629,11 +4911,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.112951,
     "lon": 75.329325,
     "ndvi": 0.64,
-    "brix": 15.97,
-    "pol": 14.03,
+    "brix": 16.14,
+    "pol": 14.66,
     "purity": 87.8,
-    "ccs": 9.68,
-    "recovery": 7.88,
+    "ccs": 10.27,
+    "recovery": 8.36,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 63.9,
@@ -4657,8 +4939,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.09,
       "cadastral_wind_alignment": 0.42,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3040.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2802.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.0,
+      "soc_pct": 0.77
     }
   },
   {
@@ -4678,11 +4963,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.112348,
     "lon": 75.330626,
     "ndvi": 0.703,
-    "brix": 15.85,
-    "pol": 13.94,
+    "brix": 16.03,
+    "pol": 14.06,
     "purity": 88.0,
-    "ccs": 9.62,
-    "recovery": 7.83,
+    "ccs": 9.69,
+    "recovery": 7.89,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 106.4,
@@ -4706,8 +4991,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.53,
       "cadastral_wind_alignment": 0.16,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3514.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3264.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.2,
+      "soc_pct": 0.74
     }
   },
   {
@@ -4727,11 +5015,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.112217,
     "lon": 75.33114,
     "ndvi": 0.642,
-    "brix": 15.67,
-    "pol": 13.9,
+    "brix": 16.04,
+    "pol": 14.41,
     "purity": 88.7,
-    "ccs": 9.63,
-    "recovery": 7.84,
+    "ccs": 10.04,
+    "recovery": 8.17,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 80.1,
@@ -4755,8 +5043,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.77,
       "cadastral_wind_alignment": 0.77,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2968.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2802.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.2,
+      "soc_pct": 0.74
     }
   },
   {
@@ -4776,11 +5067,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.112258,
     "lon": 75.330871,
     "ndvi": 0.643,
-    "brix": 15.73,
-    "pol": 13.68,
+    "brix": 16.06,
+    "pol": 14.41,
     "purity": 87.0,
-    "ccs": 9.39,
-    "recovery": 7.64,
+    "ccs": 10.04,
+    "recovery": 8.17,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 49.0,
@@ -4804,8 +5095,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.72,
       "cadastral_wind_alignment": 0.71,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2980.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2808.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.2,
+      "soc_pct": 0.74
     }
   },
   {
@@ -4825,11 +5119,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.11249,
     "lon": 75.330743,
     "ndvi": 0.705,
-    "brix": 15.78,
-    "pol": 13.92,
+    "brix": 15.96,
+    "pol": 14.04,
     "purity": 88.2,
-    "ccs": 9.62,
-    "recovery": 7.83,
+    "ccs": 9.69,
+    "recovery": 7.89,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 105.7,
@@ -4853,8 +5147,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.79,
       "cadastral_wind_alignment": 0.04,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3517.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3257.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.2,
+      "soc_pct": 0.74
     }
   },
   {
@@ -4874,11 +5171,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.112084,
     "lon": 75.33142,
     "ndvi": 0.645,
-    "brix": 15.8,
-    "pol": 13.86,
+    "brix": 16.14,
+    "pol": 14.63,
     "purity": 87.7,
-    "ccs": 9.55,
-    "recovery": 7.77,
+    "ccs": 10.24,
+    "recovery": 8.34,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 80.4,
@@ -4902,8 +5199,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.23,
       "cadastral_wind_alignment": 0.45,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2979.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2802.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.2,
+      "soc_pct": 0.74
     }
   },
   {
@@ -4923,11 +5223,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.111269,
     "lon": 75.33134,
     "ndvi": 0.646,
-    "brix": 15.92,
-    "pol": 13.91,
+    "brix": 16.18,
+    "pol": 14.67,
     "purity": 87.4,
-    "ccs": 9.57,
-    "recovery": 7.79,
+    "ccs": 10.27,
+    "recovery": 8.36,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 82.3,
@@ -4951,8 +5251,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.09,
       "cadastral_wind_alignment": 0.32,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2983.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2802.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 49.4,
+      "soc_pct": 0.74
     }
   },
   {
@@ -4972,11 +5275,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.111788,
     "lon": 75.331037,
     "ndvi": 0.708,
-    "brix": 15.91,
-    "pol": 14.01,
+    "brix": 16.13,
+    "pol": 14.09,
     "purity": 88.1,
-    "ccs": 9.67,
-    "recovery": 7.87,
+    "ccs": 9.69,
+    "recovery": 7.89,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 104.8,
@@ -5000,8 +5303,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.16,
       "cadastral_wind_alignment": 0.62,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3528.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3257.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.2,
+      "soc_pct": 0.74
     }
   },
   {
@@ -5021,11 +5327,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.111093,
     "lon": 75.330304,
     "ndvi": 0.648,
-    "brix": 15.8,
-    "pol": 13.75,
+    "brix": 16.13,
+    "pol": 14.5,
     "purity": 87.0,
-    "ccs": 9.44,
-    "recovery": 7.68,
+    "ccs": 10.11,
+    "recovery": 8.23,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 83.2,
@@ -5049,8 +5355,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.01,
       "cadastral_wind_alignment": 0.73,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3007.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2813.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 49.4,
+      "soc_pct": 0.74
     }
   },
   {
@@ -5070,11 +5379,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.111198,
     "lon": 75.329931,
     "ndvi": 0.649,
-    "brix": 15.93,
-    "pol": 13.88,
+    "brix": 16.19,
+    "pol": 14.63,
     "purity": 87.1,
-    "ccs": 9.53,
-    "recovery": 7.76,
+    "ccs": 10.22,
+    "recovery": 8.32,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 81.7,
@@ -5098,8 +5407,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.37,
       "cadastral_wind_alignment": 0.32,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2994.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2802.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 49.4,
+      "soc_pct": 0.74
     }
   },
   {
@@ -5119,11 +5431,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.222507,
     "lon": 75.476418,
     "ndvi": 0.73,
-    "brix": 15.85,
-    "pol": 14.01,
+    "brix": 17.93,
+    "pol": 15.68,
     "purity": 88.4,
-    "ccs": 9.69,
-    "recovery": 7.89,
+    "ccs": 10.79,
+    "recovery": 8.78,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 109.6,
@@ -5147,8 +5459,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.35,
       "cadastral_wind_alignment": 0.52,
       "cultivar_fiber_pct": 12.4,
-      "accumulated_gdd": 2929.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3005.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 45.3,
+      "soc_pct": 0.75
     }
   },
   {
@@ -5168,11 +5483,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.443045,
     "lon": 75.866657,
     "ndvi": 0.651,
-    "brix": 14.82,
-    "pol": 13.26,
+    "brix": 15.48,
+    "pol": 13.31,
     "purity": 89.5,
-    "ccs": 9.22,
-    "recovery": 7.51,
+    "ccs": 9.08,
+    "recovery": 7.39,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 181.8,
@@ -5196,8 +5511,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.52,
       "cadastral_wind_alignment": 0.89,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3062.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3066.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 49.5,
+      "soc_pct": 0.71
     }
   },
   {
@@ -5217,11 +5535,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.444991,
     "lon": 75.020955,
     "ndvi": 0.652,
-    "brix": 15.66,
-    "pol": 14.03,
+    "brix": 15.88,
+    "pol": 13.63,
     "purity": 89.6,
-    "ccs": 9.77,
-    "recovery": 7.95,
+    "ccs": 9.29,
+    "recovery": 7.56,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 140.1,
@@ -5245,8 +5563,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.08,
       "cadastral_wind_alignment": 0.66,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3109.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2996.0,
+      "cumulative_precip_mm": 81.8,
+      "mean_dtr_celsius": 11.25,
+      "clay_pct": 48.6,
+      "soc_pct": 0.62
     }
   },
   {
@@ -5266,11 +5587,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.383314,
     "lon": 75.54114,
     "ndvi": 0.653,
-    "brix": 15.12,
-    "pol": 13.25,
+    "brix": 15.63,
+    "pol": 13.3,
     "purity": 87.6,
-    "ccs": 9.13,
-    "recovery": 7.43,
+    "ccs": 9.03,
+    "recovery": 7.35,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 79.9,
@@ -5294,8 +5615,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.93,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3009.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2989.0,
+      "cumulative_precip_mm": 84.3,
+      "mean_dtr_celsius": 11.51,
+      "clay_pct": 50.0,
+      "soc_pct": 0.58
     }
   },
   {
@@ -5315,11 +5639,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.298179,
     "lon": 75.750554,
     "ndvi": 0.656,
-    "brix": 15.3,
-    "pol": 13.61,
+    "brix": 15.38,
+    "pol": 13.19,
     "purity": 89.0,
-    "ccs": 9.44,
-    "recovery": 7.68,
+    "ccs": 8.99,
+    "recovery": 7.32,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 155.8,
@@ -5343,8 +5667,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.53,
       "cadastral_wind_alignment": 0.11,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2952.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3013.0,
+      "cumulative_precip_mm": 62.4,
+      "mean_dtr_celsius": 12.29,
+      "clay_pct": 48.2,
+      "soc_pct": 0.86
     }
   },
   {
@@ -5364,11 +5691,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.293528,
     "lon": 75.749484,
     "ndvi": 0.657,
-    "brix": 15.34,
-    "pol": 13.48,
+    "brix": 15.67,
+    "pol": 13.11,
     "purity": 87.9,
-    "ccs": 9.3,
-    "recovery": 7.57,
+    "ccs": 8.82,
+    "recovery": 7.18,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 141.9,
@@ -5392,8 +5719,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.08,
       "cadastral_wind_alignment": 0.69,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2921.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2985.0,
+      "cumulative_precip_mm": 62.4,
+      "mean_dtr_celsius": 12.29,
+      "clay_pct": 47.8,
+      "soc_pct": 0.84
     }
   },
   {
@@ -5413,11 +5743,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.270295,
     "lon": 75.978296,
     "ndvi": 0.658,
-    "brix": 15.16,
-    "pol": 13.47,
+    "brix": 16.31,
+    "pol": 13.18,
     "purity": 88.8,
-    "ccs": 9.34,
-    "recovery": 7.6,
+    "ccs": 8.71,
+    "recovery": 7.09,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 70.4,
@@ -5441,8 +5771,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 4.65,
       "cadastral_wind_alignment": 0.92,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3019.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3074.0,
+      "cumulative_precip_mm": 60.2,
+      "mean_dtr_celsius": 12.41,
+      "clay_pct": 46.8,
+      "soc_pct": 0.67
     }
   },
   {
@@ -5462,11 +5795,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.439677,
     "lon": 75.865992,
     "ndvi": 0.738,
-    "brix": 16.36,
-    "pol": 14.28,
+    "brix": 17.29,
+    "pol": 14.43,
     "purity": 87.3,
-    "ccs": 9.82,
-    "recovery": 7.99,
+    "ccs": 9.7,
+    "recovery": 7.9,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 181.0,
@@ -5490,8 +5823,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.07,
       "cadastral_wind_alignment": 0.09,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 3100.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3074.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -5511,11 +5847,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.273671,
     "lon": 75.98185,
     "ndvi": 0.66,
-    "brix": 15.78,
-    "pol": 14.39,
+    "brix": 16.13,
+    "pol": 13.66,
     "purity": 91.2,
-    "ccs": 10.1,
-    "recovery": 8.22,
+    "ccs": 9.25,
+    "recovery": 7.53,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 64.4,
@@ -5539,8 +5875,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.56,
       "cadastral_wind_alignment": 0.02,
       "cultivar_fiber_pct": 11.9,
-      "accumulated_gdd": 3035.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3080.0,
+      "cumulative_precip_mm": 60.2,
+      "mean_dtr_celsius": 12.41,
+      "clay_pct": 47.2,
+      "soc_pct": 0.68
     }
   },
   {
@@ -5560,11 +5899,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.440824,
     "lon": 75.867732,
     "ndvi": 0.74,
-    "brix": 16.41,
-    "pol": 14.62,
+    "brix": 18.15,
+    "pol": 16.14,
     "purity": 89.1,
-    "ccs": 10.15,
-    "recovery": 8.26,
+    "ccs": 11.2,
+    "recovery": 9.12,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 208.6,
@@ -5588,8 +5927,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.74,
       "cadastral_wind_alignment": 0.48,
       "cultivar_fiber_pct": 12.4,
-      "accumulated_gdd": 3142.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3108.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -5609,11 +5951,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.333804,
     "lon": 75.840765,
     "ndvi": 0.663,
-    "brix": 15.07,
-    "pol": 13.32,
+    "brix": 15.6,
+    "pol": 13.25,
     "purity": 88.4,
-    "ccs": 9.21,
-    "recovery": 7.5,
+    "ccs": 8.99,
+    "recovery": 7.32,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 137.9,
@@ -5637,8 +5979,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.18,
       "cadastral_wind_alignment": 0.84,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2972.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3064.0,
+      "cumulative_precip_mm": 62.4,
+      "mean_dtr_celsius": 12.29,
+      "clay_pct": 48.3,
+      "soc_pct": 0.82
     }
   },
   {
@@ -5658,11 +6003,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.441276,
     "lon": 75.867654,
     "ndvi": 0.664,
-    "brix": 15.34,
-    "pol": 13.68,
+    "brix": 15.87,
+    "pol": 13.55,
     "purity": 89.2,
-    "ccs": 9.5,
-    "recovery": 7.73,
+    "ccs": 9.21,
+    "recovery": 7.5,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 187.0,
@@ -5686,8 +6031,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.5,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3027.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3066.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -5707,11 +6055,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.441014,
     "lon": 75.866742,
     "ndvi": 0.665,
-    "brix": 15.32,
-    "pol": 13.91,
+    "brix": 15.77,
+    "pol": 13.41,
     "purity": 90.8,
-    "ccs": 9.74,
-    "recovery": 7.93,
+    "ccs": 9.1,
+    "recovery": 7.41,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 161.0,
@@ -5735,8 +6083,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.19,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2970.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3022.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -5756,11 +6107,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.44096,
     "lon": 75.86765,
     "ndvi": 0.723,
-    "brix": 16.33,
-    "pol": 14.57,
+    "brix": 16.62,
+    "pol": 13.87,
     "purity": 89.2,
-    "ccs": 10.12,
-    "recovery": 8.24,
+    "ccs": 9.32,
+    "recovery": 7.59,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 214.0,
@@ -5784,8 +6135,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.09,
       "cadastral_wind_alignment": 0.3,
       "cultivar_fiber_pct": 12.5,
-      "accumulated_gdd": 3086.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3116.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -5805,11 +6159,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.440424,
     "lon": 75.86844,
     "ndvi": 0.744,
-    "brix": 15.97,
-    "pol": 13.82,
+    "brix": 16.69,
+    "pol": 13.98,
     "purity": 86.5,
-    "ccs": 9.46,
-    "recovery": 7.7,
+    "ccs": 9.41,
+    "recovery": 7.66,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 211.8,
@@ -5833,8 +6187,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.08,
       "cadastral_wind_alignment": 0.22,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3081.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3108.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 49.2,
+      "soc_pct": 0.73
     }
   },
   {
@@ -5854,11 +6211,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.440168,
     "lon": 75.866738,
     "ndvi": 0.745,
-    "brix": 16.07,
-    "pol": 14.04,
+    "brix": 16.85,
+    "pol": 14.19,
     "purity": 87.4,
-    "ccs": 9.66,
-    "recovery": 7.86,
+    "ccs": 9.58,
+    "recovery": 7.8,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 203.0,
@@ -5882,8 +6239,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.05,
       "cadastral_wind_alignment": 0.21,
       "cultivar_fiber_pct": 12.5,
-      "accumulated_gdd": 3085.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3108.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -5904,10 +6264,10 @@ window.IKSHU_PLOTS = [
     "lon": 75.866807,
     "ndvi": 0.699,
     "brix": 16.93,
-    "pol": 14.51,
+    "pol": 14.07,
     "purity": 85.7,
-    "ccs": 9.89,
-    "recovery": 8.05,
+    "ccs": 9.44,
+    "recovery": 7.68,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 209.6,
@@ -5931,8 +6291,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.21,
       "cadastral_wind_alignment": 0.21,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3880.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3868.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -5952,11 +6315,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.428398,
     "lon": 75.236806,
     "ndvi": 0.746,
-    "brix": 15.71,
-    "pol": 13.85,
+    "brix": 16.61,
+    "pol": 14.68,
     "purity": 88.2,
-    "ccs": 9.57,
-    "recovery": 7.79,
+    "ccs": 10.15,
+    "recovery": 8.26,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 48.5,
@@ -5980,8 +6343,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.27,
       "cadastral_wind_alignment": 0.35,
       "cultivar_fiber_pct": 11.75,
-      "accumulated_gdd": 2740.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2804.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 48.5,
+      "soc_pct": 0.79
     }
   },
   {
@@ -6001,11 +6367,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.441027,
     "lon": 75.86675,
     "ndvi": 0.747,
-    "brix": 14.96,
-    "pol": 13.4,
+    "brix": 16.53,
+    "pol": 14.01,
     "purity": 89.6,
-    "ccs": 9.33,
-    "recovery": 7.59,
+    "ccs": 9.49,
+    "recovery": 7.72,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 202.6,
@@ -6029,8 +6395,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.68,
       "cadastral_wind_alignment": 0.98,
       "cultivar_fiber_pct": 12.5,
-      "accumulated_gdd": 3096.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3108.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -6050,11 +6419,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.426575,
     "lon": 75.24442,
     "ndvi": 0.672,
-    "brix": 16.2,
-    "pol": 14.42,
+    "brix": 16.69,
+    "pol": 14.06,
     "purity": 89.0,
-    "ccs": 10.01,
-    "recovery": 8.15,
+    "ccs": 9.5,
+    "recovery": 7.73,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 57.8,
@@ -6078,8 +6447,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.54,
       "cadastral_wind_alignment": 0.18,
       "cultivar_fiber_pct": 12.1,
-      "accumulated_gdd": 2653.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2745.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 49.0,
+      "soc_pct": 0.73
     }
   },
   {
@@ -6099,11 +6471,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.113133,
     "lon": 75.333753,
     "ndvi": 0.673,
-    "brix": 15.88,
-    "pol": 13.66,
+    "brix": 16.15,
+    "pol": 14.37,
     "purity": 86.0,
-    "ccs": 9.32,
-    "recovery": 7.59,
+    "ccs": 9.97,
+    "recovery": 8.12,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 164.6,
@@ -6127,8 +6499,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.85,
       "cadastral_wind_alignment": 0.74,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3009.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2808.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.2,
+      "soc_pct": 0.74
     }
   },
   {
@@ -6148,11 +6523,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.113773,
     "lon": 75.334466,
     "ndvi": 0.73,
-    "brix": 16.12,
-    "pol": 13.97,
+    "brix": 16.24,
+    "pol": 14.11,
     "purity": 86.7,
-    "ccs": 9.57,
-    "recovery": 7.79,
+    "ccs": 9.68,
+    "recovery": 7.88,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 175.7,
@@ -6176,8 +6551,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.1,
       "cadastral_wind_alignment": 0.24,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3537.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3249.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.2,
+      "soc_pct": 0.74
     }
   },
   {
@@ -6197,11 +6575,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.112459,
     "lon": 75.333634,
     "ndvi": 0.731,
-    "brix": 16.07,
-    "pol": 13.85,
+    "brix": 16.19,
+    "pol": 14.02,
     "purity": 86.2,
-    "ccs": 9.46,
-    "recovery": 7.7,
+    "ccs": 9.6,
+    "recovery": 7.81,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 329.4,
@@ -6225,8 +6603,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.03,
       "cadastral_wind_alignment": 0.56,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3558.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3264.0,
+      "cumulative_precip_mm": 81.7,
+      "mean_dtr_celsius": 11.03,
+      "clay_pct": 48.2,
+      "soc_pct": 0.74
     }
   },
   {
@@ -6246,11 +6627,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.564973,
     "lon": 74.878001,
     "ndvi": 0.731,
-    "brix": 14.74,
-    "pol": 13.08,
+    "brix": 16.07,
+    "pol": 13.63,
     "purity": 88.7,
-    "ccs": 9.06,
-    "recovery": 7.37,
+    "ccs": 9.24,
+    "recovery": 7.52,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 336.6,
@@ -6274,8 +6655,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.88,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3132.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3011.0,
+      "cumulative_precip_mm": 81.8,
+      "mean_dtr_celsius": 11.25,
+      "clay_pct": 42.5,
+      "soc_pct": 0.7
     }
   },
   {
@@ -6295,11 +6679,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.408476,
     "lon": 75.333682,
     "ndvi": 0.677,
-    "brix": 15.64,
-    "pol": 13.99,
+    "brix": 15.34,
+    "pol": 13.41,
     "purity": 89.5,
-    "ccs": 9.73,
-    "recovery": 7.92,
+    "ccs": 9.23,
+    "recovery": 7.51,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 73.5,
@@ -6323,8 +6707,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.17,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2740.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2788.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 47.5,
+      "soc_pct": 0.59
     }
   },
   {
@@ -6344,11 +6731,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.396178,
     "lon": 75.243041,
     "ndvi": 0.753,
-    "brix": 15.66,
-    "pol": 13.3,
+    "brix": 16.52,
+    "pol": 13.84,
     "purity": 84.9,
-    "ccs": 9.02,
-    "recovery": 7.34,
+    "ccs": 9.32,
+    "recovery": 7.59,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 34.2,
@@ -6372,8 +6759,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.52,
       "cadastral_wind_alignment": 0.1,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3037.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2993.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 48.5,
+      "soc_pct": 0.64
     }
   },
   {
@@ -6393,11 +6783,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.482372,
     "lon": 75.079667,
     "ndvi": 0.679,
-    "brix": 15.9,
-    "pol": 13.9,
+    "brix": 15.78,
+    "pol": 13.55,
     "purity": 87.4,
-    "ccs": 9.56,
-    "recovery": 7.78,
+    "ccs": 9.24,
+    "recovery": 7.52,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 161.8,
@@ -6421,8 +6811,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.45,
       "cadastral_wind_alignment": 0.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3126.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2996.0,
+      "cumulative_precip_mm": 81.8,
+      "mean_dtr_celsius": 11.25,
+      "clay_pct": 45.8,
+      "soc_pct": 0.8
     }
   },
   {
@@ -6442,11 +6835,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.440927,
     "lon": 75.251528,
     "ndvi": 0.755,
-    "brix": 15.57,
-    "pol": 13.52,
+    "brix": 16.54,
+    "pol": 14.47,
     "purity": 86.8,
-    "ccs": 9.27,
-    "recovery": 7.55,
+    "ccs": 9.96,
+    "recovery": 8.11,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 170.0,
@@ -6470,8 +6863,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.1,
       "cadastral_wind_alignment": 0.63,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 2975.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2947.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 47.8,
+      "soc_pct": 0.83
     }
   },
   {
@@ -6491,11 +6887,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.437583,
     "lon": 75.120505,
     "ndvi": 0.621,
-    "brix": 15.79,
-    "pol": 13.94,
+    "brix": 15.76,
+    "pol": 13.75,
     "purity": 88.3,
-    "ccs": 9.64,
-    "recovery": 7.85,
+    "ccs": 9.45,
+    "recovery": 7.69,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 91.7,
@@ -6519,8 +6915,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.34,
       "cadastral_wind_alignment": 0.83,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2988.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2882.0,
+      "cumulative_precip_mm": 81.8,
+      "mean_dtr_celsius": 11.25,
+      "clay_pct": 48.1,
+      "soc_pct": 0.92
     }
   },
   {
@@ -6540,11 +6939,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.43973,
     "lon": 75.866956,
     "ndvi": 0.707,
-    "brix": 16.41,
-    "pol": 14.33,
+    "brix": 17.32,
+    "pol": 14.46,
     "purity": 87.3,
-    "ccs": 9.85,
-    "recovery": 8.02,
+    "ccs": 9.72,
+    "recovery": 7.91,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 197.2,
@@ -6568,8 +6967,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.12,
       "cadastral_wind_alignment": 0.05,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 3138.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3108.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -6589,11 +6991,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.115295,
     "lon": 75.381446,
     "ndvi": 0.623,
-    "brix": 15.31,
-    "pol": 13.58,
+    "brix": 15.49,
+    "pol": 13.76,
     "purity": 88.7,
-    "ccs": 9.41,
-    "recovery": 7.66,
+    "ccs": 9.54,
+    "recovery": 7.77,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 144.8,
@@ -6617,8 +7019,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.58,
       "cadastral_wind_alignment": 0.99,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3047.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3060.0,
+      "cumulative_precip_mm": 65.9,
+      "mean_dtr_celsius": 11.09,
+      "clay_pct": 45.4,
+      "soc_pct": 0.84
     }
   },
   {
@@ -6638,11 +7043,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.456551,
     "lon": 75.288448,
     "ndvi": 0.624,
-    "brix": 15.42,
-    "pol": 13.44,
+    "brix": 15.39,
+    "pol": 13.45,
     "purity": 87.2,
-    "ccs": 9.23,
-    "recovery": 7.51,
+    "ccs": 9.25,
+    "recovery": 7.53,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 59.5,
@@ -6666,8 +7071,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.24,
       "cadastral_wind_alignment": 0.81,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2816.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2870.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 47.3,
+      "soc_pct": 0.88
     }
   },
   {
@@ -6687,11 +7095,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.440686,
     "lon": 75.866756,
     "ndvi": 0.625,
-    "brix": 15.4,
-    "pol": 13.8,
+    "brix": 15.88,
+    "pol": 13.62,
     "purity": 89.6,
-    "ccs": 9.61,
-    "recovery": 7.82,
+    "ccs": 9.28,
+    "recovery": 7.55,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 272.1,
@@ -6715,8 +7123,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.0,
       "cadastral_wind_alignment": 0.99,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3026.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3066.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -6736,11 +7147,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.435437,
     "lon": 75.889621,
     "ndvi": 0.69,
-    "brix": 15.86,
-    "pol": 14.36,
+    "brix": 16.69,
+    "pol": 14.14,
     "purity": 90.5,
-    "ccs": 10.04,
-    "recovery": 8.17,
+    "ccs": 9.58,
+    "recovery": 7.8,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 105.3,
@@ -6764,8 +7175,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.38,
       "cadastral_wind_alignment": 0.39,
       "cultivar_fiber_pct": 11.55,
-      "accumulated_gdd": 3081.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3156.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.5,
+      "soc_pct": 0.79
     }
   },
   {
@@ -6785,11 +7199,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.436629,
     "lon": 75.900846,
     "ndvi": 0.627,
-    "brix": 15.36,
-    "pol": 13.44,
+    "brix": 15.57,
+    "pol": 13.35,
     "purity": 87.5,
-    "ccs": 9.25,
-    "recovery": 7.53,
+    "ccs": 9.1,
+    "recovery": 7.41,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 92.0,
@@ -6813,8 +7227,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.03,
       "cadastral_wind_alignment": 0.06,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3033.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3106.0,
+      "cumulative_precip_mm": 74.6,
+      "mean_dtr_celsius": 12.34,
+      "clay_pct": 47.1,
+      "soc_pct": 0.94
     }
   },
   {
@@ -6834,11 +7251,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.324515,
     "lon": 75.811079,
     "ndvi": 0.628,
-    "brix": 15.29,
-    "pol": 13.39,
+    "brix": 15.47,
+    "pol": 13.23,
     "purity": 87.6,
-    "ccs": 9.22,
-    "recovery": 7.51,
+    "ccs": 9.0,
+    "recovery": 7.33,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 123.4,
@@ -6862,8 +7279,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.67,
       "cadastral_wind_alignment": 0.59,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2917.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3019.0,
+      "cumulative_precip_mm": 62.4,
+      "mean_dtr_celsius": 12.29,
+      "clay_pct": 48.8,
+      "soc_pct": 0.88
     }
   },
   {
@@ -6883,11 +7303,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.464014,
     "lon": 75.282615,
     "ndvi": 0.713,
-    "brix": 15.65,
-    "pol": 13.36,
+    "brix": 16.68,
+    "pol": 14.45,
     "purity": 85.4,
-    "ccs": 9.08,
-    "recovery": 7.39,
+    "ccs": 9.9,
+    "recovery": 8.06,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 59.5,
@@ -6911,8 +7331,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 2.94,
       "cadastral_wind_alignment": 0.69,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 3084.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3069.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 48.4,
+      "soc_pct": 0.84
     }
   },
   {
@@ -6932,11 +7355,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.354882,
     "lon": 75.381489,
     "ndvi": 0.713,
-    "brix": 14.87,
-    "pol": 13.17,
+    "brix": 16.25,
+    "pol": 13.85,
     "purity": 88.6,
-    "ccs": 9.12,
-    "recovery": 7.42,
+    "ccs": 9.41,
+    "recovery": 7.66,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 82.9,
@@ -6960,8 +7383,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.19,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 12.85,
-      "accumulated_gdd": 2967.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3038.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 48.6,
+      "soc_pct": 0.62
     }
   },
   {
@@ -6981,11 +7407,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.354356,
     "lon": 75.381422,
     "ndvi": 0.631,
-    "brix": 15.64,
-    "pol": 13.72,
+    "brix": 15.42,
+    "pol": 13.12,
     "purity": 87.7,
-    "ccs": 9.45,
-    "recovery": 7.69,
+    "ccs": 8.91,
+    "recovery": 7.25,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 62.4,
@@ -7009,8 +7435,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.05,
       "cadastral_wind_alignment": 0.06,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2962.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3032.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 48.6,
+      "soc_pct": 0.62
     }
   },
   {
@@ -7030,11 +7459,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.440991,
     "lon": 75.866291,
     "ndvi": 0.632,
-    "brix": 15.76,
-    "pol": 13.79,
+    "brix": 15.66,
+    "pol": 13.45,
     "purity": 87.5,
-    "ccs": 9.49,
-    "recovery": 7.72,
+    "ccs": 9.17,
+    "recovery": 7.46,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 90.0,
@@ -7058,8 +7487,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.68,
       "cadastral_wind_alignment": 0.4,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 3095.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 3108.0,
+      "cumulative_precip_mm": 81.1,
+      "mean_dtr_celsius": 12.07,
+      "clay_pct": 48.9,
+      "soc_pct": 0.72
     }
   },
   {
@@ -7079,11 +7511,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.355714,
     "lon": 75.391707,
     "ndvi": 0.633,
-    "brix": 15.37,
-    "pol": 13.51,
+    "brix": 15.04,
+    "pol": 13.11,
     "purity": 87.9,
-    "ccs": 9.32,
-    "recovery": 7.59,
+    "ccs": 9.01,
+    "recovery": 7.33,
     "status": "VEGETATIVE",
     "isGhost": false,
     "estTons": 57.9,
@@ -7107,8 +7539,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.19,
       "cadastral_wind_alignment": 0.31,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2850.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2941.0,
+      "cumulative_precip_mm": 69.0,
+      "mean_dtr_celsius": 11.84,
+      "clay_pct": 48.7,
+      "soc_pct": 0.7
     }
   },
   {
@@ -7128,11 +7563,11 @@ window.IKSHU_PLOTS = [
     "lat": 19.428711,
     "lon": 75.277098,
     "ndvi": 0.634,
-    "brix": 15.86,
-    "pol": 13.98,
+    "brix": 17.16,
+    "pol": 14.0,
     "purity": 88.2,
-    "ccs": 9.66,
-    "recovery": 7.86,
+    "ccs": 9.3,
+    "recovery": 7.57,
     "status": "WINDOW_15D",
     "isGhost": false,
     "estTons": 45.1,
@@ -7156,8 +7591,11 @@ window.IKSHU_PLOTS = [
       "cadastral_aspect_ratio": 1.88,
       "cadastral_wind_alignment": 1.0,
       "cultivar_fiber_pct": 13.2,
-      "accumulated_gdd": 2501.0,
-      "cumulative_precip_mm": 437.7
+      "accumulated_gdd": 2643.0,
+      "cumulative_precip_mm": 79.6,
+      "mean_dtr_celsius": 11.15,
+      "clay_pct": 48.2,
+      "soc_pct": 0.6
     }
   },
   {
