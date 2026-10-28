@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { and, desc, eq, gte, inArray, sql } from 'drizzle-orm';
 import { getDb } from '../../../db';
-import { plots, boundaries, satelliteObservations, satelliteRequests, mills, satelliteRegister } from '../../../db/schema';
+import { plots, boundaries, satelliteObservations, satelliteRequests, mills } from '../../../db/schema';
 import { getMillUser } from '../../session-auth';
 import { date } from '../../validation';
 import { boundaryHash, parseBoundary } from '../../../lib/satellite/geometry';
@@ -9,7 +9,6 @@ import { catalogue, measure, SatelliteError } from '../../../lib/satellite/proce
 import { predictQuality } from '../../../lib/satellite/predict';
 import modelInfo from '../../../lib/satellite/retrained-model-info.json';
 import { z } from 'zod';
-import { registerGeometries, registerPlots, resolvePlot } from '../../../lib/latest-register';
 
 export const dynamic = 'force-dynamic';
 const json = (value: unknown, status = 200) => Response.json(value, { status, headers: { 'Cache-Control': 'private, no-store' } });
@@ -17,7 +16,8 @@ const secrets = () => ({ CDSE_CLIENT_ID: env.CDSE_CLIENT_ID, CDSE_CLIENT_SECRET:
 const today = () => new Date().toISOString().slice(0, 10);
 
 async function ownsPlot(db: ReturnType<typeof getDb>, ownerId: string, plotId: string) {
-  return resolvePlot(db,ownerId,plotId);
+  const rows = await db.select().from(plots).where(and(eq(plots.id, plotId), eq(plots.ownerId, ownerId))).limit(1);
+  return rows[0];
 }
 
 async function consumeRequest(db: ReturnType<typeof getDb>, ownerId: string) {
@@ -36,7 +36,6 @@ export async function GET(request: Request) {
     const ownMill = await db.select({ ownerId: mills.ownerId }).from(mills).where(eq(mills.ownerId, user.userId)).limit(1);
     if (!ownMill.length) return json({ error: 'Set up your mill first' }, 409);
     const plotId = new URL(request.url).searchParams.get('plotId');
-    const view = new URL(request.url).searchParams.get('view');
     const result: Record<string, unknown> = {
       configured: Boolean(env.CDSE_CLIENT_ID && env.CDSE_CLIENT_SECRET),
       provider: 'Copernicus Data Space Ecosystem',
@@ -44,30 +43,9 @@ export async function GET(request: Request) {
       qualityPredictionsEnabled: false,
       predictionNote: modelInfo.predictionNote,
     };
-    if (view === 'map') {
-      const requestedIds = [...new Set((new URL(request.url).searchParams.get('ids') || '').split(',').filter(Boolean))].slice(0, 301);
-      const [countRows, geometryRows] = await Promise.all([
-        db.select({ count: sql<number>`count(*)` }).from(boundaries).where(eq(boundaries.ownerId, user.userId)),
-        (async () => {
-          const rows: { plotId: string; geometry: string; updatedAt:string }[] = [];
-          for (let offset = 0; offset < requestedIds.length; offset += 80) {
-            rows.push(...await db.select({ plotId: boundaries.plotId, geometry: boundaries.geometry,updatedAt:boundaries.updatedAt }).from(boundaries)
-              .where(and(eq(boundaries.ownerId, user.userId), inArray(boundaries.plotId, requestedIds.slice(offset, offset + 80)))));
-          }
-          return rows;
-        })(),
-      ]);
-      const latest = await registerGeometries(db,user.userId,requestedIds);
-      const sourceCount = await db.select({count:sql<number>`count(*)`}).from(satelliteRegister).where(and(eq(satelliteRegister.ownerId,user.userId),eq(satelliteRegister.isCurrent,1),eq(satelliteRegister.status,'Unharvested'),sql`length(coalesce(json_extract(${satelliteRegister.dataJson}, '$."Plot Area Lat Long"'),'')) > 0`));
-      const merged = new Map(geometryRows.map(row=>[row.plotId,{plotId:row.plotId,geometry:JSON.parse(row.geometry),updatedAt:row.updatedAt}]));
-      for(const row of latest)if(!merged.has(row.plotId)||merged.get(row.plotId)!.updatedAt<row.updatedAt)merged.set(row.plotId,row);
-      return json({ boundaryCount:Number(sourceCount[0]?.count||countRows[0]?.count||0), boundaries:[...merged.values()],geometrySource:latest.length?'Supplied register survey outline':'Saved boundary file' });
-    }
     if (!plotId) {
       const ownBoundaries = await db.select({ plotId: boundaries.plotId, hash: boundaries.hash }).from(boundaries).where(eq(boundaries.ownerId, user.userId));
-      const active=await registerPlots(db,user.userId,{light:true});
-      const stored=new Map(ownBoundaries.map(row=>[row.plotId,row]));
-      return json({ ...result, boundaries:active.length?active.filter(p=>p.boundaryAvailable||stored.has(p.id)).map(p=>({plotId:p.id,hash:stored.get(p.id)?.hash||''})):ownBoundaries });
+      return json({ ...result, boundaries: ownBoundaries });
     }
     const plot = await ownsPlot(db, user.userId, plotId);
     if (!plot) return json({ error: 'Plot not found' }, 404);
@@ -75,8 +53,7 @@ export async function GET(request: Request) {
     const observations = await db.select().from(satelliteObservations)
       .where(and(eq(satelliteObservations.plotId, plotId), eq(satelliteObservations.ownerId, user.userId)))
       .orderBy(desc(satelliteObservations.date)).limit(20);
-    const supplied=await registerGeometries(db,user.userId,[plotId]);
-    return json({ ...result, boundarySaved: Boolean(boundary[0]||supplied.length), boundaryHash: boundary[0]?.hash ?? null, observations: observations.map(row => JSON.parse(row.result)) });
+    return json({ ...result, boundarySaved: Boolean(boundary[0]), boundaryHash: boundary[0]?.hash ?? null, observations: observations.map(row => JSON.parse(row.result)) });
   } catch {
     return json({ error: 'Satellite workspace is temporarily unavailable. Please retry.' }, 503);
   }
@@ -109,9 +86,6 @@ export async function POST(request: Request) {
       if (new Set(rows.map(row => row.plotNo)).size !== rows.length) return json({ error: 'Each plot number must appear once in the boundary file.' }, 400);
       const ownPlots: {id:string;plotNo:string}[] = [];
       for(let offset=0;offset<rows.length;offset+=80)ownPlots.push(...await db.select({id:plots.id,plotNo:plots.plotNo}).from(plots).where(and(eq(plots.ownerId,ownerId),inArray(plots.plotNo,rows.slice(offset,offset+80).map(row=>row.plotNo)))));
-      const requested=new Set(rows.map(row=>row.plotNo));
-      const sourcePlots=await registerPlots(db,ownerId,{light:true});
-      ownPlots.push(...sourcePlots.filter(p=>requested.has(p.plotNo)).map(p=>({id:p.id,plotNo:p.plotNo})));
       const plotByNo = new Map(ownPlots.map(row => [row.plotNo, row.id]));
       const now = new Date().toISOString();
       const values = await Promise.all(rows.map(async row => {
@@ -127,8 +101,6 @@ export async function POST(request: Request) {
 
     if (!env.CDSE_CLIENT_ID || !env.CDSE_CLIENT_SECRET) return json({ error: 'Copernicus Data Space credentials are not configured for this site yet.' }, 503);
     const saved = await db.select().from(boundaries).where(and(eq(boundaries.plotId, plotId), eq(boundaries.ownerId, ownerId))).limit(1);
-    const supplied=await registerGeometries(db,ownerId,[plotId]);
-    if(supplied[0]&&(!saved[0]||saved[0].updatedAt<supplied[0].updatedAt)){const geometry=parseBoundary(supplied[0].geometry);const value={plotId,ownerId,geometry:JSON.stringify(geometry),hash:await boundaryHash(geometry),updatedAt:new Date().toISOString()};await db.insert(boundaries).values(value).onConflictDoUpdate({target:boundaries.plotId,set:value});saved[0]=value;}
     if (!saved[0]) return json({ error: 'Add a plot boundary before searching for imagery.' }, 409);
     const geometry = parseBoundary(JSON.parse(saved[0].geometry));
 

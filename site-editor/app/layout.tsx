@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { LanguageProvider } from './ui/language';
 
 export const metadata: Metadata = {
   title: "Ikshu Intelligence | From cane to clarity",
@@ -18,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased"><LanguageProvider>{children}</LanguageProvider></body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
