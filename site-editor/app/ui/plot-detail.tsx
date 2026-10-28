@@ -273,13 +273,18 @@ export default function PlotDetail({plot,sample,onClose,onUpdatePriority}:PlotVi
                     <div style={{fontSize:'1.05rem',fontWeight:800,color:'#0f766e'}}>{plot.factoryCrushSlips || 1} {t('Slips','पावत्या')}</div>
                   </div>
                   <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bbf7d0'}}>
-                    <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Factory Lab Recovery','कारखाना लॅब उतारा')}</div>
-                    <div style={{fontSize:'1.05rem',fontWeight:800,color:'#b45309'}}>{format(plot.factoryLabRecovery, 2)}%</div>
+                    <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Factory Lab Pol in Juice','कारखाना लॅब पोल (Pol in Juice)')}</div>
+                    <div style={{fontSize:'1.05rem',fontWeight:800,color:'#047857'}}>{format(plot.factoryLabPol ?? plot.predictedPol, 2)}%</div>
                   </div>
                   <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bbf7d0'}}>
                     <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Delivery Dates','गाळप दिनांक')}</div>
                     <div style={{fontSize:'0.8rem',fontWeight:700,color:'#374151',marginTop:2}}>{plot.factoryCrushDates || '25/26 Oct 2026'}</div>
                   </div>
+                </div>
+                <div style={{display:'flex',gap:12,fontSize:'0.72rem',color:'#065f46',marginTop:6,padding:'4px 8px',background:'rgba(255,255,255,0.7)',borderRadius:4}}>
+                  <span>🔬 <strong>{format(plot.predictedBrix, 2)}°Bx</strong> {t('Brix','ब्रिक्स')}</span>
+                  <span>🍬 <strong>{format(plot.predictedCcs, 2)}%</strong> {t('CCS on Cane','सीसीएस')}</span>
+                  <span>🏭 <strong>{format(plot.predictedRecovery ?? plot.estimatedRecoveryPct, 2)}%</strong> {t('Sugar Recovery','साखर उतारा')}</span>
                 </div>
               </div>
             )}

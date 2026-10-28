@@ -40,7 +40,9 @@ crush_map = df_crush.set_index('DOCUMENT_NO')
 # Add / update factory crushing columns
 df['factory_crushed_tonnage_mt'] = df['Plot No'].map(crush_map['crushed_tonnage_mt']).fillna(0.0).round(3)
 df['factory_crush_slips'] = df['Plot No'].map(crush_map['crush_slips']).fillna(0).astype(int)
-df['factory_lab_recovery_pct'] = df['Plot No'].map(crush_map['crush_recovery_pct']).fillna(0.0).round(2)
+# Note: ERP column 'RECOVERY_PER' is actually primary juice Pol % (sucrose content 11.8% - 15.8%)
+df['factory_lab_pol_pct'] = df['Plot No'].map(crush_map['crush_recovery_pct']).fillna(0.0).round(2)
+df['factory_lab_recovery_pct'] = df['factory_lab_pol_pct'] # keep for backward compatibility
 df['factory_crush_dates'] = df['Plot No'].map(crush_map['crush_dates']).fillna('')
 
 # Get baseline fields
@@ -130,16 +132,33 @@ df['harvested_cane_area_ha'] = harvested_area_ha
 df['harvest_progress_pct'] = harvest_progress_pct
 df['canopy_occupancy_fraction'] = canopy_occupancy
 
-# Update factory lab recovery into master recovery for crushed plots
+# Update factory lab pol in juice into master quality for crushed plots
 for idx in df[matched_mask].index:
-    rec = df.loc[idx, 'factory_lab_recovery_pct']
-    if rec > 0:
-        df.loc[idx, 'predicted_recovery_pct'] = rec
-        df.loc[idx, 'Early Season Recovery (%)'] = rec
-        # Calculate CCS and Pol / Brix commensurate with lab recovery
-        ccs = np.round(rec / 0.754, 2)
-        df.loc[idx, 'predicted_ccs_pct'] = ccs
-        df.loc[idx, 'Updated CCS on Cane (%)'] = ccs
+    pol_val = df.loc[idx, 'factory_lab_pol_pct']
+    if pol_val > 0:
+        # Pol in juice measured directly from factory core-sampler / saccharimeter
+        df.loc[idx, 'predicted_pol_juice_pct'] = pol_val
+        df.loc[idx, 'Updated Pol in Juice (%)'] = pol_val
+        
+        # Primary juice Brix corresponding to factory Pol (~85% purity)
+        brix_val = np.round(pol_val / 0.85, 2)
+        df.loc[idx, 'predicted_brix_bx'] = brix_val
+        df.loc[idx, 'Updated Brix (°Bx)'] = brix_val
+        purity_val = np.round((pol_val / brix_val) * 100.0, 2)
+        df.loc[idx, 'predicted_juice_purity_pct'] = purity_val
+        df.loc[idx, 'Juice Purity (%)'] = purity_val
+        
+        # Commercial Cane Sugar (CCS %)
+        ccs_val = np.round(1.022 * pol_val - 0.292 * brix_val, 2)
+        df.loc[idx, 'predicted_ccs_pct'] = ccs_val
+        df.loc[idx, 'Updated CCS on Cane (%)'] = ccs_val
+        
+        # Sugar recovery on cane (Early Season = CCS * 0.754, Peak = CCS * 0.82)
+        rec_val = np.round(ccs_val * 0.754, 2)
+        df.loc[idx, 'predicted_recovery_pct'] = rec_val
+        df.loc[idx, 'estimated_recovery_pct'] = rec_val
+        df.loc[idx, 'Early Season Recovery (%)'] = rec_val
+        df.loc[idx, 'Peak Season Recovery (%)'] = np.round(ccs_val * 0.82, 2)
 
 # Update harvest maturity tiers
 tiers = []

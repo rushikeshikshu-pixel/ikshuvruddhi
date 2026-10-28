@@ -50,7 +50,7 @@ export async function registerPlots(db: Db, owner: string, options: {offset?:num
     latitude:numeric('Lat 1'),longitude:numeric('Long 1'),harvestTier:value('harvest_maturity_tier'),sourceTimestamp:satelliteRegister.sourceTimestamp,
     satelliteRefreshStatus:value('satellite_refresh_status'),predictionRefreshStatus:value('prediction_refresh_status'),
     detectedCaneAreaHa:numeric('detected_cane_area_ha'),harvestedAreaHa:numeric('harvested_cane_area_ha'),harvestProgressPct:numeric('harvest_progress_pct'),harvestedTonnage:numeric('Harvested Cut Tonnage (MT)'),
-    factoryCrushedTonnage:numeric('factory_crushed_tonnage_mt'),factoryCrushSlips:numeric('factory_crush_slips'),factoryLabRecovery:numeric('factory_lab_recovery_pct'),factoryCrushDates:value('factory_crush_dates'),
+    factoryCrushedTonnage:numeric('factory_crushed_tonnage_mt'),factoryCrushSlips:numeric('factory_crush_slips'),factoryLabPol:numeric('factory_lab_pol_pct'),factoryLabRecovery:numeric('factory_lab_recovery_pct'),factoryCrushDates:value('factory_crush_dates'),
     satelliteResolutionM:numeric('satellite_resolution_m'),
     tonnageBasis:value('tonnage_basis'),cropAgeReferenceDate:value('crop_age_reference_date'),
     inputPolicy:value('input_provenance_policy'),qualityModelVariant:value('quality_model_variant'),qualityInputCount:numeric('quality_input_count'),
