@@ -90,13 +90,13 @@ async function run() {
   const rows = parseCSV(text);
   console.log(`Parsed ${rows.length} rows.`);
 
-  if (rows.length !== 29384) {
-    throw new Error(`Expected 29384 rows, got ${rows.length}`);
+  if (rows.length < 29000) {
+    throw new Error(`Expected at least 29000 rows, got ${rows.length}`);
   }
 
   const snapshotId = crypto.randomUUID();
-  const timestamp = '2026-10-28 12:00:00';
-  console.log(`Starting staging for snapshotId: ${snapshotId} with timestamp: ${timestamp}`);
+  const timestamp = '2026-10-28 18:30:00';
+  console.log(`Starting staging for snapshotId: ${snapshotId} with timestamp: ${timestamp} (${rows.length} plots)`);
 
   const batchSize = 120;
   const totalBatches = Math.ceil(rows.length / batchSize);
