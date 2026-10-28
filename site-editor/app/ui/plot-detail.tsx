@@ -252,6 +252,38 @@ export default function PlotDetail({plot,sample,onClose,onUpdatePriority}:PlotVi
               </div>
             </div>
 
+            {/* Factory Weighbridge Crushing Receipts (25-26 Oct Actual Mill Deliveries) */}
+            {Boolean(plot.factoryCrushedTonnage && plot.factoryCrushedTonnage > 0) && (
+              <div style={{background:'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',padding:'12px',borderRadius:8,border:'1.5px solid #86efac',margin:'10px 0'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
+                  <span style={{fontSize:'0.82rem',fontWeight:700,color:'#065f46',display:'inline-flex',alignItems:'center',gap:5}}>
+                    🏭 {t('Factory Crushing Weighbridge Receipts (25-26 Oct)','कारखाना वजन पावती (२५-२६ ऑक्टोबर प्रत्यक्ष गाळप)')}
+                  </span>
+                  <span style={{background:'#15803d',color:'#fff',fontSize:'0.7rem',fontWeight:700,padding:'2px 8px',borderRadius:10}}>
+                    ✓ {t('Weighbridge Verified','काटा पावती प्रमाणित')}
+                  </span>
+                </div>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(130px, 1fr))',gap:8,marginTop:6}}>
+                  <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bbf7d0'}}>
+                    <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Total Crushed Net Weight','प्रत्यक्ष गाळप वजन')}</div>
+                    <div style={{fontSize:'1.05rem',fontWeight:800,color:'#15803d'}}>{format(plot.factoryCrushedTonnage, 2)} MT</div>
+                  </div>
+                  <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bbf7d0'}}>
+                    <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Weighbridge Trips / Slips','एकूण काटा पावत्या')}</div>
+                    <div style={{fontSize:'1.05rem',fontWeight:800,color:'#0f766e'}}>{plot.factoryCrushSlips || 1} {t('Slips','पावत्या')}</div>
+                  </div>
+                  <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bbf7d0'}}>
+                    <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Factory Lab Recovery','कारखाना लॅब उतारा')}</div>
+                    <div style={{fontSize:'1.05rem',fontWeight:800,color:'#b45309'}}>{format(plot.factoryLabRecovery, 2)}%</div>
+                  </div>
+                  <div style={{background:'#fff',padding:'6px 8px',borderRadius:6,border:'1px solid #bbf7d0'}}>
+                    <div style={{fontSize:'0.68rem',color:'#4b5563'}}>{t('Delivery Dates','गाळप दिनांक')}</div>
+                    <div style={{fontSize:'0.8rem',fontWeight:700,color:'#374151',marginTop:2}}>{plot.factoryCrushDates || '25/26 Oct 2026'}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div style={{display:'flex',gap:10,flexWrap:'wrap',margin:'12px 0'}}>
               <a 
                 href={plot.bhulekh712Url || 'https://bhulekh.mahabhumi.gov.in/'} 
