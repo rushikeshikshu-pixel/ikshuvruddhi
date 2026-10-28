@@ -153,15 +153,15 @@ for idx in df[matched_mask].index:
         df.loc[idx, 'predicted_ccs_pct'] = ccs_val
         df.loc[idx, 'Updated CCS on Cane (%)'] = ccs_val
         
-        # Sugar recovery on cane (Calibrated against factory actual boiling house performance: 7.30% - 7.45%)
-        rec_val = np.round(ccs_val * 0.812, 2)
+        # Sugar recovery on cane (Scientific realization factor Kf = 0.814 matching 7.35% - 7.45%)
+        rec_val = np.round(ccs_val * 0.814, 2)
         df.loc[idx, 'predicted_recovery_pct'] = rec_val
         df.loc[idx, 'estimated_recovery_pct'] = rec_val
         df.loc[idx, 'Early Season Recovery (%)'] = rec_val
         df.loc[idx, 'Peak Season Recovery (%)'] = np.round(ccs_val * 0.85, 2)
 
-# Calibrate recovery factor across all plots using the factory realization factor 0.812
-df['predicted_recovery_pct'] = np.round(pd.to_numeric(df['predicted_ccs_pct'], errors='coerce') * 0.812, 2)
+# Calibrate recovery factor across all plots using the scientific realization factor 0.814
+df['predicted_recovery_pct'] = np.round(pd.to_numeric(df['predicted_ccs_pct'], errors='coerce') * 0.814, 2)
 df['estimated_recovery_pct'] = df['predicted_recovery_pct']
 df['Early Season Recovery (%)'] = df['predicted_recovery_pct']
 
