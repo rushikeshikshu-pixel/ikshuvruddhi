@@ -46,7 +46,7 @@ export async function registerPlots(db: Db, owner: string, options: {offset?:num
     landRecord712Status:sql<string>`coalesce(nullif(${value('land_record_712_status')},''),'7/12_VERIFIED_CULTIVATOR')`,
     cropAgeDays:sql<number>`coalesce(${numeric('crop_age_days')},${numeric('True Crop Age as of Oct 22 (Days)')})`,surveyAgeDays:numeric('True Crop Age as of Oct 22 (Days)'),
     predictedPol:numeric('predicted_pol_juice_pct'),predictedBrix:numeric('predicted_brix_bx'),predictedCcs:numeric('predicted_ccs_pct'),predictedRecovery:numeric('predicted_recovery_pct'),
-    tonnage:numeric('Standing Millable Tonnage (MT)'),yieldPerHa:numeric('Yield (MT/Ha)'),canopyFraction:numeric('canopy_occupancy_fraction'),clearSkyCoveragePct:numeric('clear_sky_coverage_pct'),
+    tonnage:numeric('Standing Millable Tonnage (MT)'),yieldPerHa:numeric('Yield (MT/Ha)'),mlPredictedYieldMtHa:numeric('ml_predicted_yield_mt_ha'),mlPredictedTonnageMt:numeric('ml_predicted_tonnage_mt'),canopyFraction:numeric('canopy_occupancy_fraction'),clearSkyCoveragePct:numeric('clear_sky_coverage_pct'),
     latitude:numeric('Lat 1'),longitude:numeric('Long 1'),harvestTier:value('harvest_maturity_tier'),sourceTimestamp:satelliteRegister.sourceTimestamp,
     satelliteRefreshStatus:value('satellite_refresh_status'),predictionRefreshStatus:value('prediction_refresh_status'),
     detectedCaneAreaHa:numeric('detected_cane_area_ha'),harvestedAreaHa:numeric('harvested_cane_area_ha'),harvestProgressPct:numeric('harvest_progress_pct'),harvestedTonnage:numeric('Harvested Cut Tonnage (MT)'),
