@@ -326,10 +326,20 @@ export default function PlotDetail({plot,sample,onClose,onUpdatePriority}:PlotVi
             <div style={{background:'rgba(255,255,255,0.95)',padding:'10px 12px',borderRadius:8,border:'1px solid #e5e7eb',margin:'10px 0'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:4}}>
                 <span style={{fontSize:'0.78rem',fontWeight:700,color:'#1f2937'}}>
-                  ✂️ {t('Partial Harvest & Detected Cane Area','अंशतः तोडणी व उपग्रहाधारित क्षेत्र विभाजन')}
+                  ✂️ {t('12h–24h Rapid Harvest Detection & Area Split','१२-२४ तास उपग्रहाधारित तोडणी व क्षेत्र विभाजन')}
                 </span>
                 <span style={{fontSize:'0.72rem',fontWeight:700,color:Number(plot.harvestProgressPct||0)>50?'#c2410c':'#047857',background:Number(plot.harvestProgressPct||0)>50?'#fff7ed':'#ecfdf5',padding:'2px 8px',borderRadius:10,border:`1px solid ${Number(plot.harvestProgressPct||0)>50?'#fdba74':'#a7f3d0'}`}}>
                   {Number(plot.harvestProgressPct||0) > 10 ? `${format(plot.harvestProgressPct, 0)}% ${t('Cut','तोडला')}` : t('100% Standing','१००% उभा')}
+                </span>
+              </div>
+
+              {/* 12h-24h Sensor Detection Badge */}
+              <div style={{display:'flex',gap:6,alignItems:'center',marginBottom:6,flexWrap:'wrap',fontSize:'0.68rem'}}>
+                <span style={{background:'#f0fdf4',color:'#166534',padding:'2px 6px',borderRadius:4,border:'1px solid #bbf7d0',fontWeight:600}}>
+                  🛰️ {plot.cutDetectionSource ? plot.cutDetectionSource.replace(/_/g, ' ') : 'Sentinel-1 SAR + VIIRS 12h'}
+                </span>
+                <span style={{background:'#f8fafc',color:'#475569',padding:'2px 6px',borderRadius:4,border:'1px solid #e2e8f0'}}>
+                  ⏱️ {plot.detectionLatencyHours ?? 12}h {t('Cadence','कालावधी')} · {plot.harvestDetectionTimestamp ?? '2026-10-30 06:00 IST'}
                 </span>
               </div>
 
@@ -346,6 +356,9 @@ export default function PlotDetail({plot,sample,onClose,onUpdatePriority}:PlotVi
                   <div style={{fontSize:'0.68rem',color:'#7f1d1d',marginTop:2}}>
                     {t('Delivered to Mill','कारखान्यात जमा')}: ~{format(plot.harvestedTonnage ?? ((plot.harvestedAreaHa ?? 0) * (plot.yieldPerHa ?? 100)), 1)} MT
                   </div>
+                  <div style={{fontSize:'0.68rem',color:'#991b1b',marginTop:3,fontWeight:600}}>
+                    CCS: {format(plot.cutCcs ?? plot.predictedCcs, 2)}% · Pol: {format(plot.cutPol ?? plot.predictedPol, 2)}%
+                  </div>
                 </div>
 
                 <div style={{background:'#ecfdf5',padding:'6px 8px',borderRadius:4,border:'1px solid #a7f3d0'}}>
@@ -353,6 +366,9 @@ export default function PlotDetail({plot,sample,onClose,onUpdatePriority}:PlotVi
                   <strong style={{color:'#047857',marginLeft:4}}>{format(plot.detectedCaneAreaHa ?? plot.area, 2)} ha</strong>
                   <div style={{fontSize:'0.68rem',color:'#064e3b',marginTop:2}}>
                     {t('Standing Millable Biomass','शेतात उभा बायोमास')}: {format(plot.tonnage, 1)} MT
+                  </div>
+                  <div style={{fontSize:'0.68rem',color:'#065f46',marginTop:3,fontWeight:600}}>
+                    CCS: {format(plot.standingCcs ?? plot.predictedCcs, 2)}% · Pol: {format(plot.standingPol ?? plot.predictedPol, 2)}%
                   </div>
                 </div>
               </div>

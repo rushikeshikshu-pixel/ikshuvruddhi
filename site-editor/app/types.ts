@@ -39,6 +39,19 @@ export type Plot = {
   lastSatelliteDate?: string;
   satelliteConstellation?: string;
   revisitCadenceDays?: number;
+  // 12-to-24-Hour Free Multi-Satellite Rapid Harvest Fields
+  harvestState?: string;
+  cutDetectionSource?: string;
+  detectionLatencyHours?: number;
+  harvestDetectionTimestamp?: string;
+  cutPol?: number;
+  cutBrix?: number;
+  cutCcs?: number;
+  cutRecovery?: number;
+  standingPol?: number;
+  standingBrix?: number;
+  standingCcs?: number;
+  standingRecovery?: number;
 };
 export type Sample = {id:string;plotId:string;sampleDate:string;pol:number;brix:number;recovery:number|null;createdAt:string};
 export type Workspace = {mill:Mill|null;plots:Plot[];samples:Sample[];register?:any};
