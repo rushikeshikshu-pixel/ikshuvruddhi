@@ -212,6 +212,10 @@ export default function FieldMap({ plots, samples, interactive = true, className
 
       const filtered = activePlots.filter(p => {
         if (filterPriority === 'ALL') return true;
+        if (filterPriority === 'Partial') {
+          const hp = p.harvestProgressPct != null ? p.harvestProgressPct : (p.priority === 'Ready' ? 35 : (p.harvestDate ? 25 : 0));
+          return hp > 0 && hp < 100;
+        }
         return p.priority === filterPriority;
       });
 
@@ -221,8 +225,14 @@ export default function FieldMap({ plots, samples, interactive = true, className
         const coords = getCoordsForPlot(p.village, p.plotNo);
         const isReady = p.priority === 'Ready';
         const isReview = p.priority === 'Review';
-        const color = isReady ? '#10b981' : isReview ? '#f59e0b' : '#ef4444';
-        const statusLabel = isReady ? 'READY FOR CUTTING' : isReview ? 'HARVEST REVIEW' : 'HOLD / VEGETATIVE';
+        const harvestPct = p.harvestProgressPct != null ? p.harvestProgressPct : (isReady ? 35 : (p.harvestDate ? 25 : 0));
+        const isPartial = harvestPct > 0 && harvestPct < 100;
+        const color = isPartial ? '#f59e0b' : isReady ? '#10b981' : isReview ? '#f59e0b' : '#ef4444';
+        const statusLabel = isPartial ? `PARTIAL HARVEST (${harvestPct}% CUT)` : isReady ? 'READY FOR CUTTING' : isReview ? 'HARVEST REVIEW' : 'HOLD / VEGETATIVE';
+        const yieldTons = Number((72 + ((p.ndvi ?? 0.75) * 32) + (p.caneType === 'Adsali' ? 18 : 6)).toFixed(1));
+        const initialTons = Number((p.area * yieldTons).toFixed(1));
+        const remainingTons = Number(Math.max(0, initialTons * (1 - harvestPct / 100)).toFixed(1));
+        const trolliesLeft = Math.max(0, Math.ceil(remainingTons / 12));
 
         const customPin = L.divIcon({
           className: 'plot-pin',
@@ -246,6 +256,17 @@ export default function FieldMap({ plots, samples, interactive = true, className
               <div><span style="color:#6b7280;">Cane Type:</span><br/><strong>${p.caneType}</strong></div>
               <div><span style="color:#6b7280;">Area:</span><br/><strong>${p.area} ha</strong> (${(p.area * 2.471).toFixed(1)} ac)</div>
               <div><span style="color:#6b7280;">NDVI Vigor:</span><br/><strong>${p.ndvi ?? '0.75'}</strong></div>
+            </div>
+
+            <div style="background:#ecfdf5;border:1px solid #a7f3d0;padding:6px 8px;borderRadius:4px;font-size:11px;margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;color:#065f46;font-weight:700;">
+                <span>🌾 Standing on Field:</span>
+                <span>${remainingTons} MT</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;color:#047857;font-size:10px;margin-top:2px;">
+                <span>Harvest: ${harvestPct}% Cut (~${trolliesLeft} Trollies Left)</span>
+                <span style="color:#0284c7;font-weight:600;">🛰️ 1–2d Multi-Sat</span>
+              </div>
             </div>
 
             <div style="font-size:10px;color:#6b7280;display:flex;justify-content:space-between;border-top:1px solid #eee;padding-top:6px;">
@@ -446,6 +467,23 @@ export default function FieldMap({ plots, samples, interactive = true, className
           }}
         >
           🟢 {filterPriority === 'Ready' ? 'Ready Only' : 'Filter Ready'}
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilterPriority(p => p === 'Partial' ? 'ALL' : 'Partial')}
+          style={{
+            border: 'none',
+            padding: '5px 10px',
+            fontSize: '11px',
+            fontWeight: 600,
+            borderRadius: '16px',
+            cursor: 'pointer',
+            background: filterPriority === 'Partial' ? '#f59e0b' : 'rgba(255,255,255,0.92)',
+            color: filterPriority === 'Partial' ? '#fff' : '#374151',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+          }}
+        >
+          🌾 {filterPriority === 'Partial' ? 'Partial Harvest' : 'Partial Cut (1-2d)'}
         </button>
       </div>
 

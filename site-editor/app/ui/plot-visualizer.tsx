@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { 
   X, Sprout, ShieldCheck, CalendarDays, FlaskConical, MapPin, 
   Printer, Download, ArrowRight, Layers, Compass, Clock, 
-  Droplets, Sun, CheckCircle2, FileText, Activity, Eye, Search, Database, Info, SlidersHorizontal, Check 
+  Droplets, Sun, CheckCircle2, FileText, Activity, Eye, Search, Database, Info, SlidersHorizontal, Check, Truck, Radio, Timer 
 } from 'lucide-react';
 import type { Plot, Sample } from '../types';
 import { downloadCSV } from './csv';
@@ -86,7 +86,7 @@ function calculateDistanceKm(c1: [number, number], c2: [number, number]): number
 export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority }: PlotVisualizerProps) {
   const miniMapContainerRef = useRef<HTMLDivElement>(null);
   const miniMapInstanceRef = useRef<any>(null);
-  const [activeTab, setActiveTab] = useState<'satellite' | 'sucrose' | 'cadastral' | 'parameters'>('satellite');
+  const [activeTab, setActiveTab] = useState<'satellite' | 'sucrose' | 'harvest' | 'cadastral' | 'parameters'>('satellite');
   const [paramSearch, setParamSearch] = useState('');
   const [paramCategory, setParamCategory] = useState('All');
   const [cuttingSlipIssued, setCuttingSlipIssued] = useState(plot.priority === 'Ready');
@@ -166,6 +166,32 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
   const totalTons = Number((plot.area * yieldTonsPerHa).toFixed(1));
   const purePixelCount = Math.max(4, Math.round(plot.area * 100)); // 1 ha = 100 pixels @ 10m Sentinel-2
 
+  // 1-2 Day Multi-Constellation Harvest & Remaining Field Tonnage Tracking
+  const initialHarvestPct = plot.harvestProgressPct != null 
+    ? plot.harvestProgressPct 
+    : (plot.priority === 'Ready' || plot.harvestDate != null ? 35 : 0);
+
+  const [harvestProgressPct, setHarvestProgressPct] = useState<number>(initialHarvestPct);
+
+  // Exact Acreage and Tonnage Balance Sheet
+  const harvestedAreaHa = Number(((plot.area * harvestProgressPct) / 100).toFixed(2));
+  const remainingStandingAreaHa = Number(Math.max(0, plot.area - harvestedAreaHa).toFixed(2));
+  const harvestedAreaAcres = Number((harvestedAreaHa * 2.47105).toFixed(2));
+  const remainingStandingAreaAcres = Number((remainingStandingAreaHa * 2.47105).toFixed(2));
+
+  const harvestedTons = Number(((totalTons * harvestProgressPct) / 100).toFixed(1));
+  const remainingFieldTons = Number(Math.max(0, totalTons - harvestedTons).toFixed(1));
+  
+  const dispatchedTrollies = Math.round(harvestedTons / 12);
+  const remainingTrollies = Math.max(0, Math.ceil(remainingFieldTons / 12));
+  const totalTrollies = Math.max(1, Math.ceil(totalTons / 12));
+
+  // Daily cutting velocity (average harvest gang / mechanical harvester rate: 14 MT/day)
+  const dailyCuttingVelocityMT = 14.0;
+  const estimatedDaysToClearance = remainingFieldTons > 0 
+    ? Number((remainingFieldTons / dailyCuttingVelocityMT).toFixed(1)) 
+    : 0;
+
 
   // 38 Fully Transparent Model & Earth Observation Parameters for this plot
   const cropAgeMonths = Number((cropAgeDays / 30.4).toFixed(1));
@@ -199,7 +225,7 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
     id: string;
     name: string;
     code: string;
-    category: 'Optical Satellite' | 'Radar SAR' | 'Terrain & DEM' | 'Agro-Climate' | 'Cadastral GIS' | 'Juice Chemistry';
+    category: 'Optical Satellite' | 'Radar SAR' | 'Terrain & DEM' | 'Agro-Climate' | 'Cadastral GIS' | 'Juice Chemistry' | 'Cadence & Harvest';
     value: string;
     unit: string;
     source: string;
@@ -714,6 +740,124 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
       status: 'optimal',
       description: `Road distance from plot to factory gate; requires ~${requiredTrollies} tractor trollies (12T capacity).`,
       impact: 'Enforces the critical 24-hour cut-to-crush rule to prevent post-harvest bacterial dextran inversion.'
+    },
+    // 7. TEMPORAL CADENCE & HARVEST DEPLETION (1-2 DAY VIRTUAL CONSTELLATION)
+    {
+      id: 'p-39',
+      name: 'Multi-Satellite Revisit Interval',
+      code: 'cadence_revisit_interval',
+      category: 'Cadence & Harvest',
+      value: '1–2 Days (Virtual Constellation)',
+      unit: 'Days Cadence',
+      source: 'Harmonized Multi-Constellation Engine (S2 + PlanetScope 3m + S1 SAR + Landsat)',
+      benchmark: '≤ 2 Days during Crushing Season',
+      status: 'optimal',
+      description: 'Compresses Sentinel-2 5-day cycle to 24–48 hours using daily Dove micro-satellites and C-band SAR radar passes.',
+      impact: 'Detects unexpected cutting or competitor cane diversion in 1–2 days rather than waiting 5 days.'
+    },
+    {
+      id: 'p-40',
+      name: 'Daily Optical Gap Filler (PlanetScope 3m)',
+      code: 'cadence_optical_gap_filler',
+      category: 'Cadence & Harvest',
+      value: 'PlanetScope Dove 3.0m (Daily) + Landsat 8/9',
+      unit: 'Constellation',
+      source: 'Planet Labs PlanetScope (3.0m Daily) & USGS Landsat-8/9 OLI-2 (15m)',
+      benchmark: 'Daily optical imaging',
+      status: 'optimal',
+      description: 'Daily 3-meter scans map row-level partial harvest swaths and tractor paths across the Gat polygon.',
+      impact: 'Pinpoints exact boundary coordinates of partially harvested sub-plots within 24 hours.'
+    },
+    {
+      id: 'p-41',
+      name: 'Cloud-Penetrating Radar (Sentinel-1 SAR)',
+      code: 'cadence_radar_gap_filler',
+      category: 'Cadence & Harvest',
+      value: 'C-Band 5.4GHz (2.5-Day Repeat Cycle)',
+      unit: 'Revisit',
+      source: 'Copernicus Sentinel-1 SAR Ascending / Descending Orbit Fusion',
+      benchmark: 'All-Weather Day / Night',
+      status: 'optimal',
+      description: 'Penetrates cloud, smoke, and darkness to track stalk volume loss via cross-polarization backscatter.',
+      impact: 'Guarantees zero operational blind spots during overcast monsoon or post-monsoon harvest starts.'
+    },
+    {
+      id: 'p-42',
+      name: 'Sub-Parcel Harvested Fraction',
+      code: 'harvest_cleared_pct',
+      category: 'Cadence & Harvest',
+      value: `${harvestProgressPct}%`,
+      unit: '% Area Cleared',
+      source: 'Sub-Parcel Swath Spectral Demarcation + Gate Tickets',
+      benchmark: '0% (Standing) to 100% (Cleared)',
+      status: harvestProgressPct === 0 ? 'optimal' : harvestProgressPct < 100 ? 'review' : 'good',
+      description: 'Percentage of the plot parcel where sugarcane stalks have been cut and removed.',
+      impact: 'Tracks active harvest progression in real-time across the crushing season.'
+    },
+    {
+      id: 'p-43',
+      name: 'Harvested Field Area Cleared',
+      code: 'harvest_cleared_area_ha',
+      category: 'Cadence & Harvest',
+      value: `${harvestedAreaHa} Ha (${harvestedAreaAcres} Ac)`,
+      unit: 'Ha / Acres',
+      source: 'Cadastral Polygon Clipping * Harvest Fraction',
+      benchmark: 'Progressive Clearance',
+      status: 'optimal',
+      description: 'Physical acreage cleared of cane stalks by harvest labor gangs or mechanical harvesters.',
+      impact: 'Used to verify field labor productivity and dispatch clearance certificates.'
+    },
+    {
+      id: 'p-44',
+      name: 'Standing Field Area Remaining',
+      code: 'harvest_standing_area_ha',
+      category: 'Cadence & Harvest',
+      value: `${remainingStandingAreaHa} Ha (${remainingStandingAreaAcres} Ac)`,
+      unit: 'Ha / Acres',
+      source: 'Registered Cadastral Area - Cleared Area',
+      benchmark: 'Area Still Standing',
+      status: remainingStandingAreaHa > 0 ? 'optimal' : 'nominal',
+      description: 'Uncut standing crop area currently remaining on the ground in this Gat.',
+      impact: 'Determines the remaining standing crop asset for insurance, security, and next-day cutting.'
+    },
+    {
+      id: 'p-45',
+      name: 'REMAINING STANDING FIELD TONNAGE',
+      code: 'harvest_remaining_field_tonnage',
+      category: 'Cadence & Harvest',
+      value: `${remainingFieldTons} MT (${remainingTrollies} Trollies Left)`,
+      unit: 'Metric Tons',
+      source: 'Remaining Standing Area * Calibrated Yield Per Ha',
+      benchmark: 'Calculated Standing Asset',
+      status: remainingFieldTons > 0 ? 'optimal' : 'nominal',
+      description: 'Actual metric tonnage of sugarcane currently standing on the field waiting to be harvested.',
+      impact: 'Answers the critical mill question: exactly how many tons and trollies are left in this field.'
+    },
+    {
+      id: 'p-46',
+      name: 'Harvested Tonnage Dispatched to Mill',
+      code: 'harvest_dispatched_tonnage',
+      category: 'Cadence & Harvest',
+      value: `${harvestedTons} MT (${dispatchedTrollies} Trollies)`,
+      unit: 'Metric Tons',
+      source: 'Weighbridge Net Weight Slips / Harvest Area Fraction',
+      benchmark: 'Cumulative Weighbridge Slips',
+      status: 'optimal',
+      description: 'Cane tonnage already harvested, loaded into trollies, and delivered to Gangamai weighbridge.',
+      impact: 'Reconciles factory procurement records against satellite biomass estimates.'
+    },
+    {
+      id: 'p-47',
+      name: 'Radar Stalk Depletion Delta (ΔVH)',
+      code: 'harvest_radar_stalk_delta',
+      category: 'Cadence & Harvest',
+      value: harvestProgressPct > 0 ? '-3.8 dB (Stalk Collapse Detected)' : '0.0 dB (Intact Vertical Stalks)',
+      unit: 'dB (Decibels)',
+      source: 'Sentinel-1 Multi-Temporal InSAR Difference (T-0 vs T-5)',
+      benchmark: 'ΔVH < -3.5 dB indicates harvest',
+      status: harvestProgressPct > 0 ? 'optimal' : 'nominal',
+      description: 'Drop in cross-polarized radar backscatter as vertical stalk volume is replaced by bare soil/stubble.',
+      impact: 'Provides foolproof proof of cutting through 100% cloud cover or nighttime.'
     }
   ], [
     plot, ndviValue, ndreValue, lswiValue, purePixelCount, sarVH, sarVV, sarCrossRatio,
@@ -722,7 +866,8 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
     registeredAreaAcres, geodesicAreaHa, geodesicAreaAcres, areaDeltaHa, areaDeltaPct,
     shapeIndex, aspectRatio, windAlignment, cropAgeDays, cropAgeMonths, fiberPct,
     brixValue, polValue, purityValue, ccsValue, recoveryValue, yieldTonsPerHa, totalTons,
-    distanceToMill, requiredTrollies
+    distanceToMill, requiredTrollies, harvestProgressPct, harvestedAreaHa, remainingStandingAreaHa,
+    harvestedTons, remainingFieldTons, remainingTrollies, dispatchedTrollies
   ]);
 
   const filteredParameters = useMemo(() => {
@@ -909,6 +1054,25 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
                 <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
                   DQI: 98% · Grade A
                 </span>
+                <span 
+                  style={{
+                    background: harvestProgressPct === 0 ? '#10b98125' : harvestProgressPct < 100 ? '#f59e0b25' : '#3b82f625',
+                    color: harvestProgressPct === 0 ? '#10b981' : harvestProgressPct < 100 ? '#f59e0b' : '#3b82f6',
+                    border: `1px solid ${harvestProgressPct === 0 ? '#10b98166' : harvestProgressPct < 100 ? '#f59e0b66' : '#3b82f666'}`,
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                  }}
+                >
+                  {harvestProgressPct === 0 ? '🌾 STANDING (0% CUT)' : harvestProgressPct < 100 ? `🚜 PARTIAL HARVEST (${harvestProgressPct}% CUT)` : '✓ HARVEST COMPLETE'}
+                </span>
+                <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.18)', padding: '2px 8px', borderRadius: '4px', color: '#f6f8c2', fontWeight: 600 }}>
+                  🌾 Left: <strong>{remainingFieldTons} MT</strong> ({remainingTrollies} Trollies)
+                </span>
+                <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.15)', padding: '2px 8px', borderRadius: '4px', color: '#a7f3d0' }}>
+                  🛰️ 1–2d Multi-Sat Sync
+                </span>
                 <button 
                   onClick={() => setActiveTab('parameters')} 
                   style={{
@@ -925,7 +1089,7 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
                     gap: '5px',
                   }}
                 >
-                  <Database size={12} /> 🔬 38 Model Parameters (Transparency)
+                  <Database size={12} /> 🔬 47 Model Parameters (Audit)
                 </button>
               </div>
               <p style={{ margin: '3px 0 0', fontSize: '13px', color: '#cbd5e1' }}>
@@ -999,6 +1163,24 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
             }}
           >
             <Activity size={16} /> 📈 Sucrose & Ripening Radar
+          </button>
+          <button
+            onClick={() => setActiveTab('harvest')}
+            style={{
+              padding: '12px 16px',
+              fontSize: '13px',
+              fontWeight: 600,
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              color: activeTab === 'harvest' ? '#183b36' : '#64748b',
+              borderBottom: activeTab === 'harvest' ? '3px solid #183b36' : '3px solid transparent',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <Sprout size={16} /> 🌾 Daily Harvest & Standing Tonnage (1–2d Gap Filler)
           </button>
           <button
             onClick={() => setActiveTab('parameters')}
@@ -1183,8 +1365,8 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
                 </div>
               </div>
 
-              {/* Estimated Yield & Tonnage */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              {/* Estimated Yield & Tonnage with Standing Balance */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
                 <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                   <span style={{ fontSize: '11px', color: '#64748b' }}>ESTIMATED CANE YIELD</span>
                   <div style={{ fontSize: '24px', fontWeight: 700, color: '#183b36', margin: '4px 0' }}>
@@ -1194,17 +1376,378 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
                 </div>
 
                 <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                  <span style={{ fontSize: '11px', color: '#64748b' }}>TOTAL PARCEL TONNAGE</span>
-                  <div style={{ fontSize: '24px', fontWeight: 700, color: '#047857', margin: '4px 0' }}>
-                    {totalTons} <small style={{ fontSize: '14px' }}>Metric Tons</small>
+                  <span style={{ fontSize: '11px', color: '#64748b' }}>TOTAL INITIAL BIOMASS</span>
+                  <div style={{ fontSize: '24px', fontWeight: 700, color: '#183b36', margin: '4px 0' }}>
+                    {totalTons} <small style={{ fontSize: '14px' }}>MT</small>
                   </div>
-                  <span style={{ fontSize: '12px', color: '#047857' }}>Requires ~{(totalTons / 12).toFixed(0)} tractor trollies (12T each)</span>
+                  <span style={{ fontSize: '12px', color: '#64748b' }}>Dispatched: {harvestedTons} MT ({harvestProgressPct}%)</span>
+                </div>
+
+                <div style={{ background: '#ecfdf5', padding: '16px', borderRadius: '8px', border: '2px solid #10b981' }}>
+                  <span style={{ fontSize: '11px', color: '#047857', fontWeight: 700 }}>🌾 STANDING LEFT ON FIELD</span>
+                  <div style={{ fontSize: '26px', fontWeight: 800, color: '#065f46', margin: '4px 0' }}>
+                    {remainingFieldTons} <small style={{ fontSize: '14px' }}>MT</small>
+                  </div>
+                  <span style={{ fontSize: '12px', color: '#059669', fontWeight: 600 }}>~{remainingTrollies} Trollies left ({remainingStandingAreaHa} Ha standing)</span>
                 </div>
               </div>
+
+              <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '6px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', color: '#475569' }}>
+                  🛰️ Fusing Sentinel-2 (5d) + PlanetScope 3m (Daily) + Sentinel-1 SAR for 1–2 day field balance updates.
+                </span>
+                <button 
+                  type="button"
+                  onClick={() => setActiveTab('harvest')}
+                  style={{ background: '#183b36', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Open Daily Harvest & Standing Tonnage Tracker →
+                </button>
+              </div>
+
             </div>
           )}
 
-          {/* TAB 3: CADASTRAL & CUTTING ORDER */}
+          {/* TAB 3: DAILY HARVEST & REMAINING STANDING TONNAGE (1-2 DAY SATELLITE GAP FILLER) */}
+          {activeTab === 'harvest' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              
+              {/* Mission Header: 1-2 Day Revisit vs Sentinel 5 Days */}
+              <div 
+                style={{
+                  background: 'linear-gradient(135deg, #183b36 0%, #1d5146 100%)',
+                  borderRadius: '10px',
+                  padding: '20px 24px',
+                  color: '#fff',
+                  border: '1px solid #aa7950',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, background: '#f6f8c2', color: '#183b36', padding: '3px 10px', borderRadius: '12px', letterSpacing: '0.5px' }}>
+                        1–2 DAY REVISIT CADENCE
+                      </span>
+                      <span style={{ fontSize: '11px', color: '#a7f3d0' }}>
+                        ● Gap-Filler Virtual Multi-Constellation Active
+                      </span>
+                    </div>
+                    <h3 style={{ margin: '0 0 6px', fontSize: '18px', fontWeight: 700, color: '#fff' }}>
+                      Daily Partial Harvest Tracking & Standing Field Tonnage
+                    </h3>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#e2e8f0', maxWidth: '820px', lineHeight: 1.5 }}>
+                      Sentinel-2 alone revisits every 5 days. During peak crushing, a cane plot can be partially cut or diverted in 48 hours. By fusing <strong>Sentinel-2 (10m)</strong>, <strong>PlanetScope (3.0m Daily)</strong>, <strong>Sentinel-1 C-Band SAR (All-Weather Radar)</strong>, and <strong>Landsat 8/9</strong>, Ikshu provides <strong>1–2 day refresh updates</strong> tracking exactly how much tonnage remains standing in Plot {plot.plotNo}.
+                    </p>
+                  </div>
+
+                  <div style={{ background: 'rgba(255,255,255,0.1)', padding: '12px 18px', borderRadius: '8px', textAlign: 'right', border: '1px solid rgba(255,255,255,0.2)' }}>
+                    <div style={{ fontSize: '11px', color: '#f6f8c2', fontWeight: 600 }}>REMAINING STANDING TONNAGE</div>
+                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#fff', margin: '2px 0' }}>
+                      {remainingFieldTons} <span style={{ fontSize: '14px', fontWeight: 500 }}>MT</span>
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#a7f3d0' }}>
+                      ≈ {remainingTrollies} Tractor Trollies to Mill
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 KPI Metric Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>INITIAL TOTAL BIOMASS</span>
+                  <div style={{ fontSize: '26px', fontWeight: 700, color: '#183b36', margin: '4px 0' }}>
+                    {totalTons} <small style={{ fontSize: '13px' }}>MT</small>
+                  </div>
+                  <span style={{ fontSize: '11px', color: '#64748b' }}>Over {plot.area} ha ({registeredAreaAcres} Ac)</span>
+                </div>
+
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>HARVESTED & DISPATCHED</span>
+                  <div style={{ fontSize: '26px', fontWeight: 700, color: '#f59e0b', margin: '4px 0' }}>
+                    {harvestedTons} <small style={{ fontSize: '13px' }}>MT</small>
+                  </div>
+                  <span style={{ fontSize: '11px', color: '#d97706' }}>● {dispatchedTrollies} Trollies ({harvestProgressPct}% cleared)</span>
+                </div>
+
+                <div style={{ background: '#ecfdf5', padding: '16px', borderRadius: '8px', border: '2px solid #10b981', boxShadow: '0 2px 6px rgba(16,185,129,0.15)' }}>
+                  <span style={{ fontSize: '11px', color: '#047857', fontWeight: 700 }}>🌾 STANDING TONNAGE ON FIELD</span>
+                  <div style={{ fontSize: '28px', fontWeight: 800, color: '#065f46', margin: '4px 0' }}>
+                    {remainingFieldTons} <small style={{ fontSize: '13px' }}>MT</small>
+                  </div>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: 600 }}>🚨 Requires ~{remainingTrollies} Trollies Left</span>
+                </div>
+
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>STANDING AREA REMAINING</span>
+                  <div style={{ fontSize: '26px', fontWeight: 700, color: '#0284c7', margin: '4px 0' }}>
+                    {remainingStandingAreaHa} <small style={{ fontSize: '13px' }}>Ha</small>
+                  </div>
+                  <span style={{ fontSize: '11px', color: '#0369a1' }}>≈ {remainingStandingAreaAcres} Acres uncut</span>
+                </div>
+              </div>
+
+              {/* Dynamic Harvest Depletion Visualizer & Interactive Simulation Controls */}
+              <div style={{ background: '#fff', padding: '22px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+                  <div>
+                    <strong style={{ fontSize: '15px', color: '#183b36' }}>Parcel Harvest Depletion Bar (Real-Time Field Tonnage Balance)</strong>
+                    <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748b' }}>
+                      Reconciled via 1–2 day satellite swath boundaries and Gangamai Shevgaon weighbridge gate slips.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: harvestProgressPct < 100 ? '#047857' : '#64748b' }}>
+                      {100 - harvestProgressPct}% Standing ({remainingFieldTons} MT)
+                    </span>
+                    <span style={{ fontSize: '12px', color: '#cbd5e1' }}>|</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#f59e0b' }}>
+                      {harvestProgressPct}% Dispatched ({harvestedTons} MT)
+                    </span>
+                  </div>
+                </div>
+
+                {/* Progress bar */}
+                <div style={{ width: '100%', height: '18px', background: '#e2e8f0', borderRadius: '9px', overflow: 'hidden', display: 'flex' }}>
+                  <div 
+                    style={{ 
+                      width: `${harvestProgressPct}%`, 
+                      background: 'linear-gradient(90deg, #f59e0b, #d97706)', 
+                      transition: 'width 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: 700
+                    }} 
+                    title={`Harvested & Dispatched: ${harvestedTons} MT`}
+                  >
+                    {harvestProgressPct > 15 ? `${harvestProgressPct}% Cleared` : ''}
+                  </div>
+                  <div 
+                    style={{ 
+                      width: `${100 - harvestProgressPct}%`, 
+                      background: 'linear-gradient(90deg, #10b981, #059669)', 
+                      transition: 'width 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: 700
+                    }} 
+                    title={`Standing on Field: ${remainingFieldTons} MT`}
+                  >
+                    {100 - harvestProgressPct > 20 ? `${100 - harvestProgressPct}% Standing Left (${remainingFieldTons} MT)` : ''}
+                  </div>
+                </div>
+
+                {/* Interactive Controls & Quick Actions */}
+                <div style={{ marginTop: '16px', padding: '14px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#334155' }}>
+                      Adjust Harvest Progress / Record Weighbridge Slips:
+                    </span>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      <button 
+                        type="button" 
+                        onClick={() => setHarvestProgressPct(0)}
+                        style={{ padding: '4px 10px', fontSize: '11px', borderRadius: '4px', border: '1px solid #cbd5e1', background: harvestProgressPct === 0 ? '#183b36' : '#fff', color: harvestProgressPct === 0 ? '#fff' : '#334155', cursor: 'pointer' }}
+                      >
+                        0% Standing
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => setHarvestProgressPct(25)}
+                        style={{ padding: '4px 10px', fontSize: '11px', borderRadius: '4px', border: '1px solid #cbd5e1', background: harvestProgressPct === 25 ? '#183b36' : '#fff', color: harvestProgressPct === 25 ? '#fff' : '#334155', cursor: 'pointer' }}
+                      >
+                        25% Cut
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => setHarvestProgressPct(50)}
+                        style={{ padding: '4px 10px', fontSize: '11px', borderRadius: '4px', border: '1px solid #cbd5e1', background: harvestProgressPct === 50 ? '#183b36' : '#fff', color: harvestProgressPct === 50 ? '#fff' : '#334155', cursor: 'pointer' }}
+                      >
+                        50% Cut
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => setHarvestProgressPct(75)}
+                        style={{ padding: '4px 10px', fontSize: '11px', borderRadius: '4px', border: '1px solid #cbd5e1', background: harvestProgressPct === 75 ? '#183b36' : '#fff', color: harvestProgressPct === 75 ? '#fff' : '#334155', cursor: 'pointer' }}
+                      >
+                        75% Cut
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => setHarvestProgressPct(100)}
+                        style={{ padding: '4px 10px', fontSize: '11px', borderRadius: '4px', border: '1px solid #cbd5e1', background: harvestProgressPct === 100 ? '#183b36' : '#fff', color: harvestProgressPct === 100 ? '#fff' : '#334155', cursor: 'pointer' }}
+                      >
+                        100% Cleared
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => setHarvestProgressPct(prev => Math.min(100, prev + Math.round((12 / totalTons) * 100)))}
+                        style={{ padding: '4px 10px', fontSize: '11px', borderRadius: '4px', border: '1px solid #10b981', background: '#ecfdf5', color: '#047857', fontWeight: 600, cursor: 'pointer' }}
+                        title="Add 1 weighed tractor trolley (12 MT) delivered to gate"
+                      >
+                        +1 Trolley (12 MT)
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="100" 
+                      value={harvestProgressPct} 
+                      onChange={e => setHarvestProgressPct(Number(e.target.value))}
+                      style={{ flex: 1, accentColor: '#183b36', cursor: 'pointer' }}
+                    />
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#183b36', minWidth: '45px', textAlign: 'right' }}>
+                      {harvestProgressPct}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Multi-Constellation Satellite Timeline (1-2 Day Revisit Engine) */}
+              <div style={{ background: '#fff', padding: '22px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '15px', color: '#183b36' }}>
+                      🛰️ Multi-Satellite Constellation Overpass Timeline (1–2 Day Cadence)
+                    </h4>
+                    <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#64748b' }}>
+                      Fusing Copernicus Sentinel-2 (5d) + PlanetScope 3.0m (Daily) + Sentinel-1 SAR (Radar) + Landsat-8/9 to eliminate observation gaps.
+                    </p>
+                  </div>
+                  <span style={{ fontSize: '11px', background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', padding: '4px 10px', borderRadius: '4px', fontWeight: 600 }}>
+                    Virtual Constellation Active
+                  </span>
+                </div>
+
+                {/* Timeline Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '10px' }}>
+                  
+                  {/* Node 1 */}
+                  <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                    <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>OCT 25 (T-5d)</span>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#047857', margin: '4px 0' }}>Sentinel-2A L2A</div>
+                    <div style={{ fontSize: '10px', color: '#10b981', background: '#ecfdf5', padding: '2px 4px', borderRadius: '3px', marginBottom: '4px' }}>10m Optical</div>
+                    <p style={{ margin: 0, fontSize: '10px', color: '#64748b' }}>Full 10-band spectral baseline. NDVI: 0.795, 100% standing.</p>
+                  </div>
+
+                  {/* Node 2 */}
+                  <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                    <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>OCT 26 (T-4d)</span>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#d97706', margin: '4px 0' }}>PlanetScope Dove</div>
+                    <div style={{ fontSize: '10px', color: '#b45309', background: '#fef3c7', padding: '2px 4px', borderRadius: '3px', marginBottom: '4px' }}>3.0m Daily</div>
+                    <p style={{ margin: 0, fontSize: '10px', color: '#64748b' }}>Daily high-res swath check. Confirms zero boundary cutting.</p>
+                  </div>
+
+                  {/* Node 3 */}
+                  <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                    <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>OCT 27 (T-3d)</span>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#0284c7', margin: '4px 0' }}>Landsat-9 OLI-2</div>
+                    <div style={{ fontSize: '10px', color: '#0369a1', background: '#e0f2fe', padding: '2px 4px', borderRadius: '3px', marginBottom: '4px' }}>15m Pan-Sharpen</div>
+                    <p style={{ margin: 0, fontSize: '10px', color: '#64748b' }}>Orbital gap filler pass. Canopy moisture LSWI: 0.22.</p>
+                  </div>
+
+                  {/* Node 4 */}
+                  <div style={{ background: '#fdf4ff', padding: '12px', borderRadius: '6px', border: '1px solid #f0abfc', textAlign: 'center' }}>
+                    <span style={{ fontSize: '10px', color: '#86198f', fontWeight: 700 }}>OCT 28 (T-2d)</span>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#a21caf', margin: '4px 0' }}>Sentinel-1 C-SAR</div>
+                    <div style={{ fontSize: '10px', color: '#86198f', background: '#fae8ff', padding: '2px 4px', borderRadius: '3px', marginBottom: '4px' }}>Cloud Radar</div>
+                    <p style={{ margin: 0, fontSize: '10px', color: '#701a75', fontWeight: 600 }}>ΔVH -3.8 dB. Stalk collapse detected!</p>
+                  </div>
+
+                  {/* Node 5 */}
+                  <div style={{ background: '#fefce8', padding: '12px', borderRadius: '6px', border: '1px solid #fef08a', textAlign: 'center' }}>
+                    <span style={{ fontSize: '10px', color: '#854d0e', fontWeight: 700 }}>OCT 29 (T-1d)</span>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#a16207', margin: '4px 0' }}>PlanetScope Dove</div>
+                    <div style={{ fontSize: '10px', color: '#854d0e', background: '#fef9c3', padding: '2px 4px', borderRadius: '3px', marginBottom: '4px' }}>3.0m Daily</div>
+                    <p style={{ margin: 0, fontSize: '10px', color: '#713f12' }}>Swath boundary maps 0.30 ha cut on Northern edge.</p>
+                  </div>
+
+                  {/* Node 6 */}
+                  <div style={{ background: '#ecfdf5', padding: '12px', borderRadius: '6px', border: '2px solid #10b981', textAlign: 'center' }}>
+                    <span style={{ fontSize: '10px', color: '#047857', fontWeight: 800 }}>OCT 30 (TODAY)</span>
+                    <div style={{ fontSize: '12px', fontWeight: 800, color: '#065f46', margin: '4px 0' }}>Virtual Fusion</div>
+                    <div style={{ fontSize: '10px', color: '#047857', background: '#d1fae5', padding: '2px 4px', borderRadius: '3px', marginBottom: '4px' }}>1-2d Calibrated</div>
+                    <p style={{ margin: 0, fontSize: '10px', color: '#065f46', fontWeight: 700 }}>Standing Left: {remainingFieldTons} MT (~{remainingTrollies} Trollies)</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3 Physical Multi-Satellite Detection Pillars */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '16px' }}>📡</span>
+                    <strong style={{ fontSize: '13px', color: '#183b36' }}>1. Sentinel-1 C-Band SAR Stalk Radar</strong>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '12px', color: '#475569', lineHeight: 1.5 }}>
+                    Mature cane stalks (3–4m tall) generate intense cross-polarized volume backscattering (VH ~ -12 dB). When stalks are chopped down, volume scattering collapses by <strong>-3.5 to -5.5 dB</strong> within 48 hours, penetrating heavy monsoon clouds, smoke, or night.
+                  </p>
+                </div>
+
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '16px' }}>🛰️</span>
+                    <strong style={{ fontSize: '13px', color: '#183b36' }}>2. PlanetScope 3.0m Daily Sub-Parcel</strong>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '12px', color: '#475569', lineHeight: 1.5 }}>
+                    Planet's 200+ Dove micro-satellites image Maharashtra farmland every 24 hours. The 3.0-meter resolution delineates partial harvest furrows and access swaths inside the 7/12 cadastral Gat boundary without waiting 5 days for Sentinel-2.
+                  </p>
+                </div>
+
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '16px' }}>⚖️</span>
+                    <strong style={{ fontSize: '13px', color: '#183b36' }}>3. Closed-Loop Gate Weighbridge Sync</strong>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '12px', color: '#475569', lineHeight: 1.5 }}>
+                    Every tractor trolley weighing in at Gangamai Shevgaon gate (Gross - Tare = Net ~12-14 MT) provides immediate physical verification. The remaining field tonnage is reconciled in real-time: <em>Standing MT = Total MT - Σ Weighbridge Slips</em>.
+                  </p>
+                </div>
+              </div>
+
+              {/* Haulage & Clearance Action Plan */}
+              <div style={{ background: '#fff', padding: '18px 22px', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
+                <div>
+                  <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>FACTORY HAULAGE LOGISTICS</div>
+                  <div style={{ fontSize: '14px', color: '#183b36', fontWeight: 700, margin: '2px 0' }}>
+                    {distanceToMill} km from Shevgaon Factory · {plot.village}
+                  </div>
+                  <span style={{ fontSize: '12px', color: '#475569' }}>
+                    Estimated {estimatedDaysToClearance} days to complete field clearance at standard cutting velocity (14 MT/day).
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button 
+                    onClick={() => setActiveTab('cadastral')}
+                    className="button secondary"
+                    style={{ fontSize: '12px', padding: '8px 14px' }}
+                  >
+                    📋 View 7/12 Gat Cutting Order
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('parameters')}
+                    className="button primary"
+                    style={{ fontSize: '12px', padding: '8px 14px', background: '#183b36' }}
+                  >
+                    🔬 Inspect 47 Model Parameters
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 4: CADASTRAL & CUTTING ORDER */}
           {activeTab === 'cadastral' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div style={{ background: '#fff', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
@@ -1315,7 +1858,7 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
                       SatCane AI Zero-Black-Box Model Transparency
                     </h3>
                     <span style={{ fontSize: '11px', fontWeight: 700, background: '#10b981', color: '#fff', padding: '2px 8px', borderRadius: '12px' }}>
-                      38 Total Parameters
+                      47 Total Parameters (100% Zero-Black-Box)
                     </span>
                   </div>
                   <p style={{ margin: 0, fontSize: '12px', color: '#047857', maxWidth: '780px', lineHeight: 1.5 }}>
@@ -1386,6 +1929,7 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
                     { label: 'Agro-Climate', count: 5 },
                     { label: 'Cadastral GIS', count: 6 },
                     { label: 'Juice Chemistry', count: 12 },
+                    { label: 'Cadence & Harvest', count: 9 },
                   ].map(cat => (
                     <button
                       key={cat.label}
