@@ -71,6 +71,50 @@ function generateParcelPolygon(center: [number, number], areaHa: number): [numbe
   ];
 }
 
+// Sutherland-Hodgman Polygon Clipping by Latitude
+function clipPolygonByLat(polyPts: [number, number][], cutLat: number, keepBelow: boolean): [number, number][] {
+  const pts = polyPts[0][0] === polyPts[polyPts.length - 1][0] && polyPts[0][1] === polyPts[polyPts.length - 1][1]
+    ? polyPts.slice(0, -1)
+    : polyPts.slice();
+  const out: [number, number][] = [];
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const p1 = pts[i];
+    const p2 = pts[(i + 1) % n];
+
+    const p1Inside = keepBelow ? p1[0] <= cutLat : p1[0] >= cutLat;
+    const p2Inside = keepBelow ? p2[0] <= cutLat : p2[0] >= cutLat;
+
+    if (p1Inside && p2Inside) {
+      out.push(p2);
+    } else if (p1Inside && !p2Inside) {
+      const t = (cutLat - p1[0]) / (p2[0] - p1[0]);
+      out.push([cutLat, p1[1] + t * (p2[1] - p1[1])]);
+    } else if (!p1Inside && !p2Inside) {
+      // both outside
+    } else if (!p1Inside && p2Inside) {
+      const t = (cutLat - p1[0]) / (p2[0] - p1[0]);
+      out.push([cutLat, p1[1] + t * (p2[1] - p1[1])]);
+      out.push(p2);
+    }
+  }
+  if (out.length > 0 && (out[0][0] !== out[out.length - 1][0] || out[0][1] !== out[out.length - 1][1])) {
+    out.push([out[0][0], out[0][1]]);
+  }
+  return out;
+}
+
+// Approximate UTM Zone 43N coordinates (Easting/Northing in meters for Maharashtra)
+function toUtmZone43N(lat: number, lng: number): { easting: number; northing: number } {
+  const latRad = (lat * Math.PI) / 180;
+  const lngRad = (lng * Math.PI) / 180;
+  const lng0 = (75 * Math.PI) / 180; // Central meridian Zone 43
+  const N = 6378137 / Math.sqrt(1 - 0.00669438 * Math.sin(latRad) * Math.sin(latRad));
+  const easting = Math.round(500000 + N * (lngRad - lng0) * Math.cos(latRad));
+  const northing = Math.round(111132.95 * lat);
+  return { easting, northing };
+}
+
 function calculateDistanceKm(c1: [number, number], c2: [number, number]): number {
   const R = 6371; // Earth radius km
   const dLat = ((c2[0] - c1[0]) * Math.PI) / 180;
@@ -185,6 +229,46 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
   const dispatchedTrollies = Math.round(harvestedTons / 12);
   const remainingTrollies = Math.max(0, Math.ceil(remainingFieldTons / 12));
   const totalTrollies = Math.max(1, Math.ceil(totalTons / 12));
+
+  // Cadastral Gat vs Sugarcane Cultivated Area Inset
+  const caneOccupancyPct = 92; // 92% of Gat is cultivated cane; 8% is field bunds, pathways, furrows
+  const canePlantedAreaHa = Number(((plot.area * caneOccupancyPct) / 100).toFixed(2));
+  const canePlantedAreaAcres = Number((canePlantedAreaHa * 2.47105).toFixed(2));
+  const canePlantedAreaGunthas = Number((canePlantedAreaHa * 98.842).toFixed(1));
+  const cadastralAreaAcres = Number((plot.area * 2.47105).toFixed(2));
+  const cadastralAreaGunthas = Number((plot.area * 98.842).toFixed(1));
+  const cadastralAreaSqm = Math.round(plot.area * 10000).toLocaleString();
+
+  // Latitude range and slicing for Harvested vs Standing sub-polygons
+  const polyLats = useMemo(() => parcelPolygon.map(p => p[0]), [parcelPolygon]);
+  const minPolyLat = useMemo(() => Math.min(...polyLats), [polyLats]);
+  const maxPolyLat = useMemo(() => Math.max(...polyLats), [polyLats]);
+  const cutLat = useMemo(() => minPolyLat + (maxPolyLat - minPolyLat) * (harvestProgressPct / 100), [minPolyLat, maxPolyLat, harvestProgressPct]);
+
+  const harvestedPolygon = useMemo(() => {
+    if (harvestProgressPct <= 0) return [];
+    if (harvestProgressPct >= 100) return parcelPolygon;
+    return clipPolygonByLat(parcelPolygon, cutLat, true);
+  }, [parcelPolygon, cutLat, harvestProgressPct]);
+
+  const standingPolygon = useMemo(() => {
+    if (harvestProgressPct <= 0) return parcelPolygon;
+    if (harvestProgressPct >= 100) return [];
+    return clipPolygonByLat(parcelPolygon, cutLat, false);
+  }, [parcelPolygon, cutLat, harvestProgressPct]);
+
+  const cuttingFrontLine = useMemo((): [number, number][] => {
+    if (harvestProgressPct <= 0 || harvestProgressPct >= 100) return [];
+    const cutPoints = harvestedPolygon.filter(p => Math.abs(p[0] - cutLat) < 0.000002);
+    if (cutPoints.length < 2) return [];
+    const sorted = [...cutPoints].sort((a, b) => a[1] - b[1]);
+    return [sorted[0], sorted[sorted.length - 1]];
+  }, [harvestedPolygon, cutLat, harvestProgressPct]);
+
+  const cuttingFrontWidthM = useMemo(() => {
+    if (cuttingFrontLine.length < 2) return 0;
+    return Math.round(calculateDistanceKm(cuttingFrontLine[0], cuttingFrontLine[1]) * 1000);
+  }, [cuttingFrontLine]);
 
   // Daily cutting velocity (average harvest gang / mechanical harvester rate: 14 MT/day)
   const dailyCuttingVelocityMT = 14.0;
@@ -1023,14 +1107,81 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
       }).addTo(map);
 
-      // Draw Cadastral Parcel Polygon
-      const polygon = L.polygon(parcelPolygon, {
-        color: '#10b981',
-        weight: 3,
-        fillColor: '#10b981',
-        fillOpacity: 0.28,
-        dashArray: '2, 4',
+      // 1. Cadastral Gat Boundary (Blue dashed property perimeter)
+      const cadastralBoundary = L.polygon(parcelPolygon, {
+        color: '#3b82f6',
+        weight: 2.5,
+        fillColor: 'transparent',
+        dashArray: '4, 4',
       }).addTo(map);
+      cadastralBoundary.bindTooltip(`🏛️ 7/12 Gat Boundary: ${plot.area} Ha (${cadastralAreaAcres} Acres)`, { permanent: false, direction: 'top' });
+
+      // 2. Harvested Area Polygon (Amber / Felled Stubble Swath)
+      if (harvestedPolygon.length > 0 && harvestProgressPct > 0) {
+        const harvestedLayer = L.polygon(harvestedPolygon, {
+          color: '#d97706',
+          weight: 2,
+          fillColor: '#f59e0b',
+          fillOpacity: 0.44,
+          dashArray: '2, 3',
+        }).addTo(map);
+        harvestedLayer.bindTooltip(`🌾 Harvested Swath: ${harvestedAreaHa} Ha (${harvestedAreaAcres} Ac) · ${harvestedTons} MT Dispatched`, { permanent: false, direction: 'center' });
+      }
+
+      // 3. Standing Cane Polygon (Lush Sugarcane Emerald Green)
+      if (standingPolygon.length > 0 && harvestProgressPct < 100) {
+        const standingLayer = L.polygon(standingPolygon, {
+          color: '#059669',
+          weight: 2.5,
+          fillColor: '#10b981',
+          fillOpacity: 0.52,
+        }).addTo(map);
+        standingLayer.bindTooltip(`🌿 Standing Cane: ${remainingStandingAreaHa} Ha (${remainingStandingAreaAcres} Ac) · ${remainingFieldTons} MT Left`, { permanent: false, direction: 'center' });
+      }
+
+      // 4. Active Cutting Front Line (Red dashed line + Harvester/Scissors badge)
+      if (cuttingFrontLine.length >= 2) {
+        L.polyline(cuttingFrontLine, {
+          color: '#dc2626',
+          weight: 3.5,
+          dashArray: '6, 6',
+        }).addTo(map);
+
+        const midLng = (cuttingFrontLine[0][1] + cuttingFrontLine[1][1]) / 2;
+        const cutMarker = L.divIcon({
+          className: 'cut-front-marker',
+          html: `<div style="background:#dc2626;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.4);border:1px solid #fff;">✂️ Active Cut Front: ${harvestProgressPct}% (${cuttingFrontWidthM}m)</div>`,
+          iconSize: [120, 20],
+          iconAnchor: [60, 10],
+        });
+        L.marker([cuttingFrontLine[0][0], midLng], { icon: cutMarker }).addTo(map);
+      }
+
+      // 5. Cadastral Corner GPS Vertex Markers
+      parcelPolygon.slice(0, -1).forEach((coord, idx) => {
+        const isCut = coord[0] <= cutLat && harvestProgressPct > 0;
+        const vertexIcon = L.divIcon({
+          className: 'vertex-pin',
+          html: `
+            <div style="background:${isCut ? '#d97706' : '#059669'};color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.4);cursor:pointer;">
+              V${idx + 1}
+            </div>
+          `,
+          iconSize: [22, 22],
+          iconAnchor: [11, 11],
+        });
+        const vMarker = L.marker(coord, { icon: vertexIcon }).addTo(map);
+        vMarker.bindPopup(`
+          <div style="font-size:11px;line-height:1.4;">
+            <strong style="color:#183b36;">Corner V${idx + 1} (${['North-West', 'North-East', 'South-East', 'South', 'South-West'][idx]} Boundary)</strong><br/>
+            📍 <strong>Latitude:</strong> ${coord[0].toFixed(6)}° N<br/>
+            📍 <strong>Longitude:</strong> ${coord[1].toFixed(6)}° E<br/>
+            <span style="color:${isCut ? '#b45309' : '#047857'};font-weight:600;">
+              ${isCut ? '🌾 Status: Harvested / Stubble' : '🌿 Status: Standing Sugarcane'}
+            </span>
+          </div>
+        `);
+      });
 
       // Centroid marker with pulsing GPS ring
       const centroidIcon = L.divIcon({
@@ -1045,15 +1196,23 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
         iconAnchor: [12, 12],
       });
 
-      L.marker(plotCoords, { icon: centroidIcon }).addTo(map);
-      map.fitBounds(polygon.getBounds(), { padding: [35, 35] });
+      const centerMarker = L.marker(plotCoords, { icon: centroidIcon }).addTo(map);
+      centerMarker.bindPopup(`
+        <div style="font-size:12px;">
+          <strong style="color:#183b36;">Plot ${plot.plotNo} Centroid</strong><br/>
+          GPS: ${plotCoords[0].toFixed(6)}°N, ${plotCoords[1].toFixed(6)}°E<br/>
+          Total Gat: ${plot.area} Ha | Village: ${plot.village}
+        </div>
+      `);
+
+      map.fitBounds(cadastralBoundary.getBounds(), { padding: [45, 45] });
     });
 
     return () => {
       isCancelled = true;
       if (map) map.remove();
     };
-  }, [plotCoords, parcelPolygon]);
+  }, [plotCoords, parcelPolygon, harvestProgressPct, harvestedPolygon, standingPolygon, cuttingFrontLine, cutLat, cuttingFrontWidthM, cadastralAreaAcres, harvestedAreaHa, harvestedAreaAcres, harvestedTons, remainingStandingAreaHa, remainingStandingAreaAcres, remainingFieldTons]);
 
   function handleIssueCuttingSlip() {
     setCuttingSlipIssued(true);
@@ -1318,38 +1477,103 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
           {/* TAB 1: SATELLITE & PARCEL POLYGON */}
           {activeTab === 'satellite' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              
+              {/* Map Viewport with Multi-Layer Coordinate Overlays */}
               <div 
                 style={{
-                  height: '320px',
+                  height: '380px',
                   width: '100%',
-                  borderRadius: '8px',
+                  borderRadius: '10px',
                   overflow: 'hidden',
                   position: 'relative',
                   border: '1px solid #cbd5e1',
-                  boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.12)',
                 }}
               >
                 <div ref={miniMapContainerRef} style={{ width: '100%', height: '100%' }} />
                 
-                {/* Floating Map Badge */}
+                {/* Floating Map Header Badge */}
                 <div 
                   style={{
                     position: 'absolute',
                     top: '12px',
                     left: '12px',
-                    background: 'rgba(15,23,42,0.85)',
+                    background: 'rgba(15,23,42,0.88)',
+                    backdropFilter: 'blur(4px)',
                     color: '#fff',
-                    padding: '6px 12px',
-                    borderRadius: '6px',
+                    padding: '8px 14px',
+                    borderRadius: '8px',
                     fontSize: '11px',
                     zIndex: 1000,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    gap: '10px',
+                    border: '1px solid rgba(255,255,255,0.15)',
                   }}
                 >
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
-                  <strong>10m Sentinel-2 Optical Grid · Google Hybrid Zoom 17</strong>
+                  <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981' }} />
+                  <div>
+                    <strong style={{ fontSize: '12px' }}>High-Res Cadastral & Crop Polygon Coordinate Map</strong>
+                    <div style={{ fontSize: '10px', color: '#94a3b8' }}>
+                      Plot {plot.plotNo} · 7/12 Gat Boundary · 10m Sentinel-2 / 3m Planet Overlay
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Multi-Layer Legend */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '12px',
+                    right: '12px',
+                    background: 'rgba(255,255,255,0.94)',
+                    backdropFilter: 'blur(4px)',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    fontSize: '11px',
+                    zIndex: 1000,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '5px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    border: '1px solid #cbd5e1',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ width: '12px', height: '12px', borderRadius: '3px', border: '2px dashed #3b82f6', background: 'transparent' }} />
+                    <span style={{ color: '#1e293b', fontWeight: 600 }}>Gat Boundary: {plot.area} Ha</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#10b981', border: '1px solid #059669' }} />
+                    <span style={{ color: '#047857', fontWeight: 700 }}>Standing Cane: {remainingStandingAreaHa} Ha ({remainingFieldTons} MT)</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#f59e0b', border: '1px dashed #d97706' }} />
+                    <span style={{ color: '#b45309', fontWeight: 700 }}>Harvested Swath: {harvestedAreaHa} Ha ({harvestedTons} MT)</span>
+                  </div>
+                  {cuttingFrontLine.length >= 2 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ width: '12px', height: '3px', background: '#dc2626' }} />
+                      <span style={{ color: '#dc2626', fontWeight: 700 }}>Cut Front: {harvestProgressPct}% ({cuttingFrontWidthM}m)</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom GPS Centroid and Distance Indicator */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    bottom: '12px',
+                    left: '12px',
+                    background: 'rgba(15,23,42,0.85)',
+                    padding: '5px 12px',
+                    borderRadius: '6px',
+                    fontSize: '11px',
+                    color: '#e2e8f0',
+                    zIndex: 1000,
+                  }}
+                >
+                  📍 Plot Centroid: {plotCoords[0].toFixed(6)}°N, {plotCoords[1].toFixed(6)}°E · {distanceToMill} km from Shevgaon Factory
                 </div>
 
                 <div 
@@ -1358,18 +1582,127 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
                     bottom: '12px',
                     right: '12px',
                     background: 'rgba(255,255,255,0.92)',
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    fontSize: '10px',
-                    color: '#334155',
+                    padding: '5px 12px',
+                    borderRadius: '6px',
+                    fontSize: '11px',
+                    color: '#1e293b',
+                    fontWeight: 600,
                     zIndex: 1000,
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
                   }}
                 >
-                  GPS: {plotCoords[0].toFixed(5)}°N, {plotCoords[1].toFixed(5)}°E
+                  📍 {parcelPolygon.length - 1} GPS Boundary Vertices Mapped (V1–V5)
                 </div>
               </div>
 
-              {/* 4 Biophysical Indices Cards */}
+              {/* Dynamic Harvest Progression Simulation Controller */}
+              <div style={{ background: '#fff', padding: '16px 20px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '10px' }}>
+                  <div>
+                    <strong style={{ fontSize: '13px', color: '#183b36' }}>
+                      🌾 Visual Harvest Swath & Field Depletion Simulator
+                    </strong>
+                    <div style={{ fontSize: '11px', color: '#64748b' }}>
+                      Adjust the slider or presets to visualize the real-time cutting front and standing cane area in map coordinates.
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {[
+                      { label: '0% Uncut', pct: 0 },
+                      { label: '25% Cut', pct: 25 },
+                      { label: '50% Half', pct: 50 },
+                      { label: '75% Cut', pct: 75 },
+                      { label: '100% Cleared', pct: 100 }
+                    ].map(preset => (
+                      <button
+                        key={preset.pct}
+                        onClick={() => setHarvestProgressPct(preset.pct)}
+                        style={{
+                          padding: '5px 10px',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          borderRadius: '6px',
+                          border: '1px solid',
+                          borderColor: harvestProgressPct === preset.pct ? '#183b36' : '#cbd5e1',
+                          background: harvestProgressPct === preset.pct ? '#183b36' : '#f8fafc',
+                          color: harvestProgressPct === preset.pct ? '#fff' : '#334155',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={harvestProgressPct}
+                    onChange={(e) => setHarvestProgressPct(Number(e.target.value))}
+                    style={{ flex: 1, accentColor: '#183b36', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: '#183b36', minWidth: '45px' }}>
+                    {harvestProgressPct}%
+                  </span>
+                </div>
+              </div>
+
+              {/* 4 Spatial Area & Harvest Balance KPI Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
+                    <span>🏛️</span> TOTAL 7/12 GAT AREA
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: 800, color: '#183b36', margin: '4px 0' }}>
+                    {plot.area} <span style={{ fontSize: '14px', fontWeight: 500 }}>Ha</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#475569' }}>
+                    {cadastralAreaAcres} Acres · {cadastralAreaGunthas} Gunthas ({cadastralAreaSqm} m²)
+                  </div>
+                </div>
+
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
+                    <span>🌿</span> CANE CANOPY OCCUPANCY
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: 800, color: '#047857', margin: '4px 0' }}>
+                    {canePlantedAreaHa} <span style={{ fontSize: '14px', fontWeight: 500 }}>Ha</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#059669' }}>
+                    {canePlantedAreaAcres} Acres ({caneOccupancyPct}% crop ground cover)
+                  </div>
+                </div>
+
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
+                    <span>🌾</span> HARVESTED SWATH
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: 800, color: '#b45309', margin: '4px 0' }}>
+                    {harvestedAreaHa} <span style={{ fontSize: '14px', fontWeight: 500 }}>Ha</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#d97706' }}>
+                    {harvestedAreaAcres} Ac · {harvestedTons} MT ({dispatchedTrollies} Trollies Cut)
+                  </div>
+                </div>
+
+                <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
+                    <span>🚜</span> STANDING CANE LEFT
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: 800, color: '#15803d', margin: '4px 0' }}>
+                    {remainingStandingAreaHa} <span style={{ fontSize: '14px', fontWeight: 500 }}>Ha</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#166534', fontWeight: 600 }}>
+                    {remainingStandingAreaAcres} Ac · {remainingFieldTons} MT ({remainingTrollies} Trollies Left)
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Biophysical Remote Sensing Indices Cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
                 <div style={{ background: '#fff', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                   <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>NDVI CANOPY VIGOR</div>
@@ -1395,6 +1728,130 @@ export default function PlotVisualizer({ plot, sample, onClose, onUpdatePriority
                   <div style={{ fontSize: '11px', color: '#64748b' }}>Over {plot.area} ha parcel</div>
                 </div>
               </div>
+
+              {/* Exact Plot Boundary Coordinates & Spatial Vertices Table */}
+              <div style={{ background: '#fff', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '14px', color: '#183b36', fontWeight: 700 }}>
+                      📍 Plot {plot.plotNo} Cadastral Boundary Coordinates & Spatial Vertices
+                    </h4>
+                    <span style={{ fontSize: '11px', color: '#64748b' }}>
+                      Exact WGS84 GPS and UTM Zone 43N coordinates marking the parcel boundary, active cutting front, and standing cane perimeter.
+                    </span>
+                  </div>
+                  <span style={{ background: '#f1f5f9', color: '#475569', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 600 }}>
+                    CRS: EPSG:4326 (WGS84) / EPSG:32643 (UTM 43N)
+                  </span>
+                </div>
+
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
+                    <thead>
+                      <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
+                        <th style={{ padding: '10px 12px', color: '#475569' }}>Vertex / Landmark</th>
+                        <th style={{ padding: '10px 12px', color: '#475569' }}>Latitude (°N)</th>
+                        <th style={{ padding: '10px 12px', color: '#475569' }}>Longitude (°E)</th>
+                        <th style={{ padding: '10px 12px', color: '#475569' }}>UTM Easting (m)</th>
+                        <th style={{ padding: '10px 12px', color: '#475569' }}>UTM Northing (m)</th>
+                        <th style={{ padding: '10px 12px', color: '#475569' }}>Harvest State</th>
+                        <th style={{ padding: '10px 12px', color: '#475569' }}>Distance from Center</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Parcel Corner Vertices */}
+                      {parcelPolygon.slice(0, -1).map((coord, idx) => {
+                        const utm = toUtmZone43N(coord[0], coord[1]);
+                        const isCut = coord[0] <= cutLat && harvestProgressPct > 0;
+                        const distM = Math.round(calculateDistanceKm(plotCoords, coord) * 1000);
+                        const cornerNames = ['Corner V1 (North-West)', 'Corner V2 (North-East)', 'Corner V3 (South-East)', 'Corner V4 (South)', 'Corner V5 (South-West)'];
+
+                        return (
+                          <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                            <td style={{ padding: '10px 12px', fontWeight: 600, color: '#183b36' }}>
+                              <span style={{ display: 'inline-block', width: '16px', height: '16px', borderRadius: '50%', background: isCut ? '#f59e0b' : '#10b981', color: '#fff', textAlign: 'center', lineHeight: '16px', fontSize: '9px', fontWeight: 800, marginRight: '8px' }}>
+                                V{idx + 1}
+                              </span>
+                              {cornerNames[idx]}
+                            </td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#0f172a' }}>{coord[0].toFixed(6)}° N</td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#0f172a' }}>{coord[1].toFixed(6)}° E</td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#475569' }}>{utm.easting.toLocaleString()} m E</td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#475569' }}>{utm.northing.toLocaleString()} m N</td>
+                            <td style={{ padding: '10px 12px' }}>
+                              <span style={{ 
+                                padding: '3px 8px', 
+                                borderRadius: '4px', 
+                                fontSize: '10px', 
+                                fontWeight: 700, 
+                                background: isCut ? '#fef3c7' : '#dcfce7', 
+                                color: isCut ? '#b45309' : '#15803d' 
+                              }}>
+                                {isCut ? '🌾 Harvested Stubble' : '🌿 Standing Sugarcane'}
+                              </span>
+                            </td>
+                            <td style={{ padding: '10px 12px', color: '#64748b' }}>{distM} meters</td>
+                          </tr>
+                        );
+                      })}
+
+                      {/* Active Cutting Front Endpoints */}
+                      {cuttingFrontLine.length >= 2 && (
+                        <>
+                          <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#fef2f2' }}>
+                            <td style={{ padding: '10px 12px', fontWeight: 700, color: '#b91c1c' }}>
+                              ✂️ Cutting Front (West Edge)
+                            </td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#b91c1c' }}>{cuttingFrontLine[0][0].toFixed(6)}° N</td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#b91c1c' }}>{cuttingFrontLine[0][1].toFixed(6)}° E</td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#7f1d1d' }}>{toUtmZone43N(cuttingFrontLine[0][0], cuttingFrontLine[0][1]).easting.toLocaleString()} m E</td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#7f1d1d' }}>{toUtmZone43N(cuttingFrontLine[0][0], cuttingFrontLine[0][1]).northing.toLocaleString()} m N</td>
+                            <td style={{ padding: '10px 12px' }}>
+                              <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 700, background: '#fee2e2', color: '#991b1b' }}>
+                                Active Harvest Line
+                              </span>
+                            </td>
+                            <td style={{ padding: '10px 12px', color: '#b91c1c', fontWeight: 600 }}>Swath Width: {cuttingFrontWidthM}m</td>
+                          </tr>
+                          <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#fef2f2' }}>
+                            <td style={{ padding: '10px 12px', fontWeight: 700, color: '#b91c1c' }}>
+                              ✂️ Cutting Front (East Edge)
+                            </td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#b91c1c' }}>{cuttingFrontLine[1][0].toFixed(6)}° N</td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#b91c1c' }}>{cuttingFrontLine[1][1].toFixed(6)}° E</td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#7f1d1d' }}>{toUtmZone43N(cuttingFrontLine[1][0], cuttingFrontLine[1][1]).easting.toLocaleString()} m E</td>
+                            <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#7f1d1d' }}>{toUtmZone43N(cuttingFrontLine[1][0], cuttingFrontLine[1][1]).northing.toLocaleString()} m N</td>
+                            <td style={{ padding: '10px 12px' }}>
+                              <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 700, background: '#fee2e2', color: '#991b1b' }}>
+                                Active Harvest Line
+                              </span>
+                            </td>
+                            <td style={{ padding: '10px 12px', color: '#b91c1c', fontWeight: 600 }}>Swath Width: {cuttingFrontWidthM}m</td>
+                          </tr>
+                        </>
+                      )}
+
+                      {/* Plot Centroid */}
+                      <tr style={{ background: '#f8fafc', fontWeight: 600 }}>
+                        <td style={{ padding: '10px 12px', color: '#183b36' }}>
+                          📍 Plot Centroid (GPS Origin)
+                        </td>
+                        <td style={{ padding: '10px 12px', fontFamily: 'monospace' }}>{plotCoords[0].toFixed(6)}° N</td>
+                        <td style={{ padding: '10px 12px', fontFamily: 'monospace' }}>{plotCoords[1].toFixed(6)}° E</td>
+                        <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#475569' }}>{toUtmZone43N(plotCoords[0], plotCoords[1]).easting.toLocaleString()} m E</td>
+                        <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#475569' }}>{toUtmZone43N(plotCoords[0], plotCoords[1]).northing.toLocaleString()} m N</td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 700, background: '#e0f2fe', color: '#0369a1' }}>
+                            Parcel Center
+                          </span>
+                        </td>
+                        <td style={{ padding: '10px 12px', color: '#64748b' }}>0 meters (Center)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
             </div>
           )}
 
