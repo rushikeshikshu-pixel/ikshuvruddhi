@@ -1,7 +1,7 @@
 """
 scripts/export_compressed_and_xlsx_intelligence.py
 ==================================================
-Exports the latest calibrated Pol, Brix, CCS, and Tonnage datasets into:
+Exports the latest calibrated Pol, Brix, CCS, and Tonnage datasets WITH PLANTATION DATES into:
 1. Executive Styled Multi-Sheet Excel Workbook (.xlsx)
 2. High-Compression ZIP Archive (.zip) for fast distribution
 
@@ -26,6 +26,8 @@ sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 DATA_DIR = os.path.join(ROOT, 'data', 'output')
 WEB_DIR = os.path.join(ROOT, 'web', 'downloads')
+WEB_APP_DIR = os.path.join(ROOT, 'web')
+CF_DIR = os.path.join(ROOT, 'cloudflare_public')
 DL_DIR = os.path.expanduser('~\\Downloads')
 os.makedirs(WEB_DIR, exist_ok=True)
 os.makedirs(DL_DIR, exist_ok=True)
@@ -34,7 +36,7 @@ UNHARV_CSV = os.path.join(DATA_DIR, 'all_unharvested_plots_oct2026_latest_satell
 HARV_CSV = os.path.join(DATA_DIR, 'all_harvested_plots_oct2026_register.csv')
 
 print("=" * 90)
-print("SATCANE AI: EXCEL (.XLSX) & COMPRESSED (.ZIP) EXPORT PIPELINE")
+print("SATCANE AI: EXCEL (.XLSX) & COMPRESSED (.ZIP) EXPORT WITH PLANTATION DATE")
 print(f"Timestamp: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}")
 print("=" * 90)
 
@@ -45,7 +47,7 @@ df_harv = pd.read_csv(HARV_CSV, low_memory=False)
 print(f"  • Unharvested Plots: {len(df_unharv):,}")
 print(f"  • Harvested Plots  : {len(df_harv):,}")
 
-# Core Column Mapping for Clean Business Excel
+# Core Column Mapping with Plantation Date & Crop Age
 col_mapping = {
     'Plot No': 'Plot No',
     'Farmer Name': 'Farmer Name',
@@ -53,6 +55,9 @@ col_mapping = {
     'Circle / Gut': 'Circle / Sector',
     'Variety': 'Cane Variety',
     'Cane Type': 'Planting Type',
+    'Plantation Date (Raw Ground Survey)': 'Plantation Date',
+    'crop_age_days': 'Crop Age (Days)',
+    'Plantation Audit Status': 'Plantation Audit Status',
     'registered_area_ha': 'Registered Area (Ha)',
     'detected_cane_area_ha': 'Detected Cane Area (Ha)',
     'optical_ndvi': 'Sentinel-2 NDVI',
@@ -88,11 +93,10 @@ xlsx_local = os.path.join(DATA_DIR, XLSX_NAME)
 xlsx_web = os.path.join(WEB_DIR, XLSX_NAME)
 xlsx_dl = os.path.join(DL_DIR, XLSX_NAME)
 
-print(f"\n[STEP 2] Generating multi-sheet Excel workbook: {XLSX_NAME}...")
+print(f"\n[STEP 2] Generating multi-sheet Excel workbook with Plantation Dates: {XLSX_NAME}...")
 
 wb = openpyxl.Workbook()
-# Remove default sheet
-wb.remove(wb.active)
+wb.remove(wb.active)  # Remove default sheet
 
 # Styles
 font_title = Font(name='Calibri', size=16, bold=True, color='1E5631')
@@ -107,7 +111,6 @@ fill_header_green = PatternFill(start_color='166534', end_color='166534', fill_t
 fill_header_blue = PatternFill(start_color='1E40AF', end_color='1E40AF', fill_type='solid')
 fill_header_amber = PatternFill(start_color='B45309', end_color='B45309', fill_type='solid')
 fill_kpi_bg = PatternFill(start_color='F0FDF4', end_color='F0FDF4', fill_type='solid')
-fill_zebra = PatternFill(start_color='F8FAFC', end_color='F8FAFC', fill_type='solid')
 
 border_thin = Border(
     left=Side(style='thin', color='CBD5E1'),
@@ -127,7 +130,7 @@ ws_summary.views.sheetView[0].showGridLines = True
 
 ws_summary['A1'] = "GANGAMAI INDUSTRIES & TECHNOLOGIES LTD. • SHEVGAON"
 ws_summary['A1'].font = font_title
-ws_summary['A2'] = f"Command-Area Sugarcane Intelligence Dossier | Calibrated Factory Gate Intake (< 6 Lakh MT Target) | As of {datetime.now(timezone.utc).strftime('%d %b %Y %H:%M UTC')}"
+ws_summary['A2'] = f"Command-Area Sugarcane Intelligence Dossier (With Plantation Dates & Ages) | Calibrated Gate Intake (< 6 Lakh MT) | As of {datetime.now(timezone.utc).strftime('%d %b %Y %H:%M UTC')}"
 ws_summary['A2'].font = font_subtitle
 
 # KPI Summary Cards
@@ -147,7 +150,6 @@ for i, (title, val, sub) in enumerate(kpis):
     col = (i % 4) * 3 + 1
     r = row if i < 4 else row + 4
     
-    # Merge cells for card
     ws_summary.merge_cells(start_row=r, start_column=col, end_row=r, end_column=col+2)
     ws_summary.merge_cells(start_row=r+1, start_column=col, end_row=r+1, end_column=col+2)
     ws_summary.merge_cells(start_row=r+2, start_column=col, end_row=r+2, end_column=col+2)
@@ -242,7 +244,7 @@ for row_idx, c_row in circle_summary.iterrows():
         cell.font = font_data
         cell.border = border_thin
 
-# Auto-adjust column widths
+# Auto-adjust column widths for summary
 for col in ws_summary.columns:
     max_len = max(len(str(cell.value or '')) for cell in col)
     col_letter = get_column_letter(col[0].column)
@@ -252,7 +254,6 @@ for col in ws_summary.columns:
 def write_dataframe_to_sheet(ws, df, header_fill):
     ws.views.sheetView[0].showGridLines = True
     
-    # Headers
     headers = list(df.columns)
     for col_idx, h in enumerate(headers, start=1):
         cell = ws.cell(row=1, column=col_idx, value=h)
@@ -272,19 +273,30 @@ def write_dataframe_to_sheet(ws, df, header_fill):
             cell.border = border_thin
             
             # Formatting
+            h_name = headers[col_idx-1]
             if isinstance(val, (int, np.integer)):
                 cell.number_format = '#,##0'
                 cell.alignment = align_right
             elif isinstance(val, (float, np.floating)):
-                if 'Area' in headers[col_idx-1] or 'NDVI' in headers[col_idx-1]:
+                if np.isnan(val):
+                    cell.value = ''
+                elif 'Age' in h_name:
+                    cell.number_format = '#,##0'
+                    cell.alignment = align_right
+                elif 'Area' in h_name or 'NDVI' in h_name:
                     cell.number_format = '0.00'
-                elif 'Pol' in headers[col_idx-1] or 'Brix' in headers[col_idx-1] or 'CCS' in headers[col_idx-1] or 'Recovery' in headers[col_idx-1]:
+                    cell.alignment = align_right
+                elif 'Pol' in h_name or 'Brix' in h_name or 'CCS' in h_name or 'Recovery' in h_name:
                     cell.number_format = '0.00'
-                elif 'Tonnage' in headers[col_idx-1] or 'Yield' in headers[col_idx-1]:
+                    cell.alignment = align_right
+                elif 'Tonnage' in h_name or 'Yield' in h_name:
                     cell.number_format = '#,##0.0'
+                    cell.alignment = align_right
                 else:
                     cell.number_format = '0.00'
-                cell.alignment = align_right
+                    cell.alignment = align_right
+            elif 'Date' in h_name:
+                cell.alignment = align_center
             else:
                 cell.alignment = align_left
 
@@ -294,12 +306,12 @@ def write_dataframe_to_sheet(ws, df, header_fill):
         ws.column_dimensions[col_letter].width = max(len(h) + 4, 13)
 
 # --- SHEET 2: UNHARVESTED PLOTS ---
-print(f"  • Writing 'Unharvested Plots ({len(export_unh):,})' sheet...")
+print(f"  • Writing 'Unharvested Plots ({len(export_unh):,})' sheet with Plantation Dates...")
 ws_unh = wb.create_sheet(title=f"Unharvested Active ({len(export_unh):,})")
 write_dataframe_to_sheet(ws_unh, export_unh, fill_header_green)
 
 # --- SHEET 3: HARVESTED PLOTS ---
-print(f"  • Writing 'Harvested Plots ({len(export_harv):,})' sheet...")
+print(f"  • Writing 'Harvested Plots ({len(export_harv):,})' sheet with Plantation Dates...")
 ws_harv = wb.create_sheet(title=f"Harvested Delivered ({len(export_harv):,})")
 write_dataframe_to_sheet(ws_harv, export_harv, fill_header_amber)
 
@@ -331,18 +343,20 @@ zip_dl = os.path.join(DL_DIR, ZIP_NAME)
 
 print(f"\n[STEP 4] Packaging high-compression ZIP archive: {ZIP_NAME}...")
 
-# Create README text inside ZIP
 readme_content = f"""================================================================================
 GANGAMAI SUGAR MILLS LTD. • CANE DEPARTMENT INTELLIGENCE DOSSIER
-SEASON 2026-27 CRUSHING CAMPAIGN (AUDITED WEIGHBRIDGE CALIBRATION)
+SEASON 2026-27 CRUSHING CAMPAIGN (WITH AUDITED PLANTATION DATES)
 Exported: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}
 ================================================================================
 
 CONTENTS OF THIS ARCHIVE:
 1. Gangamai_Latest_Pol_Brix_CCS_Tonnage_Oct2026.xlsx
-   - Formatted multi-sheet executive workbook.
-   - Sheets: Executive Overview, Unharvested Active (26,471 plots), 
-     Harvested Delivered (3,059 plots), and Batch 1 Opening Priority.
+   - Formatted multi-sheet executive workbook WITH PLANTATION DATES & CROP AGES.
+   - Sheets: 
+     * Executive Overview (Macro KPIs, Circles, Batches)
+     * Unharvested Active (26,471 plots with Plantation Date, Pol, Brix, CCS, Tonnage)
+     * Harvested Delivered (3,059 cut plots with weighbridge cut delivery)
+     * Batch 1 Opening Priority (Top mature plots sorted by CCS)
 
 2. all_unharvested_plots_oct2026_latest_satellite_register.csv
    - Complete unharvested register (26,471 plots) with 229 satellite/lab parameters.
@@ -359,19 +373,14 @@ TOTAL REALIZABLE FACTORY CRUSHING INTAKE:
 """
 
 with zipfile.ZipFile(zip_local, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
-    # Add Excel
     zf.write(xlsx_local, arcname=XLSX_NAME)
-    # Add Readme
     zf.writestr("README_CANE_INTELLIGENCE.txt", readme_content)
-    # Add unharvested CSV
     zf.write(UNHARV_CSV, arcname="all_unharvested_plots_oct2026_latest_satellite_register.csv")
-    # Add harvested CSV
     zf.write(HARV_CSV, arcname="all_harvested_plots_oct2026_register.csv")
 
 zip_size_mb = os.path.getsize(zip_local) / 1024 / 1024
 print(f"  ✓ Created ZIP archive: {zip_local} ({zip_size_mb:.2f} MB)")
 
-# Copy ZIP to web and downloads
 import shutil
 shutil.copy2(zip_local, zip_web)
 print(f"  ✓ Copied to web downloads: {zip_web}")
@@ -383,5 +392,5 @@ except Exception as e:
     print(f"  Note on user downloads copy: {e}")
 
 print("\n" + "=" * 90)
-print(f"EXPORT COMPLETE: BOTH EXCEL (.XLSX) AND COMPRESSED (.ZIP) READY FOR USE!")
+print(f"EXPORT COMPLETE: EXCEL (.XLSX) AND COMPRESSED (.ZIP) WITH PLANTATION DATE GENERATED!")
 print("=" * 90)
