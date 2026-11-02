@@ -142,7 +142,7 @@ kpis = [
     ("COMMAND MEAN POL", "13.30 %", "Range: 11.41% - 16.14%"),
     ("COMMAND MEAN BRIX", "15.64 °Bx", "Range: 13.42° - 18.15°Bx"),
     ("COMMAND MEAN CCS", "9.02 %", "Commercial Cane Sugar"),
-    ("EARLY FACTORY RECOVERY", "7.45 %", "Campaign Opening Norm")
+    ("FACTORY CUMULATIVE RECOVERY", "7.71 %", "Daily Crushing: 8.21%+")
 ]
 
 row = 4
@@ -323,17 +323,24 @@ write_dataframe_to_sheet(ws_b1, batch1_df, fill_header_blue)
 
 # Save Excel files
 print(f"\n[STEP 3] Saving Excel workbook to targets...")
-wb.save(xlsx_local)
-print(f"  ✓ Saved to: {xlsx_local} ({os.path.getsize(xlsx_local) / 1024 / 1024:.2f} MB)")
-
-wb.save(xlsx_web)
-print(f"  ✓ Saved to: {xlsx_web}")
-
-try:
-    wb.save(xlsx_dl)
-    print(f"  ✓ Saved to User Downloads: {xlsx_dl}")
-except Exception as e:
-    print(f"  Note on user downloads: {e}")
+primary_saved_xlsx = None
+for p_target in [xlsx_local, xlsx_web, xlsx_dl]:
+    try:
+        wb.save(p_target)
+        print(f"  ✓ Saved to: {p_target}")
+        if primary_saved_xlsx is None:
+            primary_saved_xlsx = p_target
+    except PermissionError:
+        alt_path = p_target.replace(".xlsx", "_Calibrated_7.71_8.21.xlsx")
+        try:
+            wb.save(alt_path)
+            print(f"  ✓ (File was open in Excel) Saved updated copy to: {alt_path}")
+            if primary_saved_xlsx is None:
+                primary_saved_xlsx = alt_path
+        except Exception as ex:
+            print(f"  Note saving {alt_path}: {ex}")
+    except Exception as e:
+        print(f"  Note saving {p_target}: {e}")
 
 # 3. Build High-Compression ZIP Archive
 ZIP_NAME = "Gangamai_Latest_Pol_Brix_CCS_Tonnage_Oct2026.zip"
@@ -369,11 +376,12 @@ CONTENTS OF THIS ARCHIVE:
 TOTAL REALIZABLE FACTORY CRUSHING INTAKE:
 - 556,496.1 MT (~5.565 Lakh MT) — STRICTLY UNDER 6 LAKH MT CEILING.
 - Mean Pol: 13.30% | Mean Brix: 15.64°Bx | Mean CCS: 9.02% | Purity: 85.01%.
+- Calibrated Factory Recovery: 7.71% Cumulative Season Average | 8.21%+ Daily Crushing Stream.
 ================================================================================
 """
 
 with zipfile.ZipFile(zip_local, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
-    zf.write(xlsx_local, arcname=XLSX_NAME)
+    zf.write(primary_saved_xlsx or xlsx_local, arcname=XLSX_NAME)
     zf.writestr("README_CANE_INTELLIGENCE.txt", readme_content)
     zf.write(UNHARV_CSV, arcname="all_unharvested_plots_oct2026_latest_satellite_register.csv")
     zf.write(HARV_CSV, arcname="all_harvested_plots_oct2026_register.csv")
@@ -382,14 +390,22 @@ zip_size_mb = os.path.getsize(zip_local) / 1024 / 1024
 print(f"  ✓ Created ZIP archive: {zip_local} ({zip_size_mb:.2f} MB)")
 
 import shutil
-shutil.copy2(zip_local, zip_web)
-print(f"  ✓ Copied to web downloads: {zip_web}")
+try:
+    shutil.copy2(zip_local, zip_web)
+    print(f"  ✓ Copied to web downloads: {zip_web}")
+except Exception as e:
+    print(f"  Note on web zip copy: {e}")
 
 try:
     shutil.copy2(zip_local, zip_dl)
     print(f"  ✓ Copied to User Downloads: {zip_dl}")
 except Exception as e:
-    print(f"  Note on user downloads copy: {e}")
+    alt_zip = zip_dl.replace(".zip", "_Calibrated.zip")
+    try:
+        shutil.copy2(zip_local, alt_zip)
+        print(f"  ✓ Copied to User Downloads: {alt_zip}")
+    except Exception as ex:
+        print(f"  Note on user downloads copy: {ex}")
 
 print("\n" + "=" * 90)
 print(f"EXPORT COMPLETE: EXCEL (.XLSX) AND COMPRESSED (.ZIP) WITH PLANTATION DATE GENERATED!")
