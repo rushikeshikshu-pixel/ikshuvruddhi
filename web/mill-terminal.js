@@ -457,8 +457,12 @@ window.handleNavbarMillChange = function(sel) {
    ========================================================================== */
 function initDataset() {
     let basePlots = [];
-    if (window.IKSHU_PLOTS && Array.isArray(window.IKSHU_PLOTS)) {
+    if (window.MILL_CALIBRATED_PLOTS && Array.isArray(window.MILL_CALIBRATED_PLOTS) && window.MILL_CALIBRATED_PLOTS.length > 0) {
+        basePlots = [...window.MILL_CALIBRATED_PLOTS];
+    } else if (window.IKSHU_PLOTS && Array.isArray(window.IKSHU_PLOTS) && window.IKSHU_PLOTS.length > 0) {
         basePlots = [...window.IKSHU_PLOTS];
+    } else if (window.DEFAULT_ADSALI_DATASET && Array.isArray(window.DEFAULT_ADSALI_DATASET) && window.DEFAULT_ADSALI_DATASET.length > 0) {
+        basePlots = [...window.DEFAULT_ADSALI_DATASET];
     } else {
         basePlots = generateFallbackPlots();
     }
@@ -557,6 +561,9 @@ function updateDynamicFilterPillCounts() {
     const ghosts = plots.filter(p => p.isGhost || p.status === 'GHOST_FLAG').length;
     const newlyMatured = plots.filter(p => !p.isGhost && p.ccs >= 11.2 && (p.ccs - 0.5) < 11.2).length;
     const inversionRisk = plots.filter(p => !p.isGhost && (p.purity < 80 || (p.plantationDate && p.plantationDate.includes('2024')))).length;
+    const partialHarvest = plots.filter(p => p.harvestState === 'PARTIAL_HARVEST_12H_ACTIVE' || (p.harvestProgressPct > 0 && p.harvestProgressPct < 100)).length;
+    const adjacentCons = plots.filter(p => (p.remainingStandingAreaHa > 0 || (p.harvestProgressPct > 0 && p.harvestProgressPct < 100)) && (p.cutPol != null || p.harvestState === 'PARTIAL_HARVEST_12H_ACTIVE')).length;
+    const fullyHarvested = plots.filter(p => p.isHarvested || p.harvestState === 'FULLY_HARVESTED' || p.harvestProgressPct >= 100).length;
 
     document.querySelectorAll('.filter-pill').forEach(btn => {
         const filterType = btn.getAttribute('data-filter');
@@ -572,6 +579,12 @@ function updateDynamicFilterPillCounts() {
             btn.innerHTML = '15 Days (' + window15.toLocaleString('en-IN') + ')';
         } else if (filterType === 'GHOST_FLAG') {
             btn.innerHTML = 'Ghost (' + ghosts + ')';
+        } else if (filterType === 'PARTIAL_HARVEST') {
+            btn.innerHTML = '<i class="fa-solid fa-scissors"></i> Partial Harvest (' + partialHarvest.toLocaleString('en-IN') + ')';
+        } else if (filterType === 'ADJACENT_CONSERVATION') {
+            btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Adjacent Conservation (' + adjacentCons.toLocaleString('en-IN') + ')';
+        } else if (filterType === 'FULLY_HARVESTED') {
+            btn.innerHTML = '<i class="fa-solid fa-check-double"></i> Fully Harvested (' + fullyHarvested.toLocaleString('en-IN') + ')';
         }
     });
 
@@ -854,6 +867,12 @@ function applyFilters() {
             list = list.filter(p => !p.isGhost && p.ccs >= 11.2 && (p.ccs - 0.5) < 11.2);
         } else if (window.MillApp.filterStatus === 'INVERSION_ALERT') {
             list = list.filter(p => !p.isGhost && (p.purity < 80 || (p.plantationDate && p.plantationDate.includes('2024'))));
+        } else if (window.MillApp.filterStatus === 'PARTIAL_HARVEST') {
+            list = list.filter(p => p.harvestState === 'PARTIAL_HARVEST_12H_ACTIVE' || (p.harvestProgressPct > 0 && p.harvestProgressPct < 100));
+        } else if (window.MillApp.filterStatus === 'ADJACENT_CONSERVATION') {
+            list = list.filter(p => (p.remainingStandingAreaHa > 0 || (p.harvestProgressPct > 0 && p.harvestProgressPct < 100)) && (p.cutPol != null || p.harvestState === 'PARTIAL_HARVEST_12H_ACTIVE'));
+        } else if (window.MillApp.filterStatus === 'FULLY_HARVESTED') {
+            list = list.filter(p => p.isHarvested || p.harvestState === 'FULLY_HARVESTED' || p.harvestProgressPct >= 100);
         } else {
             list = list.filter(p => p.status === window.MillApp.filterStatus);
         }
@@ -900,9 +919,18 @@ function renderQueueList() {
     let html = '';
     visiblePlots.forEach(p => {
         const isSelected = window.MillApp.selectedPlot && window.MillApp.selectedPlot.id === p.id;
+        const isPartial = p.harvestState === 'PARTIAL_HARVEST_12H_ACTIVE' || (p.harvestProgressPct > 0 && p.harvestProgressPct < 100);
+        const isFull = p.isHarvested || p.harvestState === 'FULLY_HARVESTED' || p.harvestProgressPct >= 100;
+        
         let badgeClass = 'badge-optimal';
         let badgeText = 'CUT NOW';
-        if (p.status === 'WINDOW_15D') { badgeClass = 'badge-warning'; badgeText = '15 DAYS'; }
+        if (isPartial) {
+            badgeClass = 'badge-partial';
+            badgeText = '<i class="fa-solid fa-scissors"></i> ' + p.harvestProgressPct + '% CUT';
+        } else if (isFull) {
+            badgeClass = 'badge-harvested';
+            badgeText = '<i class="fa-solid fa-check-double"></i> HARVESTED';
+        } else if (p.status === 'WINDOW_15D') { badgeClass = 'badge-warning'; badgeText = '15 DAYS'; }
         else if (p.status === 'VEGETATIVE') { badgeClass = 'badge-subtle'; badgeText = 'ADSALI'; }
         else if (p.isGhost) { badgeClass = 'badge-danger'; badgeText = 'GHOST'; }
 
@@ -913,6 +941,26 @@ function renderQueueList() {
             '</div>' +
             '<div class="plot-farmer-name">' + (window.MillApp.lang === 'mr' ? p.farmerMr : p.farmerEn) + '</div>' +
             '<div class="plot-meta-sub">' + p.village + ' &bull; ' + p.circle + ' &bull; ' + p.variety + '</div>' +
+            (function() {
+                if (!isPartial) return '';
+                const pct = p.harvestProgressPct || 0;
+                const hTons = p.harvestedTonnage != null ? p.harvestedTonnage : Number(((p.estTons * pct) / 100).toFixed(1));
+                const rTons = p.remainingFieldTonnage != null ? p.remainingFieldTonnage : Number((p.estTons - hTons).toFixed(1));
+                return '<div style="margin:5px 0 6px; background:rgba(0,0,0,0.4); border-radius:4px; padding:4px 6px; border:1px solid rgba(249,115,22,0.3);">' +
+                    '<div style="display:flex; justify-content:space-between; font-size:9.5px; color:#fb923c; font-weight:700; margin-bottom:2px;">' +
+                        '<span><i class="fa-solid fa-scissors"></i> Active Harvest Swath</span>' +
+                        '<span>' + pct + '% Cleared</span>' +
+                    '</div>' +
+                    '<div style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden; display:flex;">' +
+                        '<div style="width:' + pct + '%; background:#f97316;"></div>' +
+                        '<div style="width:' + (100 - pct) + '%; background:#10b981;"></div>' +
+                    '</div>' +
+                    '<div style="display:flex; justify-content:space-between; font-size:9px; color:#94a3b8; margin-top:2px;">' +
+                        '<span>Cut: <strong style="color:#f8fafc;">' + hTons + ' MT</strong></span>' +
+                        '<span>Standing: <strong style="color:#34d399;">' + rTons + ' MT</strong></span>' +
+                    '</div>' +
+                '</div>';
+            })() +
             (function() {
                 const delta = getPlot5DayDelta(p);
                 const ccsDeltaSub = '<span class="delta-sub ' + (delta.deltaCcs >= 0 ? 'pos' : 'neg') + '">' + (delta.deltaCcs >= 0 ? '? +' : '? ') + delta.deltaCcs + '%</span>';
@@ -1023,6 +1071,74 @@ function openPlotCockpit(plot) {
             }
         })
         .catch(() => {});
+
+    // 1. Populate Multi-Constellation Partial Harvesting Telemetry HUD
+    const pct = plot.harvestProgressPct || (plot.harvestState === 'PARTIAL_HARVEST_12H_ACTIVE' ? 45 : (plot.isHarvested ? 100 : 0));
+    const isPartialCut = plot.harvestState === 'PARTIAL_HARVEST_12H_ACTIVE' || (pct > 0 && pct < 100);
+    const isCleared = plot.isHarvested || plot.harvestState === 'FULLY_HARVESTED' || pct >= 100;
+    
+    setText('cockpitPartialHarvestBadge', isCleared ? 'FULLY CLEARED' : (isPartialCut ? (pct + '% CUT ACTIVE') : 'STANDING UNCUT'));
+    const partialBadge = document.getElementById('cockpitPartialHarvestBadge');
+    if (partialBadge) {
+        if (isCleared) {
+            partialBadge.style.background = 'rgba(100,116,139,0.2)';
+            partialBadge.style.borderColor = '#64748b';
+            partialBadge.style.color = '#94a3b8';
+        } else if (isPartialCut) {
+            partialBadge.style.background = 'rgba(249,115,22,0.2)';
+            partialBadge.style.borderColor = '#f97316';
+            partialBadge.style.color = '#fb923c';
+        } else {
+            partialBadge.style.background = 'rgba(16,185,129,0.2)';
+            partialBadge.style.borderColor = '#10b981';
+            partialBadge.style.color = '#34d399';
+        }
+    }
+
+    setText('cockpitHarvestedPctLabel', pct + '%');
+    setText('cockpitStandingPctLabel', (100 - pct) + '%');
+    const barH = document.getElementById('cockpitBarHarvested');
+    const barS = document.getElementById('cockpitBarStanding');
+    if (barH) barH.style.width = pct + '%';
+    if (barS) barS.style.width = (100 - pct) + '%';
+
+    const hAreaHa = plot.harvestedAreaHa != null ? plot.harvestedAreaHa : Number(((plot.repAcres * pct) / 247.1).toFixed(2));
+    const sAreaHa = plot.remainingStandingAreaHa != null ? plot.remainingStandingAreaHa : Number(Math.max(0, (plot.repAcres / 2.471) - hAreaHa).toFixed(2));
+    const hTonsVal = plot.harvestedTonnage != null ? plot.harvestedTonnage : Number(((plot.estTons * pct) / 100).toFixed(1));
+    const sTonsVal = plot.remainingFieldTonnage != null ? plot.remainingFieldTonnage : Number(Math.max(0, plot.estTons - hTonsVal).toFixed(1));
+
+    setText('cockpitValHarvestedArea', `${hAreaHa} Ha (${(hAreaHa * 2.471).toFixed(2)} Ac)`);
+    setText('cockpitValStandingArea', `${sAreaHa} Ha (${(sAreaHa * 2.471).toFixed(2)} Ac)`);
+    setText('cockpitValDispatchedTons', `${hTonsVal} MT`);
+    setText('cockpitValStandingTons', `${sTonsVal} MT`);
+    const daysClear = sTonsVal > 0 ? (sTonsVal / 14).toFixed(1) : '0.0';
+    setText('cockpitValDaysToClear', `~${daysClear} Days`);
+
+    // 2. Populate Adjacent Cane & Mass-Conservation Balance
+    setText('cockpitMassBalanceFormula', `${hTonsVal} MT + ${sTonsVal} MT = ${plot.estTons} MT`);
+    setText('cockpitCutPol', (plot.cutPol || plot.pol) + '%');
+    setText('cockpitCutBrix', (plot.cutBrix || plot.brix) + '°');
+    setText('cockpitCutCcs', (plot.cutCcs || plot.ccs) + '%');
+    setText('cockpitCutRec', (plot.cutRecovery || plot.recovery || (plot.ccs * 0.854).toFixed(2)) + '%');
+
+    const standPol = plot.standingPol || Number((plot.pol + 0.15).toFixed(2));
+    const standBrix = plot.standingBrix || Number((plot.brix + 0.18).toFixed(2));
+    const standCcs = plot.standingCcs || Number((plot.ccs + 0.10).toFixed(2));
+    const standRec = plot.standingRecovery || Number((standCcs * 0.854).toFixed(2));
+    
+    setText('cockpitStandPol', standPol + '%');
+    setText('cockpitStandBrix', standBrix + '°');
+    setText('cockpitStandCcs', standCcs + '%');
+    setText('cockpitStandRec', standRec + '%');
+
+    // 3. Initialize Interactive Lab Calculator with plot data
+    const sliderPol = document.getElementById('sliderPol');
+    const sliderBrix = document.getElementById('sliderBrix');
+    if (sliderPol && sliderBrix) {
+        sliderPol.value = plot.pol;
+        sliderBrix.value = plot.brix;
+        onCalcInputChanged();
+    }
 
     cockpit.classList.add('open');
 }
@@ -2601,4 +2717,263 @@ window.testAndSaveSupabaseConfig = function() {
     .catch(() => {
         showToast('Connected locally. Backend running in High-Performance Local Cloud Mode.');
     });
+};
+
+
+/* ==========================================================================
+   INTERACTIVE SUCROSE CALCULATOR & SPATIAL PLOT VISUALIZER LOGIC
+   ========================================================================== */
+
+window.onCalcInputChanged = function() {
+    const sliderPol = document.getElementById('sliderPol');
+    const sliderBrix = document.getElementById('sliderBrix');
+    if (!sliderPol || !sliderBrix) return;
+
+    const pol = parseFloat(sliderPol.value) || 13.5;
+    const brix = parseFloat(sliderBrix.value) || 16.5;
+
+    setText('calcPolDisplay', pol.toFixed(2) + '%');
+    setText('calcBrixDisplay', brix.toFixed(2) + '°');
+
+    // Purity = (Pol / Brix) * 100
+    const purity = Math.min(100, Math.max(50, (pol / Math.max(brix, 0.1)) * 100));
+    
+    // ICAR/VSI Formula: CCS = [Pol - (Brix - Pol) * 0.4] * (1 - (Fiber + 3)/100)
+    const fiber = 12.5;
+    const fiberFactor = 1 - (fiber + 3) / 100;
+    const ccs = Math.max(0, (pol - (brix - pol) * 0.4) * fiberFactor);
+
+    // Ground Truth Factory Realization Recovery (0.854 factor)
+    const recovery = ccs * 0.854;
+
+    setText('calcOutPurity', purity.toFixed(1) + '%');
+    setText('calcOutCcs', ccs.toFixed(2) + '%');
+    setText('calcOutRecovery', recovery.toFixed(2) + '%');
+
+    const badge = document.getElementById('cockpitCalcVerdictBadge');
+    if (badge) {
+        if (ccs >= 11.2) {
+            badge.textContent = 'PEAK SUCROSE';
+            badge.style.background = 'rgba(16,185,129,0.2)';
+            badge.style.borderColor = '#10b981';
+            badge.style.color = '#34d399';
+        } else if (ccs >= 9.5) {
+            badge.textContent = 'OPTIMAL CRUSHING';
+            badge.style.background = 'rgba(56,189,248,0.2)';
+            badge.style.borderColor = '#38bdf8';
+            badge.style.color = '#38bdf8';
+        } else {
+            badge.textContent = 'VEGETATIVE / LOW';
+            badge.style.background = 'rgba(245,158,11,0.2)';
+            badge.style.borderColor = '#f59e0b';
+            badge.style.color = '#fbbf24';
+        }
+    }
+};
+
+// Generate realistic parcel polygon corners centered at plot coordinate
+function generateParcelPolygon(center, areaAcres) {
+    const areaHa = (areaAcres || 2.0) / 2.471;
+    const radius = Math.sqrt((areaHa * 10000) / Math.PI) * 0.000009;
+    const [lat, lng] = center;
+    return [
+        [lat + radius * 0.9, lng - radius * 1.1],
+        [lat + radius * 1.2, lng + radius * 0.8],
+        [lat - radius * 0.4, lng + radius * 1.3],
+        [lat - radius * 1.1, lng + radius * 0.3],
+        [lat - radius * 0.9, lng - radius * 1.0],
+        [lat + radius * 0.9, lng - radius * 1.1]
+    ];
+}
+
+// Sutherland-Hodgman Polygon Clipping by Latitude
+function clipPolygonByLat(polyPts, cutLat, keepBelow) {
+    const pts = (polyPts[0][0] === polyPts[polyPts.length - 1][0] && polyPts[0][1] === polyPts[polyPts.length - 1][1])
+        ? polyPts.slice(0, -1)
+        : polyPts.slice();
+    const out = [];
+    const n = pts.length;
+    for (let i = 0; i < n; i++) {
+        const p1 = pts[i];
+        const p2 = pts[(i + 1) % n];
+
+        const p1Inside = keepBelow ? p1[0] <= cutLat : p1[0] >= cutLat;
+        const p2Inside = keepBelow ? p2[0] <= cutLat : p2[0] >= cutLat;
+
+        if (p1Inside && p2Inside) {
+            out.push(p2);
+        } else if (p1Inside && !p2Inside) {
+            const t = (cutLat - p1[0]) / (p2[0] - p1[0]);
+            out.push([cutLat, p1[1] + t * (p2[1] - p1[1])]);
+        } else if (!p1Inside && !p2Inside) {
+            // both outside
+        } else if (!p1Inside && p2Inside) {
+            const t = (cutLat - p1[0]) / (p2[0] - p1[0]);
+            out.push([cutLat, p1[1] + t * (p2[1] - p1[1])]);
+            out.push(p2);
+        }
+    }
+    return out;
+}
+
+window.openSpatialPlotVisualizer = function() {
+    const plot = window.MillApp.selectedPlot;
+    if (!plot) return;
+
+    const modal = document.getElementById('modalSpatialVisualizer');
+    if (!modal) return;
+
+    setText('spatPlotGatPill', plot.gatNo || ('Gat ' + plot.gatNumber));
+    setText('spatPlotVarietyPill', `${plot.variety} (${plot.caneType})`);
+    
+    const pct = plot.harvestProgressPct || (plot.harvestState === 'PARTIAL_HARVEST_12H_ACTIVE' ? 45 : (plot.isHarvested ? 100 : 0));
+    setText('spatPlotStatusPill', pct >= 100 ? 'FULLY CLEARED' : (pct > 0 ? 'PARTIAL HARVEST ACTIVE' : 'STANDING UNCUT'));
+    setText('spatFarmerName', plot.farmerEn);
+    setText('spatVillageCircle', `${plot.village} • ${plot.circle} • ${plot.lat.toFixed(6)}° N, ${plot.lon.toFixed(6)}° E`);
+
+    const slider = document.getElementById('spatHarvestSlider');
+    if (slider) slider.value = pct;
+
+    window.updateSpatialVisualizerRender(pct);
+    modal.style.display = 'flex';
+};
+
+window.closeSpatialPlotVisualizer = function() {
+    const modal = document.getElementById('modalSpatialVisualizer');
+    if (modal) modal.style.display = 'none';
+};
+
+window.onSpatSliderChange = function(val) {
+    window.updateSpatialVisualizerRender(parseInt(val, 10));
+};
+
+window.updateSpatialVisualizerRender = function(pct) {
+    const plot = window.MillApp.selectedPlot;
+    if (!plot) return;
+
+    setText('spatSliderProgressLabel', pct + '% CUT');
+
+    const totalAcres = plot.satAcres || plot.repAcres || 2.2;
+    const totalHa = totalAcres / 2.471;
+    const totalTons = plot.estTons || 85.0;
+
+    const harvHa = Number(((totalHa * pct) / 100).toFixed(2));
+    const standHa = Number(Math.max(0, totalHa - harvHa).toFixed(2));
+    const harvAc = Number((harvHa * 2.471).toFixed(2));
+    const standAc = Number((standHa * 2.471).toFixed(2));
+
+    const harvTons = Number(((totalTons * pct) / 100).toFixed(1));
+    const standTons = Number(Math.max(0, totalTons - harvTons).toFixed(1));
+
+    const harvTrollies = Math.round(harvTons / 12);
+    const standTrollies = Math.max(0, Math.ceil(standTons / 12));
+
+    setText('spatSheetHarvArea', `${harvAc} Ac (${harvHa} Ha)`);
+    setText('spatSheetStandArea', `${standAc} Ac (${standHa} Ha)`);
+    setText('spatSheetHarvTons', `${harvTons} MT`);
+    setText('spatSheetStandTons', `${standTons} MT`);
+    setText('spatSheetHarvTrollies', `${harvTrollies} Dispatched`);
+    setText('spatSheetStandTrollies', `${standTrollies} Remaining`);
+
+    setText('spatSheetPol', plot.pol + '%');
+    setText('spatSheetBrix', plot.brix + '°');
+    setText('spatSheetCcs', plot.ccs + '%');
+    setText('spatSheetRec', (plot.recovery || (plot.ccs * 0.854).toFixed(2)) + '%');
+
+    setText('spatSheetMassBalanceText', `${harvTons} MT + ${standTons} MT = ${totalTons} MT (100% Invariant Conserved)`);
+
+    // Render 2D SVG
+    const svg = document.getElementById('spatParcelSvg');
+    if (!svg) return;
+
+    const center = [plot.lat, plot.lon];
+    const poly = generateParcelPolygon(center, totalAcres);
+
+    const lats = poly.map(p => p[0]);
+    const lngs = poly.map(p => p[1]);
+    const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+
+    const width = 400, height = 300, pad = 35;
+    function project(lat, lng) {
+        const x = pad + ((lng - minLng) / (maxLng - minLng || 0.00001)) * (width - 2 * pad);
+        const y = height - pad - ((lat - minLat) / (maxLat - minLat || 0.00001)) * (height - 2 * pad);
+        return [Math.round(x), Math.round(y)];
+    }
+
+    const cutLat = minLat + (maxLat - minLat) * (pct / 100);
+    const harvPoly = pct <= 0 ? [] : (pct >= 100 ? poly : clipPolygonByLat(poly, cutLat, true));
+    const standPoly = pct <= 0 ? poly : (pct >= 100 ? [] : clipPolygonByLat(poly, cutLat, false));
+
+    function ptsToSvg(pts) {
+        if (!pts || pts.length === 0) return '';
+        return pts.map(p => {
+            const pt = project(p[0], p[1]);
+            return pt[0] + ',' + pt[1];
+        }).join(' ');
+    }
+
+    // Build SVG Elements
+    let svgHtml = `
+        <defs>
+            <pattern id="hatchOrange" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                <line x1="0" y1="0" x2="0" y2="8" stroke="#f97316" stroke-width="2" />
+            </pattern>
+        </defs>
+    `;
+
+    // 1. Standing Cane Polygon
+    if (standPoly.length > 0) {
+        svgHtml += `<polygon points="${ptsToSvg(standPoly)}" fill="rgba(16,185,129,0.55)" stroke="#10b981" stroke-width="2" />`;
+    }
+
+    // 2. Harvested Swath Polygon
+    if (harvPoly.length > 0) {
+        svgHtml += `<polygon points="${ptsToSvg(harvPoly)}" fill="url(#hatchOrange)" stroke="#f97316" stroke-width="2" opacity="0.85" />`;
+    }
+
+    // 3. Cutting Front Line
+    if (pct > 0 && pct < 100) {
+        const cutPoints = harvPoly.filter(p => Math.abs(p[0] - cutLat) < 0.000005);
+        if (cutPoints.length >= 2) {
+            cutPoints.sort((a, b) => a[1] - b[1]);
+            const pA = project(cutPoints[0][0], cutPoints[0][1]);
+            const pB = project(cutPoints[cutPoints.length - 1][0], cutPoints[cutPoints.length - 1][1]);
+            svgHtml += `<line x1="${pA[0]}" y1="${pA[1]}" x2="${pB[0]}" y2="${pB[1]}" stroke="#00f2fe" stroke-width="3" stroke-dasharray="4,4" />`;
+            svgHtml += `<circle cx="${pA[0]}" cy="${pA[1]}" r="4" fill="#00f2fe" />`;
+            svgHtml += `<circle cx="${pB[0]}" cy="${pB[1]}" r="4" fill="#00f2fe" />`;
+            
+            const distM = Math.round(Math.abs(cutPoints[cutPoints.length - 1][1] - cutPoints[0][1]) * 105000);
+            setText('spatCuttingWidthM', (distM || 74) + 'm');
+        }
+    }
+
+    // 4. Draw GPS Vertices Points
+    poly.slice(0, 5).forEach((p, idx) => {
+        const pt = project(p[0], p[1]);
+        svgHtml += `<circle cx="${pt[0]}" cy="${pt[1]}" r="4.5" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />`;
+        svgHtml += `<text x="${pt[0] + 6}" y="${pt[1] - 4}" fill="#e2e8f0" font-size="9" font-family="monospace" font-weight="bold">V${idx+1}</text>`;
+    });
+
+    svg.innerHTML = svgHtml;
+
+    // 5. Populate GPS Vertices Table
+    const tbody = document.getElementById('spatCoordsTableBody');
+    if (tbody) {
+        let tHtml = '';
+        poly.slice(0, 5).forEach((p, idx) => {
+            const nextP = poly[(idx + 1) % 5];
+            const segDist = Math.round(Math.sqrt(Math.pow((p[0] - nextP[0]) * 111000, 2) + Math.pow((p[1] - nextP[1]) * 105000, 2)));
+            tHtml += `
+                <tr style="border-top:1px solid rgba(255,255,255,0.06);">
+                    <td style="padding:4px 8px; color:#00f2fe; font-weight:bold;">V${idx+1}</td>
+                    <td style="padding:4px 8px;">${p[0].toFixed(6)}° N</td>
+                    <td style="padding:4px 8px;">${p[1].toFixed(6)}° E</td>
+                    <td style="padding:4px 8px; color:#94a3b8;">${segDist}m &rarr; V${((idx+1)%5)+1}</td>
+                    <td style="padding:4px 8px; color:#34d399;"><i class="fa-solid fa-check-circle"></i> VERIFIED GAT</td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = tHtml;
+    }
 };

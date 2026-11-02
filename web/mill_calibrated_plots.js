@@ -166982,3 +166982,5 @@ window.MILL_CALIBRATED_PLOTS = [
     "standingRecovery": 7.65
   }
 ];
+
+window.IKSHU_PLOTS = window.MILL_CALIBRATED_PLOTS;

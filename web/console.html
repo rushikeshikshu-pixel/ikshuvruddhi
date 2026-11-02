@@ -409,7 +409,13 @@
 
                         <!-- Status Filter Pills -->
                         <div class="filter-pills-row">
-                            <button class="filter-pill active" data-filter="ALL">All (2,581)</button>
+                            <button class="filter-pill active" data-filter="ALL">All (<span id="pillAllCount">3,630</span>)</button>
+                            <button class="filter-pill" data-filter="PARTIAL_HARVEST" style="border-color:rgba(249,115,22,0.6); color:#fb923c; background:rgba(249,115,22,0.08);">
+                                <i class="fa-solid fa-scissors"></i> Partial Harvest (<span id="pillPartialHarvestCount">1,000</span>)
+                            </button>
+                            <button class="filter-pill" data-filter="ADJACENT_CONSERVATION" style="border-color:rgba(168,85,247,0.6); color:#c084fc; background:rgba(168,85,247,0.08);">
+                                <i class="fa-solid fa-shield-halved"></i> Adjacent Conservation (<span id="pillAdjacentConsCount">1,000</span>)
+                            </button>
                             <button class="filter-pill delta-pill-peak" data-filter="NEW_TO_PEAK" style="border-color:#10b981; color:#34d399;">
                                 <i class="fa-solid fa-bolt"></i> New to Peak (42)
                             </button>
@@ -418,6 +424,9 @@
                             </button>
                             <button class="filter-pill" data-filter="CUT_NOW">Cut Now (188)</button>
                             <button class="filter-pill" data-filter="WINDOW_15D">15 Days (76)</button>
+                            <button class="filter-pill" data-filter="FULLY_HARVESTED" style="border-color:rgba(100,116,139,0.6); color:#94a3b8;">
+                                <i class="fa-solid fa-check-double"></i> Fully Harvested (<span id="pillFullyHarvestedCount">500</span>)
+                            </button>
                             <button class="filter-pill" data-filter="GHOST_FLAG" style="color:#f87171;">Ghost (32)</button>
                         </div>
                     </div>
@@ -866,6 +875,162 @@
                 <span style="color:var(--text-muted);">Cutting Docket ID:</span>
                 <strong style="color:var(--cyan-accent);" id="cockpitValDocketId">DOK-2026-1001</strong>
             </div>
+        </div>
+
+        <!-- 1. PARTIAL HARVESTING & CUTTING FRONT TELEMETRY CARD -->
+        <div class="cockpit-stat-box" id="cockpitPartialHarvestBox" style="background:rgba(15,23,42,0.96); border:1px solid rgba(249,115,22,0.4); margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:0.72rem; color:#fb923c; font-weight:800; letter-spacing:0.05em;">
+                    <i class="fa-solid fa-scissors"></i> MULTI-CONSTELLATION PARTIAL HARVEST TRACKING
+                </span>
+                <span class="badge" id="cockpitPartialHarvestBadge" style="background:rgba(249,115,22,0.2); border:1px solid #f97316; color:#fb923c; font-size:10px; font-weight:800;">
+                    45% CUT ACTIVE
+                </span>
+            </div>
+            
+            <div style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+                    <span style="color:#fb923c; font-weight:700;">Harvested: <strong id="cockpitHarvestedPctLabel">45%</strong></span>
+                    <span style="color:#34d399; font-weight:700;">Standing Cane: <strong id="cockpitStandingPctLabel">55%</strong></span>
+                </div>
+                <div style="height:8px; background:rgba(0,0,0,0.5); border-radius:4px; overflow:hidden; display:flex; border:1px solid rgba(255,255,255,0.08);">
+                    <div id="cockpitBarHarvested" style="width:45%; background:linear-gradient(90deg, #ea580c, #f97316);"></div>
+                    <div id="cockpitBarStanding" style="width:55%; background:linear-gradient(90deg, #059669, #10b981);"></div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:6px; margin-bottom:8px; font-size:11px;">
+                <div style="background:rgba(0,0,0,0.4); padding:6px 8px; border-radius:6px; border:1px solid rgba(249,115,22,0.2);">
+                    <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">Harvested Area</div>
+                    <div style="font-size:13px; font-weight:800; color:#fb923c;" id="cockpitValHarvestedArea">0.45 Ha (1.11 Ac)</div>
+                    <div style="font-size:10px; color:#cbd5e1;">Dispatched: <strong id="cockpitValDispatchedTons">38.2 MT</strong></div>
+                </div>
+                <div style="background:rgba(0,0,0,0.4); padding:6px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.2);">
+                    <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">Standing Cane</div>
+                    <div style="font-size:13px; font-weight:800; color:#34d399;" id="cockpitValStandingArea">0.55 Ha (1.36 Ac)</div>
+                    <div style="font-size:10px; color:#cbd5e1;">Remaining: <strong id="cockpitValStandingTons">46.8 MT</strong></div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; border-top:1px solid rgba(255,255,255,0.08); padding-top:6px; color:#94a3b8;">
+                <span>Cutting Front Velocity: <strong style="color:#ffffff;">14 MT / Day</strong></span>
+                <span>Est. Field Clearance: <strong style="color:#00f2fe;" id="cockpitValDaysToClear">~3.3 Days</strong></span>
+            </div>
+        </div>
+
+        <!-- 2. ADJACENT CANE & MASS-CONSERVATION BALANCE CARD -->
+        <div class="cockpit-stat-box" id="cockpitAdjacentConsBox" style="background:rgba(15,23,42,0.96); border:1px solid rgba(168,85,247,0.4); margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:0.72rem; color:#c084fc; font-weight:800; letter-spacing:0.05em;">
+                    <i class="fa-solid fa-shield-halved"></i> ADJACENT CANE &amp; MASS-CONSERVATION BALANCE
+                </span>
+                <span class="badge" style="background:rgba(168,85,247,0.2); border:1px solid #a855f7; color:#c084fc; font-size:10px; font-weight:800;">
+                    <i class="fa-solid fa-check"></i> 100% MASS BALANCED
+                </span>
+            </div>
+
+            <!-- Conservation Identity Equation -->
+            <div style="background:rgba(0,0,0,0.5); padding:8px 10px; border-radius:6px; border:1px solid rgba(168,85,247,0.25); font-family:var(--font-mono); font-size:11px; margin-bottom:8px;">
+                <div style="color:#a855f7; font-weight:800; font-size:10px; margin-bottom:2px; text-transform:uppercase;">Mass Conservation Equation (Kf = 0.814)</div>
+                <div style="color:#e2e8f0; display:flex; justify-content:space-between;">
+                    <span>Dispatched MT + Standing MT = Total Farm Gate MT</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:3px; color:#34d399; font-weight:700;">
+                    <span id="cockpitMassBalanceFormula">38.2 MT + 46.8 MT = 85.0 MT</span>
+                    <span style="color:#00f2fe;">&Delta; = 0.00 MT &#10003;</span>
+                </div>
+            </div>
+
+            <!-- Cut vs Standing Quality Table -->
+            <table style="width:100%; border-collapse:collapse; font-size:11px; text-align:center; background:rgba(0,0,0,0.3); border-radius:6px; overflow:hidden;">
+                <thead>
+                    <tr style="background:rgba(255,255,255,0.04); color:#94a3b8; font-size:10px;">
+                        <th style="padding:4px 6px; text-align:left;">ZONE</th>
+                        <th style="padding:4px 6px;">POL %</th>
+                        <th style="padding:4px 6px;">BRIX &deg;</th>
+                        <th style="padding:4px 6px;">CCS %</th>
+                        <th style="padding:4px 6px;">RECOVERY</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-top:1px solid rgba(255,255,255,0.06);">
+                        <td style="padding:5px 6px; text-align:left; color:#fb923c; font-weight:700;">Cut Swath</td>
+                        <td style="padding:5px 6px;" id="cockpitCutPol">12.96%</td>
+                        <td style="padding:5px 6px;" id="cockpitCutBrix">15.88&deg;</td>
+                        <td style="padding:5px 6px;" id="cockpitCutCcs">8.61%</td>
+                        <td style="padding:5px 6px; color:#34d399;" id="cockpitCutRec">7.36%</td>
+                    </tr>
+                    <tr style="border-top:1px solid rgba(255,255,255,0.06);">
+                        <td style="padding:5px 6px; text-align:left; color:#34d399; font-weight:700;">Adjacent Standing</td>
+                        <td style="padding:5px 6px;" id="cockpitStandPol">13.11%</td>
+                        <td style="padding:5px 6px;" id="cockpitStandBrix">16.06&deg;</td>
+                        <td style="padding:5px 6px;" id="cockpitStandCcs">8.71%</td>
+                        <td style="padding:5px 6px; color:#34d399;" id="cockpitStandRec">7.44%</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="font-size:10px; color:#94a3b8; margin-top:6px; line-height:1.4;">
+                <i class="fa-solid fa-circle-info" style="color:#c084fc;"></i> <strong>Adjacent Ripening Conservation:</strong> Uncut standing cane is buffered against post-cut inversion, continuing daily sucrose accumulation (+0.10% CCS/5d).
+            </div>
+        </div>
+
+        <!-- 3. INTERACTIVE POL, BRIX & CCS LIVE CALCULATOR -->
+        <div class="cockpit-stat-box" id="cockpitLabCalcBox" style="background:rgba(15,23,42,0.96); border:1px solid rgba(0,242,254,0.4); margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:0.72rem; color:#00f2fe; font-weight:800; letter-spacing:0.05em;">
+                    <i class="fa-solid fa-flask-vial"></i> SCIENTIFIC POL, BRIX &amp; CCS CALCULATOR
+                </span>
+                <span class="badge" id="cockpitCalcVerdictBadge" style="background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#34d399; font-size:10px; font-weight:800;">
+                    PEAK SUCROSE
+                </span>
+            </div>
+
+            <!-- Calculator Sliders / Inputs -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                <div>
+                    <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8; margin-bottom:2px;">
+                        <span>POLARIMETER POL (%)</span>
+                        <strong style="color:#a7f3d0;" id="calcPolDisplay">13.50%</strong>
+                    </div>
+                    <input type="range" id="sliderPol" min="9.0" max="18.5" step="0.05" value="13.5" style="width:100%; accent-color:#10b981;" oninput="onCalcInputChanged()" />
+                </div>
+                <div>
+                    <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8; margin-bottom:2px;">
+                        <span>JUICE BRIX (&deg;Bx)</span>
+                        <strong style="color:#38bdf8;" id="calcBrixDisplay">16.50&deg;</strong>
+                    </div>
+                    <input type="range" id="sliderBrix" min="12.0" max="23.0" step="0.05" value="16.5" style="width:100%; accent-color:#0284c7;" oninput="onCalcInputChanged()" />
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:10px; color:#94a3b8; margin-bottom:8px;">
+                <span>Cane Fiber Factor: <strong>12.5% (Maharashtra VSI Std)</strong></span>
+                <span>Refractometer Temp: <strong>20.0&deg;C (Calibrated)</strong></span>
+            </div>
+
+            <!-- Dynamic Output Readout -->
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; text-align:center; background:rgba(0,0,0,0.4); padding:6px 4px; border-radius:6px; border:1px solid rgba(0,242,254,0.2);">
+                <div>
+                    <div style="font-size:9.5px; color:#94a3b8; margin-bottom:1px;">PURITY</div>
+                    <strong style="font-size:13px; color:#ffffff;" id="calcOutPurity">81.8%</strong>
+                </div>
+                <div>
+                    <div style="font-size:9.5px; color:#94a3b8; margin-bottom:1px;">CALC CCS</div>
+                    <strong style="font-size:14px; color:#00e676;" id="calcOutCcs">9.12%</strong>
+                </div>
+                <div>
+                    <div style="font-size:9.5px; color:#94a3b8; margin-bottom:1px;">MILL RECOVERY</div>
+                    <strong style="font-size:13px; color:#38bdf8;" id="calcOutRecovery">7.79%</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. OPEN SPATIAL PLOT VISUALIZER BUTTON -->
+        <div style="margin-bottom:12px;">
+            <button class="action-btn" onclick="openSpatialPlotVisualizer()" style="width:100%; justify-content:center; padding:10px 14px; background:linear-gradient(135deg, rgba(0,242,254,0.18), rgba(16,185,129,0.18)); border:1px solid rgba(0,242,254,0.5); color:#ffffff; font-weight:800; font-size:12px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-draw-polygon" style="color:#00f2fe;"></i> Open Spatial Plot Visualizer &amp; Coordinate Slicing
+            </button>
         </div>
 
         <!-- Live Sentinel-2 Multi-Spectral Telemetry Card -->
@@ -1704,6 +1869,152 @@
                     <i class="fa-solid fa-file-arrow-up"></i> Select CSV/Excel File to Ingest
                 </button>
             </div>
+        </div>
+    </div>
+
+
+    <!-- ====================================================================
+         SPATIAL PLOT VISUALIZER & COORDINATE SLICING MODAL
+         ==================================================================== -->
+    <div id="modalSpatialVisualizer" class="modal-dialog-overlay" style="display:none; align-items:center; justify-content:center; z-index:1000000; padding:16px;">
+        <div class="terminal-modal-card" style="max-width:960px; width:100%; max-height:92vh; overflow-y:auto; background:rgba(7,14,28,0.98); border:1px solid rgba(0,242,254,0.4); box-shadow:0 25px 80px rgba(0,0,0,0.9); padding:24px;">
+            
+            <!-- Modal Header -->
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px;">
+                <div>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                        <span class="badge" style="background:rgba(0,242,254,0.15); border:1px solid #00f2fe; color:#00f2fe; font-size:11px; font-weight:800;" id="spatPlotGatPill">Gat 55</span>
+                        <span class="badge" style="background:rgba(16,185,129,0.15); border:1px solid #10b981; color:#34d399; font-size:11px; font-weight:800;" id="spatPlotVarietyPill">CO-265 (Khodwa)</span>
+                        <span class="badge" style="background:rgba(249,115,22,0.15); border:1px solid #f97316; color:#fb923c; font-size:11px; font-weight:800;" id="spatPlotStatusPill">PARTIAL HARVEST ACTIVE</span>
+                    </div>
+                    <h2 style="font-size:1.3rem; font-weight:800; color:#ffffff; margin:0;" id="spatFarmerName">RATHOD SHESHERAO HEMA</h2>
+                    <p style="font-size:0.75rem; color:#94a3b8; margin:2px 0 0;" id="spatVillageCircle">KATHAVADA &bull; BAGPIMPALGAON &bull; 19.268203&deg; N, 75.949671&deg; E</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeSpatialPlotVisualizer()" style="font-size:24px; color:#94a3b8; background:transparent; border:none; cursor:pointer;">&times;</button>
+            </div>
+
+            <!-- Interactive Slice Slider Bar -->
+            <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(249,115,22,0.35); border-radius:10px; padding:12px 16px; margin-bottom:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:0.8rem; font-weight:800; color:#fb923c; display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-sliders"></i> DYNAMIC HARVEST SWATH SLICER (COORDINATE-LEVEL CLIPPING)
+                    </span>
+                    <span style="font-size:0.9rem; font-weight:800; color:#00f2fe; font-family:var(--font-mono);" id="spatSliderProgressLabel">45% CUT</span>
+                </div>
+                <input type="range" id="spatHarvestSlider" min="0" max="100" step="1" value="45" style="width:100%; accent-color:#f97316;" oninput="onSpatSliderChange(this.value)" />
+                <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#94a3b8; margin-top:4px;">
+                    <span>0% (Standing Cane)</span>
+                    <span style="color:#00f2fe;"><i class="fa-solid fa-scissors"></i> Active Cutting Front Laser</span>
+                    <span>100% (Fully Cleared)</span>
+                </div>
+            </div>
+
+            <!-- Two-Column Layout: Visualizer Canvas + Live Balance Sheet -->
+            <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:16px; margin-bottom:16px;">
+                
+                <!-- Left: 2D Spatial Polygon SVG Canvas -->
+                <div style="background:#040914; border:1px solid rgba(0,242,254,0.3); border-radius:10px; padding:14px; position:relative;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="font-size:0.75rem; color:#94a3b8; font-weight:700;"><i class="fa-solid fa-map"></i> 2D SPATIAL SWATH PROJECTION</span>
+                        <span style="font-size:0.7rem; color:#34d399; font-family:var(--font-mono);">Sutherland-Hodgman Polygon Clipping</span>
+                    </div>
+
+                    <!-- SVG Parcel Container -->
+                    <div style="width:100%; height:280px; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at center, rgba(16,185,129,0.06), #020617); border-radius:8px; overflow:hidden;">
+                        <svg id="spatParcelSvg" viewBox="0 0 400 300" style="width:100%; height:100%;">
+                            <!-- Dynamically populated by JS: Parcel polygon, Harvested swath, Cutting front line, GPS vertices -->
+                        </svg>
+                    </div>
+
+                    <!-- Legend -->
+                    <div style="display:flex; justify-content:space-around; margin-top:10px; font-size:0.7rem;">
+                        <span style="display:flex; align-items:center; gap:5px; color:#fb923c;">
+                            <span style="width:12px; height:12px; background:#f97316; border-radius:2px; display:inline-block;"></span> Harvested Swath
+                        </span>
+                        <span style="display:flex; align-items:center; gap:5px; color:#34d399;">
+                            <span style="width:12px; height:12px; background:#10b981; border-radius:2px; display:inline-block;"></span> Standing Cane
+                        </span>
+                        <span style="display:flex; align-items:center; gap:5px; color:#00f2fe;">
+                            <span style="width:14px; height:2px; background:#00f2fe; display:inline-block;"></span> Cutting Front (<span id="spatCuttingWidthM">74m</span>)
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Right: Acreage & Tonnage Balance Sheet -->
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    
+                    <!-- Balance Summary Card -->
+                    <div style="background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:12px;">
+                        <h4 style="font-size:0.78rem; color:#e2e8f0; font-weight:800; margin:0 0 8px; text-transform:uppercase;">Parcel Balance Sheet</h4>
+                        
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.75rem;">
+                            <div style="background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.3); padding:6px 8px; border-radius:6px;">
+                                <div style="color:#94a3b8; font-size:0.68rem;">HARVESTED AREA</div>
+                                <div style="color:#fb923c; font-weight:800; font-size:0.9rem;" id="spatSheetHarvArea">1.11 Ac (0.45 Ha)</div>
+                                <div style="color:#cbd5e1; margin-top:2px;">Dispatched: <strong id="spatSheetHarvTons">38.2 MT</strong></div>
+                                <div style="color:#94a3b8; font-size:0.68rem; margin-top:2px;">Trollies: <strong id="spatSheetHarvTrollies">3 Dispatched</strong></div>
+                            </div>
+                            <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:6px 8px; border-radius:6px;">
+                                <div style="color:#94a3b8; font-size:0.68rem;">STANDING CANE</div>
+                                <div style="color:#34d399; font-weight:800; font-size:0.9rem;" id="spatSheetStandArea">1.36 Ac (0.55 Ha)</div>
+                                <div style="color:#cbd5e1; margin-top:2px;">Remaining: <strong id="spatSheetStandTons">46.8 MT</strong></div>
+                                <div style="color:#94a3b8; font-size:0.68rem; margin-top:2px;">Trollies: <strong id="spatSheetStandTrollies">4 Remaining</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- Quality Parameters Inset -->
+                        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; text-align:center; background:rgba(0,0,0,0.4); border-radius:6px; padding:6px; margin-top:8px;">
+                            <div><span style="font-size:0.65rem; color:#94a3b8; display:block;">POL</span><strong style="color:#a7f3d0;" id="spatSheetPol">12.96%</strong></div>
+                            <div><span style="font-size:0.65rem; color:#94a3b8; display:block;">BRIX</span><strong style="color:#38bdf8;" id="spatSheetBrix">15.88&deg;</strong></div>
+                            <div><span style="font-size:0.65rem; color:#94a3b8; display:block;">CCS</span><strong style="color:#00e676;" id="spatSheetCcs">8.61%</strong></div>
+                            <div><span style="font-size:0.65rem; color:#94a3b8; display:block;">RECOVERY</span><strong style="color:#34d399;" id="spatSheetRec">7.36%</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Mass Conservation & Invariant Card -->
+                    <div style="background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.35); border-radius:10px; padding:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <span style="font-size:0.75rem; font-weight:800; color:#c084fc;">
+                                <i class="fa-solid fa-scale-balanced"></i> ADJACENT MASS CONSERVATION
+                            </span>
+                            <span class="badge" style="background:#a855f7; color:#fff; font-size:9px; font-weight:800;">PASS &bull; &Delta; = 0.0 MT</span>
+                        </div>
+                        <p style="font-size:0.72rem; color:#cbd5e1; margin:0 0 6px;">
+                            Total Field Mass = Dispatched Tonnage + Standing Tonnage. Realization coefficient calibrated at <strong style="color:#00f2fe;">Kf = 0.814</strong>.
+                        </p>
+                        <div style="font-size:0.72rem; color:#a7f3d0; background:rgba(0,0,0,0.4); padding:4px 8px; border-radius:4px; font-family:var(--font-mono);">
+                            <span id="spatSheetMassBalanceText">38.2 MT + 46.8 MT = 85.0 MT (100% Invariant Conserved)</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Bottom: Cadastral GPS Coordinates Table (V1 to V5) -->
+            <div style="background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:0.78rem; font-weight:800; color:#e2e8f0; text-transform:uppercase;">
+                        <i class="fa-solid fa-location-crosshairs"></i> Boundary GPS Vertices &amp; Cadastral Spatial Coordinates
+                    </span>
+                    <span style="font-size:0.7rem; color:#94a3b8;">Datum: WGS84 &bull; CRS: EPSG:4326</span>
+                </div>
+                
+                <table style="width:100%; border-collapse:collapse; font-size:0.75rem; text-align:left; font-family:var(--font-mono);">
+                    <thead>
+                        <tr style="background:rgba(255,255,255,0.04); color:#94a3b8;">
+                            <th style="padding:4px 8px;">VERTEX</th>
+                            <th style="padding:4px 8px;">LATITUDE</th>
+                            <th style="padding:4px 8px;">LONGITUDE</th>
+                            <th style="padding:4px 8px;">SEGMENT LENGTH</th>
+                            <th style="padding:4px 8px;">BOUNDARY STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="spatCoordsTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 

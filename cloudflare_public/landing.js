@@ -418,7 +418,7 @@ const I18N = {
     en: {
         heroTitle: 'Autonomous Sugarcane Intelligence from Orbit to Mill Crushing',
         heroSubtitle: 'Empowering Sugar Mills & Agricultural Cooperatives with AI-driven pre-harvest sucrose forecasting, cadastral Gat reconciliation, and capacity-balanced harvest scheduling. Maximize sugar recovery (CCS), eliminate ghost-plot fraud, and cut harvest-to-crush delays.',
-        btnLaunchConsole: 'Launch Mill Console (320 Plots)',
+        btnLaunchConsole: 'Launch Mill Console (3,630 Plots)',
         btnCalcRoi: 'Calculate Mill Recovery ROI',
         statCcs: 'Recovery Gain',
         statImpact: 'Annual Addition',

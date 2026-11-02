@@ -1878,3 +1878,38 @@ body.light-mode .cadence-guide-title {
 body.light-mode .cadence-guide-desc {
     color: #475569;
 }
+
+/* Partial Harvesting & Adjacent Conservation Badges & Bars */
+.badge-partial {
+    background: rgba(249, 115, 22, 0.18) !important;
+    border: 1px solid #f97316 !important;
+    color: #fb923c !important;
+    font-weight: 800;
+}
+
+.badge-harvested {
+    background: rgba(100, 116, 139, 0.2) !important;
+    border: 1px solid #64748b !important;
+    color: #94a3b8 !important;
+    font-weight: 700;
+}
+
+.filter-pill[data-filter="PARTIAL_HARVEST"].active {
+    background: rgba(249, 115, 22, 0.25) !important;
+    border-color: #f97316 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+}
+
+.filter-pill[data-filter="ADJACENT_CONSERVATION"].active {
+    background: rgba(168, 85, 247, 0.25) !important;
+    border-color: #a855f7 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.filter-pill[data-filter="FULLY_HARVESTED"].active {
+    background: rgba(100, 116, 139, 0.3) !important;
+    border-color: #94a3b8 !important;
+    color: #ffffff !important;
+}
