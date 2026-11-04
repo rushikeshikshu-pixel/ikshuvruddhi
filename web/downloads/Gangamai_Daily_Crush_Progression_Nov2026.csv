@@ -1,5 +1,5 @@
-Crush Date,Daily Crushed Cane (MT),Factory Daily Recovery (%),Cumulative Season Average (%),Daily Sugar Produced (MT),Cumulative Cane Crushed To Date (MT),Operational Ripening Driver
-01 November 2026,8000.0,8.21,7.71,656.8,145710.4,Opening November stream; Adsali plots entering carrier; ambient minimum temperature ~17.5°C.
-02 November 2026,8062.0,8.31,7.74,669.9,153772.6,Winter transition; night temperatures drop to 16.0°C; initial cold-induced sucrose translocation surge (+0.10%).
-03 November 2026,8062.157,8.44,7.75,680.4,161834.716,"Peak cold night chilling (Tmin 14.5°C); high-purity (90%+) Adsali entering carrier with streamlined transit (+0.13%). Full 3 shifts crushed: 8,062.157 MT!"
-04 November 2026 (Live at 3:33 PM),3933.275,8.46,7.76,332.8,165767.991,"Shift 1: 2,768.54 MT | Shift 2: 1,164.74 MT (as of 3:33 PM). Season cumulative reaches 1,65,768 MT."
+Crush Date,Daily Crushed Cane (MT),Plots Harvested,Satellite Pred Pol (%),Satellite Pred Brix (°Bx),Satellite Realizable Recovery (%),Factory Actual Recovery (%),Cumulative Season Average (%),Daily Sugar Produced (MT),Cumulative Crushed To Date (MT),Operational Dynamics
+01 November 2026,8130.0,392,13.26,15.63,8.2,8.21,7.71,667.5,145710.4,"Opening November stream; 8,130 MT crushed across 3 shifts; ambient Tmin ~17.5°C."
+02 November 2026,8062.0,376,13.28,15.64,8.23,8.31,7.74,669.9,153772.6,Winter transition; night temperatures drop to 16.0°C; cold-induced sucrose surge (+0.10%).
+03 November 2026,8062.157,316,13.68,15.9,8.62,8.44,7.75,680.4,161834.716,"Peak cold night chilling (Tmin 14.5°C); mature Adsali entering carrier with fast transit (+0.13%). Full 3 shifts: 8,062.157 MT."
+04 November 2026 (Live at 3:33 PM),3933.275,203,13.23,15.61,8.19,8.46,7.76,332.8,165767.991,"Live ERP status: Shift 1: 2,768.54 MT | Shift 2: 1,164.74 MT (as of 3:33 PM)."
