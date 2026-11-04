@@ -1,0 +1,1405 @@
+/* ==========================================================================
+   IKSHU INTELLIGENCE - LUXURY AEROSPACE & AGRI-TECH AESTHETIC (VERSION 3.0)
+   Inspired by SpaceX Starship, Palantir Foundry & Apple Pro Hardware
+   Domain: ikshuintelligence.com | SatCane AI & IkshuVruddhi Engine
+   ========================================================================== */
+
+:root {
+    --bg-black: #000000;
+    --bg-space: #02050e;
+    --bg-surface-1: #070e1c;
+    --bg-surface-2: #0c162a;
+    --bg-glass: rgba(8, 16, 32, 0.78);
+    --bg-glass-card: rgba(12, 22, 42, 0.7);
+    --bg-card-hover: rgba(16, 30, 58, 0.85);
+
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-glass: rgba(0, 242, 254, 0.22);
+    --border-emerald: rgba(0, 230, 118, 0.28);
+    --border-active: rgba(0, 242, 254, 0.6);
+
+    --neon-green: #00e676;
+    --emerald-primary: #10b981;
+    --cyan-primary: #00f2fe;
+    --cyan-glow: #38bdf8;
+    --amber-glow: #f59e0b;
+    --coral-danger: #ef4444;
+    --purple-orbit: #a855f7;
+
+    --text-pure: #ffffff;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+
+    --shadow-hud: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 40px rgba(0, 242, 254, 0.12);
+    --shadow-emerald: 0 10px 40px rgba(0, 230, 118, 0.25);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-black);
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+body {
+    background-color: var(--bg-black);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Background Cosmic Canvas */
+#spaceCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Custom Telemetry Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #02050e;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 242, 254, 0.25);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cyan-primary);
+}
+
+.container {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Utility Corner Crosshairs */
+.hud-bracket {
+    position: relative;
+}
+.hud-bracket::before,
+.hud-bracket::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: rgba(0, 242, 254, 0.4);
+    pointer-events: none;
+}
+.hud-bracket::before {
+    top: 0;
+    left: 0;
+    border-top: 1.5px solid;
+    border-left: 1.5px solid;
+}
+.hud-bracket::after {
+    bottom: 0;
+    right: 0;
+    border-bottom: 1.5px solid;
+    border-right: 1.5px solid;
+}
+
+/* ==========================================================================
+   1. NAVIGATION BAR (AEROSPACE FLOATING HUD)
+   ========================================================================== */
+.spacex-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(2, 5, 14, 0.82);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 14px 0;
+    transition: all 0.3s ease;
+}
+.spacex-navbar.scrolled {
+    background: rgba(2, 5, 14, 0.96);
+    border-bottom: 1px solid rgba(0, 242, 254, 0.25);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+}
+
+.nav-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-anchor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #ffffff;
+}
+.brand-satellite-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(0, 230, 118, 0.15));
+    border: 1px solid var(--border-glass);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cyan-primary);
+    font-size: 1.2rem;
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+}
+.brand-text-block h1 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+}
+.brand-text-block h1 span {
+    color: var(--cyan-primary);
+}
+.brand-text-block p {
+    font-size: 0.65rem;
+    color: var(--neon-green);
+    letter-spacing: 0.14em;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+.nav-links-list {
+    display: flex;
+    list-style: none;
+    gap: 24px;
+    align-items: center;
+}
+.nav-links-list a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: color 0.2s, text-shadow 0.2s;
+    position: relative;
+    padding: 4px 0;
+}
+.nav-links-list a:hover {
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(0, 242, 254, 0.6);
+}
+.nav-links-list a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--cyan-primary);
+    transition: width 0.2s ease;
+}
+.nav-links-list a:hover::after {
+    width: 100%;
+}
+
+.nav-cta-cluster {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-lang-toggle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    padding: 7px 12px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-lang-toggle:hover {
+    border-color: var(--cyan-primary);
+    color: #ffffff;
+}
+
+.btn-telemetry-portal {
+    background: rgba(0, 230, 118, 0.08);
+    border: 1px solid rgba(0, 230, 118, 0.35);
+    color: var(--neon-green);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+.btn-telemetry-portal:hover {
+    background: var(--emerald-primary);
+    color: #ffffff;
+    box-shadow: 0 0 25px rgba(0, 230, 118, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-launch-terminal {
+    background: linear-gradient(135deg, #00f2fe 0%, #00c0fa 100%);
+    border: none;
+    color: #02050e;
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    padding: 9px 20px;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.35);
+    transition: all 0.2s ease;
+}
+.btn-launch-terminal:hover {
+    box-shadow: 0 0 35px rgba(0, 242, 254, 0.65);
+    transform: translateY(-1px);
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: #ffffff;
+    font-size: 1.1rem;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   2. ORBITAL STATUS TICKER (REPLACES OLD DNS BAR)
+   ========================================================================== */
+.telemetry-ticker-bar {
+    position: relative;
+    z-index: 10;
+    margin-top: 72px;
+    background: rgba(4, 9, 20, 0.9);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 9px 0;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+}
+.ticker-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.ticker-badge {
+    background: rgba(0, 242, 254, 0.12);
+    border: 1px solid rgba(0, 242, 254, 0.35);
+    color: var(--cyan-primary);
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-weight: 800;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.ticker-telemetry-text {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.ticker-telemetry-text span strong {
+    color: #ffffff;
+}
+.ticker-telemetry-text span em {
+    color: var(--neon-green);
+    font-style: normal;
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   3. HERO SECTION (AEROSPACE MISSION CONTROL)
+   ========================================================================== */
+.hero-viewport {
+    padding-top: 60px;
+    padding-bottom: 90px;
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-grid-split {
+    display: grid;
+    grid-template-columns: 1.15fr 0.95fr;
+    gap: 48px;
+    align-items: center;
+}
+
+.hero-telemetry-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 242, 254, 0.08);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    color: var(--cyan-primary);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.74rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 22px;
+}
+.telemetry-beacon-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--neon-green);
+    box-shadow: 0 0 10px var(--neon-green);
+    animation: beaconPulse 2s infinite ease-in-out;
+}
+@keyframes beaconPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.8); }
+}
+
+.hero-display-headline {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+    color: #ffffff;
+    margin-bottom: 22px;
+}
+.hero-display-headline .gradient-cyan {
+    background: linear-gradient(135deg, #ffffff 20%, #00f2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.hero-display-headline .gradient-emerald {
+    background: linear-gradient(135deg, #00e676 0%, #10b981 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-narrative-copy {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 34px;
+    max-width: 620px;
+}
+
+.hero-cta-ribbon {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 42px;
+}
+
+.btn-hero-primary {
+    background: linear-gradient(135deg, #00f2fe 0%, #00b4d8 100%);
+    color: #02050e;
+    font-size: 0.92rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    padding: 14px 28px;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 0 35px rgba(0, 242, 254, 0.45);
+    transition: all 0.25s ease;
+}
+.btn-hero-primary:hover {
+    box-shadow: 0 0 50px rgba(0, 242, 254, 0.7);
+    transform: translateY(-2px);
+}
+
+.btn-hero-secondary {
+    background: rgba(12, 22, 42, 0.75);
+    border: 1px solid var(--border-glass);
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 800;
+    padding: 14px 26px;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    backdrop-filter: blur(12px);
+    transition: all 0.25s ease;
+}
+.btn-hero-secondary:hover {
+    border-color: var(--cyan-primary);
+    background: rgba(16, 30, 58, 0.9);
+    box-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+    transform: translateY(-2px);
+}
+
+.hero-stats-band {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding-top: 26px;
+    border-top: 1px solid var(--border-subtle);
+}
+.hero-stat-block span {
+    display: block;
+}
+.stat-digit-display {
+    font-family: var(--font-mono);
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.1;
+}
+.stat-digit-display.green { color: var(--neon-green); text-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
+.stat-digit-display.cyan { color: var(--cyan-primary); text-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
+.stat-digit-display.coral { color: var(--coral-danger); }
+.stat-caption-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+/* ==========================================================================
+   4. HERO RIGHT: MISSION CONTROL TELEMETRY HUD
+   ========================================================================== */
+.mission-hud-card {
+    background: var(--bg-glass-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-hud);
+    backdrop-filter: blur(24px);
+    overflow: hidden;
+    position: relative;
+}
+
+.hud-top-strip {
+    padding: 14px 20px;
+    background: rgba(10, 18, 36, 0.85);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.hud-title-tag {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--cyan-primary);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.hud-tab-selector {
+    display: flex;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 3px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+}
+.hud-tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.hud-tab-btn.active {
+    background: rgba(0, 242, 254, 0.2);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+}
+
+.hud-main-body {
+    padding: 22px;
+}
+
+/* Radar Screen */
+.radar-scanner-box {
+    height: 200px;
+    background: radial-gradient(circle at center, rgba(0, 242, 254, 0.1) 0%, transparent 75%), #040914;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.4s ease;
+}
+.radar-cadastral-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+.radar-sweep-beam {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.3), transparent);
+    animation: radarSweep 3.5s infinite linear;
+}
+@keyframes radarSweep {
+    0% { left: -60%; }
+    100% { left: 160%; }
+}
+
+.radar-plot-node {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--neon-green);
+    box-shadow: 0 0 14px var(--neon-green);
+    transition: all 0.3s ease;
+}
+.radar-plot-node.node-1 { top: 32%; left: 35%; }
+.radar-plot-node.node-2 { top: 62%; left: 68%; }
+.radar-plot-node.node-3 { top: 48%; left: 80%; background: var(--amber-glow); box-shadow: 0 0 14px var(--amber-glow); }
+.radar-plot-node.node-ghost { top: 75%; left: 25%; background: var(--coral-danger); box-shadow: 0 0 14px var(--coral-danger); }
+
+.radar-overlay-badge {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid var(--border-subtle);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--cyan-primary);
+}
+
+.spectral-bands-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.band-metric-cell {
+    background: rgba(14, 25, 45, 0.65);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 10px 8px;
+    text-align: center;
+    transition: border-color 0.2s;
+}
+.band-metric-cell:hover {
+    border-color: var(--cyan-primary);
+}
+.band-name-label {
+    font-size: 0.66rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    display: block;
+}
+.band-value-val {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-top: 2px;
+}
+
+.hud-bottom-telemetry-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+}
+.hud-bottom-telemetry-row a {
+    color: var(--cyan-primary);
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.hud-bottom-telemetry-row a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   5. SUCROSE RIPENING & LOSS SIMULATOR SECTION
+   ========================================================================== */
+.simulator-section {
+    padding: 110px 0;
+    background: radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.07), transparent 70%), #02050e;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.section-head-center {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 50px;
+}
+
+.section-eyebrow-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 230, 118, 0.1);
+    border: 1px solid rgba(0, 230, 118, 0.35);
+    color: var(--neon-green);
+    padding: 5px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+.section-headline {
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.15;
+    margin-bottom: 16px;
+}
+.section-subcopy {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.sim-control-wrapper {
+    background: var(--bg-glass-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 36px;
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-hud);
+}
+
+.variety-selector-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.variety-btn {
+    background: rgba(14, 25, 45, 0.7);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    padding: 8px 18px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.variety-btn:hover {
+    border-color: var(--cyan-primary);
+    color: #ffffff;
+}
+.variety-btn.active {
+    background: rgba(0, 242, 254, 0.15);
+    border-color: var(--cyan-primary);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+}
+
+.sim-sliders-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 28px;
+}
+.sim-slider-block {
+    background: rgba(14, 25, 45, 0.5);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+.sim-slider-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+.sim-slider-val {
+    font-family: var(--font-mono);
+    color: var(--neon-green);
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+.sim-range-input {
+    width: 100%;
+    height: 8px;
+    background: #040914;
+    border-radius: 4px;
+    outline: none;
+    accent-color: var(--neon-green);
+    cursor: pointer;
+}
+
+.sim-svg-graph-container {
+    width: 100%;
+    height: 200px;
+    background: #030812;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    position: relative;
+    margin-bottom: 24px;
+    padding: 10px;
+}
+
+.sim-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.sim-metric-card {
+    background: rgba(14, 25, 45, 0.7);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+}
+.sim-metric-title {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.sim-metric-value {
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-top: 4px;
+}
+.sim-metric-value.highlight-green { color: var(--neon-green); }
+.sim-metric-value.highlight-cyan { color: var(--cyan-primary); }
+.sim-metric-value.highlight-amber { color: var(--amber-glow); }
+.sim-metric-value.highlight-red { color: var(--coral-danger); }
+
+.sim-window-alert {
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    font-size: 0.86rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid transparent;
+}
+.sim-window-optimal {
+    background: rgba(0, 230, 118, 0.1);
+    border-color: rgba(0, 230, 118, 0.35);
+    color: #a7f3d0;
+}
+.sim-window-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #fde68a;
+}
+.sim-window-danger {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+}
+
+/* ==========================================================================
+   6. CADASTRAL 7/12 GAT FRAUD BUSTER SECTION
+   ========================================================================== */
+.audit-section {
+    padding: 110px 0;
+    background: #000000;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.audit-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.audit-interactive-card {
+    background: var(--bg-glass-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    backdrop-filter: blur(20px);
+}
+.audit-tabs-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+.audit-tab-btn {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+    background: rgba(14, 25, 45, 0.6);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+.audit-tab-btn.active.legit {
+    background: rgba(0, 230, 118, 0.15);
+    border-color: var(--neon-green);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.3);
+}
+.audit-tab-btn.active.ghost {
+    background: rgba(239, 68, 68, 0.18);
+    border-color: var(--coral-danger);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.35);
+}
+
+.audit-visual-box {
+    height: 190px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: all 0.4s ease;
+    padding: 16px;
+}
+
+.audit-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 0.84rem;
+}
+.audit-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.audit-detail-row span:first-child {
+    color: var(--text-muted);
+}
+.audit-detail-row span:last-child {
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.badge-green {
+    background: rgba(0, 230, 118, 0.15);
+    border: 1px solid rgba(0, 230, 118, 0.35);
+    color: var(--neon-green);
+}
+.badge-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: var(--coral-danger);
+}
+
+.audit-feature-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.audit-card-item {
+    background: rgba(14, 25, 45, 0.5);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    transition: border-color 0.2s;
+}
+.audit-card-item:hover {
+    border-color: var(--cyan-primary);
+}
+.audit-card-item h4 {
+    font-size: 1rem;
+    color: #ffffff;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.audit-card-item p {
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+/* ==========================================================================
+   7. EXECUTIVE MILL CRUSHING ROI CALCULATOR SECTION
+   ========================================================================== */
+.roi-section {
+    padding: 110px 0;
+    background: radial-gradient(circle at 50% 80%, rgba(0, 242, 254, 0.06), transparent 70%), #02050e;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.roi-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+}
+
+.roi-input-panel {
+    background: var(--bg-glass-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 34px;
+    backdrop-filter: blur(20px);
+}
+.roi-output-panel {
+    background: linear-gradient(135deg, rgba(0, 230, 118, 0.12) 0%, rgba(0, 242, 254, 0.08) 100%), #050e1f;
+    border: 1px solid var(--border-emerald);
+    border-radius: var(--radius-lg);
+    padding: 38px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), var(--shadow-emerald);
+}
+
+.roi-slider-group {
+    margin-bottom: 22px;
+}
+.roi-slider-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.86rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.roi-slider-label-row span:last-child {
+    font-family: var(--font-mono);
+    color: var(--cyan-primary);
+    font-weight: 800;
+}
+
+.roi-cash-headline-label {
+    font-size: 0.8rem;
+    color: var(--neon-green);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.roi-big-cash-display {
+    font-family: var(--font-mono);
+    font-size: 3.4rem;
+    font-weight: 900;
+    color: var(--neon-green);
+    line-height: 1.05;
+    text-shadow: 0 0 35px rgba(0, 230, 118, 0.45);
+    margin: 8px 0 22px;
+}
+
+.roi-breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.86rem;
+}
+.roi-breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.roi-breakdown-row span:first-child {
+    color: var(--text-secondary);
+}
+.roi-breakdown-row span:last-child {
+    font-family: var(--font-mono);
+    font-weight: 800;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   8. THE 6 ENTERPRISE FACTORY ENGINES
+   ========================================================================== */
+.engines-section {
+    padding: 110px 0;
+    background: #000000;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.engines-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+.engine-card {
+    background: var(--bg-glass-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 30px 24px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.engine-card:hover {
+    border-color: var(--cyan-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 242, 254, 0.2);
+}
+.engine-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--cyan-primary), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.engine-card:hover::before {
+    opacity: 1;
+}
+
+.engine-icon-halo {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-sm);
+    background: rgba(0, 242, 254, 0.12);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cyan-primary);
+    font-size: 1.35rem;
+    margin-bottom: 22px;
+}
+.engine-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 12px;
+}
+.engine-card p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   9. SUGAR FACTORY CASE STUDIES
+   ========================================================================== */
+.case-studies-section {
+    padding: 110px 0;
+    background: #02050e;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.case-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+.case-card {
+    background: var(--bg-glass-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 30px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.case-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+.case-mill-name {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+.case-mill-location {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+}
+.case-metric-highlight {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--neon-green);
+    margin: 12px 0;
+}
+.case-narrative {
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+.case-metrics-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 0.76rem;
+}
+.case-metric-pill span {
+    display: block;
+}
+.case-metric-pill span:first-child {
+    color: var(--text-muted);
+}
+.case-metric-pill span:last-child {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   10. CONTACT & PILOT DEPLOYMENT SECTION
+   ========================================================================== */
+.contact-section {
+    padding: 110px 0;
+    background: #000000;
+    border-top: 1px solid var(--border-subtle);
+}
+.contact-grid-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+}
+.contact-form-card {
+    background: var(--bg-glass-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 36px;
+    backdrop-filter: blur(20px);
+}
+.form-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.form-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+.form-input-group label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+.form-input-group input,
+.form-input-group select,
+.form-input-group textarea {
+    background: rgba(14, 25, 45, 0.8);
+    border: 1px solid var(--border-subtle);
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.2s;
+}
+.form-input-group input:focus,
+.form-input-group select:focus,
+.form-input-group textarea:focus {
+    border-color: var(--cyan-primary);
+}
+
+/* ==========================================================================
+   11. FOOTER
+   ========================================================================== */
+.spacex-footer {
+    padding: 60px 0 30px;
+    border-top: 1px solid var(--border-subtle);
+    background: #010308;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+.footer-row-split {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.footer-legal-bar {
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   12. MODAL DIALOGS (MILL PORTAL & DEMO ACCESS)
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.modal-box-card {
+    background: #070e1c;
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 580px;
+    padding: 32px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 40px rgba(0, 242, 254, 0.2);
+    position: relative;
+}
+.modal-close-x {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.modal-close-x:hover {
+    color: #ffffff;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+    .hero-grid-split { grid-template-columns: 1fr; }
+    .roi-layout-grid { grid-template-columns: 1fr; }
+    .audit-grid-layout { grid-template-columns: 1fr; }
+    .engines-grid-layout { grid-template-columns: repeat(2, 1fr); }
+    .case-grid-layout { grid-template-columns: 1fr; }
+    .contact-grid-split { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .nav-links-list { display: none; }
+    .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+    .hero-display-headline { font-size: 2.5rem; }
+    .hero-stats-band { grid-template-columns: 1fr; }
+    .sim-sliders-grid { grid-template-columns: 1fr; }
+    .sim-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .engines-grid-layout { grid-template-columns: 1fr; }
+    .form-group-row { grid-template-columns: 1fr; }
+}
