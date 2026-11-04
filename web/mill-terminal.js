@@ -39,8 +39,8 @@ window.MillApp = {
     markersGroup: null,
     fraudBlockedCount: 32,
     fraudSavedCrores: 1.82,
-    baseRecovery: 10.45,
-    currentRecovery: 11.24,
+    baseRecovery: 7.74,
+    currentRecovery: 8.44,
     pendingBulkPlots: []
 };
 
@@ -1119,12 +1119,12 @@ function openPlotCockpit(plot) {
     setText('cockpitCutPol', (plot.cutPol || plot.pol) + '%');
     setText('cockpitCutBrix', (plot.cutBrix || plot.brix) + '°');
     setText('cockpitCutCcs', (plot.cutCcs || plot.ccs) + '%');
-    setText('cockpitCutRec', (plot.cutRecovery || plot.recovery || (plot.ccs * 0.854).toFixed(2)) + '%');
+    setText('cockpitCutRec', (plot.cutRecovery || plot.recovery || (plot.ccs * 0.824).toFixed(2)) + '%');
 
     const standPol = plot.standingPol || Number((plot.pol + 0.15).toFixed(2));
     const standBrix = plot.standingBrix || Number((plot.brix + 0.18).toFixed(2));
     const standCcs = plot.standingCcs || Number((plot.ccs + 0.10).toFixed(2));
-    const standRec = plot.standingRecovery || Number((standCcs * 0.854).toFixed(2));
+    const standRec = plot.standingRecovery || Number((standCcs * 0.824).toFixed(2));
     
     setText('cockpitStandPol', standPol + '%');
     setText('cockpitStandBrix', standBrix + '°');
@@ -2733,7 +2733,7 @@ window.onCalcInputChanged = function() {
     const brix = parseFloat(sliderBrix.value) || 16.5;
 
     setText('calcPolDisplay', pol.toFixed(2) + '%');
-    setText('calcBrixDisplay', brix.toFixed(2) + '°');
+    setText('calcBrixDisplay', brix.toFixed(2) + '°Bx');
 
     // Purity = (Pol / Brix) * 100
     const purity = Math.min(100, Math.max(50, (pol / Math.max(brix, 0.1)) * 100));
@@ -2743,8 +2743,8 @@ window.onCalcInputChanged = function() {
     const fiberFactor = 1 - (fiber + 3) / 100;
     const ccs = Math.max(0, (pol - (brix - pol) * 0.4) * fiberFactor);
 
-    // Ground Truth Factory Realization Recovery (0.854 factor)
-    const recovery = ccs * 0.854;
+    // Ground Truth Factory Realization Recovery (0.824 factor)
+    const recovery = ccs * 0.824;
 
     setText('calcOutPurity', purity.toFixed(1) + '%');
     setText('calcOutCcs', ccs.toFixed(2) + '%');
@@ -2878,7 +2878,7 @@ window.updateSpatialVisualizerRender = function(pct) {
     setText('spatSheetPol', plot.pol + '%');
     setText('spatSheetBrix', plot.brix + '°');
     setText('spatSheetCcs', plot.ccs + '%');
-    setText('spatSheetRec', (plot.recovery || (plot.ccs * 0.854).toFixed(2)) + '%');
+    setText('spatSheetRec', (plot.recovery || (plot.ccs * 0.824).toFixed(2)) + '%');
 
     setText('spatSheetMassBalanceText', `${harvTons} MT + ${standTons} MT = ${totalTons} MT (100% Invariant Conserved)`);
 

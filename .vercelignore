@@ -1,0 +1,25 @@
+# Ignore heavy machine learning models, outputs and large datasets
+models/
+data/
+outputs/
+*.pkl
+*.db
+*.sqlite
+*.csv
+
+# Ignore alternate app trees and node_modules
+site-editor/
+node_modules/
+.venv/
+__pycache__/
+
+# Ignore internal scripts and tests
+scripts/
+tests/
+scratch/
+validation/
+docs/
+.github/
+
+# Keep only web distribution and necessary configs
+!web/downloads/*.geojson

@@ -1,10 +1,10 @@
 /**
  * Factory Commercial Sugar Recovery Realization Factor (Kf)
- * Standard Indian Sugar Technology (VSI / NSI / Meade-Chen SJM Formula):
- * Kf = Reduced Mill Extraction (0.9465) x Boiling House Retention (0.860) = 0.8140
- * Reconciles CCS on cane with actual commercial bagged sugar recovery (7.35% - 7.45% in late Oct).
+ * Calibrated to Gangamai Sugar Mills 2026 ground-truth laboratory recovery:
+ * Season average recovery: 7.74% | Nov 2: 8.31% | Nov 3: 8.44%
+ * Mean Command CCS = 9.394% -> Kf = 7.74 / 9.394 = 0.8239
  */
-export const RECOVERY_FACTOR = 0.814;
+export const RECOVERY_FACTOR = 0.824;
 
 /** Calculated estimate requested by the mill; keep full precision until display. */
 export function estimatedRecovery(ccs: unknown): number | null {
