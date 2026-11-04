@@ -40,12 +40,18 @@ if os.path.exists(RAW_MASTER):
             df.drop(columns=[col], inplace=True)
     df = df.merge(df_raw, on='Plot No', how='left')
 
+# Deduplicate columns if any duplicate headers exist
+df = df.loc[:, ~df.columns.duplicated()]
+
 # Standardize column names cleanly
 cols = list(df.columns)
+found_brix = False
 for i, c in enumerate(cols):
-    if 'Brix' in c:
+    if 'Brix' in c and not found_brix:
         cols[i] = 'Nov 04 Brix (deg Bx)'
+        found_brix = True
 df.columns = cols
+df = df.loc[:, ~df.columns.duplicated()]
 
 # =================================================================================================
 # DYNAMIC BIOPHYSICAL SATELLITE RIPENING & MULTI-TEMPORAL CALIBRATION
