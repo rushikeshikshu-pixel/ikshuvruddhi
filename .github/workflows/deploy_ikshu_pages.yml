@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out site files
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Verify Cloudflare deployment settings
         id: check_creds
@@ -48,7 +48,7 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         if: steps.check_creds.outputs.has_creds == 'true'
-        uses: cloudflare/wrangler-action@v4
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
