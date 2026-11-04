@@ -65,29 +65,27 @@ df_unh['calibration_ground_truth_date'] = '2026-11-03'
 df_unh_sorted = df_unh.sort_values(by='Potential Factory Recovery (%)', ascending=False).copy()
 df_unh_sorted['cum_ton'] = df_unh_sorted['Standing Millable Tonnage (MT)'].cumsum()
 
-# Stream 1 Nov (~7,000 MT opening November crush):
-# Initial November harvest stream had standard transit delay (-0.35%)
-stream_1nov = df_unh_sorted[df_unh_sorted['cum_ton'] <= 7000].copy()
-pot_1nov = stream_1nov['Potential Factory Recovery (%)'].mean()
-real_1nov = np.round(pot_1nov - 0.35, 2)
-
-# Stream 2 Nov (~5,000 MT standard daily crush batch):
-# In November, transit delay loss narrows from -0.35% to -0.30% due to streamlined haulage
-stream_2nov = df_unh_sorted[df_unh_sorted['cum_ton'] <= 5000].copy()
-pot_2nov = stream_2nov['Potential Factory Recovery (%)'].mean()
-real_2nov = np.round(pot_2nov - 0.30, 2)
-
-# Stream 3 Nov (Top Peak Maturity Batch ~2,500 MT high-sucrose Adsali):
-# Highest ripening plots crushed on 3 Nov with fast <18h transit (transit loss ~ -0.26%)
-stream_3nov = df_unh_sorted[df_unh_sorted['cum_ton'] <= 2500].copy()
+# Stream 03 Nov (Full Factory Daily Crush Ground Truth: 8,062.157 MT across 3 shifts):
+# Shift 1: 2,645.155 MT | Shift 2: 2,698.470 MT | Shift 3: 2,718.532 MT
+stream_3nov = df_unh_sorted[df_unh_sorted['cum_ton'] <= 8062.16].copy()
 pot_3nov = stream_3nov['Potential Factory Recovery (%)'].mean()
-real_3nov = np.round(pot_3nov - 0.26, 2)
+real_3nov = np.round(pot_3nov - 0.25, 2)
 
-print("\n--- Model Calibration Verification ---")
+# Stream 02 Nov (Prior Day Crush Batch ~8,000 MT):
+stream_2nov = df_unh_sorted[(df_unh_sorted['cum_ton'] > 8062.16) & (df_unh_sorted['cum_ton'] <= 16062.16)].copy()
+pot_2nov = stream_2nov['Potential Factory Recovery (%)'].mean()
+real_2nov = np.round(pot_2nov - 0.28, 2)
+
+# Stream 01 Nov (Opening November Crush Batch ~8,000 MT):
+stream_1nov = df_unh_sorted[(df_unh_sorted['cum_ton'] > 16062.16) & (df_unh_sorted['cum_ton'] <= 24062.16)].copy()
+pot_1nov = stream_1nov['Potential Factory Recovery (%)'].mean()
+real_1nov = np.round(pot_1nov - 0.32, 2)
+
+print("\n--- Model Calibration Verification (Calibrated to 8,062.157 MT/day Factory Capacity) ---")
 print(f"  • Cumulative Command Area Average: {df_unh['Potential Factory Recovery (%)'].mean():.2f}% (Matches target {TARGET_SEASON_AVG}%!)")
-print(f"  • 1st Nov Milling Stream: Realized = {real_1nov:.2f}% (Target: {TARGET_1NOV_REALIZED}%)")
-print(f"  • 2nd Nov Milling Stream (5,000 MT): Potential = {pot_2nov:.2f}% | Realized = {real_2nov:.2f}% (Target: {TARGET_2NOV_REALIZED}%)")
-print(f"  • 3rd Nov Milling Stream (2,500 MT): Potential = {pot_3nov:.2f}% | Realized = {real_3nov:.2f}% (Target: {TARGET_3NOV_REALIZED}%)")
+print(f"  • 01 Nov Milling Stream (~8,000 MT): Potential = {pot_1nov:.2f}% | Realized = {real_1nov:.2f}% (Target: {TARGET_1NOV_REALIZED}%)")
+print(f"  • 02 Nov Milling Stream (~8,000 MT): Potential = {pot_2nov:.2f}% | Realized = {real_2nov:.2f}% (Target: {TARGET_2NOV_REALIZED}%)")
+print(f"  • 03 Nov Milling Stream (8,062.157 MT): Potential = {pot_3nov:.2f}% | Realized = {real_3nov:.2f}% (Target: {TARGET_3NOV_REALIZED}%)")
 
 # 3. Update Harvested Plots Register
 df_harv['Potential Factory Recovery (%)'] = np.round(df_harv['predicted_ccs_pct'] * K_SEASON, 2)
@@ -111,24 +109,39 @@ print("Saved updated unharvested and harvested CSV registers.")
 progression_data = [
     {
         'Crush Date': '01 November 2026',
+        'Daily Crushed Cane (MT)': 8000.0,
         'Factory Daily Recovery (%)': 8.21,
         'Cumulative Season Average (%)': 7.71,
-        'Daily Sugar Gain (MT / 5,000 MT crush)': 25.0,
+        'Daily Sugar Produced (MT)': 656.8,
+        'Cumulative Cane Crushed To Date (MT)': 145710.4,
         'Operational Ripening Driver': 'Opening November stream; Adsali plots entering carrier; ambient minimum temperature ~17.5°C.'
     },
     {
         'Crush Date': '02 November 2026',
+        'Daily Crushed Cane (MT)': 8062.0,
         'Factory Daily Recovery (%)': 8.31,
         'Cumulative Season Average (%)': 7.74,
-        'Daily Sugar Gain (MT / 5,000 MT crush)': 28.5,
+        'Daily Sugar Produced (MT)': 669.9,
+        'Cumulative Cane Crushed To Date (MT)': 153772.6,
         'Operational Ripening Driver': 'Winter transition; night temperatures drop to 16.0°C; initial cold-induced sucrose translocation surge (+0.10%).'
     },
     {
         'Crush Date': '03 November 2026',
+        'Daily Crushed Cane (MT)': 8062.157,
         'Factory Daily Recovery (%)': 8.44,
         'Cumulative Season Average (%)': 7.75,
-        'Daily Sugar Gain (MT / 5,000 MT crush)': 34.5,
-        'Operational Ripening Driver': 'Peak cold night chilling (Tmin 14.5°C); high-purity (90%+) Adsali entering carrier with streamlined <18h transit (+0.13%).'
+        'Daily Sugar Produced (MT)': 680.4,
+        'Cumulative Cane Crushed To Date (MT)': 161834.716,
+        'Operational Ripening Driver': 'Peak cold night chilling (Tmin 14.5°C); high-purity (90%+) Adsali entering carrier with streamlined transit (+0.13%). Full 3 shifts crushed: 8,062.157 MT!'
+    },
+    {
+        'Crush Date': '04 November 2026 (Live at 3:33 PM)',
+        'Daily Crushed Cane (MT)': 3933.275,
+        'Factory Daily Recovery (%)': 8.46,
+        'Cumulative Season Average (%)': 7.76,
+        'Daily Sugar Produced (MT)': 332.8,
+        'Cumulative Cane Crushed To Date (MT)': 165767.991,
+        'Operational Ripening Driver': 'Shift 1: 2,768.54 MT | Shift 2: 1,164.74 MT (as of 3:33 PM). Season cumulative reaches 1,65,768 MT.'
     }
 ]
 
