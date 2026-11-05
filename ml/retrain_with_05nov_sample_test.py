@@ -1,18 +1,15 @@
 r"""
 ========================================================================================
 RETRAIN SATCANE AI ENGINE WITH AUTHENTIC 05-NOV-2026 PHYSICAL LAB SAMPLE TESTS
-Cane Cut: 03:00 AM - 05:00 AM on 05 Nov 2026
-Lab Sampling & Crushing: 02:00 PM on 05 Nov 2026 (10-Hour Staling & Transit Delay)
+Matched to True Farmers & Tyre Gadi Numbers from Slip:
+1. Gadi 57:  गुजर अंबादास भानुदास (Erandgaon, Plot 2685)  | Brix 14.98 | Pol 12.10
+2. Gadi 218: खेडकर अशोक बाबुराव (Ghotan, Plot 16558)     | Brix 14.28 | Pol 12.02
+3. Gadi 685: भराट खंडू उत्तम (Ravtale, Plot 3755)        | Brix 15.29 | Pol 12.50
+4. Gadi 62:  गुजर अंबादास भानुदास [2] (Erandgaon, Plot 2684)| Brix 14.54 | Pol 11.84
+5. Gadi 723: क्षिरसागर बाळासाहेब किसन (Ghotan, Plot 13509)| Brix 15.78 | Pol 12.58
 
-Physical Lab Results:
-Sample 1: Brix 14.98 deg Bx | Pol 12.10 % | Purity 80.77 %
-Sample 2: Brix 14.28 deg Bx | Pol 12.02 % | Purity 84.17 %
-Sample 3: Brix 15.29 deg Bx | Pol 12.50 % | Purity 81.75 %
-Sample 4: Brix 15.11 deg Bx | Pol 11.84 % | Purity 78.36 %
-Sample 5: Brix 15.78 deg Bx | Pol 12.58 % | Purity 79.72 %
-
-Mean Lab Values (at 2:00 PM): Brix = 15.088 deg Bx, Pol = 12.208 %, Purity = 80.91 %
-Reconstructed Field Cut Values (at 3:00-5:00 AM): Pol ≈ 12.71 %, Brix ≈ 15.49 deg Bx
+Cut Time: 03:00 AM - 05:00 AM on 05 Nov 2026
+Crush Time: 02:00 PM on 05 Nov 2026 (10-Hour Staling & Transit Delay)
 ========================================================================================
 """
 
@@ -32,48 +29,19 @@ DATA_DIR = os.path.join(ROOT, 'data')
 MODELS_DIR = os.path.join(ROOT, 'models')
 
 print("=" * 95)
-print("SATCANE AI: INGESTING 05-NOV-2026 PHYSICAL LAB GROUND TRUTH & RETRAINING")
+print("SATCANE AI: INGESTING 05-NOV-2026 TRUE FARMER GROUND TRUTH & RETRAINING")
 print("=" * 95)
 
-# 1. 05 Nov 2026 Lab Samples
-lab_samples_05nov = [
-    {"sample_id": "05NOV_TEST_01", "lab_brix": 14.98, "lab_pol": 12.10, "lab_purity": 80.77, "variety": "CO-265", "cut_time": "04:00 AM", "crush_time": "02:00 PM", "delay_hrs": 10.0},
-    {"sample_id": "05NOV_TEST_02", "lab_brix": 14.28, "lab_pol": 12.02, "lab_purity": 84.17, "variety": "CO-265", "cut_time": "04:00 AM", "crush_time": "02:00 PM", "delay_hrs": 10.0},
-    {"sample_id": "05NOV_TEST_03", "lab_brix": 15.29, "lab_pol": 12.50, "lab_purity": 81.75, "variety": "CO-86032", "cut_time": "03:30 AM", "crush_time": "02:00 PM", "delay_hrs": 10.5},
-    {"sample_id": "05NOV_TEST_04", "lab_brix": 15.11, "lab_pol": 11.84, "lab_purity": 78.36, "variety": "CO-265", "cut_time": "04:30 AM", "crush_time": "02:00 PM", "delay_hrs": 9.5},
-    {"sample_id": "05NOV_TEST_05", "lab_brix": 15.78, "lab_pol": 12.58, "lab_purity": 79.72, "variety": "CO-86032", "cut_time": "03:00 AM", "crush_time": "02:00 PM", "delay_hrs": 11.0}
+# 1. 05 Nov 2026 Lab Samples matched to True Farmer Plots
+true_samples = [
+    {'plot_no': 2685, 'gadi_no': 57, 'farmer': 'गुजर अंबादास भानुदास', 'village': 'एरंडगाव', 'variety': 'CO-265', 'lab_brix': 14.98, 'lab_pol': 12.10, 'cut_time': '04:00 AM', 'delay_hrs': 10.0},
+    {'plot_no': 16558, 'gadi_no': 218, 'farmer': 'खेडकर अशोक बाबुराव', 'village': 'घोटन (भारत वस्ती)', 'variety': 'CO-265', 'lab_brix': 14.28, 'lab_pol': 12.02, 'cut_time': '04:00 AM', 'delay_hrs': 10.0},
+    {'plot_no': 3755, 'gadi_no': 685, 'farmer': 'भराट खंडू उत्तम', 'village': 'रावताळे (भारत वस्ती)', 'variety': 'CO-265', 'lab_brix': 15.29, 'lab_pol': 12.50, 'cut_time': '03:30 AM', 'delay_hrs': 10.5},
+    {'plot_no': 2684, 'gadi_no': 62, 'farmer': 'गुजर अंबादास भानुदास (२री गाडी)', 'village': 'एरंडगाव', 'variety': 'VSI 18121', 'lab_brix': 14.54, 'lab_pol': 11.84, 'cut_time': '04:30 AM', 'delay_hrs': 9.5},
+    {'plot_no': 13509, 'gadi_no': 723, 'farmer': 'क्षिरसागर बाळासाहेब किसन', 'village': 'घोटन (टाका मळा)', 'variety': 'CO-265', 'lab_brix': 15.78, 'lab_pol': 12.58, 'cut_time': '03:00 AM', 'delay_hrs': 11.0}
 ]
 
-df_05nov = pd.DataFrame(lab_samples_05nov)
-df_05nov['lab_ccs'] = np.clip(1.022 * df_05nov['lab_pol'] - 0.292 * df_05nov['lab_brix'], 4.0, 12.0)
-df_05nov['lab_recovery'] = np.clip(df_05nov['lab_ccs'] * 0.78, 4.0, 10.0)
-df_05nov['sample_date'] = '2026-11-05'
-df_05nov['lab_year'] = '2026-27 In-Season Spot Check'
-
-print(f"Ingested 5 Physical Lab Samples (05 Nov 2026):")
-print(f"  Mean Lab Brix:     {df_05nov['lab_brix'].mean():.3f} deg Bx")
-print(f"  Mean Lab Pol:      {df_05nov['lab_pol'].mean():.3f} %")
-print(f"  Mean Lab Purity:   {df_05nov['lab_purity'].mean():.2f} %")
-print(f"  Mean Lab CCS:      {df_05nov['lab_ccs'].mean():.3f} %")
-print(f"  Mean Lab Recovery: {df_05nov['lab_recovery'].mean():.3f} %")
-
-# 2. Reconstructed Field Cut Values (pre-inversion at 03:00 - 05:00 AM)
-# Daytime inversion rate at 30°C: ~0.045% Pol / hr after 4 hours
-field_pols = [round(p + (d - 4.0) * 0.05 + 0.10, 2) for p, d in zip(df_05nov['lab_pol'], df_05nov['delay_hrs'])]
-field_brixs = [round(b + 0.35, 2) for b in df_05nov['lab_brix']]
-
-df_05nov['reconstructed_field_pol'] = field_pols
-df_05nov['reconstructed_field_brix'] = field_brixs
-print(f"\nReconstructed Field Potential at Cutting (3:00 AM):")
-print(f"  Field Pol:  {np.mean(field_pols):.2f}% (Decay loss during 10-hr transit: -{np.mean(field_pols) - df_05nov['lab_pol'].mean():.2f}%)")
-print(f"  Field Brix: {np.mean(field_brixs):.2f} deg Bx")
-
-# 3. Load Existing Ground Truth (809 certified records)
-gt_path = os.path.join(DATA_DIR, 'unified_809_orthogonal_ground_truth.csv')
-df_gt = pd.read_csv(gt_path, low_memory=False)
-print(f"\nExisting Certified Ground Truth: {len(df_gt)} records")
-
-# 4. Feature Specification
+# 2. 54-Parameter Feature Specification
 FEATURES_54 = [
     'optical_ndvi', 'optical_ndre', 'optical_ndwi', 'optical_lswi', 'optical_evi', 'optical_bsi',
     'chlorophyll_rededge_index_ci', 'swir_lignification_index_sli', 'plant_senescence_index_psri',
@@ -92,32 +60,49 @@ FEATURES_54 = [
     'mill_extraction_factor_cf', 'mill_brix_factor_bf'
 ]
 
-# Create synthetic features for 05 Nov samples matching real Nov 04 Sentinel-2 observations
-nov05_rows = []
-for idx, r in df_05nov.iterrows():
-    row_feat = {f: df_gt[f].median() for f in FEATURES_54 if f in df_gt.columns}
-    row_feat['optical_ndvi'] = 0.52 if '86032' in r['variety'] else 0.48
-    row_feat['optical_ndre'] = 0.36 if '86032' in r['variety'] else 0.31
-    row_feat['crop_age_days'] = 410.0
-    row_feat['is_early_cultivar'] = 1.0 if '86032' in r['variety'] else 0.0
-    row_feat['is_heavy_tonnage_cultivar'] = 1.0 if '265' in r['variety'] else 0.0
-    row_feat['lab_brix'] = r['lab_brix']
-    row_feat['lab_pol'] = r['lab_pol']
-    row_feat['lab_ccs'] = r['lab_ccs']
-    row_feat['lab_recovery'] = r['lab_recovery']
-    row_feat['sample_date'] = '2026-11-05'
-    row_feat['sample_id'] = r['sample_id']
-    nov05_rows.append(row_feat)
+# 3. Load Real Multi-Satellite Features from Register
+UNH_CSV = os.path.join(ROOT, 'web', 'downloads', 'all_unharvested_plots_oct2026_latest_satellite_register.csv')
+df_unh = pd.read_csv(UNH_CSV, low_memory=False)
 
-df_nov05_features = pd.DataFrame(nov05_rows)
+nov05_rows = []
+for s in true_samples:
+    plot_row = df_unh[df_unh['Plot No'] == s['plot_no']].iloc[0]
+    row = {f: plot_row[f] for f in FEATURES_54 if f in plot_row}
+    row['lab_brix'] = s['lab_brix']
+    row['lab_pol'] = s['lab_pol']
+    row['lab_purity'] = round(s['lab_pol'] / s['lab_brix'] * 100.0, 2)
+    row['lab_ccs'] = round(1.022 * s['lab_pol'] - 0.292 * s['lab_brix'], 3)
+    row['lab_recovery'] = round(row['lab_ccs'] * 0.804, 3)
+    row['sample_id'] = '05NOV_GADI_' + str(s['gadi_no'])
+    row['farmer_name'] = s['farmer']
+    row['village'] = s['village']
+    row['plot_no'] = s['plot_no']
+    row['cut_time'] = s['cut_time']
+    row['delay_hrs'] = s['delay_hrs']
+    row['reconstructed_field_pol'] = round(s['lab_pol'] + (s['delay_hrs'] - 4.0) * 0.05 + 0.10, 2)
+    row['reconstructed_field_brix'] = round(s['lab_brix'] + 0.35, 2)
+    row['sample_date'] = '2026-11-05'
+    row['lab_year'] = '2026-27 In-Season Spot Check'
+    nov05_rows.append(row)
+
+df_05nov = pd.DataFrame(nov05_rows)
+
+print("Ingested 5 Authentic Physical Lab Samples:")
+for idx, r in df_05nov.iterrows():
+    print(f"  • {r['sample_id']} | {r['farmer_name']} ({r['village']}) | Plot {r['plot_no']} | Lab Brix: {r['lab_brix']}°Bx | Lab Pol: {r['lab_pol']}% | Reconstructed Field Pol: {r['reconstructed_field_pol']}%")
+
+# 4. Load Master Ground Truth Dataset
+gt_path = os.path.join(DATA_DIR, 'unified_809_orthogonal_ground_truth.csv')
+df_gt = pd.read_csv(gt_path, low_memory=False)
+print(f"\nExisting Certified Master Ground Truth: {len(df_gt)} records")
 
 # Combine into master 814 ground truth
-df_combined = pd.concat([df_gt, df_nov05_features], ignore_index=True, sort=False)
+df_combined = pd.concat([df_gt, df_05nov], ignore_index=True, sort=False)
 valid_mask = df_combined['lab_pol'].notna() & df_combined['lab_brix'].notna() & df_combined['lab_recovery'].notna()
 df_combined = df_combined[valid_mask].copy()
 
 total_samples = len(df_combined)
-print(f"Total Combined Master Ground Truth Records: {total_samples}")
+print(f"Total Master Ground Truth Records after Ingestion: {total_samples}")
 
 # Build feature matrix X
 X = pd.DataFrame(index=df_combined.index)
@@ -177,6 +162,7 @@ final_bx.fit(X, y_brix)
 final_rec = HistGradientBoostingRegressor(max_iter=200, max_leaf_nodes=31, min_samples_leaf=15, l2_regularization=1.5, random_state=42)
 final_rec.fit(X, y_rec)
 
+os.makedirs(MODELS_DIR, exist_ok=True)
 with open(os.path.join(MODELS_DIR, 'sota_54param_pol.pkl'), 'wb') as f:
     pickle.dump(final_pol, f)
 with open(os.path.join(MODELS_DIR, 'sota_54param_brix.pkl'), 'wb') as f:
@@ -192,11 +178,11 @@ bundle = {
     'training_samples': total_samples,
     'cv_recovery_r2': float(np.mean(rec_r2s)),
     'cv_recovery_mae': float(np.mean(rec_maes)),
-    'nov05_sample_test_calibration': {
-        'lab_brix_mean': float(df_05nov['lab_brix'].mean()),
-        'lab_pol_mean': float(df_05nov['lab_pol'].mean()),
+    'nov05_true_farmer_calibration': {
+        'farmers': [s['farmer'] for s in true_samples],
+        'plots': [s['plot_no'] for s in true_samples],
         'transit_delay_hours': 10.0,
-        'transit_inversion_loss_pct': 0.50
+        'transit_inversion_loss_pct': 0.45
     }
 }
 with open(os.path.join(MODELS_DIR, 'sota_54param_4satellite_bundle.pkl'), 'wb') as f:
