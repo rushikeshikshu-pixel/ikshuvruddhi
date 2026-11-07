@@ -11,6 +11,7 @@ services:
       paths:
         - backend_main.py
         - ml/**
+        - models/**
         - data/**
         - scripts/recalibrate_harvest_queue.py
         - requirements.txt
