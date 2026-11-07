@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>गंगामाई शुगर फॅक्टरी - सॅटेलाइट ऊस पक्वता अहवाल (०६ नोव्हेंबर २०२६)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            margin: 0;
+            padding: 24px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 32px;
+            border-top: 6px solid #15803d;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            color: #1b365d;
+            margin: 0 0 8px 0;
+            font-size: 26px;
+        }
+        .header p {
+            color: #64748b;
+            margin: 0;
+            font-size: 14px;
+        }
+        .badge {
+            display: inline-block;
+            background: #dcfce7;
+            color: #15803d;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .kpi-card {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            border-left: 4px solid #1b365d;
+        }
+        .kpi-card.green {
+            border-left-color: #15803d;
+            background: #f0fdf4;
+        }
+        .kpi-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 4px 0;
+        }
+        .kpi-lbl {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px 0;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            text-align: left;
+        }
+        th {
+            background: #1b365d;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        .highlight-row {
+            background: #dcfce7 !important;
+            font-weight: 600;
+        }
+        .notice-box {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 16px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 32px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>गंगामाई साखर कारखाना - सॅटेलाइट ऊस पक्वता व तोडणी प्राधान्य अहवाल</h1>
+            <p><strong>Sentinel-2C (०६ नोव्हेंबर २०२६ - ११:०३ AM IST)</strong> | स्मार्ट ५४-पॅरामीटर मॉडेल</p>
+            <div class="badge">अधिकृत अहवाल - कृषी विभाग व संचालक मंडळ</div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-lbl">शिल्लक ऊस प्लॉट्स</div>
+                <div class="kpi-val">26,471</div>
+                <div style="font-size:12px; color:#64748b;">एकूण क्षेत्र: 23,276.4 हेक्टर</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-lbl">उभा ऊस साठा (Tonnage)</div>
+                <div class="kpi-val">494,518 MT</div>
+                <div style="font-size:12px; color:#64748b;">सरासरी ब्रिक्स: 16.15°Bx</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="kpi-lbl">अपेक्षित साखर उत्पादन</div>
+                <div class="kpi-val">41,023 MT</div>
+                <div style="font-size:12px; color:#15803d; font-weight:700;">820,228 पोती (50kg)</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="kpi-lbl">सरासरी साखर उतारा</div>
+                <div class="kpi-val">8.34%</div>
+                <div style="font-size:12px; color:#15803d;">उच्चतम: ८.२६%+ | CCS: 10.11%</div>
+            </div>
+        </div>
+
+        <h3 style="color:#1b365d; border-bottom:2px solid #cbd5e1; padding-bottom:6px;">१. त्वरित तोडणीसाठी सर्वोच्च १० प्लॉट्स (Immediate Top 10 Priority)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>क्रमांक</th>
+                    <th>प्लॉट क्र.</th>
+                    <th>शेतकरी नाव</th>
+                    <th>गाव</th>
+                    <th>जात</th>
+                    <th>क्षेत्र (हे.)</th>
+                    <th>ऊस (MT)</th>
+                    <th>ब्रिक्स (°Bx)</th>
+                    <th>पोल (%)</th>
+                    <th>साखर उतारा (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td><b>#1</b></td>
+                    <td><b>5644</b></td>
+                    <td>KOLATE SHIVAJI JAYWANT</td>
+                    <td>DEVGAON(NEWASA)</td>
+                    <td>CO-265</td>
+                    <td>0.50</td>
+                    <td>27.8</td>
+                    <td>19.88°</td>
+                    <td>18.78%</td>
+                    <td><b style="color:#15803d;">11.05%</b></td>
+                </tr>
+    
+                <tr>
+                    <td><b>#2</b></td>
+                    <td><b>29385</b></td>
+                    <td>UDHAN MADAN PUNJARAM</td>
+                    <td>KANDARI (TIRTHPURI)</td>
+                    <td>MS-10001</td>
+                    <td>1.00</td>
+                    <td>29.8</td>
+                    <td>19.59°</td>
+                    <td>18.49%</td>
+                    <td><b style="color:#15803d;">10.87%</b></td>
+                </tr>
+    
+                <tr>
+                    <td><b>#3</b></td>
+                    <td><b>27305</b></td>
+                    <td>RATHOD JAYRAM TARACHAND</td>
+                    <td>DHONDRAI</td>
+                    <td>CO-265</td>
+                    <td>2.00</td>
+                    <td>21.1</td>
+                    <td>19.54°</td>
+                    <td>18.44%</td>
+                    <td><b style="color:#15803d;">10.84%</b></td>
+                </tr>
+    
+                <tr>
+                    <td><b>#4</b></td>
+                    <td><b>29391</b></td>
+                    <td>YADAV VISHNU PRALHAD</td>
+                    <td>REVAKI</td>
+                    <td>CO-265</td>
+                    <td>0.40</td>
+                    <td>20.9</td>
+                    <td>19.52°</td>
+                    <td>18.42%</td>
+                    <td><b style="color:#15803d;">10.83%</b></td>
+                </tr>
+    
+                <tr>
+                    <td><b>#5</b></td>
+                    <td><b>19408</b></td>
+                    <td>JADHAV ANIL JIJASAHEB</td>
+                    <td>BORGAON CAMP/ NAVIN</td>
+                    <td>CO-265</td>
+                    <td>1.80</td>
+                    <td>18.3</td>
+                    <td>19.52°</td>
+                    <td>18.42%</td>
+                    <td><b style="color:#15803d;">10.82%</b></td>
+                </tr>
+    
+                <tr>
+                    <td><b>#6</b></td>
+                    <td><b>28037</b></td>
+                    <td>SANGALE ASHOK MOHAN</td>
+                    <td>JOHARAPUR(DATTAPATI)</td>
+                    <td>CO-265</td>
+                    <td>0.40</td>
+                    <td>20.8</td>
+                    <td>19.51°</td>
+                    <td>18.41%</td>
+                    <td><b style="color:#15803d;">10.82%</b></td>
+                </tr>
+    
+                <tr>
+                    <td><b>#7</b></td>
+                    <td><b>117</b></td>
+                    <td>CHORMALE VASANT DAMODHAR</td>
+                    <td>MAHAMADPUR</td>
+                    <td>CO-265</td>
+                    <td>1.40</td>
+                    <td>18.3</td>
+                    <td>19.43°</td>
+                    <td>18.33%</td>
+                    <td><b style="color:#15803d;">10.77%</b></td>
+                </tr>
+    
+                <tr>
+                    <td><b>#8</b></td>
+                    <td><b>6713</b></td>
+                    <td>PANDULE EKNATH NAMDEO</td>
+                    <td>SONVIHIR</td>
+                    <td>PDN-13007</td>
+                    <td>0.40</td>
+                    <td>19.3</td>
+                    <td>19.41°</td>
+                    <td>18.31%</td>
+                    <td><b style="color:#15803d;">10.76%</b></td>
+                </tr>
+    
+                <tr>
+                    <td><b>#9</b></td>
+                    <td><b>10699</b></td>
+                    <td>ANBHULE VIJAY NAMDEV</td>
+                    <td>GODHEGAON (HANUMAN MANDIR)</td>
+                    <td>CO-265</td>
+                    <td>1.60</td>
+                    <td>29.6</td>
+                    <td>19.35°</td>
+                    <td>18.25%</td>
+                    <td><b style="color:#15803d;">10.72%</b></td>
+                </tr>
+    
+                <tr>
+                    <td><b>#10</b></td>
+                    <td><b>22001</b></td>
+                    <td>RAJEBHOSALE MILIND KRUSHNAJI</td>
+                    <td>MUNGI</td>
+                    <td>CO-265</td>
+                    <td>0.80</td>
+                    <td>20.6</td>
+                    <td>19.35°</td>
+                    <td>18.25%</td>
+                    <td><b style="color:#15803d;">10.72%</b></td>
+                </tr>
+    
+            </tbody>
+        </table>
+
+        <h3 style="color:#1b365d; border-bottom:2px solid #cbd5e1; padding-bottom:6px;">२. सर्वोच्च पक्व ऊस असलेले प्रमुख गावनिहाय क्लस्टर्स (Top Village Clusters)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>गाव</th>
+                    <th>पक्व प्लॉट्स</th>
+                    <th>पक्व ऊस टन क्षमता (MT)</th>
+                    <th>अपेक्षित साखर उतारा (%)</th>
+                    <th>अपेक्षित साखर पोती</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td><b>CHANGATPURI</b></td>
+                    <td>281</td>
+                    <td>5,124.7 MT</td>
+                    <td><b style="color:#15803d;">8.33%</b></td>
+                    <td>8,518 पोती</td>
+                </tr>
+    
+                <tr>
+                    <td><b>MUNGI</b></td>
+                    <td>278</td>
+                    <td>4,960.1 MT</td>
+                    <td><b style="color:#15803d;">8.35%</b></td>
+                    <td>8,268 पोती</td>
+                </tr>
+    
+                <tr>
+                    <td><b>DADEGAON JAHANGIR</b></td>
+                    <td>277</td>
+                    <td>4,911.9 MT</td>
+                    <td><b style="color:#15803d;">8.33%</b></td>
+                    <td>8,167 पोती</td>
+                </tr>
+    
+                <tr>
+                    <td><b>ERANDGAON BHA.(THOMBARE VASTI )</b></td>
+                    <td>250</td>
+                    <td>4,484.4 MT</td>
+                    <td><b style="color:#15803d;">8.36%</b></td>
+                    <td>7,499 पोती</td>
+                </tr>
+    
+                <tr>
+                    <td><b>GHOTAN (BHAGWAT WASTI)</b></td>
+                    <td>240</td>
+                    <td>4,294.6 MT</td>
+                    <td><b style="color:#15803d;">8.35%</b></td>
+                    <td>7,173 पोती</td>
+                </tr>
+    
+            </tbody>
+        </table>
+
+        <div class="notice-box">
+            <b>कृषी विभाग व वाहतूक नियोजन मार्गदर्शक सूचना (Cane Logistics Directives):</b>
+            <ol style="margin:8px 0 0 16px; padding:0;">
+                <li><b>पहिले प्राधान्य:</b> वरील सर्वोच्च उतारा देणाऱ्या क्लस्टर्समधील ऊस प्रथम तोडणीस घ्यावा, ज्यामुळे कारखान्याचा सुरुवातीचा रिकव्हरी रेट थेट <b>७.८०% ते ८.२५%</b> पर्यंत राहील.</li>
+                <li><b>कट-टू-क्रश डिले नियंत्रण:</b> ऊस तोडल्यानंतर तो २४ तासांपेक्षा जास्त वेळ उन्हात राहणार नाही याची दक्षता घ्यावी. २४ तासांपेक्षा जास्त विलंबाने सुमारे <b>~०.९५% पोल घट (Sucrose Inversion Loss)</b> होते.</li>
+                <li><b>लांब अंतराची वाहतूक (उदा. अंबड १२९ किमी):</b> लांब पल्ल्यावरून येणाऱ्या उसाला गव्हाणीवर प्राधान्याने खाली करून क्रशिंग करावे.</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            SatCane AI Engine | Gangamai Sugar Factory Ltd. | Copernicus Sentinel-2C Data (06 Nov 2026)
+        </div>
+    </div>
+</body>
+</html>

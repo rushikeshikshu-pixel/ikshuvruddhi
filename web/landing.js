@@ -363,6 +363,8 @@ function initRoiCalculator() {
    ========================================================================== */
 function initCadastralAuditShowcase() {
     const btnLegit = document.getElementById('auditTabLegit');
+    const btnRatoon = document.getElementById('auditTabRatoonFraud');
+    const btnWaterlog = document.getElementById('auditTabWaterlog');
     const btnGhost = document.getElementById('auditTabGhost');
 
     const plotBadge = document.getElementById('auditPlotBadge');
@@ -374,41 +376,82 @@ function initCadastralAuditShowcase() {
     const valStatus = document.getElementById('auditValStatus');
     const valDocket = document.getElementById('auditValDocket');
 
-    if (!btnLegit || !btnGhost) return;
+    const allButtons = [btnLegit, btnRatoon, btnWaterlog, btnGhost].filter(Boolean);
 
-    btnLegit.addEventListener('click', () => {
-        btnLegit.className = 'audit-tab-btn active legit';
-        btnGhost.className = 'audit-tab-btn';
+    function setActiveBtn(activeBtn) {
+        allButtons.forEach(b => b.className = 'audit-tab-btn');
+        activeBtn.className = 'audit-tab-btn active';
+    }
 
-        if (plotBadge) plotBadge.innerHTML = '<span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> VERIFIED PARCEL</span>';
-        if (plotTitle) plotTitle.textContent = 'Gat 142 - Babhaleshwar (Farmer: Balasaheb Vikhe)';
-        if (mapMock) {
-            mapMock.style.background = 'radial-gradient(circle, rgba(0, 230, 118, 0.25) 0%, rgba(9, 19, 38, 0.95) 75%)';
-            mapMock.innerHTML = '<div style="text-align:center;"><div style="color:#00e676; font-size:2rem; margin-bottom:6px;"><i class="fa-solid fa-satellite-dish"></i></div><div style="font-size:0.88rem; font-family:monospace; color:#ffffff;">Sentinel-2 Canopy Density: <strong>94.2%</strong></div><div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Walked GPS Perimeter matches 7/12 MahaBhuNaksha Record (1.82 Ha)</div></div>';
-        }
-        if (valNdvi) valNdvi.innerHTML = '<span style="color:#00e676; font-weight:700;">0.78 (High Vigor Canopy)</span>';
-        if (valArea) valArea.innerHTML = 'Registered: 1.80 Ha | Walked: 1.82 Ha <span style="color:#00e676;">(+1.1% Match)</span>';
-        if (valCcs) valCcs.innerHTML = '<span style="color:#00f2fe; font-weight:700;">12.4% CCS (Peak Ripening)</span>';
-        if (valStatus) valStatus.innerHTML = '<span style="color:#00e676; font-weight:800;">CONFIRMED AUTHENTIC CANE</span>';
-        if (valDocket) valDocket.innerHTML = '<span class="badge badge-green">APPROVED FOR CRUSH DISPATCH</span>';
-    });
+    if (btnLegit) {
+        btnLegit.addEventListener('click', () => {
+            setActiveBtn(btnLegit);
+            btnLegit.classList.add('legit');
+            if (plotBadge) plotBadge.innerHTML = '<span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> VERIFIED NORMAL</span>';
+            if (plotTitle) plotTitle.textContent = 'Gat 142 - Babhaleshwar (Farmer: Balasaheb Vikhe)';
+            if (mapMock) {
+                mapMock.style.background = 'radial-gradient(circle, rgba(0, 230, 118, 0.25) 0%, rgba(9, 19, 38, 0.95) 75%)';
+                mapMock.innerHTML = '<div style="text-align:center;"><div style="color:#00e676; font-size:2rem; margin-bottom:6px;"><i class="fa-solid fa-satellite-dish"></i></div><div style="font-size:0.88rem; font-family:monospace; color:#ffffff;">Sentinel-2 & C-SAR Density: <strong>94.2%</strong></div><div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Clean Biological Lifecycle &bull; 24,591 Plots (92.90%) Verified Normal</div></div>';
+            }
+            if (valNdvi) valNdvi.innerHTML = '<span style="color:#00e676; font-weight:700;">0.78 (High Canopy Vigor)</span>';
+            if (valArea) valArea.innerHTML = '0.52 DPRVI &bull; Suru Biological Signature Confirmed';
+            if (valCcs) valCcs.innerHTML = '<span style="color:#00f2fe; font-weight:700;">18.4°Bx | 12.4% CCS (Peak Ripening)</span>';
+            if (valStatus) valStatus.innerHTML = '<span style="color:#00e676; font-weight:800;">CONFIRMED CLEAN LIFECYCLE</span>';
+            if (valDocket) valDocket.innerHTML = '<span class="badge badge-green">APPROVED FOR PRIORITY CRUSH</span>';
+        });
+    }
 
-    btnGhost.addEventListener('click', () => {
-        btnGhost.className = 'audit-tab-btn active ghost';
-        btnLegit.className = 'audit-tab-btn';
+    if (btnRatoon) {
+        btnRatoon.addEventListener('click', () => {
+            setActiveBtn(btnRatoon);
+            if (plotBadge) plotBadge.innerHTML = '<span class="badge badge-warning" style="background:#f59e0b; color:#000;"><i class="fa-solid fa-repeat"></i> RATOON MISCLASSIFICATION</span>';
+            if (plotTitle) plotTitle.textContent = 'Gat 17341 - Shingave (Farmer: Khedkar & Others)';
+            if (mapMock) {
+                mapMock.style.background = 'radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(19, 13, 9, 0.95) 75%)';
+                mapMock.innerHTML = '<div style="text-align:center;"><div style="color:#f59e0b; font-size:2rem; margin-bottom:6px;"><i class="fa-solid fa-repeat"></i></div><div style="font-size:0.88rem; font-family:monospace; color:#ffffff;">Radar Stalk Volume: <strong style="color:#f59e0b;">DPRVI 0.54 (Plant Cane)</strong></div><div style="font-size:0.75rem; color:#fed7aa; margin-top:4px;">Survey book says Khodwa (Ratoon), but satellite proves 10.2 mo Suru plant cane</div></div>';
+            }
+            if (valNdvi) valNdvi.innerHTML = '<span style="color:#f59e0b; font-weight:700;">0.72 (Plant Cane Canopy)</span>';
+            if (valArea) valArea.innerHTML = 'Book Record: Khodwa | SLI Detected: Suru (242 Plots in Command Area)';
+            if (valCcs) valCcs.innerHTML = '<span style="color:#fbbf24; font-weight:700;">16.89°Bx (Crushed at 17.10°Bx - 0.21° Err)</span>';
+            if (valStatus) valStatus.innerHTML = '<span style="color:#f59e0b; font-weight:800;">SURVEY BOOK MISLABEL FLAGGED</span>';
+            if (valDocket) valDocket.innerHTML = '<span class="badge badge-warning" style="background:#f59e0b; color:#000;">SCHEDULE RECALIBRATED TO SURU</span>';
+        });
+    }
 
-        if (plotBadge) plotBadge.innerHTML = '<span class="badge badge-danger"><i class="fa-solid fa-triangle-exclamation"></i> GHOST GAT FRAUD</span>';
-        if (plotTitle) plotTitle.textContent = 'Gat 89 - Ghotan Sector 4 (Farmer: Registered Placeholder)';
-        if (mapMock) {
-            mapMock.style.background = 'radial-gradient(circle, rgba(239, 68, 68, 0.28) 0%, rgba(15, 10, 15, 0.95) 75%)';
-            mapMock.innerHTML = '<div style="text-align:center;"><div style="color:#ef4444; font-size:2rem; margin-bottom:6px;"><i class="fa-solid fa-triangle-exclamation"></i></div><div style="font-size:0.88rem; font-family:monospace; color:#ffffff;">Sentinel-2 Canopy Density: <strong style="color:#ef4444;">0.0% (Zero Standing Cane)</strong></div><div style="font-size:0.75rem; color:#fca5a5; margin-top:4px;">Barren / Fallow Soil Syndicate Scam - Automated Slip Blocked</div></div>';
-        }
-        if (valNdvi) valNdvi.innerHTML = '<span style="color:#ef4444; font-weight:700;">0.14 (Fallow Land / Barren)</span>';
-        if (valArea) valArea.innerHTML = 'Registered: 3.50 Ha | Real Cane: 0.00 Ha <span style="color:#ef4444;">(-100% Divergence)</span>';
-        if (valCcs) valCcs.innerHTML = '<span style="color:#94a3b8;">N/A (No Crop Standing)</span>';
-        if (valStatus) valStatus.innerHTML = '<span style="color:#ef4444; font-weight:800;">GHOST PLOT / SUBSIDY THEFT</span>';
-        if (valDocket) valDocket.innerHTML = '<span class="badge badge-danger">HARVEST SLIP BLOCKED & REJECTED</span>';
-    });
+    if (btnWaterlog) {
+        btnWaterlog.addEventListener('click', () => {
+            setActiveBtn(btnWaterlog);
+            if (plotBadge) plotBadge.innerHTML = '<span class="badge badge-warning" style="background:#0284c7; color:#fff;"><i class="fa-solid fa-water"></i> WATERLOGGING PENALTY</span>';
+            if (plotTitle) plotTitle.textContent = 'Gat 8082 - Juni Khirdi (Farmer: Dhas)';
+            if (mapMock) {
+                mapMock.style.background = 'radial-gradient(circle, rgba(2, 132, 199, 0.25) 0%, rgba(8, 18, 30, 0.95) 75%)';
+                mapMock.innerHTML = '<div style="text-align:center;"><div style="color:#38bdf8; font-size:2rem; margin-bottom:6px;"><i class="fa-solid fa-water"></i></div><div style="font-size:0.88rem; font-family:monospace; color:#ffffff;">Green-Leaf Paradox Resolved: <strong style="color:#38bdf8;">TWI 9.84</strong></div><div style="font-size:0.75rem; color:#bae6fd; margin-top:4px;">Optical NDVI 0.76 (Lush leaves), but anaerobic root zone trapped Brix at 14.54°</div></div>';
+            }
+            if (valNdvi) valNdvi.innerHTML = '<span style="color:#38bdf8; font-weight:700;">0.76 (Optical False Positive Defeated)</span>';
+            if (valArea) valArea.innerHTML = 'Profile Curvature: Concave Drainage Depression &bull; TWI: 9.84';
+            if (valCcs) valCcs.innerHTML = '<span style="color:#38bdf8; font-weight:700;">Predicted: 15.42°Bx (Lab Crushed: 14.54°Bx)</span>';
+            if (valStatus) valStatus.innerHTML = '<span style="color:#38bdf8; font-weight:800;">WATERLOGGING PENALTY APPLIED (-2.41°Bx)</span>';
+            if (valDocket) valDocket.innerHTML = '<span class="badge badge-info" style="background:#0284c7; color:#fff;">DRAINAGE DIVERSION RECOMMENDED</span>';
+        });
+    }
+
+    if (btnGhost) {
+        btnGhost.addEventListener('click', () => {
+            setActiveBtn(btnGhost);
+            btnGhost.classList.add('ghost');
+            if (plotBadge) plotBadge.innerHTML = '<span class="badge badge-danger"><i class="fa-solid fa-triangle-exclamation"></i> STUNTED CANOPY DEFICIT</span>';
+            if (plotTitle) plotTitle.textContent = 'Gat 89 - Ghotan Sector 4 (1,295 Flagged Plots)';
+            if (mapMock) {
+                mapMock.style.background = 'radial-gradient(circle, rgba(239, 68, 68, 0.28) 0%, rgba(15, 10, 15, 0.95) 75%)';
+                mapMock.innerHTML = '<div style="text-align:center;"><div style="color:#ef4444; font-size:2rem; margin-bottom:6px;"><i class="fa-solid fa-triangle-exclamation"></i></div><div style="font-size:0.88rem; font-family:monospace; color:#ffffff;">Sentinel-2 Canopy Density: <strong style="color:#ef4444;">NDVI 0.14 (Severe Deficit)</strong></div><div style="font-size:0.75rem; color:#fca5a5; margin-top:4px;">Recorded age 13 Mo, but zero standing cane volume &bull; Slip Rejected</div></div>';
+            }
+            if (valNdvi) valNdvi.innerHTML = '<span style="color:#ef4444; font-weight:700;">0.14 (Fallow / Severe Stunting)</span>';
+            if (valArea) valArea.innerHTML = 'Recorded: 3.50 Ha | Real Cane Volume: 0.00 Ha';
+            if (valCcs) valCcs.innerHTML = '<span style="color:#94a3b8;">Immature / Non-Crushable</span>';
+            if (valStatus) valStatus.innerHTML = '<span style="color:#ef4444; font-weight:800;">CANOPY DEFICIT / SUBSIDY RISK</span>';
+            if (valDocket) valDocket.innerHTML = '<span class="badge badge-danger">HARVEST SLIP BLOCKED & REJECTED</span>';
+        });
+    }
 }
 
 /* ==========================================================================
