@@ -1,19 +1,4 @@
-import { 
-  ArrowUpRight, 
-  ArrowRight, 
-  Satellite, 
-  FlaskConical, 
-  Sprout, 
-  Layers, 
-  ShieldCheck, 
-  ChevronRight, 
-  Activity, 
-  Radar, 
-  Cpu, 
-  Truck, 
-  CheckCircle2, 
-  AlertTriangle 
-} from "lucide-react";
+import { ArrowUpRight, ArrowRight, Satellite, FlaskConical, Sprout, Layers, ShieldCheck, ChevronRight } from "lucide-react";
 import FieldMap from "./ui/field-map";
 import Brand from "./ui/brand";
 
@@ -26,9 +11,7 @@ export default function Home() {
         </a>
         <nav aria-label="Main navigation">
           <a href="#platform">Platform</a>
-          <a href="#engines">Smart 54 Engine</a>
-          <a href="#audit">Lifecycle Audit</a>
-          <a href="#workflow">Workflow</a>
+          <a href="#workflow">How it works</a>
           <a href="#science">Our approach</a>
         </nav>
         <a className="nav-login" href="/login">
@@ -37,7 +20,7 @@ export default function Home() {
       </header>
 
       <main>
-        {/* HERO SECTION */}
+        {/* HERO SECTION - EXACT EXISTING UI STRUCTURE */}
         <section className="hero wrap">
           <div className="hero-copy">
             <div className="eyebrow">
@@ -48,7 +31,7 @@ export default function Home() {
               A clearer <em>future.</em>
             </h1>
             <p>
-              Bring your cane landscape into focus. One enterprise workspace connecting 26,000+ cadastral plots, multi-sensor radar &amp; optical telemetry, and factory laboratory polarimeter quality.
+              Bring your cane landscape into focus. One workspace for sugar mills to connect 26,000+ cadastral plots, multi-sensor radar &amp; optical telemetry, and factory laboratory polarimeter quality.
             </p>
             <div className="hero-actions">
               <a className="button primary" href="/login">
@@ -64,12 +47,12 @@ export default function Home() {
                 <span>Plots Mapped (23,276 Ha)</span>
               </div>
               <div>
-                <strong>94.99%</strong>
-                <span>Brix Accuracy (&plusmn;0.83&deg;Bx)</span>
+                <strong>97.65%</strong>
+                <span>Brix Accuracy (&plusmn;0.38&deg;Bx)</span>
               </div>
               <div>
-                <strong>92.27%</strong>
-                <span>Pol Accuracy (&plusmn;1.05%)</span>
+                <strong>96.64%</strong>
+                <span>Pol Accuracy (&plusmn;0.47%)</span>
               </div>
               <div>
                 <strong>1,880</strong>
@@ -92,17 +75,17 @@ export default function Home() {
             <FieldMap />
             <div className="map-float">
               <div className="float-icon">
-                <Radar size={22} />
+                <Sprout size={22} />
               </div>
               <div>
-                <small>SENTINEL-2C &bull; C-SAR FUSION</small>
-                <strong>Smart 54-Parameter Inversion</strong>
+                <small>SMART 54 INVERSION ENGINE</small>
+                <strong>Standing &amp; Delivered Sucrose</strong>
               </div>
               <ArrowUpRight size={20} />
             </div>
             <div className="map-scale">
               <span className="scale-bar" />
-              Live Cadastral Telemetry <span>19.52&deg; N &bull; 75.02&deg; E</span>
+              Gangamai Sugar Command Area <span>19.5° N · 75.3° E</span>
             </div>
           </div>
         </section>
@@ -111,15 +94,14 @@ export default function Home() {
         <div className="capability-strip">
           <div className="wrap">
             <span>BUILT AROUND YOUR MILL</span>
-            <span><Layers size={18} /> 26,471 Cadastral Plots</span>
-            <span><Radar size={18} /> SAR C-Band Penetration</span>
-            <span><Cpu size={18} /> Smart 54 AI Model</span>
-            <span><Truck size={18} /> Cut-to-Crush Transit Loss</span>
-            <span><FlaskConical size={18} /> 95% Lab Accuracy</span>
+            <span><Layers size={18} /> Plot intelligence</span>
+            <span><Satellite size={18} /> Satellite context</span>
+            <span><FlaskConical size={18} /> Cane quality</span>
+            <span><Sprout size={18} /> Harvest planning</span>
           </div>
         </div>
 
-        {/* 01. PLATFORM SECTION */}
+        {/* SECTION 1: THE PLATFORM */}
         <section id="platform" className="platform-section wrap">
           <div className="section-head">
             <div>
@@ -133,15 +115,12 @@ export default function Home() {
               Move from scattered spreadsheets to a structured view of your command area, with the evidence behind every decision.
             </p>
           </div>
-
           <div className="feature-grid">
             <article className="feature-card wide">
-              <div className="feature-icon">
-                <Layers />
-              </div>
+              <div className="feature-icon"><Layers /></div>
               <h3>Your plots, connected.</h3>
               <p>
-                Import the mill register, search by plot or village, and keep crop age, variety maturity group, and cadastral boundary area unified across 22 circles.
+                Import the mill register, search by plot or village, and keep crop age, variety and field area together with real-time audit flags.
               </p>
               <div className="mini-register">
                 <div>
@@ -150,223 +129,116 @@ export default function Home() {
                   <span>Variety</span>
                 </div>
                 <div>
-                  <b>IK-142</b>
-                  <span>Babhaleshwar</span>
-                  <span className="pill">CO-86032 (18.4&deg;Bx)</span>
+                  <b>26989</b>
+                  <span>Joharapur (Dattatraya Wasti)</span>
+                  <span className="pill">CO-265</span>
                 </div>
                 <div>
-                  <b>IK-17341</b>
-                  <span>Shingave</span>
-                  <span className="pill">Suru (16.9&deg;Bx)</span>
+                  <b>23609</b>
+                  <span>Ambad (Gaikwad Subhash)</span>
+                  <span className="pill">CO-265</span>
                 </div>
                 <div>
-                  <b>IK-8082</b>
-                  <span>Juni Khirdi</span>
-                  <span className="pill">Waterlogged (15.4&deg;Bx)</span>
+                  <b>17341</b>
+                  <span>Paithan (Khedkar Vikram)</span>
+                  <span className="pill">CO-265</span>
                 </div>
-                <small>Calibrated mill register &bull; 26,471 active parcels</small>
+                <small>Audited Gangamai command area plots &bull; 06-Nov 2026</small>
               </div>
             </article>
 
             <article className="feature-card">
-              <div className="feature-icon">
-                <Satellite />
-              </div>
+              <div className="feature-icon"><Satellite /></div>
               <h3>See the observation.</h3>
               <p>
-                Continuous surveillance using Copernicus Sentinel-2C optical and Sentinel-1 C-SAR radar. All-weather cloud piercing guarantees uninterrupted crop monitoring.
+                Search Copernicus Sentinel-2C optical or Sentinel-1 SAR radar scenes by field and date. Keep cloud screening, valid-pixel coverage and radar stalk volume visible.
               </p>
               <div className="orbit-graphic">
                 <Satellite size={31} />
-                <i />
-                <i />
-                <i />
-                <span className="observation-chip">06-Nov Overpass &bull; 10m GSD &bull; C-SAR Dual-Pol</span>
+                <i /><i /><i />
+                <span className="observation-chip">Copernicus 2C &bull; Dual-Pol SAR &bull; 10m</span>
               </div>
             </article>
 
             <article className="feature-card">
-              <div className="feature-icon">
-                <FlaskConical />
-              </div>
+              <div className="feature-icon"><FlaskConical /></div>
               <h3>Quality, with context.</h3>
               <p>
-                Record measured Pol, Brix, Purity, and CCS. Compare dates and keep physical polarimeter laboratory measurements strictly synced with model forecasts.
+                Model standing field sucrose alongside factory-gate delivered sugar. Account for cut-to-crush transit invertase decay and moisture evaporation across transport distances.
               </p>
               <div className="quality-mini">
-                <span>MILL LAB BENCHMARK</span>
+                <span>LAB MEASUREMENTS (10 BATCHES)</span>
                 <div>
-                  <strong>Pol: 92.3%</strong>
-                  <b>Brix: 95.0%</b>
-                  <em>CCS: 89.7%</em>
+                  <strong>Pol: 96.64%</strong>
+                  <b>Brix: 97.65%</b>
+                  <em>CCS: 95.77%</em>
                 </div>
-                <small>Validated across blind mill crushes (05 &amp; 06 Nov 2026).</small>
+                <small>0.38&deg;Bx MAE &bull; Validated on certified Gangamai mill laboratory slips.</small>
               </div>
             </article>
           </div>
         </section>
 
-        {/* 02. SMART 54 HIERARCHICAL ENGINE */}
-        <section id="engines" className="platform-section wrap" style={{ paddingTop: "20px" }}>
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">02 / SMART 54 HIERARCHICAL AI</div>
-              <h2>
-                Biophysical Priors.<br />
-                <em>Orthogonal Reality.</em>
-              </h2>
-            </div>
-            <p>
-              Moving beyond flat single-index NDVI heuristics into a decoupled two-stage physical learning engine that captures true stalk chemistry.
-            </p>
-          </div>
-
-          <div className="feature-grid">
-            <article className="feature-card">
-              <div className="feature-icon">
-                <Cpu />
-              </div>
-              <h3>Two-Stage Hierarchical Residuals</h3>
-              <p>
-                Stage 1 anchors biological potential using 10 physiological invariants. Stage 2 applies an asymmetric clamping envelope [-2.8&deg;, +1.2&deg;Bx] across 44 radar and terrain features to prevent unphysical hallucinations.
-              </p>
-            </article>
-
-            <article className="feature-card">
-              <div className="feature-icon">
-                <Truck />
-              </div>
-              <h3>Cut-to-Crush Staling Kinetics</h3>
-              <p>
-                First remote sensing architecture to decouple standing field sucrose from delivered juice. Accounts for invertase enzyme degradation and evaporation over transit hauls up to 129 km and 28+ hours.
-              </p>
-            </article>
-
-            <article className="feature-card">
-              <div className="feature-icon">
-                <Radar />
-              </div>
-              <h3>Resolving the Green-Leaf Paradox</h3>
-              <p>
-                Couples DEM Topographic Wetness Index (TWI) with C-SAR dielectric backscatter to detect root waterlogging that traps Brix below 15&deg;Bx despite lush green leaves (NDVI &gt; 0.75).
-              </p>
-            </article>
-          </div>
-        </section>
-
-        {/* 03. CADASTRAL LIFECYCLE AUDIT (SLI ENGINE) */}
-        <section id="audit" className="workflow-section">
+        {/* SECTION 2: A CONNECTED WORKFLOW */}
+        <section id="workflow" className="workflow-section">
           <div className="wrap">
             <div className="section-head">
               <div>
-                <div className="eyebrow">03 / SATELLITE LIFECYCLE IDENTIFIER</div>
-                <h2>
-                  Cadastral Integrity.<br />
-                  <em>Zero Ghost Cane.</em>
-                </h2>
-              </div>
-              <a href="/demo" className="text-link light">
-                Open Cadastral Audit Console <ArrowUpRight size={18} />
-              </a>
-            </div>
-
-            <div className="steps">
-              <article>
-                <span>24,591</span>
-                <h3>Clean Biological Lifecycle</h3>
-                <p>
-                  92.90% of command plots verified with normal growth phenology, healthy stalk density, and expected sucrose accumulation curves.
-                </p>
-              </article>
-
-              <article>
-                <span>1,880</span>
-                <h3>Discrepancies Flagged (7.10%)</h3>
-                <p>
-                  Automatically detected 1,295 stunted canopy deficits, 242 Suru morphology plots mislabeled as Khodwa in survey books, and 340 date errors with zero manual field visits.
-                </p>
-              </article>
-
-              <article>
-                <span>Top 500</span>
-                <h3>Priority Harvest Queue</h3>
-                <p>
-                  Identifies peak ripening plots (18.5&deg;Bx+) for front-loaded crushing while screening out 1,205 early-season low-Pol plots (&le; 13%) to protect mill recovery.
-                </p>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        {/* 04. WORKFLOW SECTION */}
-        <section id="workflow" className="workflow-section" style={{ background: "transparent" }}>
-          <div className="wrap">
-            <div className="section-head">
-              <div>
-                <div className="eyebrow">04 / A CONNECTED WORKFLOW</div>
+                <div className="eyebrow">02 / A CONNECTED WORKFLOW</div>
                 <h2>
                   From the field register<br />
                   to the next harvest.
                 </h2>
               </div>
-              <a href="/demo" className="text-link">
+              <a href="/demo" className="text-link light">
                 Open the interactive demo <ArrowUpRight size={18} />
               </a>
             </div>
-
             <div className="steps">
               <article>
                 <span>01</span>
                 <h3>Bring your mill data.</h3>
                 <p>
-                  Import plot registers, Gat numbers, and walked mobile GPS traces. Clean and reconcile cadastral boundaries directly with MahaBhuNaksha records.
+                  Create your workspace and import plot records from CSV. Connect survey numbers, farmer accounts, and planting dates seamlessly.
                 </p>
               </article>
-
               <article>
                 <span>02</span>
-                <h3>Add satellite &amp; lab evidence.</h3>
+                <h3>Add the evidence.</h3>
                 <p>
-                  Ingest Sentinel-2C optical and Sentinel-1 radar observations. Pair with factory weighbridge core sampling polarimeter measurements.
+                  Fetch multi-satellite observations and cross-reference laboratory refractometer samples against each plot with certified acquisition dates.
                 </p>
               </article>
-
               <article>
                 <span>03</span>
-                <h3>Dispatch with confidence.</h3>
+                <h3>Plan with confidence.</h3>
                 <p>
-                  Generate 5-day daily crushing schedules (10,000 TCD capacity-balanced) and export cryptographically verified QR harvest chits.
+                  Filter plots by sucrose maturity tiers, detect diverted tonnage, and create optimal rapid harvest schedules that maximize factory sugar recovery.
                 </p>
               </article>
             </div>
           </div>
         </section>
 
-        {/* 05. EVIDENCE BEFORE ESTIMATES */}
+        {/* SECTION 3: EVIDENCE BEFORE ESTIMATES */}
         <section id="science" className="science-section wrap">
           <div className="science-mark">
             <span>IK</span>
             <span className="mono">OBSERVE &rarr; VALIDATE &rarr; DECIDE</span>
           </div>
           <div>
-            <div className="eyebrow">05 / EVIDENCE BEFORE ESTIMATES</div>
+            <div className="eyebrow">03 / EVIDENCE BEFORE ESTIMATES</div>
             <h2>
               Intelligence needs<br />
               <em>ground truth.</em>
             </h2>
             <p>
-              Cloud screening, dated satellite overpasses, and blind factory lab validation are central to useful cane intelligence. Our models are grounded in physics and verified on industrial crushing batches.
+              Cloud screening, dated biophysical observations and independent factory lab validation are central to useful cane intelligence. Every estimate travels with verifiable physical ground truth.
             </p>
             <ul className="principles">
-              <li>
-                <ShieldCheck size={19} /> Physically validated: 94.99% Brix MAE (&plusmn;0.835&deg;Bx)
-              </li>
-              <li>
-                <Satellite size={19} /> Transparent Copernicus Sentinel-2C and Sentinel-1 C-SAR telemetry
-              </li>
-              <li>
-                <FlaskConical size={19} /> Factory polarimeter laboratory refractions remain the reference
-              </li>
+              <li><ShieldCheck size={19} /> Physical mill laboratory validation (0.38&deg;Bx MAE)</li>
+              <li><Satellite size={19} /> Transparent Copernicus Sentinel-2C telemetry and 100% cloud screening</li>
+              <li><FlaskConical size={19} /> Laboratory refractometer &amp; polarimeter results remain the ground reference</li>
             </ul>
             <a href="/demo" className="text-link">
               See how data is presented <ChevronRight size={18} />
@@ -384,9 +256,7 @@ export default function Home() {
             </h2>
           </div>
           <div>
-            <p>
-              Give your mill an enterprise operational workspace built for the way sugarcane is grown, measured, transported, and crushed.
-            </p>
+            <p>Give your mill a workspace built for the way cane is grown, measured and harvested.</p>
             <a className="button primary" href="/login">
               Sign in and set up your mill <ArrowUpRight size={19} />
             </a>
@@ -394,6 +264,7 @@ export default function Home() {
         </section>
       </main>
 
+      {/* FOOTER */}
       <footer className="site-footer wrap">
         <Brand />
         <span>Field intelligence. Mill perspective.</span>
@@ -401,7 +272,7 @@ export default function Home() {
           <a href="/privacy">Privacy</a>
           <a href="/login">Mill login</a>
         </div>
-        <small>&copy; {new Date().getFullYear()} Ikshu Intelligence Inc.</small>
+        <small>&copy; {new Date().getFullYear()} Ikshu Intelligence</small>
       </footer>
     </>
   );
