@@ -7,6 +7,24 @@ services:
     healthCheckPath: /api/health
     plan: free
     autoDeploy: true
+    buildFilter:
+      paths:
+        - backend_main.py
+        - ml/**
+        - data/**
+        - scripts/recalibrate_harvest_queue.py
+        - requirements.txt
+        - supabase_client.py
+        - render.yaml
+      ignoredPaths:
+        - site-editor/**
+        - web/**
+        - cloudflare_public/**
+        - docs/**
+        - "**/*.csv"
+        - "**/*.md"
+        - "**/*.png"
+        - "**/*.jpg"
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0

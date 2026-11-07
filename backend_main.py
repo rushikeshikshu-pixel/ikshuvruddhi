@@ -18,6 +18,7 @@ import json
 import pickle
 import numpy as np
 import sys
+import threading
 
 import time
 from collections import defaultdict
@@ -273,7 +274,8 @@ def ensure_cloud_db_calibrated():
 
 @app.on_event("startup")
 def app_startup():
-    ensure_cloud_db_calibrated()
+    # Asynchronous initialization so Uvicorn binds immediately and healthcheck passes instantly
+    threading.Thread(target=ensure_cloud_db_calibrated, daemon=True).start()
 
 
 @app.get("/api/health")
