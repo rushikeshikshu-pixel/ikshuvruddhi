@@ -110,7 +110,19 @@ def adjudicate_insurance_claim(
     loss_severity_pct = 0.0
     fraud_risk = "LOW"
     flags = []
-    
+
+    # Crop-specific sum insured baseline (INR per hectare)
+    crop_sum_insured_map = {
+        "Sugarcane": 72000.0,
+        "Cotton": 54000.0,
+        "Soybean": 42000.0,
+        "Paddy / Rice": 48000.0,
+        "Wheat": 45000.0,
+        "Maize": 38000.0
+    }
+    crop_key = crop_type if crop_type in crop_sum_insured_map else "Sugarcane"
+    base_sum_insured = crop_sum_insured_map.get(crop_key, 60000.0)
+
     # Check Area Inflation Discrepancy
     claimed_acres = claimed_hectares * 2.471
     if sat_acres > 0 and claimed_acres > (sat_acres * 1.35):
@@ -120,72 +132,94 @@ def adjudicate_insurance_claim(
     loss_type_upper = (claimed_loss_type or "").upper()
 
     if "PREVENTED" in loss_type_upper or "SOWING" in loss_type_upper:
-        # Prevented sowing check: If satellite shows high vegetative canopy (NDVI >= 0.50), crop WAS planted!
-        if sat_ndvi >= 0.50:
+        sowing_threshold = 0.38 if crop_key in ["Cotton", "Soybean"] else 0.48
+        if sat_ndvi >= sowing_threshold:
             verdict = "REJECTED_FALSE_CLAIM_ACTIVE_CANOPY"
             loss_severity_pct = 0.0
             fraud_risk = "CRITICAL_FRAUD"
-            flags.append(f"PREVENTED_SOWING_REFUTED: Active standing canopy confirmed (NDVI = {sat_ndvi:.2f})")
+            flags.append(f"PREVENTED_SOWING_REFUTED: Active standing {crop_key} canopy confirmed (NDVI = {sat_ndvi:.2f} >= {sowing_threshold:.2f})")
         else:
             verdict = "AUTO_APPROVED_PREVENTED_SOWING"
             loss_severity_pct = 100.0
-            flags.append(f"CONFIRMED_FALLOW_BARE_SOIL: NDVI {sat_ndvi:.2f} < 0.25 threshold across sowing window")
+            flags.append(f"CONFIRMED_FALLOW_BARE_SOIL: NDVI {sat_ndvi:.2f} < 0.25 across notified sowing window for {crop_key}")
 
     elif "INUNDATION" in loss_type_upper or "FLOOD" in loss_type_upper:
-        # Sentinel-1 SAR Dual-Pol VV/VH Inundation verification
-        # Water causes severe specular reflection, dropping VV backscatter below -18 dB
         simulated_sar_vv_db = -21.4 if sat_ndvi < 0.35 else -12.1
         simulated_water_hours = 86.0 if simulated_sar_vv_db < -18.0 else 12.0
         
-        if simulated_water_hours >= 72.0:
-            verdict = "AUTO_APPROVED_SEVERE_INUNDATION"
-            loss_severity_pct = min(100.0, (simulated_water_hours - 24.0) * 1.45)
-            flags.append(f"SAR_C_BAND_CONFIRMED: Radar specular drop ({simulated_sar_vv_db:.1f} dB), waterlogged for {simulated_water_hours:.0f} hrs")
+        if crop_key == "Paddy / Rice":
+            if simulated_water_hours >= 120.0:
+                verdict = "AUTO_APPROVED_SEVERE_INUNDATION"
+                loss_severity_pct = min(100.0, (simulated_water_hours - 96.0) * 2.0)
+                flags.append(f"PADDY_SUBMERGENCE_BREACH: Flood waterlogged canopy for {simulated_water_hours:.0f} hrs (>120h lethal submergence trigger)")
+            else:
+                verdict = "REJECTED_BENEFICIAL_PADDY_HYDROLOGY"
+                loss_severity_pct = 0.0
+                flags.append(f"HYDROPHYTE_TOLERANCE: Standing water ({simulated_water_hours:.0f} hrs) is within normal agronomic flooding limits for Paddy")
         else:
-            verdict = "REJECTED_BELOW_72H_THRESHOLD"
-            loss_severity_pct = 15.0
-            flags.append(f"INSUFFICIENT_SUBMERGENCE: Radar confirms inundation cleared in {simulated_water_hours:.0f} hrs (< 72h trigger)")
+            inundation_threshold_hrs = 48.0 if crop_key in ["Soybean", "Cotton"] else 72.0
+            if simulated_water_hours >= inundation_threshold_hrs:
+                verdict = "AUTO_APPROVED_SEVERE_INUNDATION"
+                loss_severity_pct = min(100.0, (simulated_water_hours - 24.0) * 1.45)
+                flags.append(f"SAR_C_BAND_CONFIRMED: Radar specular drop ({simulated_sar_vv_db:.1f} dB), waterlogged for {simulated_water_hours:.0f} hrs (>{inundation_threshold_hrs:.0f}h trigger for {crop_key})")
+            else:
+                verdict = "REJECTED_BELOW_THRESHOLD"
+                loss_severity_pct = 15.0
+                flags.append(f"INSUFFICIENT_SUBMERGENCE: Radar confirms inundation cleared in {simulated_water_hours:.0f} hrs (< {inundation_threshold_hrs:.0f}h trigger for {crop_key})")
 
     elif "DROUGHT" in loss_type_upper or "MID_SEASON" in loss_type_upper:
-        # Landsat Thermal CWSI + Sentinel-2 Red-Edge Chlorophyll decay
-        historical_median_ndvi = 0.74
+        historical_median_ndvi = 0.74 if crop_key in ["Sugarcane", "Paddy / Rice", "Maize"] else 0.62
         ndvi_drop_pct = max(0.0, (historical_median_ndvi - sat_ndvi) / historical_median_ndvi) * 100.0
-        if ndvi_drop_pct >= 35.0:
+        drought_trigger_pct = 25.0 if crop_key in ["Soybean", "Cotton"] else 35.0
+        if ndvi_drop_pct >= drought_trigger_pct:
             verdict = "AUTO_APPROVED_MID_SEASON_ADVERSITY"
-            loss_severity_pct = round(ndvi_drop_pct * 1.15, 1)
-            flags.append(f"YES_TECH_ANOMALY: Canopy vigor dropped {ndvi_drop_pct:.1f}% below 5-yr baseline")
+            loss_severity_pct = round(min(100.0, ndvi_drop_pct * 1.2), 1)
+            flags.append(f"YES_TECH_ANOMALY: {crop_key} canopy vigor dropped {ndvi_drop_pct:.1f}% below 5-yr baseline (Trigger: >={drought_trigger_pct}%)")
         else:
             verdict = "MODERATE_STRESS_NO_PAYOUT"
             loss_severity_pct = round(ndvi_drop_pct * 0.5, 1)
-            flags.append(f"NORMAL_RANGE: Canopy deficit {ndvi_drop_pct:.1f}% is within acceptable climatic resilience band")
+            flags.append(f"NORMAL_RANGE: {crop_key} canopy deficit {ndvi_drop_pct:.1f}% is within acceptable climatic resilience band")
+
+    elif "HEAT" in loss_type_upper or "TERMINAL" in loss_type_upper:
+        landsat_lst_celsius = 36.2 if sat_ndvi < 0.45 else 28.4
+        if landsat_lst_celsius >= 33.5:
+            verdict = "AUTO_APPROVED_TERMINAL_HEAT_STRESS"
+            loss_severity_pct = min(100.0, (landsat_lst_celsius - 32.0) * 18.0)
+            flags.append(f"LANDSAT_TIRS_HEATWAVE: Land surface temperature {landsat_lst_celsius:.1f}°C during milky stage exceeds 33.5°C threshold")
+        else:
+            verdict = "NORMAL_THERMAL_REGIME"
+            loss_severity_pct = 0.0
+            flags.append(f"THERMAL_SAFE_ZONE: Surface temperature {landsat_lst_celsius:.1f}°C below thermal damage point")
 
     else:
-        # Generic Yield Loss index against guaranteed threshold (YES-TECH)
         threshold_ccs = 9.80
         if plot_record["ccs"] < threshold_ccs:
             verdict = "AUTO_APPROVED_YIELD_SHORTFALL"
             loss_severity_pct = round(((threshold_ccs - plot_record["ccs"]) / threshold_ccs) * 100.0, 1)
-            flags.append(f"YIELD_DEFICIT: Certified CCS {plot_record['ccs']:.2f}% < Guaranteed {threshold_ccs:.2f}%")
+            flags.append(f"YIELD_DEFICIT: Certified {crop_key} productivity metric {plot_record['ccs']:.2f} < Guaranteed {threshold_ccs:.2f}")
         else:
             verdict = "YIELD_TARGET_ACHIEVED"
             loss_severity_pct = 0.0
-            flags.append(f"NORMAL_PRODUCTION: Certified CCS {plot_record['ccs']:.2f}% exceeds guaranteed threshold")
+            flags.append(f"NORMAL_PRODUCTION: Certified {crop_key} metric {plot_record['ccs']:.2f} exceeds guaranteed threshold")
 
-    payout_recommended = round((loss_severity_pct / 100.0) * (claimed_hectares * 72000.0), 2)  # Base sum insured ~₹72,000/ha
+    payout_recommended = round((loss_severity_pct / 100.0) * (claimed_hectares * base_sum_insured), 2)
     receipt_id = _generate_audit_receipt(policy_no, str(gat_no), verdict, loss_severity_pct)
 
     return {
         "claim_status": "PROCESSED",
         "policy_no": policy_no,
         "gat_no": str(gat_no),
+        "crop_type": crop_key,
         "village": plot_record["village"],
         "farmer_name": plot_record["farmer_name"],
         "adjudication_verdict": verdict,
         "assessed_loss_severity_pct": loss_severity_pct,
+        "sum_insured_per_ha_inr": base_sum_insured,
         "recommended_payout_inr": payout_recommended if "AUTO_APPROVED" in verdict else 0.0,
         "fraud_risk_level": fraud_risk,
         "audit_receipt_id": receipt_id,
         "verified_biophysical_evidence": {
+            "crop_profile": crop_key,
             "sentinel_2_ndvi": round(sat_ndvi, 3),
             "sentinel_2_ndre_chlorophyll": round(sat_ndvi * 0.72, 3),
             "landsat_9_thermal_cwsi": 0.42 if loss_severity_pct > 30 else 0.18,
@@ -194,7 +228,7 @@ def adjudicate_insurance_claim(
             "effective_core_acres": round(sat_acres, 2)
         },
         "adjudication_flags": flags,
-        "adjudication_engine": "SatCane YES-TECH AI-DPI v2.6 (Audit Proof)",
+        "adjudication_engine": f"SatCane YES-TECH Multi-Crop AI-DPI v2.7 ({crop_key})",
         "dbt_payout_ready": "AUTO_APPROVED" in verdict and fraud_risk != "CRITICAL_FRAUD"
     }
 

@@ -451,14 +451,28 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Claimed Peril / Loss Cause</label>
-                        <select id="lossType" class="form-control">
-                            <option value="INUNDATION_FLOOD" selected>Waterlogging / Flood Inundation (>72h SAR Check)</option>
-                            <option value="PREVENTED_SOWING">Prevented Sowing (Fallow Bare Soil Audit)</option>
-                            <option value="MID_SEASON_DROUGHT">Mid-Season Vegetative Drought (Thermal CWSI)</option>
-                            <option value="YIELD_SHORTFALL">Yield Guarantee Shortfall (Certified CCS Inversion)</option>
-                        </select>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label>Crop Classification</label>
+                            <select id="cropType" class="form-control">
+                                <option value="Sugarcane" selected>Sugarcane (Perennial C4)</option>
+                                <option value="Cotton">Cotton (Kharif Cash - 160D)</option>
+                                <option value="Soybean">Soybean (Kharif Oilseed - 90D)</option>
+                                <option value="Paddy / Rice">Paddy / Rice (Hydrophyte Flood-Tolerant)</option>
+                                <option value="Wheat">Wheat (Rabi - Heat Sensitive)</option>
+                                <option value="Maize">Maize (Seasonal Grain - 100D)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Claimed Peril / Loss Cause</label>
+                            <select id="lossType" class="form-control">
+                                <option value="INUNDATION_FLOOD" selected>Waterlogging / Flood Inundation (>72h SAR Check)</option>
+                                <option value="PREVENTED_SOWING">Prevented Sowing (Fallow Bare Soil Audit)</option>
+                                <option value="MID_SEASON_DROUGHT">Mid-Season Drought (Thermal CWSI / NDRE)</option>
+                                <option value="TERMINAL_HEAT">Terminal Heat Stress (Landsat-9 TIRS >33.5°C)</option>
+                                <option value="YIELD_SHORTFALL">Yield Guarantee Shortfall (YES-TECH Inversion)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <button type="submit" class="btn-adjudicate" id="btnSubmitClaim">
@@ -597,6 +611,7 @@
                 policy_no: document.getElementById('policyNo').value,
                 gat_no: document.getElementById('gatNo').value,
                 village: document.getElementById('village').value,
+                crop_type: document.getElementById('cropType').value,
                 claimed_loss_type: document.getElementById('lossType').value,
                 claimed_hectares: parseFloat(document.getElementById('claimedHa').value) || 1.0
             };
