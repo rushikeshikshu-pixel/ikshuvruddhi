@@ -1194,6 +1194,44 @@ def api_detect_5day_anomaly(req: FiveDayAnomalyRequest):
     )
 
 
+# -------------------------------------------------------------
+# PMFBY & YES-TECH Insurance Adjudication & CCE Smart Sampling
+# -------------------------------------------------------------
+from ml.insurance_engine import adjudicate_insurance_claim, generate_cce_smart_sampling
+
+class InsuranceClaimRequest(BaseModel):
+    policy_no: str
+    gat_no: str
+    village: Optional[str] = "Shevgaon"
+    claimed_loss_type: str = "INUNDATION_FLOOD"  # PREVENTED_SOWING, INUNDATION_FLOOD, MID_SEASON_DROUGHT, YIELD_SHORTFALL
+    claimed_hectares: Optional[float] = 1.0
+    crop_type: Optional[str] = "Sugarcane"
+    reported_incident_date: Optional[str] = None
+
+@app.post("/api/insurance/verify_claim")
+def verify_insurance_claim_endpoint(req: InsuranceClaimRequest):
+    """
+    Automated PMFBY claim adjudication engine bridging 4-satellite telemetry with MahaBhuNaksha 7/12 Gat boundaries.
+    Detects prevented sowing, SAR inundation hours, mid-season vegetative drought, and generates cryptographic VAEP audit receipts.
+    """
+    return adjudicate_insurance_claim(
+        policy_no=req.policy_no,
+        gat_no=req.gat_no,
+        village=req.village,
+        claimed_loss_type=req.claimed_loss_type,
+        claimed_hectares=req.claimed_hectares or 1.0,
+        crop_type=req.crop_type or "Sugarcane",
+        reported_incident_date=req.reported_incident_date
+    )
+
+@app.get("/api/insurance/cce_smart_sampling")
+def cce_smart_sampling_endpoint(village: str = Query("ALL", description="Gram Panchayat or circle name"), sample_size: int = Query(10, description="Target sample size")):
+    """
+    Generates statistically stratified CCE (Crop Cutting Experiment) sampling points across High, Medium, and Low vigor strata to eliminate surveyor bias under YES-TECH.
+    """
+    return generate_cce_smart_sampling(village=village, sample_size=sample_size)
+
+
 # Static file serving for web dashboard and assets
 from fastapi.staticfiles import StaticFiles
 
