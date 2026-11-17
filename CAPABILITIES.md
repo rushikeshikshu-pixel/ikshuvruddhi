@@ -102,6 +102,13 @@ is the core of the product, not a disclaimer bolted on.
 1. **A ranked harvest queue.** Plots ordered by sucrose being lost to standing,
    not by CCS alone. In the sample register every plot is 120–200 days past its
    optimal cut date — visible in one screen, previously not visible at all.
+   The weighbridge cutting queue can also rank the current season by CCS
+   percentile (default) so a drought year, when every plot is below the old
+   11.2% line, still has a non-empty roster. Absolute cutoff mode remains.
+   The mode, threshold and source tag are printed on the slip. Relative ranks
+   and distances from an unverified mill point are *PLANNING ONLY — NOT VALID
+   FOR PAYMENT*. Distance is great-circle kilometres to the configured mill
+   point and is what the transit-loss estimate uses.
 2. **A dispatch program.** Plots packed against real daily crushing capacity
    over a chosen horizon, with per-day tonnage, weighted CCS, and an explicit
    flag when a single field pushes a day over capacity.

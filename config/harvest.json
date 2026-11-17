@@ -1,0 +1,9 @@
+{
+  "eligibility_mode": "relative",
+  "ccs_percentile": 50,
+  "absolute_min_ccs": 11.2,
+  "mill_lat": 19.361543,
+  "mill_lon": 75.297651,
+  "mill_coordinates_verified": false,
+  "mill_coordinates_todo": "TODO: mill_lat/mill_lon are the Najik Babhulgaon point already recorded in scripts/train_on_gangamai_online_tonnage.py. They are not a surveyed weighbridge-gate fix. Confirm with the mill before using distance for payment or diesel claims. Override with IKSHU_MILL_LAT and IKSHU_MILL_LON. Set IKSHU_MILL_COORDS_VERIFIED=true only after that survey. Road distance is not connected; the queue uses haversine until a plot carries roadDistanceKm."
+}

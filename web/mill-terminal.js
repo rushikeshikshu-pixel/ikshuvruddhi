@@ -41,7 +41,14 @@ window.MillApp = {
     fraudSavedCrores: 1.82,
     baseRecovery: 7.74,
     currentRecovery: 8.44,
-    pendingBulkPlots: []
+    pendingBulkPlots: [],
+    // Same point as config/harvest.json. TODO: unverified weighbridge-gate GPS
+    // (see mill_coordinates_todo). Not valid for payment or diesel claims.
+    millLat: 19.361543,
+    millLon: 75.297651,
+    millCoordsVerified: false,
+    eligibilityMode: 'relative',
+    ccsPercentile: 50
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1170,6 +1177,45 @@ function initCuttingDocket() {
     }
 }
 
+function haversineKm(lat1, lon1, lat2, lon2) {
+    var radius = 6371.0;
+    var p1 = lat1 * Math.PI / 180;
+    var p2 = lat2 * Math.PI / 180;
+    var dPhi = (lat2 - lat1) * Math.PI / 180;
+    var dLam = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dPhi / 2) * Math.sin(dPhi / 2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dLam / 2) * Math.sin(dLam / 2);
+    return 2 * radius * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
+function distanceKmForPlot(plot) {
+    if (!plot) return null;
+    if (plot.distKm != null && plot.distKm !== '') return Number(plot.distKm);
+    if (plot.distance_km != null && plot.distance_km !== '') return Number(plot.distance_km);
+    if (plot.lat == null || plot.lon == null || window.MillApp.millLat == null || window.MillApp.millLon == null) return null;
+    return Math.round(haversineKm(Number(plot.lat), Number(plot.lon), window.MillApp.millLat, window.MillApp.millLon) * 100) / 100;
+}
+
+function seasonEligibilityLine(plot) {
+    var mode = window.MillApp.eligibilityMode || 'relative';
+    var values = (window.MillApp.plots || []).filter(function(p) { return p && !p.isGhost && p.ccs != null && !isNaN(Number(p.ccs)); }).map(function(p) { return Number(p.ccs); }).sort(function(a, b) { return a - b; });
+    var threshold = null;
+    if (mode === 'absolute') {
+        threshold = 11.2;
+    } else if (values.length) {
+        var pct = window.MillApp.ccsPercentile != null ? window.MillApp.ccsPercentile : 50;
+        var k = (values.length - 1) * (pct / 100);
+        var lo = Math.floor(k);
+        var hi = Math.min(lo + 1, values.length - 1);
+        threshold = values[lo] + (values[hi] - values[lo]) * (k - lo);
+    }
+    var dist = distanceKmForPlot(plot);
+    var distText = dist == null ? 'distance unavailable' : (dist + ' km haversine, tag D');
+    var millTag = window.MillApp.millCoordsVerified ? 'M' : '?';
+    var cut = threshold == null ? 'n/a' : (Math.round(threshold * 100) / 100) + '% CCS';
+    var tag = mode === 'relative' ? 'X' : 'D';
+    return 'Eligibility: ' + mode + ' | threshold ' + cut + ' | tag ' + tag + ' | ' + distText + ' | mill point tag ' + millTag + ' | PLANNING ONLY — NOT VALID FOR PAYMENT';
+}
+
 function renderOfficialDocket(plot) {
     setText('docketMillHeaderName', window.MillApp.millName);
     setText('docketMillHeaderSub', `Sugar Directorate Factory Code: ${window.MillApp.millCode} • Crushing Capacity: ${window.MillApp.tcd}`);
@@ -1186,6 +1232,7 @@ function renderOfficialDocket(plot) {
     setText('docketValCcs', plot.ccs + '%');
     setText('docketValBrix', plot.brix + '°Bx');
     setText('docketValPol', plot.pol + '%');
+    setText('docketEligibilityLine', seasonEligibilityLine(plot));
     setText('docketMaxHours', `${plot.transitTargetHours} Hours Cut-to-Crush Max`);
 
     const selGang = window.MillApp.harvestGangs[0] || { name: 'Santosh Kale Mukadam', phone: '98221 45120', type: 'Tractor Trolley' };
@@ -2083,7 +2130,8 @@ window.openMobileHealthSlip = function(plotIdOrGat) {
     setText('slipTransitHours', `${plot.transitTargetHours || 18} तास (तोडणी ते गाळप कमाल)`);
     const selGang = window.MillApp.harvestGangs[0] || { name: 'संतोष काळे मुकादम', phone: '98221 45120', type: 'ट्रॅक्टर ट्रॉली' };
     setText('slipGangName', `${selGang.name} (${selGang.type || 'ट्रॅक्टर'} - ${selGang.phone || '९८२२१ ४५१२०'})`);
-    setText('slipDistance', `${plot.distKm || 22.5} किमी अंतर`);
+    var slipKm = distanceKmForPlot(plot);
+    setText('slipDistance', slipKm != null ? `${slipKm} किमी अंतर` : `${plot.distKm || 22.5} किमी अंतर`);
 
     // Render 5-Day Satellite Maturation Trajectory
     const trajectory = [
@@ -2128,7 +2176,8 @@ window.openMobileHealthSlip = function(plotIdOrGat) {
 ⏱️ *वाहतूक मर्यादा:* १८ तास (तोडणी ते गाळप)
 🎫 *डॉक्युमेंट क्र.:* ${plot.docketId || 'DOK-2026-103'}
 ━━━━━━━━━━━━━━━━━━━
-⚠️ *सूचना:* कृपया तोडणीनंतर ऊस वाळू न देता तात्काळ कारखान्यात आणावा.`;
+⚠️ *सूचना:* कृपया तोडणीनंतर ऊस वाळू न देता तात्काळ कारखान्यात आणावा.
+${seasonEligibilityLine(plot)}`;
 
     const modal = document.getElementById('mobileHealthSlipModal');
     if (modal) modal.classList.add('active');
@@ -2320,7 +2369,9 @@ function fetchBackendTelemetryAndAudit() {
 function updateQueueBannerStats(summary) {
     var statsEl = document.getElementById('lblBackendQueueStats');
     if (!statsEl || !summary) return;
-    statsEl.textContent = 'Target: ' + window.MillApp.tcd + ' • ' + summary.total_queued_parcels + ' Parcels Allocated • Avg CCS: ' + summary.average_ccs_pct + '% • Avg Brix: ' + summary.average_brix_deg + '°Bx • Sugar: ' + summary.estimated_commercial_sugar_recovery_mt + ' MT • Transit: < 18h';
+    var modeNote = summary.eligibility_mode ? (' • Mode: ' + summary.eligibility_mode + (summary.effective_min_ccs != null ? (' @ ' + summary.effective_min_ccs + '% CCS') : '') + (summary.eligibility_source_tag ? (' [' + summary.eligibility_source_tag + ']') : '')) : '';
+    var planNote = summary.planning_stamp ? (' • ' + summary.planning_stamp) : '';
+    statsEl.textContent = 'Target: ' + window.MillApp.tcd + ' • ' + summary.total_queued_parcels + ' Parcels Allocated • Avg CCS: ' + summary.average_ccs_pct + '% • Avg Brix: ' + summary.average_brix_deg + '°Bx • Sugar: ' + summary.estimated_commercial_sugar_recovery_mt + ' MT • Transit: < 18h' + modeNote + planNote;
 }
 
 window.syncLiveBackendQueue = function() {
@@ -2399,7 +2450,7 @@ window.inspectBackendParcel = function(idx) {
         farmerMr: p.farmer_mr || p.farmer_en,
         village: p.village,
         circle: p.circle,
-        distKm: p.distance_km || 12.0,
+        distKm: p.distance_km != null ? p.distance_km : 12.0,
         ccs: p.predicted_ccs_pct,
         brix: p.predicted_brix_deg,
         pol: p.predicted_pol_pct,

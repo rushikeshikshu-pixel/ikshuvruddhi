@@ -65,7 +65,18 @@ Recognised columns: `Plot No` / `Gut`, `Farmer`, `Village`, `Variety Name`,
 ## What it does
 
 - **Harvest queue** — plots ranked by sucrose lost to standing, sortable on any
-  column, filterable by readiness, record state and circle.
+  column, filterable by readiness, record state and circle. The weighbridge
+  cutting queue (`/api/harvest/cutting_queue`) defaults to a **relative**
+  season rank (CCS percentile, config `config/harvest.json` or
+  `IKSHU_CCS_PERCENTILE`) so a drought year still cuts the ripest cane first.
+  `eligibility_mode=absolute` keeps the fixed CCS cutoff (`min_ccs`,
+  `IKSHU_MIN_CCS`, default 11.2). The response and the cutting slip name the
+  mode, the threshold, the source tag, and print *PLANNING ONLY — NOT VALID
+  FOR PAYMENT* when the rank or the mill point is not a payment figure.
+- **Distance to mill** — great-circle kilometres from the plot coordinate to
+  the mill point in `config/harvest.json` (`IKSHU_MILL_LAT` / `IKSHU_MILL_LON`).
+  That figure feeds the existing cut-to-crush transit estimate. The checked-in
+  point is unverified gate GPS; road distance is not connected yet.
 - **Harvest program** — plots packed against daily crush capacity (MT/day) over
   a chosen horizon, with per-day tonnage, tonnage-weighted CCS and an explicit
   flag when one field pushes a day over capacity. Exports as a dispatch CSV.
