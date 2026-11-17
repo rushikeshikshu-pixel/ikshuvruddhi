@@ -854,18 +854,38 @@ from ml.harvest_api_helper import calculate_cutting_queue, get_plot_digital_heal
 @app.get("/api/harvest/cutting_queue")
 def harvest_cutting_queue_endpoint(
     circle: str = Query("ALL", description="Mill circle name, or ALL"),
-    min_ccs: float = Query(11.2, description="Minimum CCS% threshold"),
+    min_ccs: Optional[float] = Query(None, description="Absolute-mode minimum CCS%. Omit to use config, IKSHU_MIN_CCS, or 11.2"),
     target_mt: float = Query(4500.0, description="Daily crushing capacity in MT"),
     delta_only: bool = Query(False, description="True for only plots that matured this pass"),
-    pass_date: str = Query("2026-10-10", description="Satellite pass date")
+    pass_date: str = Query("2026-10-10", description="Satellite pass date"),
+    eligibility_mode: Optional[str] = Query(None, description="relative (season CCS percentile, default) or absolute (min_ccs cutoff)"),
+    ccs_percentile: Optional[float] = Query(None, description="Relative-mode season CCS percentile, 0-100. Omit to use config or 50"),
 ):
     """Direct Weighbridge ERP REST API (Zero-File Mode). Streams 5-day delta cutting queue."""
-    return calculate_cutting_queue(circle=circle, min_ccs=min_ccs, target_mt=target_mt, delta_only=delta_only, pass_date=pass_date)
+    return calculate_cutting_queue(
+        circle=circle,
+        min_ccs=min_ccs,
+        target_mt=target_mt,
+        delta_only=delta_only,
+        pass_date=pass_date,
+        eligibility_mode=eligibility_mode,
+        ccs_percentile=ccs_percentile,
+    )
 
 @app.get("/api/harvest/plot/{gat_no}")
-def plot_digital_health_slip_endpoint(gat_no: str):
+def plot_digital_health_slip_endpoint(
+    gat_no: str,
+    eligibility_mode: Optional[str] = Query(None, description="relative (default) or absolute"),
+    min_ccs: Optional[float] = Query(None, description="Absolute-mode minimum CCS%"),
+    ccs_percentile: Optional[float] = Query(None, description="Relative-mode season CCS percentile, 0-100"),
+):
     """Returns Mobile Digital Cane Health Slip data & WhatsApp slip for field inspectors."""
-    res = get_plot_digital_health_slip(gat_no)
+    res = get_plot_digital_health_slip(
+        gat_no,
+        eligibility_mode=eligibility_mode,
+        min_ccs=min_ccs,
+        ccs_percentile=ccs_percentile,
+    )
     if not res:
         # Check cloud db
         db_path = os.path.join(os.path.dirname(__file__), "data", "cloud_sync.db")
